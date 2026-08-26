@@ -1,232 +1,237 @@
-# 📜 Mimicry Voxel Engine Development Log (Changelog)
+# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.18.11)
 
-> **ToME 2.3.5 / TomeNET 데이터 지향 복셀 로그라이크 누적 세션 개발 로그 (1~12차 마일스톤 집대성)**
+> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 4 집대성)**
 
-[![Version](https://img.shields.io/badge/version-0.18.0-emerald.svg)](package.json)
-[![Tests](https://img.shields.io/badge/test%20suites-43%2F43%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
-[![Engines](https://img.shields.io/badge/stateless%20engines-10%20engines-blue.svg)](src/systems/)
+[![Version](https://img.shields.io/badge/version-0.18.11-emerald.svg)](package.json)
+[![Tests](https://img.shields.io/badge/test%20suites-56%2F56%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
+[![Engines](https://img.shields.io/badge/stateless%20engines-12%20engines-blue.svg)](src/systems/)
 [![Entities](https://img.shields.io/badge/canonical%20entities-1%2C636-purple.svg)](src/entities/)
+[![Architecture](https://img.shields.io/badge/architecture-5--layer%20Clean%20DOD-orange.svg)](src/meta/code_meta_index.json)
 
 ---
 
-## 🧭 세션 개요 및 엔지니어링 하이라이트
+## 🧭 프로젝트 개요 및 엔진 진화 여정
 
-본 개발 로그는 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터를 100% 무상태(Stateless)로 처리하는 **10대 시스템 엔진**, **1~50F 4단계 티어 게이팅 & 던전 가치 예산 엔진(`DungeonValueBudgetEngine`)**, **ToME 정통 14대 상태이상/버프 `StatusEffectEngine`**, **ToME 7대 공격 체계 & TomeNET 5단계 AI 의사결정 트리**, **다중 계단 & 동적 맵 스케일링**, **모던 인벤토리 코어 인스펙터(4대 스킬 프리뷰 카드)** 및 **시작/이어하기 트랜잭션 무결성 핫픽스**까지의 12차에 걸친 마일스톤 개발 내역을 상세히 기록합니다.
+**미미크리 복셀(Mimicry Voxel)**은 플레이어가 쓰러뜨린 몬스터의 정수 코어(Core)를 흡수하여 그 신체 능력과 고유 마법을 의태(Mimicry)하는 전술적 복셀 로그라이크 엔진입니다. 
+초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**까지 탑재된 완성형 엔진으로 진화했습니다.
 
 ```mermaid
 timeline
-    title 미미크리 Voxel 로그라이크 엔진 12대 마일스톤 진화 타임라인
-    2026-08-25 : 1차 ToME DOD 8대 시스템 엔진 신설
-               : 2차 DungeonValueBudgetEngine 티어 게이팅 & 저층 보호
-               : 3차 183종 유물 'SLAYER' 하드코딩 제거 & 순수 명칭 복원
-               : 4차 렌더링 3대 정밀 핫픽스 & 플레이어 가시성 가드
-    2026-08-26 : 5차 50F 모르고스 3단 보스전 & 발리노르 승천 엔딩
-               : 6차 다중 상/하행 계단 분산 & 동적 맵 규격 스케일링
-               : 7차 10대 독립 장비 슬롯 & ToME tval 34/31 정규화
-               : 8차 100% 순수 쿨타임 & 오토 스킬 자동 격발 엔진
-               : 9차 명예의 전당 & 사망 묘비명 3단 탭 상세 인스펙터
-               : 10차 StatusEffectEngine & ToME 7대 공격 체계 & 5단계 AI
-               : 11차 인벤토리 모던 코어 인스펙터 & 4대 스킬 프리뷰 카드
-               : 12차 시작/이어하기 핫픽스 & SaveSystem 프록시 & v0.18.0 승격
+    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 4)
+    Phase 1 : 3대 원소 상호작용 프로토타입 (v0.1.0 ~ v0.6.0)
+            : 의태 코어 흡수 및 기초 복셀 렌더러 구축
+    Phase 2 : 5대 갓오브젝트 해체 및 5대 계층 클린 아키텍처 확립 (v0.7.0 ~ v0.12.0)
+            : EventBus 도입 및 상태-로직 무상태(Stateless) 분리
+    Phase 3 : ToME 2.3.5 1,636종 엔티티 & 12대 마일스톤 구축 (v0.13.0 ~ v0.18.0)
+            : 10대 무상태 엔진, 50F 모르고스 보스전, 10대 장비 슬롯, 순수 쿨타임
+    Phase 4 : 실전 핫픽스, 로어 숙련도 단일화, 실시간 자동화 엔진 (v0.18.1 ~ v0.18.11)
+            : 로어 3408 XP 역방향 동기화, Auto-Cast 엔진, 절차적 BFS 안전 드랍
 ```
 
 ---
 
-## 💎 제1차 마일스톤: ToME 몬스터/아이템 DOD 8대 시스템 엔진 및 엔티티 DTO 경량화
+## 🏛️ 아키텍처 계층 구조 (5-Layer Clean DOD)
 
-- **일자**: 2026-08-25
-- **담당**: 개발팀 전원
-- **주요 내용**:
-  1. **8대 무상태 시스템 엔진 분리 신설**:
-     - `TomeFlagResolver.js`: ToME 2.3.5 비트 플래그/속성/저항/슬레이/면역 고속 무상태 리졸버.
-     - `UnifiedTraitEngine.js`: 몬스터-플레이어 간 패시브/특성/트레잇 통합 연산.
-     - `VisionLightingEngine.js`: 광원 반경, FOV/LOS, 몬스터 감지(`canDetectMonsters`) 연산.
-     - `TomeSpellEngine.js`: 851종 마법/브레스/AOE 주문 무상태 연산.
-     - `ArtifactActivationEngine.js`: 183종 전설 유물 발동 효과 및 쿨다운 제어.
-     - `TomeConsumableEngine.js`: 포션 45+종, 주문서 42+종, 등불 급유(7,500턴), 음식 소비 엔진.
-     - `TomeDeviceEngine.js`: 완드(30종), 스태프(20종), 로드(28종) 마법 디바이스 발동 및 충전량/타임아웃 무상태 제어.
-     - `TomeEquipmentEngine.js`: 18대 슬롯 매핑, 심볼, 무게, AC, 무기 카테고리 연산.
-  2. **엔티티 Zero-Logic 경량화**:
-     - `Item.js`, `Monster.js`, `Player.js`를 순수 데이터 컨테이너(DTO)로 경량화하고 모든 연산 로직을 8대 엔진에 위임.
-  3. **검증**: `scripts/test_data_oriented_systems.js` 100% PASS.
-
----
-
-## 🏰 제2차 마일스톤: DungeonValueBudgetEngine(1~50F 4단계 티어 게이팅 & 가치 예산) 구축
-
-- **일자**: 2026-08-25
-- **담당**: 개발팀 전원
-- **주요 내용**:
-  1. **4단계 층계 티어 게이팅 명세 (`DungeonValueBudgetEngine.js`)**:
-     - **Tier 1 (1~5F 초심자 동굴)**: **저층 보호 (No Early Disaster)** 적용. RARE/EPIC 몬스터 접사 0%, CHAMPION(12F+)/CHIEFTAIN(25F+) 0%, Vault/Pit 0%, 일반방 유물 드랍 0% 원천 차단.
-     - **Tier 2 (6~20F 숙련자 광산)**: COMMON/UNCOMMON 접사, CHAMPION 몬스터(12F+), 소형 Vault, 기본 Pit 허용, 인챈트(+1~+4) 선형 스케일링.
-     - **Tier 3 (21~40F 심층 납골당)**: EPIC 접사, CHIEFTAIN(25F+), 대형 Vault, 고급 종족 Pit 허용, 인챈트(+4~+9) 및 유물 롤링 예산 개방.
-     - **Tier 4 (41~50F 앙그반드 심연)**: 최상위 에고/유물, 고룡/발록/나즈굴 대군주 스폰 전면 개방, 50F 모르고스의 옥좌 보스전.
-  2. **서브시스템 4대 파일 연동**:
-     - `DungeonThemeConfig.js`, `Map.js`, `Spawner.js`, `TomeLootGenerator.js`, `UniqueMonsterManager.js`.
-  3. **검증**: `scripts/test_dungeon_budget.js` 41/41 PASSED (100%).
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    1. Presentation / UI                     │
+│   (HUDView, InventoryView, MonsterLoreView, AscensionModal)  │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Dispatches Actions / Subscribes
+┌──────────────────────────────▼──────────────────────────────┐
+│                    2. Core Game Loop                        │
+│     (Game, CombatSystem, LootSystem, SaveSystem, Spawner)    │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Invokes Pure Operations
+┌──────────────────────────────▼──────────────────────────────┐
+│                 3. Stateless Domain Systems                 │
+│ (DungeonValueBudgetEngine, StatusEffectEngine, MonsterAISystem, │
+│  TomeSpellEngine, TomeLootGenerator, BossPhaseEngine, etc.)  │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Operates On Lightweight DTOs
+┌──────────────────────────────▼──────────────────────────────┐
+│                    4. Entity Data Models                    │
+│          (Player, Monster, Item, MimicBody, Tags)           │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Parameterized By
+┌──────────────────────────────▼──────────────────────────────┐
+│                 5. Canonical Config Datasets                │
+│    (TomeMonstersData, TomeArtifactsData, GameBalanceConfig) │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 🗡️ 제3차 마일스톤: 전설 유물 183종 '학살자(SLAYER)' 접미사 하드코딩 제거 및 순수 명칭 복구
+## 🌟 Phase 4: 실전 핫픽스, 로어 숙련도 단일화 & 실시간 자동 엔진 스프린트 (v0.18.1 ~ v0.18.11)
 
-- **일자**: 2026-08-25
-- **담당**: 개발팀 전원
-- **주요 내용**:
-  1. **방어적 정규화 로직 적용 (`Item.js`)**:
-     - `Item.displayName` 게터에서 ARTIFACT 태그 감지 시 접두사/접미사 합성을 차단하고 순수 고유 명칭(예: *The Ring of Barahir*, *The Spear of Aeglos*, *The Hammer of Wrath: Grond*) 및 강화 수치(+X)만 반환하도록 방어적 정규화 적용.
-  2. **유물 생성 파이프라인 접사 완전 초기화**:
-     - `ItemRegistry.js`, `UniqueMonsterManager.js`, `TomeLootGenerator.js`, `BossPhaseEngine.js` 내 유물 생성 시 `prefixes: []`, `suffixes: []` 빈 배열 초기화.
-  3. **검증**: `scripts/test_artifact_name_integrity.js` 67/67 PASSED (100%), 183종 전수 통과.
-
----
-
-## 🎨 제4차 마일스톤: 렌더링 3대 정밀 핫픽스 & 암흑 속 플레이어 본체 가시성 무조건 보장
-
-- **일자**: 2026-08-25
-- **담당**: 개발팀 전원
-- **주요 내용**:
-  1. **렌더러 정밀 보정 (`Classic2DAsciiRenderer.js`, `Game.js`)**:
-     - `resize` 시 뷰포트 크기 및 스케일 팩터 재계산 보정.
-     - `snapCamera` 시 Z축 온전한 전달 및 `transitionAlpha`(0.0~1.0) 정밀 클램핑.
-  2. **플레이어 가시성 가드 (`Player.js`, `Voxel3DRenderer.js`)**:
-     - 암흑/시야 0 상태에서도 플레이어 본체('@', `#34d399` 민트 글리프) 렌더링 무조건 보장.
-     - `Player.lightRange` 양방향 Getter/Setter 인터페이스 완비.
-     - `VisionLightingEngine.canDetectMonsters` 몬스터 감지 가시성 헬퍼 신설.
-  3. **검증**: `scripts/test_rendering_and_visibility_audit.js` 27/27 PASSED (100%).
+### 🧱 v0.18.11 — 절차적(Procedural) BFS 방사형 안전 드랍 엔진 구현
+- **배포일**: 2026-08-26 | **커밋**: `5b2770c`
+- **주요 변경 사항**:
+  1. **절차적 BFS 안전 드랍 탐색 엔진 (`LootSystem.findSafeDropLocation` / `getSafeDropPosition`)**:
+     - 하드코딩 0%의 순수 방사형 거리순 BFS 큐 탐색 알고리즘 탑재.
+     - 시작점이 벽이거나 통행 불가할 경우 반경 1부터 `maxRadius`까지 8방향 거리순 BFS를 수행하여 가장 가깝고 100% 이동 가능한(`isWalkable && !isWall`) 바닥 타일 좌표를 동적으로 산출.
+  2. **모든 전리품 드랍 파이프라인 안전 배치 보장 (`spawnSafeDropItem`)**:
+     - 정수 코어, ToME 장비, 유니크 전설 유물, 모르고스 유물(그론드/철왕관), 화살 다발 등 모든 드랍 아이템이 100% 안전 바닥 타일에만 떨어지도록 보정. 벽 타일 위 아이템 스폰 0건 완벽 달성.
+  3. **유니크 보너스 드랍 및 몬스터 전리품 산개 안전 좌표 연동**:
+     - `UniqueMonsterManager.js` 및 `TomeLootGenerator.js`에서 좌표 산개 시 맵 타일 이동 가능 여부를 검증하여 벽으로 튀는 현상 원천 차단.
+  4. **검증**: `scripts/test_procedural_safe_drop_engine.js` (10/10 PASS) 신설 및 56개 전체 테스트 스위트 100% 통과.
 
 ---
 
-## 👑 제5차 마일스톤: 50F 모르고스(Morgoth) 3단 페이즈 보스전 & 발리노르 승천 엔딩 완비
-
-- **일자**: 2026-08-26
-- **담당**: 개발팀 전원
-- **주요 내용**:
-  1. **3단계 보스 페이즈 엔진 (`BossPhaseEngine.js`)**:
-     - **Phase 1 (100%~66% HP - 어둠의 군주)**: 어둠의 장막 시야 축소, 마법 탄환 및 기본 브레스.
-     - **Phase 2 (66%~33% HP - 지진과 분노)**: 그론드(Grond) 지진 강타, 낙석 파편 물리 피해, 엘리트 드래곤/발록 소환.
-     - **Phase 3 (33%~0% HP - 궁극의 어둠)**: 전방위 원소 브레스 폭격, 암흑 영혼 드레인, 초재생 및 극대화 저항.
-  2. **승천 모달 및 명예의 전당 (`AscensionModalView.js`)**:
-     - 발리노르의 빛 승천 컷씬, 모험 통계 요약, 명예의 전당/묘비명 영구 기록.
-  3. **검증**: `scripts/test_boss_encounter_and_ascension.js` 64/64 PASSED (100%).
-
----
-
-## 🗺️ 제6차 마일스톤: ToME 다중 계단(Multiple Stairs) 분산 배치 & 동적 맵 규격 스케일링 구축
-
-- **일자**: 2026-08-26
-- **담당**: 개발팀 전원
-- **주요 내용**:
-  1. **동적 맵 크기 수식 산출 (`DungeonValueBudgetEngine.js`)**:
-     - 1~5F (55×38 ~ 65×45) → 6~20F (65×45 ~ 80×55) → 21~40F (80×55 ~ 95×65) → 41~50F (90×65 ~ 110×75) 선형/계단식 확장.
-  2. **다중 상/하행 계단 배치 엔진 (`Map.js`)**:
-     - `calculateStaircaseCounts(floor, roomCount)` 연동 (상행 1~3개, 하행 0~4개 산출, 50F 결전장 하행 0개).
-     - 각 계단 간 유클리드 거리 최대화 그리디 분산 알고리즘 적용 및 방 중심/내부 보행 타일 배치.
-     - `upStaircases`, `downStaircases`, `staircases` 배열 캐싱 및 조회 인터페이스 제공.
-  3. **검증**: `scripts/test_dynamic_map_and_stairs.js` 5개 스위트 615/615 PASSED (100%).
+### ⚡ v0.18.10 — 의태 액티브 스킬 실시간 자동 격발(Auto-Cast) 엔진 & SELF 스펠 타겟 버그 수정
+- **배포일**: 2026-08-26 | **커밋**: `7be0d56`
+- **주요 변경 사항**:
+  1. **실시간 자동 격발 엔진 (`Player.prototype.tryAutoCastInnateSkills`)**:
+     - 매 턴 플레이어 행동 완료 시 5대 우선순위에 따라 스킬 자동 시전:
+       1. **자가 치유 (HEAL / S_HEAL)**: 체력 85% 이하(`hp <= maxHp * 0.85`) 시 우선 자동 발동 및 실효 쿨다운 적용.
+       2. **위기 탈출 (PHASE_DOOR / 점멸)**: 체력 35% 미만 및 인접 적(거리 $\le 1.8$) 존재 시 자동 점멸 탈출.
+       3. **자가 가속/버프 (HASTE / 가속 / SELF)**: 사거리 8칸 내 적 포착 시 자동 시전.
+       4. **광역 브레스 (BREATH / AOE)**: 사거리 내 가시 적 포착 시 자동 브레스 격발.
+       5. **원거리 볼트 / 물리 강타 (PROJECTILE / MELEE_STRIKE)**: 사거리 내 적 자동 조준 격발.
+  2. **`MonsterSpellFactory.js` SELF 계열 스펠 타겟 탐색 버그 완벽 수정**:
+     - `HASTE` 및 `HEAL` 스펠이 `_findTarget(maxRange: 0)`으로 넘어가 "조준할 적이 없습니다" 오류로 실패하던 결함 수정.
+     - `_executeHaste` 및 `_executeSelfBuff` 전용 핸들러 신설로 타겟 없이 즉시 자가 시전 및 버프 적용.
+  3. **CombatSystem 턴 루프 연동**:
+     - `CombatSystem.triggerActiveSkills(game)`에서 매 턴 쿨다운 감소 후 `game.player.tryAutoCastInnateSkills(game)` 무결 호출.
+  4. **검증**: `scripts/test_realtime_innate_skills_autocast.js` (9/9 PASS) 신설 및 55개 전체 테스트 스위트 100% 통과.
 
 ---
 
-## 🛡️ 제7차 마일스톤: 독립 장갑(GLOVES) 및 방패(SHIELD) 포함 10대 전신 장비 슬롯 분리
-
-- **일자**: 2026-08-26
-- **담당**: 개발팀 전원
-- **주요 내용**:
-  1. **10대 독립 장비 슬롯 체계 (`Player.js`, `TomeEquipmentEngine.js`)**:
-     - `weapon`, `shield`, `bow`, `armor`, `gloves`, `helmet`, `boots`, `cloak`, `ring`, `amulet`, `light` 전신 슬롯 분리.
-  2. **ToME tval 34(방패), 31(장갑), 30(부츠), 35(망토) 전수 정규화**:
-     - Cammithrim, Cambeleg 등 전설 유물 장갑 10종 및 Thorin, Celegorm 등 전설 방패 5종 데이터 정규화.
-  3. **전신 실시간 AC 누적 합산 및 물리 피해 감쇄 공식 (`CombatCalculator.js`)**:
-     - $\text{Damage Reduction} = \lfloor\text{Total AC}/8\rfloor + \lfloor\text{CON}/10\rfloor + \text{ShieldBlockBonus}$.
-  4. **검증**: `scripts/test_shield_and_gloves_slots.js` 37/37 PASSED (100%).
+### 🧬 v0.18.9 — 실제 세이브 기반 역방향 별칭(Reverse Alias) 3,408 XP 동기화 & 코어 정규화
+- **배포일**: 2026-08-26 | **커밋**: `cb20bc6`
+- **주요 변경 사항**:
+  1. **역방향 별칭(Reverse Alias) 양방향 동기화 (`MimicBody.js`)**:
+     - `LEGACY_TOME_ALIASES_MAP` 역참조를 통해 레거시 키(`"TITAN": 3408`)와 정규 키(`"MON_LESSER_TITAN": 25`)가 세이브에 공존할 때 항상 최고치(3,408 XP ➔ Lv.50 마스터)를 반환하고 상호 동기화.
+  2. **SaveSystem 역직렬화 마이그레이션**:
+     - `SaveSystem.deserialize` 시 `loreRegistry` 전체 순회 자동 마이그레이션, `mimicCore.coreType` 정규화, `player.activeSkills` 재바인딩.
+  3. **검증**: `scripts/test_user_real_save_titan_lore_migration.js` 신설 및 54개 전체 테스트 스위트 100% 통과.
 
 ---
 
-## ⚡ 제8차 마일스톤: 마나/화살 완전 박멸, 100% 순수 쿨타임 & 오토 스킬 자동 격발 엔진
-
-- **일자**: 2026-08-26
-- **담당**: 개발팀 전원
-- **주요 내용**:
-  1. **자원 스트레스 박멸**:
-     - MP, SP, 화살 수량 전면 삭제 (Clean Purge).
-  2. **자동 연쇄 격발 (`CombatSystem.js`)**:
-     - `checkAndCastAutoSkills` 및 `tryAutoRangedAttack` 자동 조준 격발 파이프라인 구축.
-     - 액션 바 `[🏹 자동사격: ON/OFF]` 토글 지원.
-  3. **숙련도 비례 쿨타임 단축 (`MonsterSpellFactory.js`, `GameBalanceConfig.js`)**:
-     - 변신/무기 숙련도(Lv 1~50) 비례 쿨타임 단축(최대 -2턴) 및 위력 증폭.
-  4. **검증**: `scripts/test_pure_cooldown_system.js` (17/17) 및 `scripts/test_auto_skills.js` (6/6) 100% 통과.
+### 📖 v0.18.8 — 몬스터 로어 숙련도 단일화 및 도감 4대 스킬 카드 통합
+- **배포일**: 2026-08-26 | **커밋**: `23f0a01`
+- **주요 변경 사항**:
+  1. **UI 명칭 단일화**:
+     - 모든 UI 명칭을 `🧬 몬스터 로어 숙련도 (Lore Mastery Lv.1~50)`로 단일화.
+  2. **도감 상세 카드 4대 스킬 및 해금 배지 연동 (`MonsterLoreView.js`)**:
+     - 선택된 몬스터의 4대 고유 의태 스킬 및 실시간 해금 배지(`🟢 해금 (Lv.X)` / `🔒 잠김 (요구 Lv.X)`) 통합 렌더링.
+  3. **인벤토리 코어 인스펙터 직결 (`InventoryView.js`)**:
+     - 장착 코어가 아닌 선택된 `coreType`의 스킬을 `MonsterSpellFactory.createInnateSkills(coreType)`로 1:1 직결 렌더링.
+  4. **검증**: `scripts/test_unified_lore_mastery_and_skills_view.js` 신설 및 52개 테스트 100% 통과.
 
 ---
 
-## 📊 제9차 마일스톤: 명예의 전당 & 사망 묘비명 3단 탭 상세 인스펙터 모달 구현
-
-- **일자**: 2026-08-26
-- **담당**: 개발팀 전원
-- **주요 내용**:
-  1. **3단 탭 상세 인스펙터 모달 신설 (`AscensionModalView.js`)**:
-     - 탭 1 `[📊 캐릭터 스펙]`: 최종 레벨, 턴수, 처치 수, 6대 스탯, AC, BTH, 사망 원인.
-     - 탭 2 `[🎒 최종 장비 & 인벤토리]`: 12슬롯 착용 장비 및 소지품 완벽 렌더링.
-     - 탭 3 `[📜 마지막 전투 로그]`: 최후 순간의 최근 전투 로그 10줄 정밀 렌더링.
-  2. **영구 직렬화 보존 (`Game.js`, `BossPhaseEngine.js`, `SaveSystem.js`)**:
-     - 사망/승천 시 stats, equipment, inventory, recentLogs 영구 보존.
-  3. **검증**: `scripts/test_hof_and_graveyard_detail_view.js` 88/88 PASSED (100%).
+### 💀 v0.18.7 — DoT vs 직접 타격 사망 로그 분기 및 정규 코어 명칭 동적 매핑
+- **배포일**: 2026-08-26 | **커밋**: `e106940`
+- **주요 변경 사항**:
+  1. **사망 원인별 로그 정밀 분기 (`Game.js`, `Monster.js`)**:
+     - 독/출혈 등 지속 피해 사망 시 `[Combat] ... 지속 피해로 쓰러졌습니다!` 분기 적용.
+     - 플레이어 직접 타격/마법 처치 시 `[Combat] ... 처치했습니다!` 분기 적용.
+  2. **스타터 바디 및 코어 정규 키 매핑**:
+     - `HUMAN` ➔ `MON_NOVICE_WARRIOR` ('Novice warrior' 코어), `IMP` ➔ `MON_HOMUNCULUS` ('Homunculus' 코어).
+  3. **검증**: `scripts/test_monster_death_and_core_name.js` 100% 통과.
 
 ---
 
-## 🧪 제10차 마일스톤: StatusEffectEngine 신설, ToME 7대 공격 체계 & TomeNET 5단계 AI 파이프라인
-
-- **일자**: 2026-08-26
-- **담당**: 개발팀 전원
-- **주요 내용**:
-  1. **`StatusEffectEngine.js` 무상태 전담 엔진 신설**:
-     - 14대 상태이상/버프 카탈로그, `FREE_ACT`, `NO_CONF`, `RES_POIS` 등 O(1) 면역/저항 판정, DoT 틱 연산 및 실시간 스탯 보정치(`calculateStatusModifiers`) 산출.
-  2. **`TomeSpellEngine.js` 91종 주문 & 7대 공격 체계 완비**:
-     - 7대 공격 체계: 1) 근접(20 Methods x 27 Effects), 2) 투사체(ARROW_1~4), 3) 원소 브레스/방사형, 4) 범위/소환(S_*), 5) 상태이상 디버프, 6) 공간왜곡(BLINK, TELE_TO, TELE_AWAY), 7) 지속 DoT.
-  3. **`MonsterAISystem.js` TomeNET 정통 5단계 AI 의사결정 트리 구축**:
-     - 1단계(생존/탈출) ➔ 2단계(가속) ➔ 3단계(원거리포격) ➔ 4단계(소환/전장제어) ➔ 5단계(디버프/저주) ➔ 폴백(근접추적).
-  4. **Player & Monster Proxy 양방향 호환 연동**:
-     - 동적 `statuses` 객체 기반 엔진 구동 및 `debuffs` Proxy 실시간 동기화.
-  5. **검증**: `scripts/test_status_effect_engine.js` (107/107) 및 `scripts/test_monster_full_offense_system.js` (51/51) 100% ALL PASS.
+### 🎒 v0.18.6 — 무거운 몬스터 코어(Heavy Cores) 소지 한도 및 인벤토리 슬롯 동적 페이징
+- **배포일**: 2026-08-26 | **커밋**: `bca7b16`
+- **주요 변경 사항**:
+  1. **코어 인벤토리 슬롯 분리 및 페이징**:
+     - 무거운 정수 코어의 무게 부하를 완화하고 카테고리별 동적 페이징 인벤토리 뷰 지원.
+  2. **검증**: `scripts/test_heavy_cores_and_ammo_encumbrance_fix.js` 통과.
 
 ---
 
-## 🧬 제11차 마일스톤: 인벤토리 모던 코어 인스펙터 UI/UX 대개편 및 4대 스킬 프리뷰 카드 탑재
-
-- **일자**: 2026-08-26
-- **담당**: 개발팀 전원
-- **주요 내용**:
-  1. **4대 의태 스킬 프리뷰 카드 그리드 신설 (`InventoryView.js`)**:
-     - 코어 장착 시 획득할 1~4 슬롯 스킬의 명칭, 아이콘, 쿨다운 턴수, 다이스 위력(diceCount, diceSides), 효과/사거리/범위 카드 렌더링.
-  2. **모던 코어 정보 패널 구축**:
-     - 6대 베이스 스탯 그리드, 성장 유형 패턴 배율, ToME 2.3.5 정통 생태 서사(Lore) 박스, 유산 스탯 보존 비율(Heritage Bonus) 렌더링.
-  3. **코어 전용 액션 버튼 인터랙션 최적화**:
-     - `[🧬 메인 코어로 의태 장착]`, `[🍽️ 코어 포식(스탯 영구 흡수)]`, `[🔮 보조 1 장착/해제]`, `[🔮 보조 2 장착/해제]`, `[🗑️ 버리기]` 등 원클릭 조작 지원.
-  4. **Game.js selectItem 핸들러 클린업**:
-     - 널포인터 예외 방지 및 코어/장비/소비품 렌더링 분기 최적화.
-  5. **검증**: `scripts/test_inventory_item_detail_view.js` 49/49 PASSED (100%).
+### 🏹 v0.18.5 — 화살(Arrow) 무게 0.1 및 탄약 슬롯 전용 적재 최적화
+- **배포일**: 2026-08-26 | **커밋**: `681d683`
+- **주요 변경 사항**:
+  1. **화살 적재 최적화**:
+     - 화살 다발(15~30발) 획득 시 무게 0.1 클램핑 및 전용 퀴버(QUIVER) 슬롯 적재로 과적(Encumbrance) 패널티 방지.
+  2. **검증**: `scripts/test_encumbrance_ammo_and_archer_loot.js` 통과.
 
 ---
 
-## 🚀 제12차 마일스톤: 시작/이어하기 핫픽스, SaveSystem 프록시 보존, Game.js 트랜잭션 가드 & v0.18.0 승격
-
-- **일자**: 2026-08-26
-- **담당**: 개발팀 전원
-- **주요 내용**:
-  1. **SaveSystem.js 역직렬화 및 슬롯 안전화**:
-     - `deserialize()` 시 `player.statuses` 복원 후 `StatusEffectEngine.createDebuffsProxy()` 프록시 재생성 바인딩을 보장하여 세이브 로드 이후에도 상태이상 수정 연산 무결성 유지.
-     - `getSlotInfo()` 내 `stats` 널 세이프티 및 레벨/종족/층수 기본값 방어 가드 구축.
-  2. **Game.js 메인 메뉴 트랜잭션 안전화 및 크래시 가드**:
-     - `startNewGame(slotKey, coreKey)`, `continueGame(slotKey)` 진입부 및 슬롯 로드 핸들러에 견고한 Try-Catch 트랜잭션 방어 가드 탑재.
-     - 빈 슬롯 또는 손상된 슬롯 접근 시 타이틀 화면 비정상 종료를 방지하고 사용자 알림 메시지 출력 및 메뉴 상태 보존.
-     - `addLogEntry(text, type)` 호출 시 인자 유효성 및 널 세이프티 보강.
-  3. **전역 크래시 배너 연동 (`main.js`)**:
-     - 비정상 예외 발생 시 UI 레이어에서 직관적인 안내를 제공하는 `showCrashBanner` 전역 핸들러 연동.
-  4. **버전 v0.18.0 전면 승격 및 캐시 버스팅 동기화**:
-     - `package.json`, `mimicry_voxel/package.json`, `index.html`, `ascii.html` 버전 문자열 `v0.18.0` 동기화.
-  5. **43개 전체 테스트 스위트 100% 무결성 검증**:
-     - `scripts/run_all_tests.js` 실행 결과 43개 테스트 스위트 (총 1,000+ 어서션) **43/43 PASSED (100%)** 전수 통과.
-  6. **코드 메타 인덱서 색인 갱신 및 위키 동기화 완료**.
+### ⚖️ v0.18.4 — 무게/인벤토리 패널티 무한 증식 방지 & 세이브 로드 불변성 보장
+- **배포일**: 2026-08-26 | **커밋**: `578aa96`
+- **주요 변경 사항**:
+  1. **무게 재계산 멱등성 보장**:
+     - 세이브 로드 반복 시 장비 무게가 중복 합산되던 버그 수정 및 `calculateTotalWeight()` 무상태 연산 보장.
+  2. **검증**: `scripts/test_save_load_weight_invariance.js` 통과.
 
 ---
 
-**© 2026 OpenDCMart Engine Team.** All rights reserved.
+### 📚 v0.18.3 — 몬스터 도감(Monster Lore) 실시간 숙련도 연동 및 UI 클린업
+- **배포일**: 2026-08-26 | **커밋**: `78923a1`
+- **주요 변경 사항**:
+  1. **도감 UI 개편**:
+     - 몬스터 로어 XP(1~50) 실시간 게이지, 드랍 코어 정보, 서식 층수 필터링 제공.
+  2. **검증**: `scripts/test_ui_lore_and_clean_stats.js` 통과.
+
+---
+
+### 🃏 v0.18.2 — Jokeangband 몬스터 필터링 및 던전 밸류 버짓 클램핑
+- **배포일**: 2026-08-26 | **커밋**: `421d9fa`
+- **주요 변경 사항**:
+  1. **개그 몬스터 필터링**:
+     - ToME 2.3.5 정통 생태계에 어울리지 않는 Jokeangband 몬스터 스폰 필터링.
+  2. **검증**: `scripts/test_jokeangband_filter_and_hp_sanity.js` 통과.
+
+---
+
+### 🩺 v0.18.1 — 초기 플레이어 및 스타터 폼 체력 비정상 인플레이션 정상화
+- **배포일**: 2026-08-26 | **커밋**: `82a4d31`
+- **주요 변경 사항**:
+  1. **체력 계산 공식 정상화**:
+     - 스타터 폼 체력 과다 산출 버그를 ToME 표준 다이스 및 CON 보정치로 정상화.
+  2. **검증**: `scripts/test_starter_body.js` 통과.
+
+---
+
+## 🏛️ Phase 3: ToME 2.3.5 정통 시스템 이식 & 12대 마일스톤 (v0.13.0 ~ v0.18.0)
+
+| 마일스톤 | 핵심 구현 내용 | 전담 시스템 및 파일 |
+| :--- | :--- | :--- |
+| **제1차 마일스톤** | ToME DOD 8대 시스템 엔진 분리 및 엔티티 DTO 경량화 | `TomeFlagResolver`, `UnifiedTraitEngine`, `VisionLightingEngine`, `TomeSpellEngine`, `ArtifactActivationEngine`, `TomeConsumableEngine`, `TomeDeviceEngine`, `TomeEquipmentEngine` |
+| **제2차 마일스톤** | `DungeonValueBudgetEngine` (1~50F 4단계 티어 게이팅 & 저층 보호) | `DungeonValueBudgetEngine.js`, `DungeonThemeConfig.js`, `Map.js`, `Spawner.js` |
+| **제3차 마일스톤** | 전설 유물 183종 'SLAYER' 접미사 하드코딩 제거 & 순수 명칭 복구 | `Item.js`, `UniqueMonsterManager.js`, `TomeLootGenerator.js` |
+| **제4차 마일스톤** | 2D/3D 렌더링 3대 정밀 핫픽스 & 암흑 속 플레이어 가시성 보장 | `Classic2DAsciiRenderer.js`, `Voxel3DRenderer.js`, `Player.js` |
+| **제5차 마일스톤** | 50F 모르고스(Morgoth) 3단 페이즈 보스전 & 발리노르 승천 엔딩 | `BossPhaseEngine.js`, `AscensionModalView.js` |
+| **제6차 마일스톤** | ToME 다중 계단(Multiple Stairs) 분산 배치 & 동적 맵 스케일링 | `Map.js`, `DungeonValueBudgetEngine.js` |
+| **제7차 마일스톤** | 독립 장갑(GLOVES)/방패(SHIELD) 포함 10대 전신 장비 슬롯 분리 | `Player.js`, `TomeEquipmentEngine.js`, `CombatCalculator.js` |
+| **제8차 마일스톤** | 마나/화살 완전 박멸, 100% 순수 쿨타임 & 오토 스킬 자동 격발 | `CombatSystem.js`, `MonsterSpellFactory.js` |
+| **제9차 마일스톤** | 명예의 전당 & 사망 묘비명 3단 탭 상세 인스펙터 모달 구현 | `AscensionModalView.js`, `SaveSystem.js` |
+| **제10차 마일스톤** | `StatusEffectEngine` 신설, ToME 7대 공격 체계 & TomeNET 5단계 AI | `StatusEffectEngine.js`, `TomeSpellEngine.js`, `MonsterAISystem.js` |
+| **제11차 마일스톤** | 인벤토리 모던 코어 인스펙터 UI/UX 대개편 & 4대 스킬 프리뷰 카드 | `InventoryView.js`, `InspectModalView.js` |
+| **제12차 마일스톤** | 시작/이어하기 핫픽스, SaveSystem 프록시 보존 & v0.18.0 승격 | `SaveSystem.js`, `Game.js`, `main.js` |
+
+---
+
+## 🔬 Phase 2: 5대 갓오브젝트 해체 & 5대 계층 클린 아키텍처 (v0.7.0 ~ v0.12.0)
+
+- **모놀리식 안티패턴 해체**: 3,000+ 라인의 거대 모놀리스 파일(`Game.js`, `Player.js`, `Monster.js`, `Map.js`, `Renderer.js`)을 5대 계층(Configs, Core, Entities, Systems, UI)으로 모듈화.
+- **EventBus 이벤트 기반 비동기 파이프라인**: UI와 핵심 게임 루프 간 결합도를 낮추기 위해 `eventBus` 전역 발행/구독 아키텍처 도입.
+- **상태와 로직의 엄격한 분리**: 엔티티는 순수 데이터 구조체(DTO)로 변환하고 모든 계산 로직은 순수 함수 기반 시스템 엔진으로 이전.
+
+---
+
+## 🧪 Phase 1: 원소 반응 및 초기 프로토타입 (v0.1.0 ~ v0.6.0)
+
+- **초기 복셀 엔진 및 턴제 그리드**: 3차원 복셀 타일맵 렌더러 및 전통적인 로그라이크 8방향 이동/시야(FOV) 프로토타입 구축.
+- **3대 원소 상호작용 (Fire, Frost, Lightning)**: 불꽃 확산, 얼음 결빙, 전기 전도 등 지형과 몬스터 간의 기초 원소 반응 시스템 실증.
+- **미미크리 의태 코어 메커니즘 발명**: 쓰러뜨린 적의 신체와 능력을 흡수하여 변신하는 미미크리 보디 시스템의 핵심 기획 정립.
+
+---
+
+## 📊 종합 통계 및 검증 현황
+
+| 분류 | 수치 및 상태 | 비고 |
+| :--- | :--- | :--- |
+| **전체 테스트 스위트** | **56 / 56 ALL PASSED (100%)** | 회귀 결함 0건 완벽 방어 |
+| **스캔된 아키텍처 모듈** | **65개 모듈 (103,568 라인)** | `meta_indexer.py` 정밀 검증 |
+| **정통 ToME 엔티티** | **1,636종 정규 엔티티** | 몬스터, 아티팩트, 에고, 아이템 카탈로그 |
+| **무상태 시스템 엔진** | **12대 전담 엔진** | Loot, Spawner, Budget, Status, AI, Spells 등 |
+| **배포 버전** | **v0.18.11 (Latest Stable)** | GitHub Pages 라이브 서비스 가동 중 |
+
+---
+
+**© 2026 OpenDCMart Engine Team & Takumi Koharu.** All rights reserved.
