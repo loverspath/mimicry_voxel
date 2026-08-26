@@ -588,7 +588,7 @@ export function renderLoreMasterySummaryHTML(player) {
   return `
     <div style="display: flex; flex-direction: column; gap: 0.6rem;">
       <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.6rem 0.75rem;">
-        <p style="font-weight: bold; color: #fbbf24; font-size: 0.78rem; margin: 0 0 0.35rem 0;">⚔️ 무기 마스터리 숙련도 현황</p>
+        <p style="font-weight: bold; color: #fbbf24; font-size: 0.78rem; margin: 0 0 0.35rem 0;">⚔️ 무기 마스터리 현황 (맨손/검/활/창 타수 기반 Lv.1~5)</p>
         <table style="width: 100%; border-collapse: collapse; font-size: 0.72rem; text-align: left;">
           <thead>
             <tr style="background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.06);">
@@ -607,7 +607,7 @@ export function renderLoreMasterySummaryHTML(player) {
       </div>
 
       <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.6rem 0.75rem;">
-        <p style="font-weight: bold; color: #34d399; font-size: 0.78rem; margin: 0 0 0.35rem 0;">🧬 몬스터 로어 숙련도 현황 (Lore Mastery Lv.1~50)</p>
+        <p style="font-weight: bold; color: #34d399; font-size: 0.78rem; margin: 0 0 0.35rem 0;">🧬 몬스터 로어 숙련도 현황 (사냥/포식/의태 기반 Lv.1~50)</p>
         <table style="width: 100%; border-collapse: collapse; font-size: 0.72rem; text-align: left;">
           <thead>
             <tr style="background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.06);">

@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-08-26T12:39:58Z",
+  "generatedAt": "2026-08-26T12:50:57Z",
   "summary": {
     "totalModules": 65,
-    "totalLines": 103256,
+    "totalLines": 103315,
     "categories": {
       "configs": 4,
       "core": 14,
@@ -413,7 +413,7 @@
       "filePath": "src/core/SaveSystem.js",
       "moduleName": "SaveSystem",
       "category": "core",
-      "lines": 506,
+      "lines": 527,
       "responsibility": "로컬스토리지 기반 다중 슬롯 게임 상태(맵, 플레이어, 인벤토리, 몬스터, 유니크 몬스터 생태계) 직렬화 및 역직렬화 세이브/로드 엔진",
       "purity": "State Store",
       "dependencies": [
@@ -422,7 +422,8 @@
         "Item.js",
         "Monster.js",
         "MonsterRegistry.js",
-        "UniqueMonsterManager.js"
+        "UniqueMonsterManager.js",
+        "MonsterSpellFactory.js"
       ],
       "exports": [
         "SAVE_SLOTS",
@@ -436,7 +437,7 @@
         "serializeItem",
         "serializeMonster"
       ],
-      "lastModified": "2026-08-26T12:30:53Z"
+      "lastModified": "2026-08-26T12:48:24Z"
     },
     {
       "filePath": "src/core/Skills.js",
@@ -623,7 +624,7 @@
       "filePath": "src/entities/MimicBody.js",
       "moduleName": "MimicBody",
       "category": "entities",
-      "lines": 419,
+      "lines": 457,
       "responsibility": "무정형 미믹의 영구 본체 컨테이너 클래스. 메인 코어의 탈착과 상관없이 스탯, 로어 숙련도, 몬스터 킬 카운트, 돌연변이 태그를 영구 보존하며 무게 한도 및 감속 배율을 수학적으로 도출합니다.",
       "purity": "State Store / Logic Container",
       "dependencies": [
@@ -644,7 +645,7 @@
         "addTags",
         "checkSubCoreSkills"
       ],
-      "lastModified": "2026-08-26T12:29:48Z"
+      "lastModified": "2026-08-26T12:48:40Z"
     },
     {
       "filePath": "src/entities/Monster.js",
@@ -1668,7 +1669,7 @@
         "renderMonsterLoreModalHTML",
         "renderUniqueChecklistHTML"
       ],
-      "lastModified": "2026-08-26T12:37:47Z"
+      "lastModified": "2026-08-26T12:46:40Z"
     },
     {
       "filePath": "src/ui/UIManager.js",

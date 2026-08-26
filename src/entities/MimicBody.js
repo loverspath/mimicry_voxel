@@ -7,7 +7,7 @@
  * @exports WEAPON_MASTERY_CONFIG, WEAPON_REQUIREMENT_CONFIG, MimicBody
  */
 import { PREFIX_TAGS, SUFFIX_TAGS } from './Tags.js';
-import { getSpeciesConfig } from './MonsterRegistry.js';
+import { getSpeciesConfig, LEGACY_TOME_ALIASES_MAP } from './MonsterRegistry.js';
 import { MONSTER_PERKS } from './Perks.js';
 import { CORE_SKILL_TREES } from '../core/Skills.js';
 
@@ -94,10 +94,20 @@ export class MimicBody {
     this.killRegistry[keyOrType] = newKills;
 
     const config = getSpeciesConfig(keyOrType);
+    const canonicalKey = config ? (config.coreType || keyOrType) : (LEGACY_TOME_ALIASES_MAP[keyOrType] || keyOrType);
+
     if (config) {
       if (config.coreType) this.killRegistry[config.coreType] = newKills;
       if (config.name) this.killRegistry[config.name] = newKills;
       if (config.displayName) this.killRegistry[config.displayName] = newKills;
+    }
+
+    if (LEGACY_TOME_ALIASES_MAP) {
+      for (const alias in LEGACY_TOME_ALIASES_MAP) {
+        if (LEGACY_TOME_ALIASES_MAP[alias] === canonicalKey) {
+          this.killRegistry[alias] = newKills;
+        }
+      }
     }
   }
 
@@ -105,7 +115,10 @@ export class MimicBody {
   getKillCount(keyOrType) {
     if (!keyOrType || !this.killRegistry) return 0;
     let maxKills = this.killRegistry[keyOrType] || 0;
+    
     const config = getSpeciesConfig(keyOrType);
+    const canonicalKey = config ? (config.coreType || keyOrType) : (LEGACY_TOME_ALIASES_MAP[keyOrType] || keyOrType);
+
     if (config) {
       if (config.coreType && this.killRegistry[config.coreType]) {
         maxKills = Math.max(maxKills, this.killRegistry[config.coreType]);
@@ -117,6 +130,17 @@ export class MimicBody {
         maxKills = Math.max(maxKills, this.killRegistry[config.displayName]);
       }
     }
+
+    if (LEGACY_TOME_ALIASES_MAP) {
+      for (const alias in LEGACY_TOME_ALIASES_MAP) {
+        if (LEGACY_TOME_ALIASES_MAP[alias] === canonicalKey) {
+          if (this.killRegistry[alias]) {
+            maxKills = Math.max(maxKills, this.killRegistry[alias]);
+          }
+        }
+      }
+    }
+
     return maxKills;
   }
 
@@ -127,6 +151,8 @@ export class MimicBody {
     let maxExp = this.loreRegistry[speciesType] || 0;
 
     const config = getSpeciesConfig(speciesType);
+    const canonicalKey = config ? (config.coreType || speciesType) : (LEGACY_TOME_ALIASES_MAP[speciesType] || speciesType);
+
     if (config) {
       if (config.coreType && this.loreRegistry[config.coreType]) {
         maxExp = Math.max(maxExp, this.loreRegistry[config.coreType]);
@@ -136,6 +162,16 @@ export class MimicBody {
       }
       if (config.displayName && this.loreRegistry[config.displayName]) {
         maxExp = Math.max(maxExp, this.loreRegistry[config.displayName]);
+      }
+    }
+
+    if (LEGACY_TOME_ALIASES_MAP) {
+      for (const alias in LEGACY_TOME_ALIASES_MAP) {
+        if (LEGACY_TOME_ALIASES_MAP[alias] === canonicalKey) {
+          if (this.loreRegistry[alias]) {
+            maxExp = Math.max(maxExp, this.loreRegistry[alias]);
+          }
+        }
       }
     }
 
@@ -152,17 +188,19 @@ export class MimicBody {
   }
 
   // Add lore experience points for a species, synchronizing canonical keys and display names
-  gainLoreXp(speciesType, amount) {
-    if (!speciesType || !amount) return [];
+  gainLoreXp(speciesType, amount = 0) {
+    if (!speciesType || amount === undefined || amount === null) return [];
     if (!this.loreRegistry) this.loreRegistry = {};
 
     const currentXp = this.getLoreXp(speciesType);
-    const newXp = currentXp + amount;
+    const newXp = Math.max(0, currentXp + amount);
 
     // Synchronize across input key and canonical config keys
     this.loreRegistry[speciesType] = newXp;
 
     const config = getSpeciesConfig(speciesType);
+    const canonicalKey = config ? (config.coreType || speciesType) : (LEGACY_TOME_ALIASES_MAP[speciesType] || speciesType);
+
     if (config) {
       if (config.coreType) {
         this.loreRegistry[config.coreType] = newXp;

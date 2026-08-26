@@ -11,8 +11,9 @@ import { Map } from '../map/Map.js';
 import { Player } from '../entities/Player.js';
 import { Item } from '../entities/Item.js';
 import { Monster } from '../entities/Monster.js';
-import { getSpeciesConfig } from '../entities/MonsterRegistry.js';
+import { getSpeciesConfig, LEGACY_TOME_ALIASES_MAP } from '../entities/MonsterRegistry.js';
 import { uniqueMonsterManager } from '../systems/UniqueMonsterManager.js';
+import { MonsterSpellFactory } from '../systems/MonsterSpellFactory.js';
 
 /** 중앙화된 세이브 슬롯 목록 — 슬롯 수가 바뀌면 여기만 수정 */
 export const SAVE_SLOTS = ['slot1', 'slot2', 'slot3', 'slot4', 'slot5', 'slot6', 'slot7', 'slot8'];
@@ -256,14 +257,15 @@ export class SaveSystem {
         
         if (pData.mimicCore) {
             game.player.mimicCore = pData.mimicCore;
-            if (game.player.mimicCore.coreType) {
-                const config = getSpeciesConfig(game.player.mimicCore.coreType);
-                if (config) {
-                    game.player.mimicCore.name = config.name;
-                    game.player.mimicCore.char = config.char;
-                    game.player.mimicCore.baseColor = config.baseColor;
-                    game.player.mimicCore.flashColor = config.flashColor;
-                }
+            // 1. Resolve canonical coreType if missing or stored as legacy alias
+            const rawKey = game.player.mimicCore.coreType || game.player.mimicCore.name || 'MON_NOVICE_WARRIOR';
+            const config = getSpeciesConfig(rawKey);
+            if (config) {
+                game.player.mimicCore.coreType = config.coreType || rawKey;
+                game.player.mimicCore.name = config.name;
+                game.player.mimicCore.char = config.char;
+                game.player.mimicCore.baseColor = config.baseColor;
+                game.player.mimicCore.flashColor = config.flashColor;
             }
             const isStartingHuman = (
                 game.player.mimicCore.coreType === 'MON_NOVICE_WARRIOR' ||
@@ -282,12 +284,31 @@ export class SaveSystem {
         game.dragonBreathCooldown = pData.dragonBreathCooldown || 0;
         game.player.skillTrackers = pData.skillTrackers || {};
         
-        // Restore MimicBody attributes
+        // Restore MimicBody attributes & Auto-migrate fragmented lore XP to maximum level
         if (game.player.body) {
             if (pData.mutations) game.player.body.mutations = pData.mutations;
-            if (pData.loreRegistry) game.player.body.loreRegistry = pData.loreRegistry;
+            if (pData.loreRegistry) {
+                game.player.body.loreRegistry = pData.loreRegistry;
+                // Auto-migrate and synchronize all lore keys across aliases (e.g. 'TITAN', 'Lesser titan', 'MON_LESSER_TITAN', '레서 타이탄')
+                // to the highest accumulated XP (e.g. 3,408 XP -> Lv.50)
+                for (const key of Object.keys(game.player.body.loreRegistry)) {
+                    game.player.body.gainLoreXp(key, 0);
+                }
+                if (LEGACY_TOME_ALIASES_MAP) {
+                    for (const [alias, targetKey] of Object.entries(LEGACY_TOME_ALIASES_MAP)) {
+                        if (game.player.body.loreRegistry[alias] !== undefined || game.player.body.loreRegistry[targetKey] !== undefined) {
+                            game.player.body.gainLoreXp(alias, 0);
+                            game.player.body.gainLoreXp(targetKey, 0);
+                        }
+                    }
+                }
+            }
             if (pData.weaponMastery) game.player.body.weaponMastery = pData.weaponMastery;
         }
+
+        // Rebind activeSkills based on current restored mimicCore
+        const currentCoreKey = game.player.mimicCore?.coreType || game.player.mimicCore?.name || 'MON_NOVICE_WARRIOR';
+        game.player.activeSkills = MonsterSpellFactory.createInnateSkills(currentCoreKey);
         
         // Item deserializer helper
         const deserializeItem = (iData) => {

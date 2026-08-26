@@ -221,13 +221,16 @@ console.log("\n--- TEST 5: Game.prototype.killMonster Integration ---");
 
 assert(typeof Game.prototype.killMonster === 'function', "Game.prototype.killMonster is defined as a function");
 
-const testGame = new Game();
-testGame.render = () => {};
-testGame.updateUI = () => {};
-testGame.player = new Player(10, 10);
+const testGame = {
+  player: new Player(10, 10),
+  monsters: [],
+  items: [],
+  logHistory: [],
+  addLogEntry(text, type) { this.logHistory.push({ text, type }); },
+  killMonster: Game.prototype.killMonster
+};
 const targetMonster = new Monster(15, 15, 'BAT');
 testGame.monsters = [targetMonster];
-testGame.items = [];
 
 testGame.killMonster(targetMonster, "신성 일격");
 assert(!testGame.monsters.includes(targetMonster), "Monster removed from game.monsters by killMonster");

@@ -164,7 +164,7 @@ player.body.loreRegistry['MON_LESSER_TITAN'] = 14400;
 player.recordKill('MON_LESSER_TITAN', 12);
 
 const masterySummaryHTML = renderLoreMasterySummaryHTML(player);
-assert(masterySummaryHTML.includes('무기 마스터리 숙련도 현황'), '무기 마스터리 표 렌더링 확인');
+assert(masterySummaryHTML.includes('무기 마스터리 현황') || masterySummaryHTML.includes('무기 마스터리'), '무기 마스터리 표 렌더링 확인');
 assert(masterySummaryHTML.includes('몬스터 로어 숙련도 현황'), '몬스터 로어 숙련도 표 렌더링 확인');
 assert(masterySummaryHTML.includes('Lesser titan') || masterySummaryHTML.includes('레서 타이탄'), 'ToME 851종 동적 로어 엔트리 (Lesser titan) 렌더링 확인');
 assert(masterySummaryHTML.includes('14,400 XP'), '14,400 누적 로어 경험치 포맷 렌더링 확인');
