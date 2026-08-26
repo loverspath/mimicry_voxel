@@ -1367,12 +1367,17 @@ export class Game {
       }));
   }
   selectItem(e) {
-    ((this.selectedItem = e),
-      document.querySelectorAll(`.inventory-slot`).forEach((t, n) => {
-        this.player.inventory[n] === e
-          ? t.classList.add(`selected`)
-          : t.classList.remove(`selected`);
-      }));
+    this.selectedItem = e;
+    document.querySelectorAll(`.inventory-slot`).forEach((t, n) => {
+      if (this.player.inventory[n] === e) {
+        t.classList.add(`selected`);
+        if (typeof t.scrollIntoView === 'function') {
+          t.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+      } else {
+        t.classList.remove(`selected`);
+      }
+    });
     let t = document.getElementById(`item-detail`);
     if (!t) return;
     let n = this.player.isItemEquipped ? this.player.isItemEquipped(e) : (

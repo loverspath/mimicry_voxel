@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-08-26T09:44:45Z",
+  "generatedAt": "2026-08-26T11:08:29Z",
   "summary": {
     "totalModules": 65,
-    "totalLines": 102917,
+    "totalLines": 102922,
     "categories": {
       "configs": 4,
       "core": 14,
@@ -264,7 +264,7 @@
       "filePath": "src/core/Game.js",
       "moduleName": "Game",
       "category": "core",
-      "lines": 1989,
+      "lines": 1994,
       "responsibility": "미미크리 로그라이크 핵심 게임 루프, 턴 스케줄링, 엔티티 상호작용 및 UI 모달 이벤트 통합 조율 오케스트레이터",
       "purity": "State Store",
       "dependencies": [
@@ -308,7 +308,7 @@
         "setClick",
         "updateSlotLabels"
       ],
-      "lastModified": "2026-08-26T04:57:59Z"
+      "lastModified": "2026-08-26T11:05:12Z"
     },
     {
       "filePath": "src/core/GameEngine.js",
