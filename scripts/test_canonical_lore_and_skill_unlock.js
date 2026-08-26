@@ -124,6 +124,36 @@ const noviceHTML = renderSkillTreeHTML(player);
 assert(noviceHTML.includes('Lv.1 / 50'), "Novice warrior 스킬 트리에 'Lv.1 / 50' 렌더링");
 assert(noviceHTML.includes('0 XP'), "0 XP 정상 렌더링");
 
+// -----------------------------------------------------------------------------
+// TEST 6: useCoreAsFood Character EXP Normalization & HP Recovery
+// -----------------------------------------------------------------------------
+console.log("\n--- TEST 6: useCoreAsFood 코어 포식 시 캐릭터 경험치 정상화 및 체력 회복 검증 ---");
+
+const testGameMock = {
+  logs: [],
+  addLogEntry(text, type) { this.logs.push({ text, type }); }
+};
+
+const eatPlayer = new Player(0, 0);
+eatPlayer.level = 1;
+eatPlayer.exp = 0;
+eatPlayer.stats.hp = 10;
+eatPlayer.stats.maxHp = 50;
+
+const ogreCore = new Item(0, 0, 'CORE', '%', '#10b981', 'Ogre');
+ogreCore.coreType = 'MON_OGRE';
+eatPlayer.inventory = [ogreCore];
+
+const initialHp = eatPlayer.stats.hp;
+const initialLvl = eatPlayer.level;
+
+const eatSuccess = eatPlayer.useCoreAsFood(ogreCore, testGameMock);
+assert(eatSuccess === true, "코어 섭취 메서드 정상 실행");
+assert(!eatPlayer.inventory.includes(ogreCore), "섭취된 코어가 인벤토리에서 제거됨");
+assert(eatPlayer.stats.hp > initialHp, `코어 섭취 후 체력 회복 확인 (이전: ${initialHp}, 현재: ${eatPlayer.stats.hp})`);
+assert(eatPlayer.level <= 3, `비정상 수십 레벨 폭등 없이 적정 레벨 상승 유지 (현재 레벨: Lv.${eatPlayer.level})`);
+assert(eatPlayer.body.getLoreXp('MON_OGRE') > 0, `오우거 종족 로어 경험치 정상 누적 확인 (누적 XP: ${eatPlayer.body.getLoreXp('MON_OGRE')})`);
+
 console.log("\n================================================================================");
 console.log(`🏁 TEST RESULTS: ${passed} PASSED, ${failed} FAILED`);
 console.log("================================================================================");

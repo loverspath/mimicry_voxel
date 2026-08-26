@@ -750,13 +750,25 @@ export class Player {
 
     this.energy -= 100;
 
-    const baseStatSum = (config.coreBase.str || 8) + (config.coreBase.dex || 8) + (config.coreBase.con || 8) + (config.coreBase.int || 8);
-    const eatXp = Math.floor(config.xpValue * (1 + baseStatSum / 50));
+    // 캐릭터 레벨 경험치는 적정량만 부여 (비정상 폭등 수식 제거)
+    const eatXp = Math.max(1, Math.floor(config.xpValue * 0.5));
 
+    // 종족 로어 숙련도 계산
     const coreLvl = item.upgradeLevel || 1;
     const consumeLore = Math.max(1, Math.floor((config.xpValue / 5) * (1 + Math.max(0, coreLvl - this.level) * 0.2)));
 
     game.addLogEntry(`[Mutation] 🥩 무정형 미믹의 육체로 [${item.name}]을(를) 흡수/섭취하였습니다! (1턴 소비)`, `loot`);
+
+    // HP 회복 (코어의 생체 에너지 흡수)
+    const healAmount = Math.max(5, Math.floor((this.stats?.maxHp || 20) * 0.15));
+    if (this.stats) {
+      const oldHp = this.stats.hp;
+      this.stats.hp = Math.min(this.stats.maxHp, this.stats.hp + healAmount);
+      const healed = this.stats.hp - oldHp;
+      if (healed > 0) {
+        game.addLogEntry(`[Heal] 💚 코어의 생명 에너지를 흡수하여 체력 +${healed}가 회복되었습니다. (HP: ${this.stats.hp}/${this.stats.maxHp})`, `loot`);
+      }
+    }
 
     const xpRes = this.gainXp(eatXp);
     xpRes.logs.forEach(l => game.addLogEntry(l, `loot`));

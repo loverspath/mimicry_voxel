@@ -133,6 +133,12 @@ export class CombatSystem {
                     masteryLogs.forEach(l => game.addLogEntry(l, `loot`));
                 }
 
+                // Gain Morph Lore Mastery XP on Successful hit when in monster form
+                const currentMorphKey = player.mimicCore?.coreType || player.mimicCore?.name;
+                if (currentMorphKey && player.body && player.body.gainLoreXp) {
+                    player.body.gainLoreXp(currentMorphKey, 1);
+                }
+
                 // 3. Calculate Base Physical Damage (upgrade, conMod pen, critical, berserk, slay)
                 const physResult = CombatCalculator.calculatePhysicalDamage(player, monster, activeTags, naturalRoll);
                 if (physResult.critLog && h === 0) {
@@ -232,6 +238,12 @@ export class CombatSystem {
             if (player.body && player.body.gainWeaponMasteryXp) {
                 const masteryLogs = player.body.gainWeaponMasteryXp("ARCHERY", 1, game);
                 masteryLogs.forEach(l => game.addLogEntry(l, `loot`));
+            }
+
+            // Gain Morph Lore Mastery XP on Successful ranged hit when in monster form
+            const currentMorphKey = player.mimicCore?.coreType || player.mimicCore?.name;
+            if (currentMorphKey && player.body && player.body.gainLoreXp) {
+                player.body.gainLoreXp(currentMorphKey, 1);
             }
 
             game.effects.push(new FloatingTextEffect(monster.x, monster.y, `-${res.damage}`, res.isCrit ? "#ffd700" : "#38bdf8", res.isCrit));

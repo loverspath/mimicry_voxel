@@ -56,6 +56,13 @@ export class LootSystem {
         if (player.body && typeof player.body.gainLoreXp === 'function') {
             const loreLogs = player.body.gainLoreXp(monster.type, slayLore);
             loreLogs.forEach(l => game.addLogEntry(l, `loot`));
+
+            // 현재 전투를 수행한 변신 본체 폼에도 처치 보너스 로어 XP 가산
+            const currentMorphKey = player.mimicCore?.coreType || player.mimicCore?.name;
+            if (currentMorphKey) {
+                const morphKillBonus = Math.max(1, Math.floor(slayLore * 0.5));
+                player.body.gainLoreXp(currentMorphKey, morphKillBonus);
+            }
         }
         game.addLogEntry(`[System] ${monster.displayName} 처치 완료! 로어 숙련도 +${slayLore} 가산!`, `system`);
 

@@ -67,6 +67,12 @@ export class ActiveSkill {
       if (player.setTracker) {
         player.setTracker(this.id, 'cooldown', finalCd);
       }
+
+      // Gain Morph Lore Mastery XP (+2) on successful active skill execution
+      const currentMorphKey = player.mimicCore?.coreType || player.mimicCore?.name;
+      if (currentMorphKey && player.body && player.body.gainLoreXp) {
+        player.body.gainLoreXp(currentMorphKey, 2);
+      }
     }
     return success;
   }
