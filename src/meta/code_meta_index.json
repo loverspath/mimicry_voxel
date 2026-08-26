@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-08-26T13:00:02Z",
+  "generatedAt": "2026-08-26T13:19:38Z",
   "summary": {
     "totalModules": 65,
-    "totalLines": 103456,
+    "totalLines": 103568,
     "categories": {
       "configs": 4,
       "core": 14,
@@ -352,7 +352,7 @@
       "filePath": "src/core/LootSystem.js",
       "moduleName": "LootSystem",
       "category": "core",
-      "lines": 216,
+      "lines": 308,
       "responsibility": "몬스터 처치 시 전리품(정수 코어, 유니크 전설 유물, 에고 장비) 드롭 확률 연산, 경험치(XP) 가산 공식, 로어 숙련도 계산 및 처치 로그 취합 등 몬스터 사망에 수반되는 모든 후처리 보상 라이프사이클을 제어하는 전담 모듈",
       "purity": "Stateless Logic / System",
       "dependencies": [
@@ -369,8 +369,10 @@
       "classes": [
         "LootSystem"
       ],
-      "functions": [],
-      "lastModified": "2026-08-26T12:06:59Z"
+      "functions": [
+        "isSafeTile"
+      ],
+      "lastModified": "2026-08-26T13:18:27Z"
     },
     {
       "filePath": "src/core/ReactionRegistry.js",
@@ -1076,7 +1078,8 @@
         "TomeMonstersData.js",
         "TomeArtifactsData.js",
         "UniqueMonsterManager.js",
-        "AscensionModalView.js"
+        "AscensionModalView.js",
+        "LootSystem.js"
       ],
       "exports": [
         "BossPhaseEngine",
@@ -1090,7 +1093,7 @@
       "functions": [
         "checkItem"
       ],
-      "lastModified": "2026-08-26T03:28:02Z"
+      "lastModified": "2026-08-26T13:16:58Z"
     },
     {
       "filePath": "src/systems/ConsumableEffectEngine.js",
@@ -1368,7 +1371,7 @@
       "filePath": "src/systems/TomeLootGenerator.js",
       "moduleName": "TomeLootGenerator",
       "category": "systems",
-      "lines": 289,
+      "lines": 298,
       "responsibility": "ToME 2.3.5 정통 알고리즘 기반 던전 깊이(Depth)별 아이템 롤링, 에고(Ego) 접사 합성 및 전설 유물(Artifact) 드랍 파이프라인 엔진",
       "purity": "Pure Loot Factory",
       "dependencies": [
@@ -1386,7 +1389,7 @@
         "TomeLootGenerator"
       ],
       "functions": [],
-      "lastModified": "2026-08-26T09:40:03Z"
+      "lastModified": "2026-08-26T13:18:16Z"
     },
     {
       "filePath": "src/systems/TomeSpellEngine.js",
@@ -1436,7 +1439,7 @@
       "filePath": "src/systems/UniqueMonsterManager.js",
       "moduleName": "UniqueMonsterManager",
       "category": "systems",
-      "lines": 561,
+      "lines": 572,
       "responsibility": "ToME 2.3.5 정통 168종 유니크 몬스터 1회성 스폰 생태계 제어, 전설 유물 및 특급 에고 확정 드랍 파이프라인 엔진",
       "purity": "State Store / Logic System",
       "dependencies": [
@@ -1458,8 +1461,10 @@
       "classes": [
         "UniqueMonsterManager"
       ],
-      "functions": [],
-      "lastModified": "2026-08-26T04:31:15Z"
+      "functions": [
+        "isWalkable"
+      ],
+      "lastModified": "2026-08-26T13:16:39Z"
     },
     {
       "filePath": "src/systems/VisionLightingEngine.js",

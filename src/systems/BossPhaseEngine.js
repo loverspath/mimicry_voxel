@@ -23,6 +23,7 @@ import { TOME_MONSTERS_DATA } from '../entities/TomeMonstersData.js';
 import { TOME_ARTIFACTS_DATA } from '../entities/TomeArtifactsData.js';
 import { uniqueMonsterManager } from './UniqueMonsterManager.js';
 import { saveAscensionRecord, calculateScore, serializeCombatStats, serializeEquipmentSlots, serializeInventoryItems, serializeRecentLogs } from '../ui/AscensionModalView.js';
+import { LootSystem } from '../core/LootSystem.js';
 
 export const MORGOTH_KEY = 'MON_MORGOTH_LORD_OF_DARKNESS';
 
@@ -582,9 +583,8 @@ export class BossPhaseEngine {
       this.createIronCrown(bossMonster)
     ];
 
-    if (!game.items) game.items = [];
     for (const dropItem of drops) {
-      game.items.push(dropItem);
+      LootSystem.spawnSafeDropItem(game, dropItem, bossMonster.x, bossMonster.y);
       if (game.addLogEntry) {
         game.addLogEntry(`✨ [신화의 유물 드랍] 모르고스의 유해에서 [${dropItem.name}]이(가) 나타났습니다!`, 'loot');
       }

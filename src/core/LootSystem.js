@@ -17,6 +17,103 @@ import { bossPhaseEngine } from '../systems/BossPhaseEngine.js';
 
 export class LootSystem {
     /**
+     * 절차적(Procedural) BFS 방사형 탐색 알고리즘:
+     * 주어진 시작 좌표(originX, originY)가 벽이거나 통행 불가할 경우,
+     * 반경 0부터 maxRadius까지 거리순으로 탐색하여 가장 가깝고 100% 이동 가능한(Walkable) 바닥 타일 좌표를 반환합니다.
+     * 
+     * @param {Object} map - Map 인스턴스 (isWalkable, isWall, inBounds 메서드 지원)
+     * @param {number} originX - 기준 X 좌표
+     * @param {number} originY - 기준 Y 좌표
+     * @param {number} [maxRadius=5] - 최대 BFS 탐색 반경
+     * @returns {{x: number, y: number}} 100% 안전한 드랍 좌표
+     */
+    static findSafeDropLocation(map, originX, originY, maxRadius = 5) {
+        if (!map) return { x: originX, y: originY };
+
+        const isSafeTile = (x, y) => {
+            if (typeof map.inBounds === 'function' && !map.inBounds(x, y)) return false;
+            if (typeof map.isWalkable === 'function' && !map.isWalkable(x, y)) return false;
+            if (typeof map.isWall === 'function' && map.isWall(x, y)) return false;
+            return true;
+        };
+
+        // 1. 기준점이 이미 안전한 바닥 타일이면 즉시 반환 (반경 0)
+        if (isSafeTile(originX, originY)) {
+            return { x: originX, y: originY };
+        }
+
+        // 2. 절차적 BFS 큐 탐색 (상하좌우 및 대각선 8방향 거리순 확장)
+        const queue = [{ x: originX, y: originY, dist: 0 }];
+        const visited = new Set();
+        visited.add(`${originX},${originY}`);
+
+        const directions = [
+            { dx: 0, dy: -1 }, // 상
+            { dx: 0, dy: 1 },  // 하
+            { dx: -1, dy: 0 }, // 좌
+            { dx: 1, dy: 0 },  // 우
+            { dx: -1, dy: -1 }, // 좌상
+            { dx: 1, dy: -1 },  // 우상
+            { dx: -1, dy: 1 },  // 좌하
+            { dx: 1, dy: 1 }    // 우하
+        ];
+
+        while (queue.length > 0) {
+            const current = queue.shift();
+            if (current.dist > maxRadius) break;
+
+            if (isSafeTile(current.x, current.y)) {
+                return { x: current.x, y: current.y };
+            }
+
+            for (const dir of directions) {
+                const nx = current.x + dir.dx;
+                const ny = current.y + dir.dy;
+                const key = `${nx},${ny}`;
+
+                if (!visited.has(key)) {
+                    visited.add(key);
+                    const nextDist = current.dist + 1;
+                    if (nextDist <= maxRadius) {
+                        if (isSafeTile(nx, ny)) {
+                            return { x: nx, y: ny };
+                        }
+                        queue.push({ x: nx, y: ny, dist: nextDist });
+                    }
+                }
+            }
+        }
+
+        // 3. Fallback: 만약 maxRadius 내에 walkable 타일을 찾지 못했을 경우
+        return { x: originX, y: originY };
+    }
+
+    static getSafeDropPosition(map, originX, originY, maxRadius = 5) {
+        return this.findSafeDropLocation(map, originX, originY, maxRadius);
+    }
+
+    /**
+     * 안전한 드랍 위치로 아이템 좌표를 보정하여 game.items에 추가합니다.
+     * @param {Object} game 
+     * @param {Object} item 
+     * @param {number} fallbackX 
+     * @param {number} fallbackY 
+     */
+    static spawnSafeDropItem(game, item, fallbackX = 0, fallbackY = 0) {
+        if (!item || !game) return;
+        if (!game.items) game.items = [];
+
+        const targetX = item.x !== undefined && item.x !== null ? item.x : fallbackX;
+        const targetY = item.y !== undefined && item.y !== null ? item.y : fallbackY;
+
+        const safePos = LootSystem.findSafeDropLocation(game.map, targetX, targetY);
+        item.x = safePos.x;
+        item.y = safePos.y;
+
+        game.items.push(item);
+    }
+
+    /**
      * 플레이어와 몬스터의 레벨 차이에 따라 스케일링된 보상 XP를 도출합니다.
      * @param {Object} player 
      * @param {Object} monster 
@@ -75,10 +172,9 @@ export class LootSystem {
             bossPhaseEngine.handleBossDeath(monster, player, game);
         } else if (isUnique) {
             // 3. 일반 유니크 몬스터 전용 전설 유물 / 에고 확정 드랍 파이프라인
-            const uniqueDrops = umm.generateUniqueMonsterDrops(monster, game.floor || 1);
+            const uniqueDrops = umm.generateUniqueMonsterDrops(monster, game.floor || 1, game.map);
             for (const dropItem of uniqueDrops) {
-                if (!game.items) game.items = [];
-                game.items.push(dropItem);
+                LootSystem.spawnSafeDropItem(game, dropItem, monster.x, monster.y);
                 game.addLogEntry(`👑 [전설 유물 드랍] 유니크 처치 보상으로 [${dropItem.name}]이(가) 바닥에 떨어졌습니다!`, `loot`);
             }
 
@@ -86,8 +182,7 @@ export class LootSystem {
             if (typeof monster.createCoreItem === 'function') {
                 const coreItem = monster.createCoreItem();
                 if (coreItem) {
-                    if (!game.items) game.items = [];
-                    game.items.push(coreItem);
+                    LootSystem.spawnSafeDropItem(game, coreItem, monster.x, monster.y);
                     game.addLogEntry(`[Loot] ${monster.name}가 바닥에 정수 코어 [${coreItem.name}]을(를) 떨어뜨렸습니다!`, `loot`);
                 }
             }
@@ -124,17 +219,15 @@ export class LootSystem {
             if (Math.random() < dropChance && typeof monster.createCoreItem === 'function') {
                 const coreItem = monster.createCoreItem();
                 if (coreItem) {
-                    if (!game.items) game.items = [];
-                    game.items.push(coreItem);
+                    LootSystem.spawnSafeDropItem(game, coreItem, monster.x, monster.y);
                     game.addLogEntry(`[Loot] ${monster.name}가 바닥에 정수 코어 [${coreItem.name}]을(를) 떨어뜨렸습니다! (드롭 확률: ${Math.round(dropChance * 100)}%)`, `loot`);
                 }
             }
 
             // 5. 일반 / 보스 ToME 전리품(장비/소모품/유물) 동적 드롭 생성
-            const monsterDrops = TomeLootGenerator.rollMonsterDrop(monster, game.floor || 1);
+            const monsterDrops = TomeLootGenerator.rollMonsterDrop(monster, game.floor || 1, game.map);
             for (const dropItem of monsterDrops) {
-                if (!game.items) game.items = [];
-                game.items.push(dropItem);
+                LootSystem.spawnSafeDropItem(game, dropItem, monster.x, monster.y);
                 game.addLogEntry(`[Loot] ${monster.displayName}이(가) 전리품 [${dropItem.name}]을(를) 떨어뜨렸습니다!`, `loot`);
             }
         }
@@ -196,8 +289,7 @@ export class LootSystem {
             arrowItem.count = count;
             arrowItem.weight = 0.1;
 
-            if (!game.items) game.items = [];
-            game.items.push(arrowItem);
+            LootSystem.spawnSafeDropItem(game, arrowItem, monster.x, monster.y);
             game.addLogEntry(`🏹 [궁수 전리품] ${monster.displayName || monster.name} 처치 보상으로 화살 다발 [${arrowItem.name}] (${arrowItem.count}발)이 바닥에 떨어졌습니다!`, `loot`);
         }
 

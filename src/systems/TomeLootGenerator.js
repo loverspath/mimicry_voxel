@@ -249,9 +249,10 @@ export class TomeLootGenerator {
    * 몬스터 처치 시 전리품(골드, 소모품, 에고 장비, 아티팩트)을 롤링하여 반환합니다.
    * @param {Object} monster - 처치된 몬스터
    * @param {number} floor - 현재 던전 층수
+   * @param {Object} [map=null] - 맵 인스턴스
    * @returns {Array<Item>} 생성된 전리품 아이템 목록
    */
-  static rollMonsterDrop(monster, floor = 1) {
+  static rollMonsterDrop(monster, floor = 1, map = null) {
     const drops = [];
     const mx = monster.x || 0;
     const my = monster.y || 0;
@@ -275,7 +276,15 @@ export class TomeLootGenerator {
     for (let i = 0; i < dropCount; i++) {
       const offsetX = i === 0 ? 0 : (Math.random() > 0.5 ? 1 : -1);
       const offsetY = i === 0 ? 0 : (Math.random() > 0.5 ? 1 : -1);
-      const item = this.generateFloorItem(mx + offsetX, my + offsetY, Math.max(floor, mLevel), isBoss);
+      let targetX = mx + offsetX;
+      let targetY = my + offsetY;
+
+      if (map && typeof map.isWalkable === 'function' && !map.isWalkable(targetX, targetY)) {
+        targetX = mx;
+        targetY = my;
+      }
+
+      const item = this.generateFloorItem(targetX, targetY, Math.max(floor, mLevel), isBoss);
       drops.push(item);
     }
 

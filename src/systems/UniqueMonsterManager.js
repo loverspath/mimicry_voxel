@@ -315,12 +315,19 @@ export class UniqueMonsterManager {
    * @param {number} floor - 현재 던전 층수
    * @returns {Array<Item>} 드랍될 아이템 배열
    */
-  generateUniqueMonsterDrops(monster, floor = 1) {
+  generateUniqueMonsterDrops(monster, floor = 1, map = null) {
     const drops = [];
     const mx = monster.x || 0;
     const my = monster.y || 0;
     const mLevel = monster.level || floor || 1;
     const effectiveFloor = Math.max(floor, mLevel);
+
+    const isWalkable = (x, y) => {
+      if (!map) return true;
+      if (typeof map.isWalkable === 'function' && !map.isWalkable(x, y)) return false;
+      if (typeof map.isWall === 'function' && map.isWall(x, y)) return false;
+      return true;
+    };
 
     // 처치 상태 마킹
     const key = monster.uniqueKey || monster.type;
@@ -351,8 +358,9 @@ export class UniqueMonsterManager {
       drops.push(tier1EgoWeapon);
 
       // 일반 무기/방어구 강화 주문서
+      const scrollPos = isWalkable(mx + 1, my) ? { x: mx + 1, y: my } : { x: mx, y: my };
       const standardScroll = new Item(
-        mx + 1, my,
+        scrollPos.x, scrollPos.y,
         'SCROLL',
         '?',
         '#fb7185',
@@ -370,8 +378,9 @@ export class UniqueMonsterManager {
       drops.push(standardScroll);
 
       // 상급 체력 회복 물약
+      const potionPos = isWalkable(mx, my + 1) ? { x: mx, y: my + 1 } : { x: mx, y: my };
       const standardPotion = new Item(
-        mx, my + 1,
+        potionPos.x, potionPos.y,
         'POTION',
         '!',
         '#f43f5e',
@@ -484,8 +493,9 @@ export class UniqueMonsterManager {
     }
 
     // 2. 보너스 전리품: 무기/방어구 대강화 주문서 및 최고급 영약 확정 드랍 (6층 이상)
+    const bonusScrollPos = isWalkable(mx + 1, my) ? { x: mx + 1, y: my } : { x: mx, y: my };
     const bonusScroll = new Item(
-      mx + 1, my,
+      bonusScrollPos.x, bonusScrollPos.y,
       'SCROLL',
       '?',
       '#fb7185',
@@ -502,8 +512,9 @@ export class UniqueMonsterManager {
     );
     drops.push(bonusScroll);
 
+    const bonusPotionPos = isWalkable(mx, my + 1) ? { x: mx, y: my + 1 } : { x: mx, y: my };
     const bonusPotion = new Item(
-      mx, my + 1,
+      bonusPotionPos.x, bonusPotionPos.y,
       'POTION',
       '!',
       '#10b981',
