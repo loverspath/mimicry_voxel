@@ -636,7 +636,7 @@ export class Player {
   }
 
   getMorphMasteryLevel(speciesType = null) {
-    const sType = speciesType || this.mimicCore?.coreType || this.mimicCore?.name || 'HUMAN';
+    const sType = speciesType || this.mimicCore?.coreType || this.mimicCore?.name || 'MON_NOVICE_WARRIOR';
     if (this.body && this.body.getLoreLevel) {
       return this.body.getLoreLevel(sType);
     }

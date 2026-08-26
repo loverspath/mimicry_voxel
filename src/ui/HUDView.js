@@ -513,10 +513,11 @@ export function renderPlayerDetailsHTML(player) {
  * @returns {string} HTML 문자열
  */
 export function renderSkillTreeHTML(player) {
+  const coreKey = player.mimicCore?.coreType || player.mimicCore?.name || 'MON_NOVICE_WARRIOR';
   const coreName = player.mimicCore?.name || '인간';
-  const masteryLvl = player.getMorphMasteryLevel ? player.getMorphMasteryLevel() : 1;
+  const masteryLvl = player.getMorphMasteryLevel ? player.getMorphMasteryLevel(coreKey) : 1;
   const innateSkills = player.getInnateSkills ? player.getInnateSkills() : [];
-  const loreXp = player.body?.loreRegistry?.[player.mimicCore?.coreType || 'HUMAN'] || 0;
+  const loreXp = player.body?.getLoreXp ? player.body.getLoreXp(coreKey) : (player.body?.loreRegistry?.[coreKey] || 0);
 
   const skillsListHTML = innateSkills.map(skill => {
     const isUnlocked = skill.isUnlocked(masteryLvl);

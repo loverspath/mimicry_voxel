@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-08-26T11:45:22Z",
+  "generatedAt": "2026-08-26T11:50:53Z",
   "summary": {
     "totalModules": 65,
-    "totalLines": 102967,
+    "totalLines": 103030,
     "categories": {
       "configs": 4,
       "core": 14,
@@ -623,7 +623,7 @@
       "filePath": "src/entities/MimicBody.js",
       "moduleName": "MimicBody",
       "category": "entities",
-      "lines": 352,
+      "lines": 414,
       "responsibility": "무정형 미믹의 영구 본체 컨테이너 클래스. 메인 코어의 탈착과 상관없이 스탯, 로어 숙련도, 몬스터 킬 카운트, 돌연변이 태그를 영구 보존하며 무게 한도 및 감속 배율을 수학적으로 도출합니다.",
       "purity": "State Store / Logic Container",
       "dependencies": [
@@ -644,7 +644,7 @@
         "addTags",
         "checkSubCoreSkills"
       ],
-      "lastModified": "2026-08-26T09:39:34Z"
+      "lastModified": "2026-08-26T11:49:14Z"
     },
     {
       "filePath": "src/entities/Monster.js",
@@ -758,7 +758,7 @@
         "getGrowth",
         "getGrowthDelta"
       ],
-      "lastModified": "2026-08-26T04:04:21Z"
+      "lastModified": "2026-08-26T11:49:37Z"
     },
     {
       "filePath": "src/entities/Tags.js",
@@ -1546,7 +1546,7 @@
       "filePath": "src/ui/HUDView.js",
       "moduleName": "HUDView",
       "category": "ui",
-      "lines": 813,
+      "lines": 814,
       "responsibility": "상단 상태바(SPD, HP, Floor), 플레이어 상세 스테이터스창, 스킬 수련 트리, 무기/로어 마스터리 도감 뷰",
       "purity": "DOM Renderer",
       "dependencies": [
@@ -1579,7 +1579,7 @@
         "updateFloatingAutoFireButton",
         "updateTopBarHUD"
       ],
-      "lastModified": "2026-08-25T22:15:17Z"
+      "lastModified": "2026-08-26T11:49:33Z"
     },
     {
       "filePath": "src/ui/InspectModalView.js",

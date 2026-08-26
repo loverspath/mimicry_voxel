@@ -85,34 +85,96 @@ export class MimicBody {
     };
   }
 
-  // Record a monster kill
+  // Record a monster kill with canonical key synchronization
   recordKill(keyOrType, amount = 1) {
     if (!keyOrType) return;
     if (!this.killRegistry) this.killRegistry = {};
-    this.killRegistry[keyOrType] = (this.killRegistry[keyOrType] || 0) + amount;
+    const cur = this.getKillCount(keyOrType);
+    const newKills = cur + amount;
+    this.killRegistry[keyOrType] = newKills;
+
+    const config = getSpeciesConfig(keyOrType);
+    if (config) {
+      if (config.coreType) this.killRegistry[config.coreType] = newKills;
+      if (config.name) this.killRegistry[config.name] = newKills;
+      if (config.displayName) this.killRegistry[config.displayName] = newKills;
+    }
   }
 
-  // Get kill count for a monster or species
+  // Get kill count for a monster or species with canonical key normalization
   getKillCount(keyOrType) {
     if (!keyOrType || !this.killRegistry) return 0;
-    return this.killRegistry[keyOrType] || 0;
+    let maxKills = this.killRegistry[keyOrType] || 0;
+    const config = getSpeciesConfig(keyOrType);
+    if (config) {
+      if (config.coreType && this.killRegistry[config.coreType]) {
+        maxKills = Math.max(maxKills, this.killRegistry[config.coreType]);
+      }
+      if (config.name && this.killRegistry[config.name]) {
+        maxKills = Math.max(maxKills, this.killRegistry[config.name]);
+      }
+      if (config.displayName && this.killRegistry[config.displayName]) {
+        maxKills = Math.max(maxKills, this.killRegistry[config.displayName]);
+      }
+    }
+    return maxKills;
+  }
+
+  // Get accumulated Lore XP for a species, resolving canonical keys and aliases in O(1)
+  getLoreXp(speciesType) {
+    if (!speciesType || !this.loreRegistry) return 0;
+    
+    let maxExp = this.loreRegistry[speciesType] || 0;
+
+    const config = getSpeciesConfig(speciesType);
+    if (config) {
+      if (config.coreType && this.loreRegistry[config.coreType]) {
+        maxExp = Math.max(maxExp, this.loreRegistry[config.coreType]);
+      }
+      if (config.name && this.loreRegistry[config.name]) {
+        maxExp = Math.max(maxExp, this.loreRegistry[config.name]);
+      }
+      if (config.displayName && this.loreRegistry[config.displayName]) {
+        maxExp = Math.max(maxExp, this.loreRegistry[config.displayName]);
+      }
+    }
+
+    return maxExp;
   }
 
   // Get Lore / Morph Mastery Level (from 1 to 50) based on accumulated lore experience points
   getLoreLevel(speciesType) {
-    const xp = this.loreRegistry[speciesType] || 0;
+    const xp = this.getLoreXp(speciesType);
     if (xp >= 2000) return 50;
     if (xp >= 500) return Math.min(49, 25 + Math.floor((xp - 500) / 60));
     if (xp >= 100) return Math.min(24, 10 + Math.floor((xp - 100) / 26.6));
     return Math.min(9, 1 + Math.floor(xp / 11.1));
   }
 
-  // Add lore experience points for a species quietly in background
+  // Add lore experience points for a species, synchronizing canonical keys and display names
   gainLoreXp(speciesType, amount) {
-    if (this.loreRegistry[speciesType] === undefined) {
-      this.loreRegistry[speciesType] = 0;
+    if (!speciesType || !amount) return [];
+    if (!this.loreRegistry) this.loreRegistry = {};
+
+    const currentXp = this.getLoreXp(speciesType);
+    const newXp = currentXp + amount;
+
+    // Synchronize across input key and canonical config keys
+    this.loreRegistry[speciesType] = newXp;
+
+    const config = getSpeciesConfig(speciesType);
+    if (config) {
+      if (config.coreType) {
+        this.loreRegistry[config.coreType] = newXp;
+      }
+      if (config.name) {
+        this.loreRegistry[config.name] = newXp;
+      }
+      if (config.displayName) {
+        this.loreRegistry[config.displayName] = newXp;
+      }
     }
-    this.loreRegistry[speciesType] += amount;
+
     return [];
   }
 
