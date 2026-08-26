@@ -260,18 +260,11 @@ export class TomeEquipmentEngine {
   static calculateWeight(item) {
     if (!item) return 0;
     const count = item.count || 1;
-
     const tval = item.tval;
-    const isAmmo = tval === TVAL.SHOT || tval === TVAL.ARROW || tval === TVAL.BOLT || item.slotType === 'QUIVER' || item.type === 'QUIVER' || item.type === 'ARROW' || item.type === 'BOLT' || item.type === 'SHOT' || (item.specialTags && item.specialTags.includes('AMMO'));
+    const slotType = item.slotType;
+    const isAmmo = tval === TVAL.SHOT || tval === TVAL.ARROW || tval === TVAL.BOLT || slotType === 'QUIVER' || item.type === 'QUIVER' || item.type === 'ARROW' || item.type === 'BOLT' || item.type === 'SHOT' || (item.specialTags && item.specialTags.includes('AMMO'));
 
-    if (item._weight !== undefined && item._weight !== null) {
-      if (isAmmo) {
-        const unitWeight = item._weight > 1 ? item._weight * 0.1 : (item._weight === 1 ? 0.1 : item._weight);
-        return Math.max(1, Math.floor(unitWeight * count));
-      }
-      return item._weight * count;
-    }
-
+    // 1. Core items (highest priority dynamic formula)
     if (item.type === 'CORE') {
       const config = getSpeciesConfig(item.coreType || 'HUMAN');
       if (config && config.coreBase) {
@@ -284,6 +277,7 @@ export class TomeEquipmentEngine {
       return 5.0;
     }
 
+    // 2. Consumables (highest priority lightweight scale)
     if (tval === TVAL.POTION || item.type === 'POTION' || tval === TVAL.FLASK || item.type === 'FLASK') {
       return +(0.4 * count).toFixed(1);
     }
@@ -299,12 +293,23 @@ export class TomeEquipmentEngine {
     if (tval === TVAL.FOOD || item.type === 'FOOD') {
       return +(0.5 * count).toFixed(1);
     }
-    if (tval === TVAL.SHOT || tval === TVAL.ARROW || tval === TVAL.BOLT || item.slotType === 'QUIVER' || item.type === 'QUIVER') {
+
+    // 3. Ammo bundles (0.1 lbs per unit)
+    if (isAmmo) {
       return Math.max(1, Math.floor(0.1 * count));
     }
 
-    const slotType = item.slotType;
-    if (slotType === 'WEAPON') {
+    // 4. Explicit _weight (for defined weapons, armors, and standard ToME items)
+    if (item._weight !== undefined && item._weight !== null) {
+      let rawUnit = item._weight;
+      if (rawUnit > 50) {
+        rawUnit = rawUnit * 0.1;
+      }
+      return Math.min(50, Math.max(1, Math.floor(rawUnit * count)));
+    }
+
+    // 5. Fallback equipment formulas (when _weight is missing)
+    if (slotType === 'WEAPON' || item.type === 'WEAPON') {
       let diceCount = 1;
       let diceSides = 4;
       if (item.dice) {
@@ -313,20 +318,24 @@ export class TomeEquipmentEngine {
         diceSides = parseInt(parts[1]) || 4;
       }
       const strBonus = item.statBonuses?.str || 0;
-      return Math.floor((diceCount * diceSides * 1.5) + (strBonus * 2.0));
+      const calc = Math.floor((diceCount * diceSides * 1.5) + (strBonus * 2.0));
+      return Math.min(50, Math.max(1, calc));
     }
 
     if (slotType === 'ARMOR' || slotType === 'HELMET' || slotType === 'GLOVES' || slotType === 'BOOTS' || slotType === 'SHIELD' || slotType === 'CLOAK') {
       const conBonus = item.statBonuses?.con || 0;
       const dexBonus = item.statBonuses?.dex || 0;
-      return Math.floor((conBonus * 4.0) + (dexBonus * 1.0) + 10);
+      const baseWeight = slotType === 'ARMOR' ? 12.0 : slotType === 'SHIELD' ? 6.0 : slotType === 'HELMET' ? 3.5 : slotType === 'BOOTS' ? 3.0 : slotType === 'GLOVES' ? 1.5 : 2.0;
+      const calc = Math.floor(baseWeight + (conBonus * 1.5) + (dexBonus * 0.5));
+      return Math.min(50, Math.max(1, calc));
     }
 
-    if (slotType === 'RING' || item.type === 'RING') return 1.0;
-    if (slotType === 'AMULET' || item.type === 'AMULET') return 2.0;
-    if (slotType === 'LIGHT' || item.type === 'LAMP') return 4.0;
+    if (slotType === 'BOW' || item.type === 'BOW') return 3.0;
+    if (slotType === 'RING' || item.type === 'RING') return 0.2;
+    if (slotType === 'AMULET' || item.type === 'AMULET') return 0.2;
+    if (slotType === 'LIGHT' || item.type === 'LAMP') return 1.0;
 
-    return 2.0;
+    return 1.0;
   }
 
   /**

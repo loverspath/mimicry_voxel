@@ -249,20 +249,23 @@ export class MimicBody {
         const gear = this.player.equipment[key];
         if (gear) {
           equippedSet.add(gear);
-          total += gear.weight;
+          const safeWeight = Math.min(50, Math.max(0, typeof gear.weight === 'number' ? gear.weight : 0));
+          total += safeWeight;
         }
       }
     }
     if (this.player.equippedLamp) {
       equippedSet.add(this.player.equippedLamp);
-      total += this.player.equippedLamp.weight;
+      const safeWeight = Math.min(50, Math.max(0, typeof this.player.equippedLamp.weight === 'number' ? this.player.equippedLamp.weight : 0));
+      total += safeWeight;
     }
 
     // 3. Add inventory items (excluding already equipped items)
     if (this.player.inventory) {
       for (const item of this.player.inventory) {
         if (!equippedSet.has(item)) {
-          total += item.weight;
+          const safeWeight = Math.min(50, Math.max(0, typeof item.weight === 'number' ? item.weight : 0));
+          total += safeWeight;
         }
       }
     }
@@ -272,7 +275,7 @@ export class MimicBody {
       total += 15;
     }
 
-    return Math.max(1, total);
+    return Math.max(1, Math.round(total * 10) / 10);
   }
 
   /**

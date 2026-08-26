@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-08-26T12:21:33Z",
+  "generatedAt": "2026-08-26T12:33:03Z",
   "summary": {
     "totalModules": 65,
-    "totalLines": 103195,
+    "totalLines": 103207,
     "categories": {
       "configs": 4,
       "core": 14,
@@ -436,7 +436,7 @@
         "serializeItem",
         "serializeMonster"
       ],
-      "lastModified": "2026-08-26T04:56:50Z"
+      "lastModified": "2026-08-26T12:30:53Z"
     },
     {
       "filePath": "src/core/Skills.js",
@@ -623,7 +623,7 @@
       "filePath": "src/entities/MimicBody.js",
       "moduleName": "MimicBody",
       "category": "entities",
-      "lines": 416,
+      "lines": 419,
       "responsibility": "무정형 미믹의 영구 본체 컨테이너 클래스. 메인 코어의 탈착과 상관없이 스탯, 로어 숙련도, 몬스터 킬 카운트, 돌연변이 태그를 영구 보존하며 무게 한도 및 감속 배율을 수학적으로 도출합니다.",
       "purity": "State Store / Logic Container",
       "dependencies": [
@@ -644,7 +644,7 @@
         "addTags",
         "checkSubCoreSkills"
       ],
-      "lastModified": "2026-08-26T12:17:26Z"
+      "lastModified": "2026-08-26T12:29:48Z"
     },
     {
       "filePath": "src/entities/Monster.js",
@@ -1325,7 +1325,7 @@
       "filePath": "src/systems/TomeEquipmentEngine.js",
       "moduleName": "TomeEquipmentEngine",
       "category": "systems",
-      "lines": 350,
+      "lines": 359,
       "responsibility": "ToME 2.3.5 정통 tval 기반 슬롯(slotType), 아스키 심볼, 무게, 방어력(AC), 무기 카테고리 무상태 연산 엔진",
       "purity": "Pure Stateless Engine",
       "dependencies": [
@@ -1339,7 +1339,7 @@
         "TomeEquipmentEngine"
       ],
       "functions": [],
-      "lastModified": "2026-08-26T12:17:20Z"
+      "lastModified": "2026-08-26T12:32:04Z"
     },
     {
       "filePath": "src/systems/TomeFlagResolver.js",

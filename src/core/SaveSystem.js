@@ -163,8 +163,8 @@ export class SaveSystem {
         });
     }
 
-    static deserialize(game, jsonString) {
-        const data = JSON.parse(jsonString);
+    static deserialize(game, jsonStringOrData) {
+        const data = typeof jsonStringOrData === 'string' ? JSON.parse(jsonStringOrData) : jsonStringOrData;
         
         // 1. Map Restore
         game.floor = data.floor;
@@ -312,7 +312,7 @@ export class SaveSystem {
             item.fusionLevel = iData.fusionLevel || 0;
             item.upgradeLevel = iData.upgradeLevel || 0;
             item.count = iData.count || 1;
-            if (iData.weight !== undefined) item.weight = iData.weight;
+            // 동적 계산 대상(코어, 탄약, 소모품, 장비)의 _weight 오염 방지 (TomeEquipmentEngine dynamic getter 위임 유지)
             if (iData.potionEffect !== undefined) item.potionEffect = iData.potionEffect;
             if (iData.scrollEffect !== undefined) item.scrollEffect = iData.scrollEffect;
             if (iData.baseAC !== undefined) item.baseAC = iData.baseAC;
