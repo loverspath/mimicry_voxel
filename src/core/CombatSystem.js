@@ -532,5 +532,10 @@ export class CombatSystem {
         for (const skill of innateSkills) {
             game.player.decrementCooldown(skill.id);
         }
+
+        // 실시간 의태 액티브 스킬 자동 격발 (Auto-Cast) 실행
+        if (game.player.tryAutoCastInnateSkills) {
+            game.player.tryAutoCastInnateSkills(game);
+        }
     }
 }

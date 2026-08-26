@@ -689,6 +689,108 @@ export class Player {
     return skill.execute(game, this, target);
   }
 
+  /**
+   * 실시간 의태 액티브 스킬 자동 격발 (Auto-Cast) 엔진
+   * 1. 자가 치유 (HEAL / S_HEAL): 체력 85% 이하 시 우선 자동 시전
+   * 2. 위기 탈출 (PHASE_DOOR / 점멸): 체력 35% 미만 및 인접 적 존재 시 자동 시전
+   * 3. 자가 버프 (HASTE / 가속): 전투 중 자동 시전
+   * 4. 광역 브레스 및 원소 폭풍 (BREATH / AOE): 사거리 내 적 포착 시 자동 조준 격발
+   * 5. 마법 화살 및 물리 강타 (PROJECTILE / MELEE_STRIKE): 사거리 내 적 포착 시 자동 조준 격발
+   */
+  tryAutoCastInnateSkills(game) {
+    if (!game || this.stats.hp <= 0) return false;
+    const skills = this.getInnateSkills ? this.getInnateSkills() : (this.activeSkills || []);
+    if (!skills || skills.length === 0) return false;
+
+    const masteryLvl = this.getMorphMasteryLevel ? this.getMorphMasteryLevel() : 1;
+    let didCast = false;
+
+    for (const skill of skills) {
+      if (!skill.isUnlocked(masteryLvl)) continue;
+      const cd = this.getTracker(skill.id, 'cooldown');
+      if (cd > 0) continue;
+
+      const skillType = (skill.type || '').toUpperCase();
+      const skillId = (skill.id || '').toUpperCase();
+      const skillName = skill.name || '';
+
+      // 1. 자가 치유 (HEAL / S_HEAL / 상처 치유) - 체력 85% 이하 시 우선 자동 발동
+      const isHeal = skillId.includes('HEAL') || skillName.includes('치유') || skillName.includes('Heal') || (skillType === 'SELF' && skill.element === 'HOLY');
+      if (isHeal) {
+        if (this.stats && this.stats.hp <= this.stats.maxHp * 0.85) {
+          const success = skill.execute(game, this);
+          if (success) {
+            didCast = true;
+            continue;
+          }
+        }
+        continue;
+      }
+
+      // 2. 위기 탈출 (PHASE_DOOR / 점멸 / TELEPORT) - 체력 35% 미만 및 인접 적 존재 시 자동 시전
+      const isTeleport = skillType === 'TELEPORT' || skillId.includes('PHASE') || skillId.includes('DOOR') || skillName.includes('점멸');
+      if (isTeleport) {
+        if (this.stats && this.stats.hp < this.stats.maxHp * 0.35) {
+          const monsterList = game.dungeon?.monsters || game.monsters || [];
+          const hasAdjacentEnemy = monsterList.some(m => m && m.stats && m.stats.hp > 0 && Math.hypot(m.x - this.x, m.y - this.y) <= 1.8);
+          if (hasAdjacentEnemy) {
+            const success = skill.execute(game, this);
+            if (success) {
+              didCast = true;
+              continue;
+            }
+          }
+        }
+        continue;
+      }
+
+      // 3. 자가 버프 (HASTE / 가속 / SELF)
+      const isHaste = skillId.includes('HASTE') || skillName.includes('가속');
+      if (isHaste || skillType === 'SELF') {
+        const monsterList = game.dungeon?.monsters || game.monsters || [];
+        const hasVisibleEnemy = monsterList.some(m => m && m.stats && m.stats.hp > 0 && Math.hypot(m.x - this.x, m.y - this.y) <= 8.0);
+        if (hasVisibleEnemy) {
+          const success = skill.execute(game, this);
+          if (success) {
+            didCast = true;
+            continue;
+          }
+        }
+        continue;
+      }
+
+      // 4. 광역 브레스 (BREATH / AOE)
+      const isBreath = skillType === 'BREATH' || skillType === 'AOE' || skillId.includes('BREATH');
+      if (isBreath) {
+        const monsterList = game.dungeon?.monsters || game.monsters || [];
+        const hasTarget = monsterList.some(m => m && m.stats && m.stats.hp > 0 && Math.hypot(m.x - this.x, m.y - this.y) <= (skill.maxRange || 6.0));
+        if (hasTarget) {
+          const success = skill.execute(game, this);
+          if (success) {
+            didCast = true;
+            continue;
+          }
+        }
+        continue;
+      }
+
+      // 5. 원거리 볼트 / 물리 강타 (PROJECTILE / MELEE_STRIKE / BOLT / STRIKE / BEAM)
+      const isOffense = skillType === 'PROJECTILE' || skillType === 'MELEE_STRIKE' || (skill.maxRange && skill.maxRange > 0);
+      if (isOffense) {
+        const targetEnemy = MonsterSpellFactory._findTarget ? MonsterSpellFactory._findTarget(game, this, skill.maxRange || 5.5) : null;
+        if (targetEnemy) {
+          const success = skill.execute(game, this, targetEnemy);
+          if (success) {
+            didCast = true;
+            continue;
+          }
+        }
+      }
+    }
+
+    return didCast;
+  }
+
   getTracker(key, field = 'cooldown') {
     if (!this.skillTrackers) this.skillTrackers = {};
     if (!this.skillTrackers[key]) this.skillTrackers[key] = {};

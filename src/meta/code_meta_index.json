@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-08-26T12:50:57Z",
+  "generatedAt": "2026-08-26T13:00:02Z",
   "summary": {
     "totalModules": 65,
-    "totalLines": 103315,
+    "totalLines": 103456,
     "categories": {
       "configs": 4,
       "core": 14,
@@ -199,7 +199,7 @@
       "filePath": "src/core/CombatSystem.js",
       "moduleName": "CombatSystem",
       "category": "core",
-      "lines": 536,
+      "lines": 541,
       "responsibility": "전투 판정 및 격발 오케스트레이션을 일괄 처리하는 중앙 조율 시스템 모듈. 세부적인 수학 연산, 원소 결합 레지스트리, 전리품 루팅 및 50F 보스 페이즈 전환 제어를 슬림하게 조율합니다.",
       "purity": "Stateless System / Orchestrator",
       "dependencies": [
@@ -223,7 +223,7 @@
         "CombatSystem"
       ],
       "functions": [],
-      "lastModified": "2026-08-26T11:53:36Z"
+      "lastModified": "2026-08-26T12:58:33Z"
     },
     {
       "filePath": "src/core/Effects.js",
@@ -731,7 +731,7 @@
       "filePath": "src/entities/Player.js",
       "moduleName": "Player",
       "category": "entities",
-      "lines": 1006,
+      "lines": 1108,
       "responsibility": "플레이어 엔티티 모델 (Zero-Logic 순수 데이터 컴포넌트). 스탯/저항/광원 계산은 UnifiedTraitEngine 및 PlayerStatCalculator에, 의태 스킬 관리는 MonsterSpellFactory 및 TomeSpellEngine에 100% 위임합니다.",
       "purity": "Data Model / State Store",
       "dependencies": [
@@ -759,7 +759,7 @@
         "getGrowth",
         "getGrowthDelta"
       ],
-      "lastModified": "2026-08-26T12:06:49Z"
+      "lastModified": "2026-08-26T12:58:24Z"
     },
     {
       "filePath": "src/entities/Tags.js",
@@ -1193,7 +1193,7 @@
       "filePath": "src/systems/MonsterSpellFactory.js",
       "moduleName": "MonsterSpellFactory",
       "category": "systems",
-      "lines": 1029,
+      "lines": 1063,
       "responsibility": "ToME 2.3.5 정통 몬스터 DB(TomeMonstersData.js)의 106종 spells 플래그 및 attacks 데이터를 100% 기반으로 몬스터 코어 변신 시 플레이어 스킬바(1, 2, 3, 4번 슬롯)에 1:1 정확하게 바인딩하는 순수 의태 스펠 엔진.",
       "purity": "Stateless System / Logic",
       "dependencies": [
@@ -1211,7 +1211,7 @@
         "MonsterSpellFactory"
       ],
       "functions": [],
-      "lastModified": "2026-08-26T11:53:58Z"
+      "lastModified": "2026-08-26T12:58:12Z"
     },
     {
       "filePath": "src/systems/PlayerStatCalculator.js",

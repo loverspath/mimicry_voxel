@@ -825,8 +825,14 @@ export class MonsterSpellFactory {
     if (spec.type === 'TELEPORT') {
       return this._executePhaseDoor(game, player, skill);
     }
-    if (spec.type === 'SELF' && spec.element === 'HOLY') {
-      return this._executeHeal(game, player, skill, spec);
+    if (spec.type === 'SELF') {
+      if (spec.element === 'HOLY' || (skill.id && skill.id.includes('HEAL')) || (skill.name && (skill.name.includes('치유') || skill.name.includes('Heal')))) {
+        return this._executeHeal(game, player, skill, spec);
+      }
+      if ((skill.id && skill.id.includes('HASTE')) || (skill.name && (skill.name.includes('가속') || skill.name.includes('Haste')))) {
+        return this._executeHaste(game, player, skill, spec);
+      }
+      return this._executeSelfBuff(game, player, skill, spec);
     }
     if (spec.type === 'AOE') {
       return this._executeAoESpell(game, player, target, skill, spec);
@@ -949,6 +955,34 @@ export class MonsterSpellFactory {
 
     if (game.addLogEntry) {
       game.addLogEntry(`💚 [스킬 발동] <b>${skill.name}</b>! 신성한 치유력으로 <b>+${recovered} HP</b>를 회복했습니다! (HP: ${player.stats.hp}/${player.stats.maxHp})`, 'loot');
+    }
+    return true;
+  }
+
+  static _executeHaste(game, player, skill, spec) {
+    if (!player) return false;
+    if (player.applyBuff) {
+      player.applyBuff({
+        id: 'HASTE',
+        name: '신속 가속',
+        duration: 5,
+        icon: '⚡',
+        color: '#fbbf24',
+        modifiers: { speed: 3.0 }
+      });
+    } else {
+      player.speedBonus = (player.speedBonus || 0) + 3;
+    }
+    if (game.addLogEntry) {
+      game.addLogEntry(`⚡ [스킬 발동] <b>${skill.name}</b>! 몸 안에 에너지가 용솟음치며 5턴간 행동 속도가 대폭 가속됩니다!`, 'loot');
+    }
+    return true;
+  }
+
+  static _executeSelfBuff(game, player, skill, spec) {
+    if (!player) return false;
+    if (game.addLogEntry) {
+      game.addLogEntry(`✨ [스킬 발동] <b>${skill.name}</b>! ${skill.desc || '자신을 강화합니다.'}`, 'loot');
     }
     return true;
   }
