@@ -159,7 +159,11 @@ export class TomeLootGenerator {
     let slotType = baseKind.slotType;
     let char = baseKind.char || Item.getDefaultSymbol(type, slotType, baseKind.name);
 
-    if (baseKind.tval === 31 || type === 'GLOVES') {
+    if (baseKind.tval === 16 || baseKind.tval === 17 || baseKind.tval === 18 || type === 'QUIVER' || slotType === 'QUIVER') {
+      type = 'QUIVER';
+      slotType = 'QUIVER';
+      char = '{';
+    } else if (baseKind.tval === 31 || type === 'GLOVES') {
       type = 'GLOVES';
       slotType = 'GLOVES';
       char = ']';
@@ -209,6 +213,15 @@ export class TomeLootGenerator {
     if (typeof baseKind.cost === 'number') item.cost = baseKind.cost;
     if (typeof baseKind.level === 'number') item.level = baseKind.level;
     if (baseKind.flags && Array.isArray(baseKind.flags)) item.flags = baseKind.flags;
+
+    // 탄약류(화살/볼트/탄환) 15~35발 다발(Bundle) 롤링 적용
+    const isAmmo = item.tval === 16 || item.tval === 17 || item.tval === 18 ||
+                   item.slotType === 'QUIVER' || item.type === 'QUIVER' ||
+                   /arrow|bolt|shot|화살|볼트|탄환/i.test(item.name || '') ||
+                   /arrow|bolt|shot|화살|볼트|탄환/i.test(baseKind?.name || '');
+    if (isAmmo) {
+      item.count = Math.floor(Math.random() * 21) + 15; // 15 ~ 35발
+    }
 
     // 시그모이드 장비 인챈트(+to_h, +to_d, +to_a, pval) 산출 및 적용
     const enchants = DungeonValueBudgetEngine.calculateEnchantments(danger, type);

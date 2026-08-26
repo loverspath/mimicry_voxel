@@ -713,14 +713,16 @@ export const TOME_BASE_ITEMS = Object.freeze({
 });
 
 import { TOME_ARTIFACTS_DATA } from './TomeArtifactsData.js';
+import { TOME_KINDS_DATA } from './TomeKindsData.js';
 
 export const TOME_ARTIFACTS = TOME_ARTIFACTS_DATA;
+export const TOME_KINDS = TOME_KINDS_DATA;
 
 /**
  * ToME 아이템 키로부터 새로운 Item 인스턴스를 즉시 생성합니다.
  */
 export function createTomeItem(key, x = 0, y = 0) {
-  const cfg = TOME_BASE_ITEMS[key] || TOME_ARTIFACTS[key];
+  const cfg = TOME_BASE_ITEMS[key] || TOME_ARTIFACTS[key] || TOME_KINDS_DATA[key];
   if (!cfg) return null;
 
   let type = cfg.type || 'WEAPON';
@@ -728,7 +730,11 @@ export function createTomeItem(key, x = 0, y = 0) {
   let char = cfg.char;
 
   // Safeguard slotType & type based on tval
-  if (cfg.tval === 31 || type === 'GLOVES') {
+  if (cfg.tval === 16 || cfg.tval === 17 || cfg.tval === 18 || type === 'QUIVER' || slotType === 'QUIVER') {
+    type = 'QUIVER';
+    slotType = 'QUIVER';
+    char = '{';
+  } else if (cfg.tval === 31 || type === 'GLOVES') {
     type = 'GLOVES';
     slotType = 'GLOVES';
     char = ']';
@@ -772,6 +778,21 @@ export function createTomeItem(key, x = 0, y = 0) {
     cfg.flavorText || ""
   );
 
+  if (cfg.tval !== undefined) {
+    item.tval = cfg.tval;
+  }
+  if (cfg.sval !== undefined) {
+    item.sval = cfg.sval;
+  }
+
+  // 탄약류(화살/볼트/탄환) 15~35발 다발(Bundle) 롤링 적용
+  const isAmmo = cfg.tval === 16 || cfg.tval === 17 || cfg.tval === 18 ||
+                 slotType === 'QUIVER' || type === 'QUIVER' ||
+                 /arrow|bolt|shot|화살|볼트|탄환/i.test(cfg.name || '');
+  if (isAmmo) {
+    item.count = Math.floor(Math.random() * 21) + 15; // 15 ~ 35발
+  }
+
   if (isArtifact) {
     item.artifactKey = cfg.key || key;
   }
@@ -799,5 +820,5 @@ export function createTomeItem(key, x = 0, y = 0) {
  * 아이템 키로 메타 설정을 조회합니다.
  */
 export function getItemConfig(key) {
-  return TOME_BASE_ITEMS[key] || TOME_ARTIFACTS[key] || null;
+  return TOME_BASE_ITEMS[key] || TOME_ARTIFACTS[key] || TOME_KINDS_DATA[key] || null;
 }

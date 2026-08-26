@@ -10,6 +10,7 @@
 
 import { determineRarity } from '../entities/Tags.js';
 import { getSpeciesConfig } from '../entities/MonsterRegistry.js';
+import { Item } from '../entities/Item.js';
 import { TomeLootGenerator } from '../systems/TomeLootGenerator.js';
 import { uniqueMonsterManager } from '../systems/UniqueMonsterManager.js';
 import { bossPhaseEngine } from '../systems/BossPhaseEngine.js';
@@ -129,6 +130,68 @@ export class LootSystem {
                 game.items.push(dropItem);
                 game.addLogEntry(`[Loot] ${monster.displayName}이(가) 전리품 [${dropItem.name}]을(를) 떨어뜨렸습니다!`, `loot`);
             }
+        }
+
+        // 6. Arrow/궁수 계열 몬스터 처치 시 화살 다발(15~30발) 85% 보너스 드랍 연동
+        const isArcher = Boolean(
+            (Array.isArray(monster.spells) && monster.spells.some(s => (typeof s === 'string' ? s : (s.id || s.name || '')).toUpperCase().includes('ARROW'))) ||
+            /archer|ranger|bowman|hunter|sniper|궁수|사수/i.test(monster.name || '') ||
+            /archer|ranger|bowman|hunter|sniper|궁수|사수/i.test(monster.displayName || '') ||
+            /archer|ranger|bowman|hunter|sniper|궁수|사수/i.test(monster.type || '') ||
+            (Array.isArray(monster.specialTags) && monster.specialTags.some(t => ['ARCHER', 'ARROW'].includes(String(t).toUpperCase()))) ||
+            (Array.isArray(monster.tags) && monster.tags.some(t => ['ARCHER', 'ARROW'].includes(String(t).toUpperCase())))
+        );
+
+        if (isArcher && Math.random() < 0.85) {
+            const danger = Math.max(1, game.floor || monster.level || 1);
+            const count = Math.floor(Math.random() * 16) + 15; // 15 ~ 30발 다발
+
+            let arrowName = 'Bundle of Arrows';
+            let dice = '1d4';
+            let color = '#94a3b8';
+            let flavor = 'A bundle of recovered flight arrows with sharp iron tips.';
+
+            if (danger >= 40) {
+                arrowName = 'Bundle of Seeker Arrows';
+                dice = '4d4';
+                color = '#4ade80';
+                flavor = 'A bundle of deadly precision seeker arrows.';
+            } else if (danger >= 25) {
+                arrowName = 'Bundle of Silver Arrows';
+                dice = '3d4';
+                color = '#cbd5e1';
+                flavor = 'A bundle of hallowed silver arrows that burn evil creatures.';
+            } else if (danger >= 12) {
+                arrowName = 'Bundle of Sheaf Arrows';
+                dice = '1d5';
+                color = '#f97316';
+                flavor = 'A bundle of heavy-headed sheaf arrows.';
+            }
+
+            const arrowItem = new Item(
+                monster.x || 0,
+                monster.y || 0,
+                'QUIVER',
+                '{',
+                color,
+                arrowName,
+                0,
+                'QUIVER',
+                {},
+                dice,
+                null,
+                [],
+                [],
+                ['AMMO'],
+                flavor
+            );
+            arrowItem.tval = 17; // TVAL.ARROW
+            arrowItem.count = count;
+            arrowItem.weight = 0.1;
+
+            if (!game.items) game.items = [];
+            game.items.push(arrowItem);
+            game.addLogEntry(`🏹 [궁수 전리품] ${monster.displayName || monster.name} 처치 보상으로 화살 다발 [${arrowItem.name}] (${arrowItem.count}발)이 바닥에 떨어졌습니다!`, `loot`);
         }
 
         // 7. 월드 몬스터 리스트 제거 및 XP 획득 격발

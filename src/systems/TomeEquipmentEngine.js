@@ -261,7 +261,14 @@ export class TomeEquipmentEngine {
     if (!item) return 0;
     const count = item.count || 1;
 
+    const tval = item.tval;
+    const isAmmo = tval === TVAL.SHOT || tval === TVAL.ARROW || tval === TVAL.BOLT || item.slotType === 'QUIVER' || item.type === 'QUIVER';
+
     if (item._weight !== undefined && item._weight !== null) {
+      if (isAmmo) {
+        const unitWeight = item._weight > 1 ? item._weight * 0.1 : (item._weight === 1 ? 0.1 : item._weight);
+        return Math.max(1, Math.floor(unitWeight * count));
+      }
       return item._weight * count;
     }
 
@@ -276,7 +283,6 @@ export class TomeEquipmentEngine {
       return 5.0;
     }
 
-    const tval = item.tval;
     if (tval === TVAL.POTION || item.type === 'POTION' || tval === TVAL.FLASK || item.type === 'FLASK') {
       return 2.0 * count;
     }
@@ -291,6 +297,9 @@ export class TomeEquipmentEngine {
     }
     if (tval === TVAL.FOOD || item.type === 'FOOD') {
       return 1.0 * count;
+    }
+    if (tval === TVAL.SHOT || tval === TVAL.ARROW || tval === TVAL.BOLT || item.slotType === 'QUIVER' || item.type === 'QUIVER') {
+      return Math.max(1, Math.floor(0.1 * count));
     }
 
     const slotType = item.slotType;

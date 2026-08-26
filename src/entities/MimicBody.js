@@ -179,21 +179,28 @@ export class MimicBody {
       total += coreWeight;
     }
 
-    // 2. Add equipped gear and sub cores
-    for (const key in this.player.equipment) {
-      const gear = this.player.equipment[key];
-      if (gear) {
-        total += gear.weight;
+    // 2. Add equipped gear and sub cores (track equipped instances to avoid double-counting in inventory)
+    const equippedSet = new Set();
+    if (this.player.equipment) {
+      for (const key in this.player.equipment) {
+        const gear = this.player.equipment[key];
+        if (gear) {
+          equippedSet.add(gear);
+          total += gear.weight;
+        }
       }
     }
     if (this.player.equippedLamp) {
+      equippedSet.add(this.player.equippedLamp);
       total += this.player.equippedLamp.weight;
     }
 
-    // 3. Add inventory items
+    // 3. Add inventory items (excluding already equipped items)
     if (this.player.inventory) {
       for (const item of this.player.inventory) {
-        total += item.weight;
+        if (!equippedSet.has(item)) {
+          total += item.weight;
+        }
       }
     }
 
