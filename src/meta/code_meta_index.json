@@ -1,0 +1,1714 @@
+{
+  "version": "1.2.0",
+  "generatedAt": "2026-08-26T09:00:12Z",
+  "summary": {
+    "totalModules": 65,
+    "totalLines": 102804,
+    "categories": {
+      "configs": 4,
+      "core": 14,
+      "root": 2,
+      "entities": 13,
+      "events": 2,
+      "map": 2,
+      "renderer": 3,
+      "systems": 18,
+      "ui": 7
+    }
+  },
+  "modules": [
+    {
+      "filePath": "src/configs/DungeonThemeConfig.js",
+      "moduleName": "DungeonThemeConfig",
+      "category": "configs",
+      "lines": 428,
+      "responsibility": "1~50층 5대 테마 던전 층계 명세, 테마별 타일 색상/복셀 팔레트, Vault 및 Monster Pit 스폰 확률 및 몬스터 계열 가중치 설정",
+      "purity": "Pure Constants",
+      "dependencies": [
+        "ThemeColors.js"
+      ],
+      "exports": [
+        "DUNGEON_THEMES",
+        "DUNGEON_THEME_KEYS",
+        "getThemeForFloor",
+        "getThemeConfig",
+        "getAmbientText",
+        "getRandomPitMonsterSpecies",
+        "getThemeColors",
+        "getSpecialRoomChancesForFloor"
+      ],
+      "classes": [],
+      "functions": [
+        "getAmbientText",
+        "getRandomPitMonsterSpecies",
+        "getSpecialRoomChancesForFloor",
+        "getThemeColors",
+        "getThemeConfig",
+        "getThemeForFloor"
+      ],
+      "lastModified": "2026-08-26T02:02:04Z"
+    },
+    {
+      "filePath": "src/configs/GameBalanceConfig.js",
+      "moduleName": "GameBalanceConfig",
+      "category": "configs",
+      "lines": 417,
+      "responsibility": "게임 밸런스 공식, 레벨업 성장 곡선, 무게/속도 제약, 무기 숙련도, 전투 주사위 공식, 속성 저항 계수 및 드랍 확률 중앙화 설정",
+      "purity": "Pure Function",
+      "dependencies": [],
+      "exports": [
+        "COMBAT_CONFIG",
+        "LEVEL_CONFIG",
+        "WEIGHT_CONFIG",
+        "WEAPON_MASTERY_CONFIG",
+        "WEAPON_REQUIREMENT_CONFIG",
+        "SKILL_BALANCE_CONFIG",
+        "LOOT_BALANCE_CONFIG",
+        "TURN_CONFIG",
+        "DUNGEON_CUSTOM_SETTINGS",
+        "SPAWN_FEATURE_CONFIG",
+        "isJokeMonster",
+        "calculateXpNeeded",
+        "calculateStatGrowth",
+        "calculateMaxWeightLimit",
+        "calculateSpeedModifier",
+        "ARCHERY_CONFIG",
+        "COMBAT_ACCURACY_CONFIG",
+        "ELITE_PREFIX_CONFIG",
+        "MAGIC_RESOURCE_CONFIG",
+        "MONSTER_DEFENSE_ARCHETYPES",
+        "RANGED_COMBAT_CONFIG",
+        "STAT_METADATA",
+        "TOME_SLAY_CONFIG",
+        "calculateDexCritChance",
+        "calculateElitePrefixChance",
+        "calculateToHitVsAc"
+      ],
+      "classes": [],
+      "functions": [
+        "calculateDexCritChance",
+        "calculateElitePrefixChance",
+        "calculateMaxWeightLimit",
+        "calculateSpeedModifier",
+        "calculateStatGrowth",
+        "calculateToHitVsAc",
+        "calculateXpNeeded",
+        "isJokeMonster"
+      ],
+      "lastModified": "2026-08-26T04:29:23Z"
+    },
+    {
+      "filePath": "src/configs/RenderConfig.js",
+      "moduleName": "RenderConfig",
+      "category": "configs",
+      "lines": 121,
+      "responsibility": "3D 복셀 렌더러 지오메트리 규격, 카메라/뷰포트 배율, 조명 및 앰비언트 오클루전, 파티클 물리 및 탄도학 통합 설정",
+      "purity": "Pure Constants",
+      "dependencies": [],
+      "exports": [
+        "BASE_TILE_WIDTH",
+        "BASE_TILE_HEIGHT",
+        "BASE_BLOCK_HEIGHT",
+        "VOXEL_DIMENSIONS",
+        "ZOOM_RANGE",
+        "ZOOM_STEPS",
+        "CAMERA_LERP_FACTOR",
+        "CAMERA_CONFIG",
+        "AO_SHADING_FACTORS",
+        "LIGHTING_CONFIG",
+        "HIT_PICK_RADIUS",
+        "PARTICLE_PHYSICS",
+        "BALLISTICS_CONFIG",
+        "BREAKPOINTS",
+        "getResponsiveViewport"
+      ],
+      "classes": [],
+      "functions": [
+        "getResponsiveViewport"
+      ],
+      "lastModified": "2026-08-25T12:47:01Z"
+    },
+    {
+      "filePath": "src/configs/ThemeColors.js",
+      "moduleName": "ThemeColors",
+      "category": "configs",
+      "lines": 325,
+      "responsibility": "ToME 2.3.5 정통 16색 ANSI 터미널 팔레트(TERM_COLORS), 7대 원소 팔레트, 4대 아이템 등급 색상, 터미널 폰트 스택 및 레트로 크로매틱 글로우 스타일 통합 설정",
+      "purity": "Pure Constants",
+      "dependencies": [],
+      "exports": [
+        "TERM_COLORS",
+        "ANSI_PALETTE_INDEX",
+        "TERMINAL_FONT_STACK",
+        "RETRO_GLOW_STYLES",
+        "CANVAS_CLEAR_3D",
+        "RARITY_COLORS",
+        "ELEMENT_COLORS",
+        "ELEMENT_PALETTES",
+        "RARITY_THEMES",
+        "UI_THEMES",
+        "VOXEL_THEMES",
+        "getTermColor",
+        "getTermColorHex",
+        "getRarityColor",
+        "getRarityLabel",
+        "getElementColor"
+      ],
+      "classes": [],
+      "functions": [
+        "getElementColor",
+        "getRarityColor",
+        "getRarityLabel",
+        "getTermColor",
+        "getTermColorHex"
+      ],
+      "lastModified": "2026-08-25T14:17:46Z"
+    },
+    {
+      "filePath": "src/core/CombatCalculator.js",
+      "moduleName": "CombatCalculator",
+      "category": "core",
+      "lines": 1022,
+      "responsibility": "전투 주사위 롤링, 대미지 계산, 치명타 판정, 방어력 감쇄 및 시너지 효과 연산 전담 수학 연산 엔진",
+      "purity": "Stateless System",
+      "dependencies": [
+        "Tags.js",
+        "ReactionRegistry.js",
+        "MimicBody.js",
+        "GameBalanceConfig.js",
+        "MonsterRegistry.js",
+        "TomeEgoEngine.js",
+        "UnifiedTraitEngine.js"
+      ],
+      "exports": [
+        "COMBAT_CONFIG",
+        "SYNERGY_TRIGGERS",
+        "SPELL_SYNERGY_TRIGGERS",
+        "CombatCalculator"
+      ],
+      "classes": [
+        "CombatCalculator"
+      ],
+      "functions": [
+        "checkArmor",
+        "checkCore"
+      ],
+      "lastModified": "2026-08-26T00:00:26Z"
+    },
+    {
+      "filePath": "src/core/CombatSystem.js",
+      "moduleName": "CombatSystem",
+      "category": "core",
+      "lines": 524,
+      "responsibility": "전투 판정 및 격발 오케스트레이션을 일괄 처리하는 중앙 조율 시스템 모듈. 세부적인 수학 연산, 원소 결합 레지스트리, 전리품 루팅 및 50F 보스 페이즈 전환 제어를 슬림하게 조율합니다.",
+      "purity": "Stateless System / Orchestrator",
+      "dependencies": [
+        "ReactionRegistry.js",
+        "LootSystem.js",
+        "CombatCalculator.js",
+        "Tags.js",
+        "Effects.js",
+        "MonsterRegistry.js",
+        "Skills.js",
+        "Perks.js",
+        "BossPhaseEngine.js",
+        "GameBalanceConfig.js",
+        "MimicBody.js",
+        "TomeSpellEngine.js"
+      ],
+      "exports": [
+        "CombatSystem"
+      ],
+      "classes": [
+        "CombatSystem"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-26T03:49:56Z"
+    },
+    {
+      "filePath": "src/core/Effects.js",
+      "moduleName": "Effects",
+      "category": "core",
+      "lines": 745,
+      "responsibility": "게임 내 2.5D 아이소메트릭 기반 실시간 데이터 지향 스킬 비주얼 이펙트 파이프라인 엔진 모듈. Skills.js 및 CombatSystem.js의 스킬 엔티티 메타데이터(원소, 사거리, 각도, 글리프, 투사체 형태, 결합 반응)를 주입받아 3D 고밀도 미니 복셀 입자 스트림 브레스(SkillConeBreathEffect), 3D 포물선 탄도학 & 공전 에너지 링 마법 투사체(SkillProjectileEffect), 연속 전도 레이저/낙뢰 빔(SkillBeamEffect), 2.5D 등각타원 슬래시 아크(SkillMeleeSlashEffect), 3D 앵커링 플로팅 텍스트(FloatingTextEffect), 광역 폭발(AoEExplosionEffect)을 정석 아이소메트릭 좌표계(toScreen)로 통합 렌더링합니다.",
+      "purity": "Stateless System / Logic",
+      "dependencies": [],
+      "exports": [
+        "AoEExplosionEffect",
+        "ConeBreathEffect",
+        "ELEMENT_THEMES",
+        "FloatingTextEffect",
+        "MeleeSlashEffect",
+        "ProjectileEffect",
+        "SkillBeamEffect",
+        "SkillVisualEffectFactory",
+        "VisualEffect",
+        "getElementTheme"
+      ],
+      "classes": [
+        "AoEExplosionEffect",
+        "ConeBreathEffect",
+        "FloatingTextEffect",
+        "MeleeSlashEffect",
+        "ProjectileEffect",
+        "SkillBeamEffect",
+        "SkillVisualEffectFactory",
+        "VisualEffect"
+      ],
+      "functions": [
+        "getElementTheme"
+      ],
+      "lastModified": "2026-08-25T11:58:07Z"
+    },
+    {
+      "filePath": "src/core/Game.js",
+      "moduleName": "Game",
+      "category": "core",
+      "lines": 1989,
+      "responsibility": "미미크리 로그라이크 핵심 게임 루프, 턴 스케줄링, 엔티티 상호작용 및 UI 모달 이벤트 통합 조율 오케스트레이터",
+      "purity": "State Store",
+      "dependencies": [
+        "Map.js",
+        "Player.js",
+        "Input.js",
+        "Renderer.js",
+        "Voxel3DRenderer.js",
+        "Classic2DAsciiRenderer.js",
+        "Item.js",
+        "Monster.js",
+        "Tags.js",
+        "Skills.js",
+        "UIHelper.js",
+        "Spawner.js",
+        "SaveSystem.js",
+        "CombatSystem.js",
+        "Effects.js",
+        "VirtualController.js",
+        "AscensionModalView.js",
+        "BossPhaseEngine.js",
+        "DungeonValueBudgetEngine.js",
+        "EventBus.js",
+        "GameEvents.js",
+        "LootSystem.js",
+        "TomeDeviceEngine.js",
+        "UniqueMonsterManager.js"
+      ],
+      "exports": [
+        "Game"
+      ],
+      "classes": [
+        "Game"
+      ],
+      "functions": [
+        "closeModal",
+        "getConfigByName",
+        "i",
+        "onPointerDown",
+        "onPointerUp",
+        "setClick",
+        "updateSlotLabels"
+      ],
+      "lastModified": "2026-08-26T04:57:59Z"
+    },
+    {
+      "filePath": "src/core/GameEngine.js",
+      "moduleName": "GameEngine",
+      "category": "core",
+      "lines": 88,
+      "responsibility": "순수 턴 스케줄링, 엔티티 라이프사이클 관리 및 EventBus 기반 메시지 디스패치를 전담하는 슬림 엔진 코어",
+      "purity": "State Store / Logic Engine",
+      "dependencies": [
+        "EventBus.js",
+        "GameEvents.js",
+        "GameBalanceConfig.js"
+      ],
+      "exports": [
+        "GameEngine"
+      ],
+      "classes": [
+        "GameEngine"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-25T23:38:48Z"
+    },
+    {
+      "filePath": "src/core/Input.js",
+      "moduleName": "Input",
+      "category": "core",
+      "lines": 90,
+      "responsibility": "키보드(화살표, WASD, 넘패드), 마우스 및 가상 패드 입력을 추상화된 게임 액션으로 매핑하고 발송하는 입력 제어 모듈",
+      "purity": "DOM Event Handler",
+      "dependencies": [],
+      "exports": [
+        "Input"
+      ],
+      "classes": [
+        "Input"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-25T15:05:50Z"
+    },
+    {
+      "filePath": "src/core/LootSystem.js",
+      "moduleName": "LootSystem",
+      "category": "core",
+      "lines": 146,
+      "responsibility": "몬스터 처치 시 전리품(정수 코어, 유니크 전설 유물, 에고 장비) 드롭 확률 연산, 경험치(XP) 가산 공식, 로어 숙련도 계산 및 처치 로그 취합 등 몬스터 사망에 수반되는 모든 후처리 보상 라이프사이클을 제어하는 전담 모듈",
+      "purity": "Stateless Logic / System",
+      "dependencies": [
+        "Tags.js",
+        "MonsterRegistry.js",
+        "TomeLootGenerator.js",
+        "UniqueMonsterManager.js",
+        "BossPhaseEngine.js"
+      ],
+      "exports": [
+        "LootSystem"
+      ],
+      "classes": [
+        "LootSystem"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-25T22:27:42Z"
+    },
+    {
+      "filePath": "src/core/ReactionRegistry.js",
+      "moduleName": "ReactionRegistry",
+      "category": "core",
+      "lines": 152,
+      "responsibility": "원소 간의 결합 반응 및 상태이상 디버프 전파 처리를 전담하는 격리형 레지스트리 모듈. 모든 원소 반응 공식, 추가 데미지 다이스 및 상태이상 턴 수 계산 등을 전투 본체와 디커플링합니다.",
+      "purity": "Stateless System / Logic",
+      "dependencies": [],
+      "exports": [
+        "ELEMENTAL_REACTIONS",
+        "applyMonsterDebuff"
+      ],
+      "classes": [],
+      "functions": [
+        "applyMonsterDebuff"
+      ],
+      "lastModified": "2026-08-25T08:22:03Z"
+    },
+    {
+      "filePath": "src/core/Renderer.js",
+      "moduleName": "Renderer",
+      "category": "core",
+      "lines": 13,
+      "responsibility": "Mimicry Roguelike 핵심 렌더러 모듈. 차세대 3D 다층 복셀(Voxel3DRenderer) 파이프라인을 온전히 상속 및 바인딩하여 100% 호환성을 제공합니다.",
+      "purity": "Stateless System / Logic",
+      "dependencies": [
+        "Voxel3DRenderer.js"
+      ],
+      "exports": [
+        "Renderer"
+      ],
+      "classes": [
+        "Renderer"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-25T08:22:58Z"
+    },
+    {
+      "filePath": "src/core/SaveSystem.js",
+      "moduleName": "SaveSystem",
+      "category": "core",
+      "lines": 506,
+      "responsibility": "로컬스토리지 기반 다중 슬롯 게임 상태(맵, 플레이어, 인벤토리, 몬스터, 유니크 몬스터 생태계) 직렬화 및 역직렬화 세이브/로드 엔진",
+      "purity": "State Store",
+      "dependencies": [
+        "Map.js",
+        "Player.js",
+        "Item.js",
+        "Monster.js",
+        "MonsterRegistry.js",
+        "UniqueMonsterManager.js"
+      ],
+      "exports": [
+        "SAVE_SLOTS",
+        "SaveSystem"
+      ],
+      "classes": [
+        "SaveSystem"
+      ],
+      "functions": [
+        "deserializeItem",
+        "serializeItem",
+        "serializeMonster"
+      ],
+      "lastModified": "2026-08-26T04:56:50Z"
+    },
+    {
+      "filePath": "src/core/Skills.js",
+      "moduleName": "Skills",
+      "category": "core",
+      "lines": 788,
+      "responsibility": "플레이어 및 몬스터 스킬 시스템 설정 모듈. ToME 2.3.5 정통 851종 스펠/타격(TomeSpellEngine)과 100% 직결되어 동적 스킬 트리(CORE_SKILL_TREES) 및 액티브 스킬 설정을 제공합니다.",
+      "purity": "Stateless System / Logic",
+      "dependencies": [
+        "MonsterRegistry.js",
+        "TomeSpellEngine.js"
+      ],
+      "exports": [
+        "ACTIVE_SKILL_CONFIGS",
+        "BASE_SKILL_TREES",
+        "CORE_SKILL_TREES",
+        "MONSTER_SKILLS",
+        "generateDynamicSkillTree",
+        "isMagicSkill",
+        "renderSkillListHTML"
+      ],
+      "classes": [],
+      "functions": [
+        "generateDynamicSkillTree",
+        "isMagicSkill",
+        "renderSkillListHTML"
+      ],
+      "lastModified": "2026-08-26T02:35:06Z"
+    },
+    {
+      "filePath": "src/core/Spawner.js",
+      "moduleName": "Spawner",
+      "category": "core",
+      "lines": 799,
+      "responsibility": "ToME 2.3.5 정통 던전 깊이(Depth) 기반 동적 몬스터 및 아이템 스포너 엔진. 851종 몬스터 풀, 유니크 몬스터 1회성 스폰 생태계, Vault 및 Monster Pit 전용 군집 스폰, 테마별 절차적 배치 지원.",
+      "purity": "Pure Factory / Spawner Logic",
+      "dependencies": [
+        "Item.js",
+        "Monster.js",
+        "Tags.js",
+        "TomeLootGenerator.js",
+        "MonsterRegistry.js",
+        "UniqueMonsterManager.js",
+        "GameBalanceConfig.js",
+        "BossPhaseEngine.js",
+        "DungeonThemeConfig.js",
+        "DungeonValueBudgetEngine.js",
+        "TomeMonstersData.js"
+      ],
+      "exports": [
+        "Spawner",
+        "SPECIAL_MONSTER_PACKS",
+        "MONSTER_PIT_THEMES",
+        "DUNGEON_THEMES"
+      ],
+      "classes": [
+        "Spawner"
+      ],
+      "functions": [
+        "isEligible",
+        "isMonsterPresent",
+        "isPlayerPresent"
+      ],
+      "lastModified": "2026-08-26T04:31:28Z"
+    },
+    {
+      "filePath": "src/core/TraceLogger.js",
+      "moduleName": "TraceLogger",
+      "category": "core",
+      "lines": 64,
+      "responsibility": "게임의 복잡한 스탯 재계산 격발 원인, 더티 플래그 만료 시점 및 전투 대미지 감쇄 계산 경로 등 모든 중요 상태 변화 시점을 정밀하게 기록하고 역추적(Traceability)할 수 있도록 전담하는 중앙 집중형 디버그 로그 엔진.",
+      "purity": "Stateless System / Logic",
+      "dependencies": [],
+      "exports": [
+        "TraceLogger"
+      ],
+      "classes": [
+        "TraceLogger"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-25T08:22:03Z"
+    },
+    {
+      "filePath": "src/core/UIHelper.js",
+      "moduleName": "UIHelper",
+      "category": "core",
+      "lines": 34,
+      "responsibility": "UI 컴포넌트 3분할(InventoryView, InspectModalView, HUDView, UIManager) 통합 경량 파사드 모듈",
+      "purity": "DOM Facade / Pure Export",
+      "dependencies": [
+        "InventoryView.js",
+        "InspectModalView.js",
+        "HUDView.js",
+        "UIManager.js"
+      ],
+      "exports": [
+        "EQUIP_BADGE_STYLES",
+        "renderInventorySlotHTML",
+        "renderItemDetailHTML",
+        "renderTransferMaterialHTML",
+        "renderActiveCoreDetailsHTML",
+        "renderMonsterInspectHTML",
+        "renderPlayerStatusPanelHTML",
+        "renderPlayerDetailsHTML",
+        "renderSkillTreeHTML",
+        "renderMasteryDetailsHTML",
+        "updateTopBarHUD",
+        "formatCombatLogHTML",
+        "UIManager",
+        "updateFloatingAutoFireButton"
+      ],
+      "classes": [],
+      "functions": [],
+      "lastModified": "2026-08-25T14:21:19Z"
+    },
+    {
+      "filePath": "src/counter.js",
+      "moduleName": "counter",
+      "category": "root",
+      "lines": 9,
+      "responsibility": "counter module",
+      "purity": "Unspecified",
+      "dependencies": [],
+      "exports": [
+        "setupCounter"
+      ],
+      "classes": [],
+      "functions": [
+        "setCounter",
+        "setupCounter"
+      ],
+      "lastModified": "2026-08-25T08:22:03Z"
+    },
+    {
+      "filePath": "src/entities/Item.js",
+      "moduleName": "Item",
+      "category": "entities",
+      "lines": 284,
+      "responsibility": "던전 바닥 및 인벤토리 내의 장비, 소모품, 마법 디바이스, 정수 코어 아이템 데이터 컨테이너 모델",
+      "purity": "Zero-Logic Data Container",
+      "dependencies": [
+        "Tags.js",
+        "TomeEquipmentEngine.js",
+        "TomeConsumableEngine.js",
+        "TomeDeviceEngine.js"
+      ],
+      "exports": [
+        "Item"
+      ],
+      "classes": [
+        "Item"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-26T01:43:13Z"
+    },
+    {
+      "filePath": "src/entities/ItemRegistry.js",
+      "moduleName": "ItemRegistry",
+      "category": "entities",
+      "lines": 803,
+      "responsibility": "ToME 2.3.5 기반 560+종 기본 아이템 및 190+종 전설 유물(Artifacts) 중앙 레지스트리",
+      "purity": "Pure Registry / Data Store",
+      "dependencies": [
+        "Item.js",
+        "Tags.js",
+        "TomeArtifactsData.js"
+      ],
+      "exports": [
+        "TOME_BASE_ITEMS",
+        "TOME_ARTIFACTS",
+        "createTomeItem",
+        "getItemConfig"
+      ],
+      "classes": [],
+      "functions": [
+        "createTomeItem",
+        "getItemConfig"
+      ],
+      "lastModified": "2026-08-26T01:42:49Z"
+    },
+    {
+      "filePath": "src/entities/MimicBody.js",
+      "moduleName": "MimicBody",
+      "category": "entities",
+      "lines": 345,
+      "responsibility": "무정형 미믹의 영구 본체 컨테이너 클래스. 메인 코어의 탈착과 상관없이 스탯, 로어 숙련도, 몬스터 킬 카운트, 돌연변이 태그를 영구 보존하며 무게 한도 및 감속 배율을 수학적으로 도출합니다.",
+      "purity": "State Store / Logic Container",
+      "dependencies": [
+        "Tags.js",
+        "MonsterRegistry.js",
+        "Perks.js",
+        "Skills.js"
+      ],
+      "exports": [
+        "WEAPON_MASTERY_CONFIG",
+        "WEAPON_REQUIREMENT_CONFIG",
+        "MimicBody"
+      ],
+      "classes": [
+        "MimicBody"
+      ],
+      "functions": [
+        "addTags",
+        "checkSubCoreSkills"
+      ],
+      "lastModified": "2026-08-25T22:11:36Z"
+    },
+    {
+      "filePath": "src/entities/Monster.js",
+      "moduleName": "Monster",
+      "category": "entities",
+      "lines": 543,
+      "responsibility": "몬스터 엔티티 모델 (Zero-Logic 순수 데이터 컴포넌트). 스펠/공격 연산은 TomeSpellEngine에, 스탯/저항/플래그 판정은 TomeFlagResolver 및 UnifiedTraitEngine에 위임합니다.",
+      "purity": "Data Model / State Store",
+      "dependencies": [
+        "Tags.js",
+        "MonsterRegistry.js",
+        "Item.js",
+        "Perks.js",
+        "Skills.js",
+        "TraceLogger.js",
+        "MonsterAISystem.js",
+        "TomeFlagResolver.js",
+        "UnifiedTraitEngine.js",
+        "TomeSpellEngine.js",
+        "StatusEffectEngine.js",
+        "DungeonValueBudgetEngine.js",
+        "PlayerStatCalculator.js"
+      ],
+      "exports": [
+        "MONSTER_ATTACK_SKILL_NAMES",
+        "Monster"
+      ],
+      "classes": [
+        "Monster"
+      ],
+      "functions": [
+        "addTags"
+      ],
+      "lastModified": "2026-08-26T04:30:23Z"
+    },
+    {
+      "filePath": "src/entities/MonsterRegistry.js",
+      "moduleName": "MonsterRegistry",
+      "category": "entities",
+      "lines": 216,
+      "responsibility": "몬스터 종족(Species) 및 ToME 오픈소스 몬스터 마스터 데이터셋(851종) 중앙 제어 레지스트리",
+      "purity": "Pure Registry / Data Store",
+      "dependencies": [
+        "TomeMonstersData.js"
+      ],
+      "exports": [
+        "MONSTER_GROWTH_PATTERNS",
+        "MONSTER_SPECIES",
+        "LEGACY_TOME_ALIASES_MAP",
+        "getSpeciesConfig",
+        "normalizeCoreName",
+        "getSpeciesKeyByName",
+        "TOME_MONSTERS_DATA"
+      ],
+      "classes": [],
+      "functions": [
+        "getSpeciesConfig",
+        "getSpeciesKeyByName",
+        "initNameToKeyCache",
+        "normalizeCoreName"
+      ],
+      "lastModified": "2026-08-26T00:16:18Z"
+    },
+    {
+      "filePath": "src/entities/Perks.js",
+      "moduleName": "Perks",
+      "category": "entities",
+      "lines": 281,
+      "responsibility": "ToME 2.3.5 정통 플래그 및 변이(Mutations/Perks) 시스템 통합 정의 모듈. TomeFlagResolver 및 UnifiedTraitEngine과 직결되어 스탯 가중치, 행동 가속도, 상태이상 면역을 관리합니다.",
+      "purity": "Stateless / Pure Registry",
+      "dependencies": [],
+      "exports": [
+        "MONSTER_PERKS",
+        "getPerkDefinition"
+      ],
+      "classes": [],
+      "functions": [
+        "getPerkDefinition"
+      ],
+      "lastModified": "2026-08-25T23:59:15Z"
+    },
+    {
+      "filePath": "src/entities/Player.js",
+      "moduleName": "Player",
+      "category": "entities",
+      "lines": 963,
+      "responsibility": "플레이어 엔티티 모델 (Zero-Logic 순수 데이터 컴포넌트). 스탯/저항/광원 계산은 UnifiedTraitEngine 및 PlayerStatCalculator에, 의태 스킬 관리는 MonsterSpellFactory 및 TomeSpellEngine에 100% 위임합니다.",
+      "purity": "Data Model / State Store",
+      "dependencies": [
+        "Tags.js",
+        "MonsterRegistry.js",
+        "Perks.js",
+        "Item.js",
+        "Skills.js",
+        "MimicBody.js",
+        "TraceLogger.js",
+        "PlayerStatCalculator.js",
+        "UnifiedTraitEngine.js",
+        "VisionLightingEngine.js",
+        "MonsterSpellFactory.js",
+        "TomeFlagResolver.js",
+        "StatusEffectEngine.js"
+      ],
+      "exports": [
+        "Player"
+      ],
+      "classes": [
+        "Player"
+      ],
+      "functions": [
+        "getGrowth",
+        "getGrowthDelta"
+      ],
+      "lastModified": "2026-08-26T04:04:21Z"
+    },
+    {
+      "filePath": "src/entities/Tags.js",
+      "moduleName": "Tags",
+      "category": "entities",
+      "lines": 572,
+      "responsibility": "장비 및 몬스터에 적용되는 접두사(Prefix)와 접미사(Suffix) 태그 시스템 정의 모듈. 등급 색상, 크로매틱 애니메이션 연산, 무작위 롤링 함수 및 원소 메타데이터(ELEMENT_METADATA)를 통합 관리합니다.",
+      "purity": "Data Model / State Store",
+      "dependencies": [],
+      "exports": [
+        "ELEMENT_METADATA",
+        "PREFIX_TAGS",
+        "SUFFIX_TAGS",
+        "SYNERGY_TAG_REGISTRY",
+        "determineRarity",
+        "getChromaticColor",
+        "getRarityColor",
+        "rollJobSuffix",
+        "rollTags"
+      ],
+      "classes": [],
+      "functions": [
+        "checkEpic",
+        "checkRare",
+        "determineRarity",
+        "getChromaticColor",
+        "getKeysByRarity",
+        "getRarityColor",
+        "rollJobSuffix",
+        "rollTags"
+      ],
+      "lastModified": "2026-08-26T02:05:49Z"
+    },
+    {
+      "filePath": "src/entities/TomeArtifactsData.js",
+      "moduleName": "TomeArtifactsData",
+      "category": "entities",
+      "lines": 5944,
+      "responsibility": "ToME 2.3.5 정통 190종 전설 유물(Artifacts) 정적 데이터셋.",
+      "purity": "Data Model / State Store",
+      "dependencies": [],
+      "exports": [
+        "TOME_ARTIFACTS_DATA"
+      ],
+      "classes": [],
+      "functions": [],
+      "lastModified": "2026-08-25T15:35:22Z"
+    },
+    {
+      "filePath": "src/entities/TomeEgosData.js",
+      "moduleName": "TomeEgosData.js",
+      "category": "entities",
+      "lines": 1168,
+      "responsibility": "ToME 2.3.5 Pure ESM Data Module (101 entries)",
+      "purity": "Data Model / State Store",
+      "dependencies": [],
+      "exports": [
+        "TOME_EGOS_DATA"
+      ],
+      "classes": [],
+      "functions": [],
+      "lastModified": "2026-08-25T13:32:41Z"
+    },
+    {
+      "filePath": "src/entities/TomeKindsData.js",
+      "moduleName": "TomeKindsData",
+      "category": "entities",
+      "lines": 9988,
+      "responsibility": "ToME 2.3.5 정통 560종 베이스 아이템(Kinds) 정적 데이터셋.",
+      "purity": "Data Model / State Store",
+      "dependencies": [],
+      "exports": [
+        "TOME_KINDS_DATA"
+      ],
+      "classes": [],
+      "functions": [],
+      "lastModified": "2026-08-25T15:35:22Z"
+    },
+    {
+      "filePath": "src/entities/TomeMonstersData.js",
+      "moduleName": "TomeMonstersData.js",
+      "category": "entities",
+      "lines": 57880,
+      "responsibility": "ToME 2.3.5 Pure ESM Data Module (851 entries)",
+      "purity": "Data Model / State Store",
+      "dependencies": [],
+      "exports": [
+        "TOME_MONSTERS_DATA"
+      ],
+      "classes": [
+        "of"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-25T13:32:41Z"
+    },
+    {
+      "filePath": "src/entities/VoxelMimicBridge.js",
+      "moduleName": "VoxelMimicBridge",
+      "category": "entities",
+      "lines": 97,
+      "responsibility": "미믹(Mimic)의 코어 융합, 변신(위장), 포식, 몬스터별 3D 크로매틱 셰이딩 및 복셀 모핑 이펙트 연동 브릿지.",
+      "purity": "Data Model / State Store",
+      "dependencies": [],
+      "exports": [
+        "VoxelMimicBridge"
+      ],
+      "classes": [
+        "VoxelMimicBridge"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-26T00:16:03Z"
+    },
+    {
+      "filePath": "src/events/EventBus.js",
+      "moduleName": "EventBus",
+      "category": "events",
+      "lines": 81,
+      "responsibility": "게임 엔진과 UI 컴포넌트 간의 결합도를 완전히 분리하는 싱글톤 Pub/Sub 중앙 메시지 브로커",
+      "purity": "State Store / Event Broker",
+      "dependencies": [],
+      "exports": [
+        "EventBus",
+        "eventBus"
+      ],
+      "classes": [
+        "EventBus"
+      ],
+      "functions": [
+        "wrapper"
+      ],
+      "lastModified": "2026-08-25T12:55:52Z"
+    },
+    {
+      "filePath": "src/events/GameEvents.js",
+      "moduleName": "GameEvents",
+      "category": "events",
+      "lines": 58,
+      "responsibility": "미미크리 게임 엔진과 UI/시스템 간의 결합도를 낮추기 위한 중앙 이벤트 식별자 열거형 상수",
+      "purity": "Pure Constants",
+      "dependencies": [],
+      "exports": [
+        "GameEvents"
+      ],
+      "classes": [],
+      "functions": [],
+      "lastModified": "2026-08-25T22:26:32Z"
+    },
+    {
+      "filePath": "src/main.js",
+      "moduleName": "main",
+      "category": "root",
+      "lines": 60,
+      "responsibility": "main module",
+      "purity": "Unspecified",
+      "dependencies": [
+        "counter.js",
+        "hero.png",
+        "javascript.svg",
+        "style.css",
+        "vite.svg"
+      ],
+      "exports": [],
+      "classes": [],
+      "functions": [],
+      "lastModified": "2026-08-25T08:22:03Z"
+    },
+    {
+      "filePath": "src/map/Map.js",
+      "moduleName": "Map",
+      "category": "map",
+      "lines": 757,
+      "responsibility": "1~50층 5대 테마 던전 절차적 생성기, 타일 충돌/투명도 FOV 판정, 보스룸 및 특수 지형(보물 금고 Vault & 몬스터 피트 Monster Pit) 배치 시스템",
+      "purity": "Data Model / State Store",
+      "dependencies": [
+        "DungeonThemeConfig.js",
+        "DungeonValueBudgetEngine.js"
+      ],
+      "exports": [
+        "RectRoom",
+        "Map"
+      ],
+      "classes": [
+        "Map",
+        "RectRoom"
+      ],
+      "functions": [
+        "carveHorizontalTunnel",
+        "carveTile",
+        "carveVerticalTunnel",
+        "findSafeStairPos",
+        "getAvailableIndices",
+        "getRoomDistance",
+        "getRoomPenalty",
+        "placeWallTile"
+      ],
+      "lastModified": "2026-08-26T02:53:57Z"
+    },
+    {
+      "filePath": "src/map/Voxel3DMapBridge.js",
+      "moduleName": "Voxel3DMapBridge",
+      "category": "map",
+      "lines": 200,
+      "responsibility": "2D 던전 맵 타일 데이터를 차세대 3D 다층 높이맵(Z=0~3) 복셀 블록 스택으로 변환 및 동기화하는 브릿지 시스템",
+      "purity": "Data Model / State Store",
+      "dependencies": [],
+      "exports": [
+        "VOXEL_THEMES",
+        "Voxel3DMapBridge"
+      ],
+      "classes": [
+        "Voxel3DMapBridge"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-25T22:03:25Z"
+    },
+    {
+      "filePath": "src/renderer/Classic2DAsciiRenderer.js",
+      "moduleName": "Classic2DAsciiRenderer",
+      "category": "renderer",
+      "lines": 443,
+      "responsibility": "원본 Mimicry 정통 2D 탑다운 격자(ASCII Grid) 렌더러. 클래식 로그라이크 스타일의 2D 타일 폰트 렌더링, 시야/안개 시스템, 엔티티 및 아이템 심볼 표시를 지원하며, Game.js 및 Effects.js와의 100% 드롭인(Drop-in) 호환성을 보장합니다.",
+      "purity": "DOM / Canvas Renderer",
+      "dependencies": [
+        "ThemeColors.js",
+        "VoxelMimicBridge.js",
+        "VoxelParticleSystem.js"
+      ],
+      "exports": [
+        "Classic2DAsciiRenderer"
+      ],
+      "classes": [
+        "Classic2DAsciiRenderer"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-26T00:39:36Z"
+    },
+    {
+      "filePath": "src/renderer/Voxel3DRenderer.js",
+      "moduleName": "Voxel3DRenderer",
+      "category": "renderer",
+      "lines": 647,
+      "responsibility": "Mimicry Roguelike 차세대 3D 다층 복셀(Voxel) 렌더러. 정석 2.5D 아이소메트릭 중앙 정렬 좌표계, 반응형 화면비(Galaxy Fold 등) 실시간 적응, 표준 로그라이크 FOV 시스템, 실시간 포인트 라이트 및 3D 마이크로 복셀 파편 물리 통합 렌더링.",
+      "purity": "DOM / Canvas Renderer",
+      "dependencies": [
+        "ThemeColors.js",
+        "Voxel3DMapBridge.js",
+        "VoxelMimicBridge.js",
+        "VoxelParticleSystem.js"
+      ],
+      "exports": [
+        "Voxel3DRenderer"
+      ],
+      "classes": [
+        "Voxel3DRenderer"
+      ],
+      "functions": [
+        "clamp"
+      ],
+      "lastModified": "2026-08-26T00:15:50Z"
+    },
+    {
+      "filePath": "src/renderer/VoxelParticleSystem.js",
+      "moduleName": "VoxelParticleSystem",
+      "category": "renderer",
+      "lines": 125,
+      "responsibility": "3D 마이크로 복셀 큐브 물리 파편 및 파티클 연산 시스템. 피격, 처치, 걷기, 포식, 레벨업 시 3D 회전과 바닥 튕김(Bounce) 물리 연산을 지원합니다.",
+      "purity": "DOM / Canvas Renderer",
+      "dependencies": [],
+      "exports": [
+        "VoxelParticleSystem"
+      ],
+      "classes": [
+        "VoxelParticleSystem"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-25T08:22:27Z"
+    },
+    {
+      "filePath": "src/systems/ArtifactActivationEngine.js",
+      "moduleName": "ArtifactActivationEngine",
+      "category": "systems",
+      "lines": 346,
+      "responsibility": "ToME 2.3.5 정통 183종 전설 유물의 고유 발동(Activation: ACT_SUNLIGHT, ACT_BO_ACID_1, ACT_BA_COLD_1, ACT_HEAL_1, ACT_RESTORE_STAT, ACT_WORD_OF_RECALL, ACT_GROND, ACT_THRAIN 등)을 식별하고 쿨다운(Cooldown) 관리 및 특수 주문 효과를 발동하는 순수 무상태 유물 발동 엔진.",
+      "purity": "Stateless System",
+      "dependencies": [
+        "TomeArtifactsData.js",
+        "TomeSpellEngine.js",
+        "UnifiedTraitEngine.js"
+      ],
+      "exports": [
+        "ArtifactActivationEngine",
+        "TOME_ARTIFACT_ACTIVATIONS",
+        "ARTIFACT_KEY_TO_ACTIVATION"
+      ],
+      "classes": [
+        "ArtifactActivationEngine"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-25T23:55:07Z"
+    },
+    {
+      "filePath": "src/systems/BossPhaseEngine.js",
+      "moduleName": "BossPhaseEngine",
+      "category": "systems",
+      "lines": 673,
+      "responsibility": "50F 모르고스의 옥좌 최종 보스전(Morgoth Encounter) 3단계 페이즈 전환 엔진, 암흑 장막/지진/소환/영혼 드레인 스킬 제어 및 승천 보상 파이프라인",
+      "purity": "State Store / Logic System",
+      "dependencies": [
+        "EventBus.js",
+        "GameEvents.js",
+        "Item.js",
+        "Monster.js",
+        "Effects.js",
+        "TomeMonstersData.js",
+        "TomeArtifactsData.js",
+        "UniqueMonsterManager.js",
+        "AscensionModalView.js"
+      ],
+      "exports": [
+        "BossPhaseEngine",
+        "bossPhaseEngine",
+        "BOSS_PHASES",
+        "MORGOTH_KEY"
+      ],
+      "classes": [
+        "BossPhaseEngine"
+      ],
+      "functions": [
+        "checkItem"
+      ],
+      "lastModified": "2026-08-26T03:28:02Z"
+    },
+    {
+      "filePath": "src/systems/ConsumableEffectEngine.js",
+      "moduleName": "ConsumableEffectEngine",
+      "category": "systems",
+      "lines": 37,
+      "responsibility": "ToME 2.3.5 소비성 아이템 효과 실행기 (TomeConsumableEngine 연동 호환 래퍼)",
+      "purity": "Stateless Facade",
+      "dependencies": [
+        "TomeConsumableEngine.js"
+      ],
+      "exports": [
+        "ConsumableEffectEngine"
+      ],
+      "classes": [
+        "ConsumableEffectEngine"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-26T00:15:39Z"
+    },
+    {
+      "filePath": "src/systems/DungeonValueBudgetEngine.js",
+      "moduleName": "DungeonValueBudgetEngine",
+      "category": "systems",
+      "lines": 603,
+      "responsibility": "ToME/TomeNET 정통 층 깊이(Depth 1~50F) 기반 통합 밸류 예산 시스템. 4단계 티어 게이팅(Tier Gating), 가우시안/시그모이드 OOD 스케일링, 동적 맵 크기(Dynamic Map Dimensions) 및 다중 계단(Multiple Staircases) 분산 수식 산출, 장비 인챈트(+to_h, +to_d, +to_a, pval) 및 몬스터 접사/직업/특수방 예산 통제 엔진.",
+      "purity": "Pure Logic / Budget Calculation Engine",
+      "dependencies": [
+        "DungeonThemeConfig.js",
+        "Tags.js",
+        "GameBalanceConfig.js"
+      ],
+      "exports": [
+        "DungeonValueBudgetEngine",
+        "dungeonValueBudgetEngine",
+        "DUNGEON_TIER_CONFIGS",
+        "calculateEnchantments",
+        "calculateFloorDanger",
+        "calculateMapDimensions",
+        "calculateStaircaseCounts",
+        "clampMonsterHp",
+        "getMaxAllowedMonsterHp",
+        "getSpecialRoomProbabilities",
+        "getTierConfig",
+        "rollGaussian",
+        "rollMonsterAffixes",
+        "rollMonsterJobSuffix",
+        "rollOutOfDepthLevel",
+        "sigmoid"
+      ],
+      "classes": [
+        "DungeonValueBudgetEngine"
+      ],
+      "functions": [
+        "calculateEnchantments",
+        "calculateFloorDanger",
+        "calculateMapDimensions",
+        "calculateStaircaseCounts",
+        "clampMonsterHp",
+        "getMaxAllowedMonsterHp",
+        "getSpecialRoomProbabilities",
+        "getTierConfig",
+        "rollGaussian",
+        "rollMonsterAffixes",
+        "rollMonsterJobSuffix",
+        "rollOutOfDepthLevel",
+        "sigmoid"
+      ],
+      "lastModified": "2026-08-26T04:31:57Z"
+    },
+    {
+      "filePath": "src/systems/MonsterAISystem.js",
+      "moduleName": "MonsterAISystem",
+      "category": "systems",
+      "lines": 487,
+      "responsibility": "몬스터 A* 패스파인딩, 행동 결정(Act), Bat 도주 AI, 브레스/스킬 쿨다운 및 버프/힐 틱 전담 시스템",
+      "purity": "Stateless System",
+      "dependencies": [
+        "MonsterRegistry.js",
+        "Tags.js",
+        "Perks.js",
+        "TraceLogger.js",
+        "BossPhaseEngine.js",
+        "TomeFlagResolver.js",
+        "TomeMonstersData.js",
+        "TomeSpellEngine.js"
+      ],
+      "exports": [
+        "MonsterAISystem"
+      ],
+      "classes": [
+        "MonsterAISystem"
+      ],
+      "functions": [
+        "isSpellReady"
+      ],
+      "lastModified": "2026-08-26T03:47:04Z"
+    },
+    {
+      "filePath": "src/systems/MonsterSpellFactory.js",
+      "moduleName": "MonsterSpellFactory",
+      "category": "systems",
+      "lines": 1023,
+      "responsibility": "ToME 2.3.5 정통 몬스터 DB(TomeMonstersData.js)의 106종 spells 플래그 및 attacks 데이터를 100% 기반으로 몬스터 코어 변신 시 플레이어 스킬바(1, 2, 3, 4번 슬롯)에 1:1 정확하게 바인딩하는 순수 의태 스펠 엔진.",
+      "purity": "Stateless System / Logic",
+      "dependencies": [
+        "TomeMonstersData.js",
+        "MonsterRegistry.js"
+      ],
+      "exports": [
+        "ActiveSkill",
+        "MonsterSpellFactory",
+        "TOME_ATTACK_DEFINITIONS",
+        "TOME_SPELL_DEFINITIONS"
+      ],
+      "classes": [
+        "ActiveSkill",
+        "MonsterSpellFactory"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-25T15:09:47Z"
+    },
+    {
+      "filePath": "src/systems/PlayerStatCalculator.js",
+      "moduleName": "PlayerStatCalculator",
+      "category": "systems",
+      "lines": 344,
+      "responsibility": "플레이어 동적 스탯 연산, 스탯 Breakdown 기여도 분석, 속성 저항, 대미지 감쇄 및 속도 산출 전담 시스템",
+      "purity": "Stateless System",
+      "dependencies": [
+        "Tags.js",
+        "MonsterRegistry.js",
+        "Perks.js",
+        "TraceLogger.js"
+      ],
+      "exports": [
+        "PlayerStatCalculator"
+      ],
+      "classes": [
+        "PlayerStatCalculator"
+      ],
+      "functions": [
+        "getSubBase"
+      ],
+      "lastModified": "2026-08-26T00:01:19Z"
+    },
+    {
+      "filePath": "src/systems/StatusEffectEngine.js",
+      "moduleName": "StatusEffectEngine",
+      "category": "systems",
+      "lines": 840,
+      "responsibility": "ToME 2.3.5 정통 14대 상태이상/버프 카탈로그 관리, 동적 플래그 저항/면역 판정, 턴별 지속시간 차감 및 DoT 피해(독/출혈/마나고갈) 처리, 스탯 및 속도 보정치를 일괄 산출하는 순수 무상태 엔진.",
+      "purity": "Stateless System",
+      "dependencies": [
+        "TomeFlagResolver.js",
+        "UnifiedTraitEngine.js",
+        "TraceLogger.js"
+      ],
+      "exports": [
+        "STATUS_DEFINITIONS",
+        "StatusEffectEngine"
+      ],
+      "classes": [
+        "StatusEffectEngine"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-26T04:03:42Z"
+    },
+    {
+      "filePath": "src/systems/TomeConsumableEngine.js",
+      "moduleName": "TomeConsumableEngine",
+      "category": "systems",
+      "lines": 673,
+      "responsibility": "ToME 2.3.5 정통 (tval, sval) 기반 포션 45+종, 주문서 42+종, 기름 플라스크, 음식 및 코어 소비 무상태 엔진",
+      "purity": "Stateless Engine (State Mutation with Log Feedback)",
+      "dependencies": [
+        "TomeEquipmentEngine.js",
+        "TomeKindsData.js"
+      ],
+      "exports": [
+        "TomeConsumableEngine"
+      ],
+      "classes": [
+        "TomeConsumableEngine"
+      ],
+      "functions": [
+        "boostStat",
+        "healHp",
+        "log"
+      ],
+      "lastModified": "2026-08-26T00:22:22Z"
+    },
+    {
+      "filePath": "src/systems/TomeDeviceEngine.js",
+      "moduleName": "TomeDeviceEngine",
+      "category": "systems",
+      "lines": 397,
+      "responsibility": "ToME 2.3.5 정통 마법 디바이스(완드 30종, 스태프 20종, 로드 28종) 발동 및 충전량/쿨다운 무상태 제어 엔진",
+      "purity": "Stateless Engine (State Mutation with Log Feedback)",
+      "dependencies": [
+        "TomeEquipmentEngine.js",
+        "TomeKindsData.js"
+      ],
+      "exports": [
+        "TomeDeviceEngine"
+      ],
+      "classes": [
+        "TomeDeviceEngine"
+      ],
+      "functions": [
+        "log"
+      ],
+      "lastModified": "2026-08-26T00:15:36Z"
+    },
+    {
+      "filePath": "src/systems/TomeEgoEngine.js",
+      "moduleName": "TomeEgoEngine",
+      "category": "systems",
+      "lines": 227,
+      "responsibility": "ToME 2.3.5 정통 101종 에고 및 183종 유물의 슬레이(Slay), 속성 브랜드(Brand), 저항(Resist), 상태이상 면역(Free Action), 투시(See Invisible), 초재생(Regen) 등 전투/생존 플래그 판정 엔진",
+      "purity": "Stateless System",
+      "dependencies": [],
+      "exports": [
+        "TomeEgoEngine"
+      ],
+      "classes": [
+        "TomeEgoEngine"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-25T15:40:51Z"
+    },
+    {
+      "filePath": "src/systems/TomeEquipmentEngine.js",
+      "moduleName": "TomeEquipmentEngine",
+      "category": "systems",
+      "lines": 340,
+      "responsibility": "ToME 2.3.5 정통 tval 기반 슬롯(slotType), 아스키 심볼, 무게, 방어력(AC), 무기 카테고리 무상태 연산 엔진",
+      "purity": "Pure Stateless Engine",
+      "dependencies": [
+        "MonsterRegistry.js"
+      ],
+      "exports": [
+        "TomeEquipmentEngine",
+        "TVAL"
+      ],
+      "classes": [
+        "TomeEquipmentEngine"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-26T00:15:01Z"
+    },
+    {
+      "filePath": "src/systems/TomeFlagResolver.js",
+      "moduleName": "TomeFlagResolver",
+      "category": "systems",
+      "lines": 386,
+      "responsibility": "ToME 2.3.5 몬스터 종족(tomeKey), 장비(베이스+에고+유물), 의태 변이(mutations/perks), 소모품 및 임시 상태로부터 모든 ToME 플래그(RES_*, IM_*, LITE*, SUST_*, SLAY_*, ESP_*, FREE_ACT, NO_*, CAN_FLY, PASS_WALL, REFLECT 등)를 O(1) 단일 Set으로 일괄 추출 및 병합하는 순수 무상태 엔진.",
+      "purity": "Stateless System",
+      "dependencies": [
+        "TomeMonstersData.js",
+        "TomeKindsData.js",
+        "TomeEgosData.js",
+        "TomeArtifactsData.js"
+      ],
+      "exports": [
+        "TomeFlagResolver"
+      ],
+      "classes": [
+        "TomeFlagResolver"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-26T04:03:53Z"
+    },
+    {
+      "filePath": "src/systems/TomeLootGenerator.js",
+      "moduleName": "TomeLootGenerator",
+      "category": "systems",
+      "lines": 276,
+      "responsibility": "ToME 2.3.5 정통 알고리즘 기반 던전 깊이(Depth)별 아이템 롤링, 에고(Ego) 접사 합성 및 전설 유물(Artifact) 드랍 파이프라인 엔진",
+      "purity": "Pure Loot Factory",
+      "dependencies": [
+        "Item.js",
+        "Tags.js",
+        "DungeonValueBudgetEngine.js",
+        "TomeArtifactsData.js",
+        "TomeEgosData.js",
+        "TomeKindsData.js"
+      ],
+      "exports": [
+        "TomeLootGenerator"
+      ],
+      "classes": [
+        "TomeLootGenerator"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-26T02:04:08Z"
+    },
+    {
+      "filePath": "src/systems/TomeSpellEngine.js",
+      "moduleName": "TomeSpellEngine",
+      "category": "systems",
+      "lines": 893,
+      "responsibility": "ToME 2.3.5 정통 몬스터 851종의 106종 C 원작 spells (볼트 14종, 볼 13종, 브레스 21종, 상태이상 23종, 소환 17종, 유틸 18종) 및 20종 attacks 메소드 / 27종 effects를 1:1 정확하게 해석 및 실행하는 통합 주문/전투 엔진. 플레이어 의태 스킬(1~4 슬롯) 및 몬스터 AI 공통 사용.",
+      "purity": "Stateless System",
+      "dependencies": [
+        "TomeMonstersData.js",
+        "UnifiedTraitEngine.js",
+        "TomeFlagResolver.js",
+        "Spawner.js"
+      ],
+      "exports": [
+        "TomeSpellEngine",
+        "TOME_CANONICAL_SPELLS",
+        "TOME_ATTACK_METHODS",
+        "TOME_ATTACK_EFFECTS"
+      ],
+      "classes": [
+        "TomeSpellEngine"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-26T04:10:27Z"
+    },
+    {
+      "filePath": "src/systems/UnifiedTraitEngine.js",
+      "moduleName": "UnifiedTraitEngine",
+      "category": "systems",
+      "lines": 442,
+      "responsibility": "TomeFlagResolver가 취합한 ToME 2.3.5 정통 플래그를 정밀 해석하여 6대 스탯 보너스(str, int, wis, dex, con, chr), 21종 원소 저항률(%) 및 면역(Immunity), 광원 반경(Lite Radius), 속도 보정(Speed), 슬레이(Slay) 및 브랜드(Brand) 공격 배율, 상태이상 면역을 일괄 산출하는 순수 무상태 특성 판정 엔진.",
+      "purity": "Stateless System",
+      "dependencies": [
+        "TomeFlagResolver.js"
+      ],
+      "exports": [
+        "UnifiedTraitEngine"
+      ],
+      "classes": [
+        "UnifiedTraitEngine"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-26T04:05:06Z"
+    },
+    {
+      "filePath": "src/systems/UniqueMonsterManager.js",
+      "moduleName": "UniqueMonsterManager",
+      "category": "systems",
+      "lines": 561,
+      "responsibility": "ToME 2.3.5 정통 168종 유니크 몬스터 1회성 스폰 생태계 제어, 전설 유물 및 특급 에고 확정 드랍 파이프라인 엔진",
+      "purity": "State Store / Logic System",
+      "dependencies": [
+        "TomeMonstersData.js",
+        "TomeArtifactsData.js",
+        "TomeEgosData.js",
+        "Item.js",
+        "Monster.js",
+        "Tags.js",
+        "EventBus.js",
+        "DungeonValueBudgetEngine.js",
+        "GameBalanceConfig.js",
+        "GameEvents.js"
+      ],
+      "exports": [
+        "UniqueMonsterManager",
+        "uniqueMonsterManager"
+      ],
+      "classes": [
+        "UniqueMonsterManager"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-26T04:31:15Z"
+    },
+    {
+      "filePath": "src/systems/VisionLightingEngine.js",
+      "moduleName": "VisionLightingEngine",
+      "category": "systems",
+      "lines": 246,
+      "responsibility": "ToME 2.3.5 정통 광원 반경(Lite Radius), 9종 ESP(초감각 텔레파시: ESP_ORC, ESP_DRAGON, ESP_UNDEAD, ESP_DEMON, ESP_GIANT, ESP_TROLL, ESP_ANIMAL, ESP_HUMAN, ESP_EVIL, TELEPATHY), 적외선 시야(Infravision), 투명 감지(See Invisible)를 종합 연산하는 순수 무상태 시야/조명 엔진.",
+      "purity": "Stateless System",
+      "dependencies": [
+        "TomeFlagResolver.js",
+        "UnifiedTraitEngine.js"
+      ],
+      "exports": [
+        "VisionLightingEngine"
+      ],
+      "classes": [
+        "VisionLightingEngine"
+      ],
+      "functions": [],
+      "lastModified": "2026-08-26T00:41:22Z"
+    },
+    {
+      "filePath": "src/ui/AscensionModalView.js",
+      "moduleName": "AscensionModalView",
+      "category": "ui",
+      "lines": 1351,
+      "responsibility": "50F 모르고스 토벌 승천(Ascension) 엔딩 컷씬, 발리노르의 빛 연출, 영구 명예의 전당(Hall of Fame) 및 사망 묘비명(Graveyard) 저장/렌더링 및 상세 스펙/인벤토리/전투로그 인스펙터 시스템",
+      "purity": "DOM Manager / State Store",
+      "dependencies": [
+        "ThemeColors.js",
+        "EventBus.js",
+        "GameEvents.js"
+      ],
+      "exports": [
+        "saveAscensionRecord",
+        "getHallOfFameRecords",
+        "saveGraveyardRecord",
+        "getGraveyardRecords",
+        "deduplicateGraveyardRecords",
+        "calculateScore",
+        "clearHallOfFameRecords",
+        "clearGraveyardRecords",
+        "renderAscensionModalHTML",
+        "renderHallOfFameModalHTML",
+        "renderGraveyardModalHTML",
+        "renderRecordDetailModalHTML",
+        "showRecordDetailModal",
+        "serializeCombatStats",
+        "serializeItemData",
+        "serializeEquipmentSlots",
+        "serializeInventoryItems",
+        "serializeRecentLogs",
+        "AscensionModalView"
+      ],
+      "classes": [
+        "AscensionModalView"
+      ],
+      "functions": [
+        "calculateScore",
+        "clearGraveyardRecords",
+        "clearHallOfFameRecords",
+        "closeModal",
+        "deduplicateGraveyardRecords",
+        "getGraveyardRecords",
+        "getHallOfFameRecords",
+        "getStorageItem",
+        "render",
+        "renderAscensionModalHTML",
+        "renderGraveyardModalHTML",
+        "renderHallOfFameModalHTML",
+        "renderItemCard",
+        "renderRecordDetailModalHTML",
+        "saveAscensionRecord",
+        "saveGraveyardRecord",
+        "serializeCombatStats",
+        "serializeEquipmentSlots",
+        "serializeInventoryItems",
+        "serializeItemData",
+        "serializeRecentLogs",
+        "setStorageItem"
+      ],
+      "lastModified": "2026-08-26T03:27:32Z"
+    },
+    {
+      "filePath": "src/ui/HUDView.js",
+      "moduleName": "HUDView",
+      "category": "ui",
+      "lines": 813,
+      "responsibility": "상단 상태바(SPD, HP, Floor), 플레이어 상세 스테이터스창, 스킬 수련 트리, 무기/로어 마스터리 도감 뷰",
+      "purity": "DOM Renderer",
+      "dependencies": [
+        "Tags.js",
+        "MonsterRegistry.js",
+        "Perks.js",
+        "Skills.js",
+        "MimicBody.js",
+        "EventBus.js",
+        "GameEvents.js",
+        "MonsterLoreView.js"
+      ],
+      "exports": [
+        "renderPlayerStatusPanelHTML",
+        "renderPlayerDetailsHTML",
+        "renderSkillTreeHTML",
+        "renderMasteryDetailsHTML",
+        "updateTopBarHUD",
+        "formatCombatLogHTML",
+        "updateFloatingAutoFireButton"
+      ],
+      "classes": [],
+      "functions": [
+        "formatCombatLogHTML",
+        "renderBreakdownHTML",
+        "renderMasteryDetailsHTML",
+        "renderPlayerDetailsHTML",
+        "renderPlayerStatusPanelHTML",
+        "renderSkillTreeHTML",
+        "updateFloatingAutoFireButton",
+        "updateTopBarHUD"
+      ],
+      "lastModified": "2026-08-25T22:15:17Z"
+    },
+    {
+      "filePath": "src/ui/InspectModalView.js",
+      "moduleName": "InspectModalView",
+      "category": "ui",
+      "lines": 373,
+      "responsibility": "몬스터 48px 여유 히트박스 피킹 관찰 팝업 및 4대 스탯 기여도(Breakdown), 시너지, 상태이상 분석 뷰",
+      "purity": "DOM Renderer",
+      "dependencies": [
+        "Tags.js",
+        "Perks.js",
+        "Skills.js"
+      ],
+      "exports": [
+        "renderMonsterInspectHTML"
+      ],
+      "classes": [],
+      "functions": [
+        "renderBreakdownHTML",
+        "renderMonsterInspectHTML"
+      ],
+      "lastModified": "2026-08-25T14:55:30Z"
+    },
+    {
+      "filePath": "src/ui/InventoryView.js",
+      "moduleName": "InventoryView",
+      "category": "ui",
+      "lines": 839,
+      "responsibility": "인벤토리 그리드, 아이템 슬롯, 장착/해제/포식 모달 및 코어 수치 계승 뷰 렌더러",
+      "purity": "DOM Renderer",
+      "dependencies": [
+        "Tags.js",
+        "MonsterRegistry.js",
+        "Perks.js",
+        "TomeSpellEngine.js"
+      ],
+      "exports": [
+        "EQUIP_BADGE_STYLES",
+        "TOME_FLAG_TRANSLATIONS",
+        "renderInventorySlotHTML",
+        "renderItemDetailHTML",
+        "renderTransferMaterialHTML",
+        "renderActiveCoreDetailsHTML"
+      ],
+      "classes": [],
+      "functions": [
+        "renderActiveCoreDetailsHTML",
+        "renderInventorySlotHTML",
+        "renderItemDetailHTML",
+        "renderTransferMaterialHTML"
+      ],
+      "lastModified": "2026-08-26T04:40:20Z"
+    },
+    {
+      "filePath": "src/ui/MonsterLoreView.js",
+      "moduleName": "MonsterLoreView",
+      "category": "ui",
+      "lines": 620,
+      "responsibility": "TomeNET 스타일 851종 ToME 몬스터 도감, 검색/필터링, 168종 유니크 처치 체크리스트 및 로어/의태 마스터리 뷰 렌더러",
+      "purity": "DOM Renderer",
+      "dependencies": [
+        "TomeMonstersData.js",
+        "UniqueMonsterManager.js",
+        "Tags.js",
+        "Perks.js",
+        "MimicBody.js",
+        "MonsterRegistry.js"
+      ],
+      "exports": [
+        "renderMonsterLoreModalHTML",
+        "renderMonsterBestiaryHTML",
+        "renderUniqueChecklistHTML",
+        "renderMonsterDetailCardHTML",
+        "renderLoreMasterySummaryHTML",
+        "getUniqueChecklistStats"
+      ],
+      "classes": [],
+      "functions": [
+        "getUniqueChecklistStats",
+        "renderFlagChipsHTML",
+        "renderLoreMasterySummaryHTML",
+        "renderMonsterBestiaryHTML",
+        "renderMonsterDetailCardHTML",
+        "renderMonsterLoreModalHTML",
+        "renderUniqueChecklistHTML"
+      ],
+      "lastModified": "2026-08-25T22:12:47Z"
+    },
+    {
+      "filePath": "src/ui/UIManager.js",
+      "moduleName": "UIManager",
+      "category": "ui",
+      "lines": 257,
+      "responsibility": "게임 클라이언트 DOM 모달, HUD 상태바, 전투 로그 및 사용자 인터랙션 뷰 라우팅 중앙 관리자",
+      "purity": "DOM Manager / State Store",
+      "dependencies": [
+        "InventoryView.js",
+        "InspectModalView.js",
+        "HUDView.js",
+        "MonsterLoreView.js",
+        "AscensionModalView.js"
+      ],
+      "exports": [
+        "UIManager"
+      ],
+      "classes": [
+        "UIManager"
+      ],
+      "functions": [
+        "getEl"
+      ],
+      "lastModified": "2026-08-26T03:28:14Z"
+    },
+    {
+      "filePath": "src/ui/VirtualController.js",
+      "moduleName": "VirtualController",
+      "category": "ui",
+      "lines": 42,
+      "responsibility": "모바일/터치 환경을 위한 온스크린 가상 D-패드 및 액션 버튼 이벤트 바인딩 컨트롤러",
+      "purity": "DOM Event Handler",
+      "dependencies": [],
+      "exports": [
+        "VirtualController"
+      ],
+      "classes": [
+        "VirtualController"
+      ],
+      "functions": [
+        "releaseAction",
+        "triggerAction"
+      ],
+      "lastModified": "2026-08-25T12:48:07Z"
+    }
+  ]
+}

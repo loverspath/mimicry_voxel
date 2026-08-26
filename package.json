@@ -1,0 +1,20 @@
+{
+  "name": "mimicry-voxel",
+  "version": "0.18.0",
+  "description": "2.5D Voxel & Classic ASCII Data-Oriented Roguelike Game (ToME 2.3.5 Ecosystem)",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "test": "node scripts/test_data_oriented_rebuilding_full.js",
+    "meta-index": "python3 scripts/meta_indexer.py --update-wiki"
+  },
+  "keywords": [
+    "roguelike",
+    "voxel",
+    "ascii",
+    "tome",
+    "data-oriented"
+  ],
+  "author": "OpenDCMart Engine Team",
+  "license": "MIT"
+}

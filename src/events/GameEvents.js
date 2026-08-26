@@ -1,0 +1,58 @@
+/**
+ * @module GameEvents
+ * @category events
+ * @description 미미크리 게임 엔진과 UI/시스템 간의 결합도를 낮추기 위한 중앙 이벤트 식별자 열거형 상수
+ * @purity Pure Constants
+ * @dependencies none
+ * @exports GameEvents
+ */
+
+export const GameEvents = {
+  // 플레이어 및 액션 이벤트
+  PLAYER_MOVE: "PLAYER_MOVE",
+  PLAYER_ATTACK: "PLAYER_ATTACK",
+  PLAYER_DEATH: "PLAYER_DEATH",
+  LEVEL_UP: "LEVEL_UP",
+  STAT_CHANGE: "STAT_CHANGE",
+
+  // 전투 및 스킬 이벤트
+  COMBAT_HIT: "COMBAT_HIT",
+  SKILL_CAST: "SKILL_CAST",
+  STATUS_APPLIED: "STATUS_APPLIED",
+
+  // 인벤토리 및 아이템 이벤트
+  ITEM_PICKUP: "ITEM_PICKUP",
+  ITEM_EQUIP: "ITEM_EQUIP",
+  ITEM_UNEQUIP: "ITEM_UNEQUIP",
+  ITEM_USE: "ITEM_USE",
+  ITEM_DROP: "ITEM_DROP",
+  CORE_EAT: "CORE_EAT",
+  CORE_SWAP: "CORE_SWAP",
+  INVENTORY_UPDATE: "INVENTORY_UPDATE",
+
+  // 맵 및 턴 사이클 이벤트
+  FLOOR_CHANGE: "FLOOR_CHANGE",
+  TURN_START: "TURN_START",
+  TURN_END: "TURN_END",
+
+  // 관찰 및 UI 이벤트
+  INSPECT_ENTITY: "INSPECT_ENTITY",
+  LOG_MESSAGE: "LOG_MESSAGE",
+  RENDER_MODE_TOGGLE: "RENDER_MODE_TOGGLE",
+  ZOOM_CHANGE: "ZOOM_CHANGE",
+
+  // 게임 라이프사이클 및 HUD 이벤트
+  TITLE_SCREEN: "TITLE_SCREEN",
+  GAME_START: "GAME_START",
+  GAME_OVER: "GAME_OVER",
+  EQUIPMENT_CHANGE: "EQUIPMENT_CHANGE",
+  AUTOFIRE_TOGGLE: "AUTOFIRE_TOGGLE",
+
+  // 50F 최종 보스전 및 승천(Ascension) 엔딩 이벤트
+  BOSS_PHASE_CHANGE: "BOSS_PHASE_CHANGE",
+  BOSS_DEATH: "BOSS_DEATH",
+  ASCENSION: "ASCENSION",
+  GAME_VICTORY: "GAME_VICTORY",
+  HALL_OF_FAME_OPEN: "HALL_OF_FAME_OPEN",
+  GRAVEYARD_OPEN: "GRAVEYARD_OPEN"
+};

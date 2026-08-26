@@ -1,0 +1,1171 @@
+{
+  "metadata": {
+    "source": "ToME 2.3.5 tome_egos.json",
+    "version": "1.3.0",
+    "generatedAt": "2026-08-25T13:32:41.629002+00:00",
+    "count": 101
+  },
+  "data": {
+    "EGO_OF_MANA": {
+      "key": "EGO_OF_MANA",
+      "id": 1,
+      "name": "of Mana",
+      "flags": [
+        "MANA",
+        "PVAL_M2"
+      ],
+      "flavorText": "Ego power: of Mana"
+    },
+    "EGO_OF_POWER": {
+      "key": "EGO_OF_POWER",
+      "id": 129,
+      "name": "of Power",
+      "flags": [
+        "CHR",
+        "IGNORE_ACID",
+        "IGNORE_COLD",
+        "IGNORE_ELEC",
+        "IGNORE_FIRE",
+        "PVAL_M3",
+        "RES_ACID",
+        "RES_COLD",
+        "RES_ELEC",
+        "RES_FIRE",
+        "R_ANY",
+        "SEE_INVIS",
+        "SUST_CHR",
+        "PVAL_M1",
+        "PVAL_M1"
+      ],
+      "flavorText": "Ego power: of Power"
+    },
+    "EGO_OF_WIZARDRY": {
+      "key": "EGO_OF_WIZARDRY",
+      "id": 3,
+      "name": "of Wizardry",
+      "flags": [
+        "MANA",
+        "SPELL",
+        "PVAL_M2"
+      ],
+      "flavorText": "Ego power: of Wizardry"
+    },
+    "EGO_OF_RESIST_ACID": {
+      "key": "EGO_OF_RESIST_ACID",
+      "id": 16,
+      "name": "of Resist Acid",
+      "flags": [
+        "IGNORE_ACID",
+        "RES_ACID"
+      ],
+      "flavorText": "Ego power: of Resist Acid"
+    },
+    "EGO_OF_RESIST_LIGHTNING": {
+      "key": "EGO_OF_RESIST_LIGHTNING",
+      "id": 17,
+      "name": "of Resist Lightning",
+      "flags": [
+        "IGNORE_ELEC",
+        "RES_ELEC"
+      ],
+      "flavorText": "Ego power: of Resist Lightning"
+    },
+    "EGO_OF_RESIST_FIRE": {
+      "key": "EGO_OF_RESIST_FIRE",
+      "id": 18,
+      "name": "of Resist Fire",
+      "flags": [
+        "IGNORE_FIRE",
+        "RES_FIRE"
+      ],
+      "flavorText": "Ego power: of Resist Fire"
+    },
+    "EGO_OF_RESIST_COLD": {
+      "key": "EGO_OF_RESIST_COLD",
+      "id": 19,
+      "name": "of Resist Cold",
+      "flags": [
+        "IGNORE_COLD",
+        "RES_COLD"
+      ],
+      "flavorText": "Ego power: of Resist Cold"
+    },
+    "EGO_OF_RESISTANCE": {
+      "key": "EGO_OF_RESISTANCE",
+      "id": 20,
+      "name": "of Resistance",
+      "flags": [
+        "IGNORE_ACID",
+        "IGNORE_COLD",
+        "IGNORE_ELEC",
+        "IGNORE_FIRE",
+        "RES_ACID",
+        "RES_COLD",
+        "RES_ELEC",
+        "RES_FIRE"
+      ],
+      "flavorText": "Ego power: of Resistance"
+    },
+    "EGO_ELVEN": {
+      "key": "EGO_ELVEN",
+      "id": 10,
+      "name": "Elven",
+      "flags": [
+        "ESP_ORC",
+        "IGNORE_ACID",
+        "IGNORE_COLD",
+        "IGNORE_ELEC",
+        "IGNORE_FIRE",
+        "OLD_RESIST",
+        "RES_ACID",
+        "RES_COLD",
+        "RES_ELEC",
+        "RES_FIRE",
+        "STEALTH",
+        "RES_POIS"
+      ],
+      "flavorText": "Ego power: Elven"
+    },
+    "EGO_OF_REFLECTION": {
+      "key": "EGO_OF_REFLECTION",
+      "id": 21,
+      "name": "of Reflection",
+      "flags": [
+        "IGNORE_ACID",
+        "IGNORE_COLD",
+        "IGNORE_ELEC",
+        "IGNORE_FIRE",
+        "REFLECT"
+      ],
+      "flavorText": "Ego power: of Reflection"
+    },
+    "EGO_OF_THE_NOLDOR": {
+      "key": "EGO_OF_THE_NOLDOR",
+      "id": 23,
+      "name": "of the Noldor",
+      "flags": [
+        "ACTIVATE",
+        "DEX",
+        "ESP_ORC",
+        "SUST_DEX"
+      ],
+      "flavorText": "Ego power: of the Noldor"
+    },
+    "EGO_OF_INTELLIGENCE": {
+      "key": "EGO_OF_INTELLIGENCE",
+      "id": 24,
+      "name": "of Intelligence",
+      "flags": [
+        "INT",
+        "SUST_INT"
+      ],
+      "flavorText": "Ego power: of Intelligence"
+    },
+    "EGO_OF_WISDOM": {
+      "key": "EGO_OF_WISDOM",
+      "id": 25,
+      "name": "of Wisdom",
+      "flags": [
+        "SUST_WIS",
+        "WIS"
+      ],
+      "flavorText": "Ego power: of Wisdom"
+    },
+    "EGO_OF_BEAUTY": {
+      "key": "EGO_OF_BEAUTY",
+      "id": 26,
+      "name": "of Beauty",
+      "flags": [
+        "CHR",
+        "SUST_CHR"
+      ],
+      "flavorText": "Ego power: of Beauty"
+    },
+    "EGO_OF_MIGHT": {
+      "key": "EGO_OF_MIGHT",
+      "id": 28,
+      "name": "of Might",
+      "flags": [
+        "CON",
+        "DEX",
+        "FREE_ACT",
+        "R_HIGH",
+        "STR",
+        "SUST_CON",
+        "SUST_DEX",
+        "SUST_STR"
+      ],
+      "flavorText": "Ego power: of Might"
+    },
+    "EGO_OF_LORDLINESS": {
+      "key": "EGO_OF_LORDLINESS",
+      "id": 29,
+      "name": "of Lordliness",
+      "flags": [
+        "CHR",
+        "R_HIGH",
+        "SUST_CHR",
+        "SUST_WIS",
+        "WIS"
+      ],
+      "flavorText": "Ego power: of Lordliness"
+    },
+    "EGO_OF_SEEING": {
+      "key": "EGO_OF_SEEING",
+      "id": 30,
+      "name": "of Seeing",
+      "flags": [
+        "RES_BLIND",
+        "SEE_INVIS",
+        "ESP_ALL"
+      ],
+      "flavorText": "Ego power: of Seeing"
+    },
+    "EGO_OF_INFRAVISION": {
+      "key": "EGO_OF_INFRAVISION",
+      "id": 142,
+      "name": "of Infravision",
+      "flags": [
+        "INFRA"
+      ],
+      "flavorText": "Ego power: of Infravision"
+    },
+    "EGO_OF_LIGHT": {
+      "key": "EGO_OF_LIGHT",
+      "id": 32,
+      "name": "of Light",
+      "flags": [
+        "LITE1",
+        "RES_LITE"
+      ],
+      "flavorText": "Ego power: of Light"
+    },
+    "EGO_OF_TELEPATHY": {
+      "key": "EGO_OF_TELEPATHY",
+      "id": 33,
+      "name": "of Telepathy",
+      "flags": [
+        "ESP_ALL"
+      ],
+      "flavorText": "Ego power: of Telepathy"
+    },
+    "EGO_OF_REGENERATION": {
+      "key": "EGO_OF_REGENERATION",
+      "id": 34,
+      "name": "of Regeneration",
+      "flags": [
+        "REGEN"
+      ],
+      "flavorText": "Ego power: of Regeneration"
+    },
+    "EGO_OF_TELEPORTATION": {
+      "key": "EGO_OF_TELEPORTATION",
+      "id": 35,
+      "name": "of Teleportation",
+      "flags": [
+        "TELEPORT",
+        "CURSED"
+      ],
+      "flavorText": "Ego power: of Teleportation"
+    },
+    "EGO_OF_STUPIDITY": {
+      "key": "EGO_OF_STUPIDITY",
+      "id": 36,
+      "name": "of Stupidity",
+      "flags": [
+        "CURSED",
+        "INT"
+      ],
+      "flavorText": "Ego power: of Stupidity"
+    },
+    "EGO_OF_NAIVETY": {
+      "key": "EGO_OF_NAIVETY",
+      "id": 37,
+      "name": "of Naivety",
+      "flags": [
+        "WIS"
+      ],
+      "flavorText": "Ego power: of Naivety"
+    },
+    "EGO_OF_UGLINESS": {
+      "key": "EGO_OF_UGLINESS",
+      "id": 38,
+      "name": "of Ugliness",
+      "flags": [
+        "CHR"
+      ],
+      "flavorText": "Ego power: of Ugliness"
+    },
+    "EGO_OF_SICKLINESS": {
+      "key": "EGO_OF_SICKLINESS",
+      "id": 39,
+      "name": "of Sickliness",
+      "flags": [
+        "CON",
+        "DEX",
+        "STR"
+      ],
+      "flavorText": "Ego power: of Sickliness"
+    },
+    "EGO_DWARVEN": {
+      "key": "EGO_DWARVEN",
+      "id": 146,
+      "name": "Dwarven",
+      "flags": [
+        "CON",
+        "FREE_ACT",
+        "HIDE_TYPE",
+        "IGNORE_ACID",
+        "IGNORE_COLD",
+        "IGNORE_ELEC",
+        "IGNORE_FIRE",
+        "INFRA",
+        "RES_DARK",
+        "RES_FEAR",
+        "STR",
+        "SUST_CON",
+        "SUST_STR"
+      ],
+      "flavorText": "Ego power: Dwarven"
+    },
+    "EGO_OF_PROTECTION": {
+      "key": "EGO_OF_PROTECTION",
+      "id": 41,
+      "name": "of Protection",
+      "flags": [
+        "IGNORE_ACID",
+        "IGNORE_COLD",
+        "IGNORE_ELEC",
+        "IGNORE_FIRE",
+        "RES_SHARDS"
+      ],
+      "flavorText": "Ego power: of Protection"
+    },
+    "EGO_OF_STEALTH": {
+      "key": "EGO_OF_STEALTH",
+      "id": 58,
+      "name": "of Stealth",
+      "flags": [
+        "STEALTH"
+      ],
+      "flavorText": "Ego power: of Stealth"
+    },
+    "EGO_OF_AMAN": {
+      "key": "EGO_OF_AMAN",
+      "id": 65,
+      "name": "of Aman",
+      "flags": [
+        "BLESSED",
+        "ESP_EVIL",
+        "LIMIT_BLOWS",
+        "RES_FEAR",
+        "SEE_INVIS",
+        "SLAY_DEMON",
+        "SLAY_EVIL",
+        "SLAY_UNDEAD",
+        "SUSTAIN",
+        "WIS",
+        "BLOWS",
+        "PVAL_M1"
+      ],
+      "flavorText": "Ego power: of Aman"
+    },
+    "EGO_OF_ENVELOPING": {
+      "key": "EGO_OF_ENVELOPING",
+      "id": 45,
+      "name": "of Enveloping",
+      "flags": [
+        "SHOW_MODS"
+      ],
+      "flavorText": "Ego power: of Enveloping"
+    },
+    "EGO_OF_VULNERABILITY": {
+      "key": "EGO_OF_VULNERABILITY",
+      "id": 46,
+      "name": "of Vulnerability",
+      "flags": [
+        "AGGRAVATE"
+      ],
+      "flavorText": "Ego power: of Vulnerability"
+    },
+    "EGO_OF_IRRITATION": {
+      "key": "EGO_OF_IRRITATION",
+      "id": 47,
+      "name": "of Irritation",
+      "flags": [
+        "AGGRAVATE",
+        "SHOW_MODS"
+      ],
+      "flavorText": "Ego power: of Irritation"
+    },
+    "EGO_OF_FREE_ACTION": {
+      "key": "EGO_OF_FREE_ACTION",
+      "id": 59,
+      "name": "of Free Action",
+      "flags": [
+        "FREE_ACT"
+      ],
+      "flavorText": "Ego power: of Free Action"
+    },
+    "EGO_OF_SLAYING": {
+      "key": "EGO_OF_SLAYING",
+      "id": 120,
+      "name": "of Slaying",
+      "flags": [
+        "DAM_DIE"
+      ],
+      "flavorText": "Ego power: of Slaying"
+    },
+    "EGO_OF_AGILITY": {
+      "key": "EGO_OF_AGILITY",
+      "id": 51,
+      "name": "of Agility",
+      "flags": [
+        "DEX",
+        "HIDE_TYPE"
+      ],
+      "flavorText": "Ego power: of Agility"
+    },
+    "EGO_OF_WEAKNESS": {
+      "key": "EGO_OF_WEAKNESS",
+      "id": 55,
+      "name": "of Weakness",
+      "flags": [
+        "STR"
+      ],
+      "flavorText": "Ego power: of Weakness"
+    },
+    "EGO_OF_CLUMSINESS": {
+      "key": "EGO_OF_CLUMSINESS",
+      "id": 56,
+      "name": "of Clumsiness",
+      "flags": [
+        "DEX"
+      ],
+      "flavorText": "Ego power: of Clumsiness"
+    },
+    "EGO_OF_LEVITATION": {
+      "key": "EGO_OF_LEVITATION",
+      "id": 57,
+      "name": "of Levitation",
+      "flags": [
+        "FEATHER",
+        "R_HIGH"
+      ],
+      "flavorText": "Ego power: of Levitation"
+    },
+    "EGO_OF_SPEED": {
+      "key": "EGO_OF_SPEED",
+      "id": 60,
+      "name": "of Speed",
+      "flags": [
+        "HIDE_TYPE",
+        "SPEED",
+        "PVAL_M3"
+      ],
+      "flavorText": "Ego power: of Speed"
+    },
+    "EGO_OF_DWARVISH_ENDURANCE": {
+      "key": "EGO_OF_DWARVISH_ENDURANCE",
+      "id": 61,
+      "name": "of Dwarvish Endurance",
+      "flags": [
+        "CON",
+        "INFRA",
+        "RES_DARK",
+        "STR"
+      ],
+      "flavorText": "Ego power: of Dwarvish Endurance"
+    },
+    "EGO_OF_NOISE": {
+      "key": "EGO_OF_NOISE",
+      "id": 62,
+      "name": "of Noise",
+      "flags": [
+        "AGGRAVATE"
+      ],
+      "flavorText": "Ego power: of Noise"
+    },
+    "EGO_OF_SLOWNESS": {
+      "key": "EGO_OF_SLOWNESS",
+      "id": 63,
+      "name": "of Slowness",
+      "flags": [
+        "SPEED"
+      ],
+      "flavorText": "Ego power: of Slowness"
+    },
+    "EGO_OF_ANNOYANCE": {
+      "key": "EGO_OF_ANNOYANCE",
+      "id": 64,
+      "name": "of Annoyance",
+      "flags": [
+        "AGGRAVATE",
+        "SPEED"
+      ],
+      "flavorText": "Ego power: of Annoyance"
+    },
+    "EGO_DEFENDER": {
+      "key": "EGO_DEFENDER",
+      "id": 98,
+      "name": "(*Defender*)",
+      "flags": [
+        "CON",
+        "DEX",
+        "FEATHER",
+        "FREE_ACT",
+        "HOLD_LIFE",
+        "IGNORE_ACID",
+        "IGNORE_COLD",
+        "IGNORE_ELEC",
+        "IGNORE_FIRE",
+        "REGEN",
+        "RES_ACID",
+        "RES_COLD",
+        "RES_ELEC",
+        "RES_FIRE",
+        "RES_POIS",
+        "R_ANY",
+        "R_LOW",
+        "SEE_INVIS",
+        "STEALTH",
+        "SUSTAIN",
+        "WIS",
+        "R_ANY",
+        "R_LOW",
+        "SUSTAIN",
+        "R_ANY",
+        "R_HIGH",
+        "R_LOW",
+        "SUSTAIN",
+        "R_ANY",
+        "R_IMMUNITY"
+      ],
+      "flavorText": "Ego power: (*Defender*)"
+    },
+    "EGO_BLESSED": {
+      "key": "EGO_BLESSED",
+      "id": 67,
+      "name": "Blessed",
+      "flags": [
+        "ABILITY",
+        "BLESSED",
+        "ESP_GOOD",
+        "WIS"
+      ],
+      "flavorText": "Ego power: Blessed"
+    },
+    "EGO_OF_GREATER_LIFE": {
+      "key": "EGO_OF_GREATER_LIFE",
+      "id": 68,
+      "name": "of Greater Life",
+      "flags": [
+        "HOLD_LIFE",
+        "LIFE"
+      ],
+      "flavorText": "Ego power: of Greater Life"
+    },
+    "EGO_OF_WESTERNESSE": {
+      "key": "EGO_OF_WESTERNESSE",
+      "id": 69,
+      "name": "of Westernesse",
+      "flags": [
+        "CON",
+        "DEX",
+        "ESP_GIANT",
+        "ESP_ORC",
+        "ESP_TROLL",
+        "FREE_ACT",
+        "SEE_INVIS",
+        "SLAY_GIANT",
+        "SLAY_ORC",
+        "SLAY_TROLL",
+        "STR",
+        "RES_FEAR",
+        "RES_MORGUL"
+      ],
+      "flavorText": "Ego power: of Westernesse"
+    },
+    "EGO_OF_EXTRA_ATTACKS": {
+      "key": "EGO_OF_EXTRA_ATTACKS",
+      "id": 70,
+      "name": "of Extra Attacks",
+      "flags": [
+        "BLOWS"
+      ],
+      "flavorText": "Ego power: of Extra Attacks"
+    },
+    "EGO_OF_SPINNING": {
+      "key": "EGO_OF_SPINNING",
+      "id": 72,
+      "name": "of Spinning",
+      "flags": [
+        "ACTIVATE",
+        "DEX",
+        "STR",
+        "VORPAL"
+      ],
+      "flavorText": "Ego power: of Spinning"
+    },
+    "EGO_ACIDIC": {
+      "key": "EGO_ACIDIC",
+      "id": 73,
+      "name": "Acidic",
+      "flags": [
+        "BRAND_ACID",
+        "IGNORE_ACID",
+        "RES_ACID"
+      ],
+      "flavorText": "Ego power: Acidic"
+    },
+    "EGO_SHOCKING": {
+      "key": "EGO_SHOCKING",
+      "id": 74,
+      "name": "Shocking",
+      "flags": [
+        "BRAND_ELEC",
+        "IGNORE_ELEC",
+        "RES_ELEC"
+      ],
+      "flavorText": "Ego power: Shocking"
+    },
+    "EGO_FIERY": {
+      "key": "EGO_FIERY",
+      "id": 75,
+      "name": "Fiery",
+      "flags": [
+        "BRAND_FIRE",
+        "IGNORE_FIRE",
+        "LITE1",
+        "RES_FIRE"
+      ],
+      "flavorText": "Ego power: Fiery"
+    },
+    "EGO_FROZEN": {
+      "key": "EGO_FROZEN",
+      "id": 76,
+      "name": "Frozen",
+      "flags": [
+        "BRAND_COLD",
+        "IGNORE_COLD",
+        "RES_COLD"
+      ],
+      "flavorText": "Ego power: Frozen"
+    },
+    "EGO_VENOMOUS": {
+      "key": "EGO_VENOMOUS",
+      "id": 77,
+      "name": "Venomous",
+      "flags": [
+        "BRAND_POIS",
+        "RES_POIS"
+      ],
+      "flavorText": "Ego power: Venomous"
+    },
+    "EGO_CHAOTIC": {
+      "key": "EGO_CHAOTIC",
+      "id": 78,
+      "name": "Chaotic",
+      "flags": [
+        "CHAOTIC",
+        "IGNORE_ACID",
+        "IGNORE_ELEC",
+        "IGNORE_FIRE",
+        "RES_CHAOS",
+        "R_ANY"
+      ],
+      "flavorText": "Ego power: Chaotic"
+    },
+    "EGO_SHARP": {
+      "key": "EGO_SHARP",
+      "id": 79,
+      "name": "Sharp",
+      "flags": [
+        "VORPAL"
+      ],
+      "flavorText": "Ego power: Sharp"
+    },
+    "EGO_OF_EARTHQUAKES": {
+      "key": "EGO_OF_EARTHQUAKES",
+      "id": 80,
+      "name": "of Earthquakes",
+      "flags": [
+        "HIDE_TYPE",
+        "IMPACT",
+        "STR",
+        "TUNNEL"
+      ],
+      "flavorText": "Ego power: of Earthquakes"
+    },
+    "EGO_OF_SLAY_ANIMAL": {
+      "key": "EGO_OF_SLAY_ANIMAL",
+      "id": 112,
+      "name": "of Slay Animal",
+      "flags": [
+        "SLAY_ANIMAL"
+      ],
+      "flavorText": "Ego power: of Slay Animal"
+    },
+    "EGO_OF_SLAY_EVIL": {
+      "key": "EGO_OF_SLAY_EVIL",
+      "id": 113,
+      "name": "of Slay Evil",
+      "flags": [
+        "SLAY_EVIL"
+      ],
+      "flavorText": "Ego power: of Slay Evil"
+    },
+    "EGO_OF_SLAY_UNDEAD": {
+      "key": "EGO_OF_SLAY_UNDEAD",
+      "id": 114,
+      "name": "of Slay Undead",
+      "flags": [
+        "SLAY_UNDEAD"
+      ],
+      "flavorText": "Ego power: of Slay Undead"
+    },
+    "EGO_OF_SLAY_DEMON": {
+      "key": "EGO_OF_SLAY_DEMON",
+      "id": 118,
+      "name": "of Slay Demon",
+      "flags": [
+        "SLAY_DEMON"
+      ],
+      "flavorText": "Ego power: of Slay Demon"
+    },
+    "EGO_OF_SLAY_ORC": {
+      "key": "EGO_OF_SLAY_ORC",
+      "id": 93,
+      "name": "of *Slay Orc*",
+      "flags": [
+        "DEX",
+        "ESP_ORC",
+        "SLAY_ORC",
+        "SUST_DEX"
+      ],
+      "flavorText": "Ego power: of *Slay Orc*"
+    },
+    "EGO_OF_SLAY_TROLL": {
+      "key": "EGO_OF_SLAY_TROLL",
+      "id": 94,
+      "name": "of *Slay Troll*",
+      "flags": [
+        "ESP_TROLL",
+        "REGEN",
+        "SLAY_TROLL",
+        "STR",
+        "SUST_STR"
+      ],
+      "flavorText": "Ego power: of *Slay Troll*"
+    },
+    "EGO_OF_SLAY_GIANT": {
+      "key": "EGO_OF_SLAY_GIANT",
+      "id": 95,
+      "name": "of *Slay Giant*",
+      "flags": [
+        "ESP_GIANT",
+        "RES_SHARDS",
+        "SLAY_GIANT",
+        "STR",
+        "SUST_STR"
+      ],
+      "flavorText": "Ego power: of *Slay Giant*"
+    },
+    "EGO_OF_SLAY_DRAGON": {
+      "key": "EGO_OF_SLAY_DRAGON",
+      "id": 119,
+      "name": "of Slay Dragon",
+      "flags": [
+        "SLAY_DRAGON"
+      ],
+      "flavorText": "Ego power: of Slay Dragon"
+    },
+    "EGO_VAMPIRIC": {
+      "key": "EGO_VAMPIRIC",
+      "id": 97,
+      "name": "Vampiric",
+      "flags": [
+        "HOLD_LIFE",
+        "LIFE",
+        "VAMPIRIC"
+      ],
+      "flavorText": "Ego power: Vampiric"
+    },
+    "EGO_OF_THE_THUNDERLORDS": {
+      "key": "EGO_OF_THE_THUNDERLORDS",
+      "id": 99,
+      "name": "of the Thunderlords",
+      "flags": [
+        "ACTIVATE",
+        "BRAND_ELEC",
+        "ESP_DRAGON",
+        "FLY",
+        "FREE_ACT",
+        "KILL_DRAGON",
+        "REGEN",
+        "RES_NEXUS",
+        "R_HIGH",
+        "SLAY_EVIL",
+        "SLOW_DIGEST",
+        "TELEPORT",
+        "ABILITY",
+        "LIMIT_BLOWS",
+        "PVAL_M3",
+        "R_P_ABILITY"
+      ],
+      "flavorText": "Ego power: of the Thunderlords"
+    },
+    "EGO_OF_GONDOLIN": {
+      "key": "EGO_OF_GONDOLIN",
+      "id": 100,
+      "name": "of Gondolin",
+      "flags": [
+        "ABILITY",
+        "CON",
+        "ESP_EVIL",
+        "FREE_ACT",
+        "IGNORE_ACID",
+        "IGNORE_FIRE",
+        "LITE1",
+        "RES_DARK",
+        "RES_FEAR",
+        "SEE_INVIS",
+        "SLAY_DEMON",
+        "SLAY_DRAGON",
+        "SLAY_EVIL",
+        "SLAY_TROLL",
+        "STR",
+        "R_HIGH",
+        "HOLD_LIFE",
+        "DEX"
+      ],
+      "flavorText": "Ego power: of Gondolin"
+    },
+    "EGO_OF_DIGGING": {
+      "key": "EGO_OF_DIGGING",
+      "id": 101,
+      "name": "of Digging",
+      "flags": [
+        "IGNORE_ACID",
+        "IGNORE_COLD",
+        "IGNORE_ELEC",
+        "IGNORE_FIRE",
+        "TUNNEL"
+      ],
+      "flavorText": "Ego power: of Digging"
+    },
+    "EGO_SPECTRAL": {
+      "key": "EGO_SPECTRAL",
+      "id": 102,
+      "name": "Spectral",
+      "flags": [
+        "ACTIVATE",
+        "DRAIN_HP",
+        "HOLD_LIFE",
+        "SEE_INVIS",
+        "SLAY_UNDEAD"
+      ],
+      "flavorText": "Ego power: Spectral"
+    },
+    "EGO_OF_MORGUL": {
+      "key": "EGO_OF_MORGUL",
+      "id": 103,
+      "name": "of Morgul",
+      "flags": [
+        "AGGRAVATE",
+        "AUTO_CURSE",
+        "BLACK_BREATH",
+        "CURSED",
+        "DRAIN_EXP",
+        "HEAVY_CURSE",
+        "LUCK",
+        "SEE_INVIS",
+        "WOUNDING"
+      ],
+      "flavorText": "Ego power: of Morgul"
+    },
+    "EGO_OF_NOTHINGNESS": {
+      "key": "EGO_OF_NOTHINGNESS",
+      "id": 104,
+      "name": "of Nothingness",
+      "flags": [
+        "AUTO_CURSE",
+        "CURSED",
+        "HEAVY_CURSE",
+        "NEVER_BLOW"
+      ],
+      "flavorText": "Ego power: of Nothingness"
+    },
+    "EGO_OF_ACCURACY": {
+      "key": "EGO_OF_ACCURACY",
+      "id": 105,
+      "name": "of Accuracy",
+      "flags": [],
+      "flavorText": "Ego power: of Accuracy"
+    },
+    "EGO_OF_EXTRA_MIGHT": {
+      "key": "EGO_OF_EXTRA_MIGHT",
+      "id": 107,
+      "name": "of Extra Might",
+      "flags": [
+        "PVAL_M3",
+        "R_ANY",
+        "XTRA_MIGHT"
+      ],
+      "flavorText": "Ego power: of Extra Might"
+    },
+    "EGO_OF_EXTRA_SHOTS": {
+      "key": "EGO_OF_EXTRA_SHOTS",
+      "id": 108,
+      "name": "of Extra Shots",
+      "flags": [
+        "PVAL_M2",
+        "XTRA_SHOTS"
+      ],
+      "flavorText": "Ego power: of Extra Shots"
+    },
+    "EGO_OF_VENOM": {
+      "key": "EGO_OF_VENOM",
+      "id": 115,
+      "name": "of Venom",
+      "flags": [
+        "BRAND_POIS"
+      ],
+      "flavorText": "Ego power: of Venom"
+    },
+    "EGO_OF_ACID": {
+      "key": "EGO_OF_ACID",
+      "id": 116,
+      "name": "of Acid",
+      "flags": [
+        "BRAND_ACID",
+        "IGNORE_ACID"
+      ],
+      "flavorText": "Ego power: of Acid"
+    },
+    "EGO_OF_LIGHTNING": {
+      "key": "EGO_OF_LIGHTNING",
+      "id": 121,
+      "name": "of Lightning",
+      "flags": [
+        "BRAND_ELEC",
+        "IGNORE_ELEC"
+      ],
+      "flavorText": "Ego power: of Lightning"
+    },
+    "EGO_OF_FLAME": {
+      "key": "EGO_OF_FLAME",
+      "id": 122,
+      "name": "of Flame",
+      "flags": [
+        "BRAND_FIRE",
+        "IGNORE_FIRE"
+      ],
+      "flavorText": "Ego power: of Flame"
+    },
+    "EGO_OF_FROST": {
+      "key": "EGO_OF_FROST",
+      "id": 123,
+      "name": "of Frost",
+      "flags": [
+        "BRAND_COLD",
+        "IGNORE_COLD"
+      ],
+      "flavorText": "Ego power: of Frost"
+    },
+    "EGO_OF_WOUNDING": {
+      "key": "EGO_OF_WOUNDING",
+      "id": 124,
+      "name": "of Wounding",
+      "flags": [],
+      "flavorText": "Ego power: of Wounding"
+    },
+    "EGO_OF_BACKBITING": {
+      "key": "EGO_OF_BACKBITING",
+      "id": 125,
+      "name": "of Backbiting",
+      "flags": [],
+      "flavorText": "Ego power: of Backbiting"
+    },
+    "EGO_BLASTED": {
+      "key": "EGO_BLASTED",
+      "id": 127,
+      "name": "Blasted",
+      "flags": [],
+      "flavorText": "Ego power: Blasted"
+    },
+    "EGO_OF_THE_ELDAR": {
+      "key": "EGO_OF_THE_ELDAR",
+      "id": 128,
+      "name": "of the Eldar",
+      "flags": [
+        "CHR",
+        "IGNORE_ACID",
+        "IGNORE_COLD",
+        "IGNORE_ELEC",
+        "IGNORE_FIRE",
+        "PVAL_M2",
+        "RES_ACID",
+        "R_ANY",
+        "SEE_INVIS",
+        "PVAL_M1"
+      ],
+      "flavorText": "Ego power: of the Eldar"
+    },
+    "EGO_CHEAPNESS_OF": {
+      "key": "EGO_CHEAPNESS_OF",
+      "id": 132,
+      "name": "Cheapness of",
+      "flags": [
+        "CHEAPNESS"
+      ],
+      "flavorText": "Ego power: Cheapness of"
+    },
+    "EGO_QUICKNESS_OF": {
+      "key": "EGO_QUICKNESS_OF",
+      "id": 133,
+      "name": "Quickness of",
+      "flags": [
+        "FAST_CAST"
+      ],
+      "flavorText": "Ego power: Quickness of"
+    },
+    "EGO_CHARGING_OF": {
+      "key": "EGO_CHARGING_OF",
+      "id": 134,
+      "name": "Charging of",
+      "flags": [
+        "CHARGING"
+      ],
+      "flavorText": "Ego power: Charging of"
+    },
+    "EGO_THE_ISTARI_OF": {
+      "key": "EGO_THE_ISTARI_OF",
+      "id": 135,
+      "name": "the Istari of",
+      "flags": [
+        "CAPACITY",
+        "CHARGING",
+        "CHEAPNESS",
+        "FAST_CAST"
+      ],
+      "flavorText": "Ego power: the Istari of"
+    },
+    "EGO_OF_BOLDNESS": {
+      "key": "EGO_OF_BOLDNESS",
+      "id": 136,
+      "name": "of Boldness",
+      "flags": [],
+      "flavorText": "Ego power: of Boldness"
+    },
+    "EGO_OF_FEARLESSNESS": {
+      "key": "EGO_OF_FEARLESSNESS",
+      "id": 137,
+      "name": "of Fearlessness",
+      "flags": [
+        "RES_FEAR"
+      ],
+      "flavorText": "Ego power: of Fearlessness"
+    },
+    "EGO_OF_ILLUMINATION": {
+      "key": "EGO_OF_ILLUMINATION",
+      "id": 138,
+      "name": "of Illumination",
+      "flags": [
+        "LITE1",
+        "LITE2",
+        "LITE3"
+      ],
+      "flavorText": "Ego power: of Illumination"
+    },
+    "EGO_OF_BRIGHTNESS": {
+      "key": "EGO_OF_BRIGHTNESS",
+      "id": 140,
+      "name": "of *Brightness*",
+      "flags": [
+        "LITE1",
+        "LITE2",
+        "LITE3",
+        "RES_DARK"
+      ],
+      "flavorText": "Ego power: of *Brightness*"
+    },
+    "EGO_OF_THE_SHADOWS": {
+      "key": "EGO_OF_THE_SHADOWS",
+      "id": 141,
+      "name": "of the Shadows",
+      "flags": [
+        "INVIS",
+        "RES_DARK",
+        "RES_LITE"
+      ],
+      "flavorText": "Ego power: of the Shadows"
+    },
+    "EGO_OF_THE_ETERNAL_EYE": {
+      "key": "EGO_OF_THE_ETERNAL_EYE",
+      "id": 143,
+      "name": "of the Eternal Eye",
+      "flags": [
+        "RES_BLIND",
+        "SEE_INVIS"
+      ],
+      "flavorText": "Ego power: of the Eternal Eye"
+    },
+    "EGO_OF_THE_ETHEREAL_EYE": {
+      "key": "EGO_OF_THE_ETHEREAL_EYE",
+      "id": 144,
+      "name": "of the Ethereal Eye",
+      "flags": [],
+      "flavorText": "Ego power: of the Ethereal Eye"
+    },
+    "EGO_OF_FADING": {
+      "key": "EGO_OF_FADING",
+      "id": 145,
+      "name": "of Fading",
+      "flags": [
+        "FUEL_LITE"
+      ],
+      "flavorText": "Ego power: of Fading"
+    },
+    "EGO_INDESTRUCTIBLE": {
+      "key": "EGO_INDESTRUCTIBLE",
+      "id": 147,
+      "name": "Indestructible",
+      "flags": [
+        "IGNORE_ACID",
+        "IGNORE_COLD",
+        "IGNORE_ELEC",
+        "IGNORE_FIRE"
+      ],
+      "flavorText": "Ego power: Indestructible"
+    },
+    "EGO_CURSED": {
+      "key": "EGO_CURSED",
+      "id": 148,
+      "name": "Cursed",
+      "flags": [
+        "AUTO_CURSE"
+      ],
+      "flavorText": "Ego power: Cursed"
+    },
+    "EGO_MAGICAL": {
+      "key": "EGO_MAGICAL",
+      "id": 178,
+      "name": "Magical",
+      "flags": [],
+      "flavorText": "Ego power: Magical"
+    },
+    "EGO_DRAGON": {
+      "key": "EGO_DRAGON",
+      "id": 183,
+      "name": "Dragon",
+      "flags": [
+        "IGNORE_ACID",
+        "IGNORE_COLD",
+        "IGNORE_ELEC",
+        "IGNORE_FIRE"
+      ],
+      "flavorText": "Ego power: Dragon"
+    }
+  }
+}
