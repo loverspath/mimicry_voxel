@@ -161,9 +161,8 @@ assert(slot26.html.includes('27)'), `인덱스 26번 배지는 '27)' 임`);
 const slot34 = renderInventorySlotHTML(testItem, dummyPlayer, 34);
 assert(slot34.html.includes('35)'), `인덱스 34번 배지는 '35)' 임`);
 
-// Empty slot index badge
 const emptySlot0 = renderInventorySlotHTML(null, dummyPlayer, 0);
-assert(emptySlot0.html.includes('a)') && emptySlot0.html.includes('empty'), `빈 슬롯 0번에도 'a)' 배지와 'empty'가 함께 렌더링됨`);
+assert(emptySlot0.html.includes('a)') && /empty/i.test(emptySlot0.html), `빈 슬롯 0번에도 'a)' 배지와 'Empty'가 함께 렌더링됨`);
 
 // -----------------------------------------------------------------------------
 // TEST 2: Dynamic Inventory Slots Rendering (35 Items)

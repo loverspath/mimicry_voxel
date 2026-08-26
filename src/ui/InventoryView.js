@@ -41,12 +41,17 @@ export function renderInventorySlotHTML(item, player, index = null) {
   let indexBadge = '';
   if (typeof index === 'number') {
     const label = index >= 0 && index < 26 ? `${String.fromCharCode(97 + index)})` : `${index + 1})`;
-    indexBadge = `<span class="slot-index" style="color: #64748b; font-family: monospace; font-size: 0.8rem; font-weight: 600; min-width: 1.4rem; display: inline-block;">${label}</span>`;
+    indexBadge = `<span class="slot-index" style="color: #38bdf8; font-family: monospace; font-size: 0.85rem; font-weight: 700; min-width: 1.5rem; display: inline-block;">${label}</span>`;
   }
 
   if (!item) {
     return {
-      html: `${indexBadge}<span style="color:rgba(255,255,255,0.06); font-size: 0.8rem;">empty</span>`,
+      html: `
+        <div style="display: flex; align-items: center; gap: 0.65rem; min-width: 0; flex: 1;">
+          ${indexBadge}
+          <span style="color: rgba(255,255,255,0.15); font-size: 0.8rem; font-style: italic;">빈 슬롯 (Empty)</span>
+        </div>
+      `,
       isEquipped: false,
       slotKey: null,
     };
@@ -86,9 +91,11 @@ export function renderInventorySlotHTML(item, player, index = null) {
   }
 
   const html = `
-    ${indexBadge}
-    <span class="slot-char" style="color: ${item.color}">${item.char}</span>
-    <span class="slot-name">${displayName}</span>
+    <div style="display: flex; align-items: center; gap: 0.65rem; min-width: 0; flex: 1;">
+      ${indexBadge}
+      <span class="slot-char" style="color: ${item.color}; font-family: monospace; font-size: 1.1rem; font-weight: bold;">${item.char}</span>
+      <span class="slot-name" style="font-size: 0.92rem; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${displayName}</span>
+    </div>
     ${equipLabel}
   `;
 

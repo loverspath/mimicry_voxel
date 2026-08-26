@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-08-26T11:14:00Z",
+  "generatedAt": "2026-08-26T11:21:55Z",
   "summary": {
     "totalModules": 65,
-    "totalLines": 102930,
+    "totalLines": 102937,
     "categories": {
       "configs": 4,
       "core": 14,
@@ -1607,7 +1607,7 @@
       "filePath": "src/ui/InventoryView.js",
       "moduleName": "InventoryView",
       "category": "ui",
-      "lines": 846,
+      "lines": 853,
       "responsibility": "인벤토리 그리드, 아이템 슬롯, 장착/해제/포식 모달 및 코어 수치 계승 뷰 렌더러",
       "purity": "DOM Renderer",
       "dependencies": [
@@ -1631,7 +1631,7 @@
         "renderItemDetailHTML",
         "renderTransferMaterialHTML"
       ],
-      "lastModified": "2026-08-26T11:12:18Z"
+      "lastModified": "2026-08-26T11:20:58Z"
     },
     {
       "filePath": "src/ui/MonsterLoreView.js",
