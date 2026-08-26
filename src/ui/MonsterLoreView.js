@@ -12,6 +12,7 @@ import { uniqueMonsterManager } from '../systems/UniqueMonsterManager.js';
 import { WEAPON_MASTERY_CONFIG } from '../entities/MimicBody.js';
 import { getSpeciesConfig } from '../entities/MonsterRegistry.js';
 import { MONSTER_PERKS } from '../entities/Perks.js';
+import { MonsterSpellFactory } from '../systems/MonsterSpellFactory.js';
 
 /**
  * 유니크 몬스터 처치 통계 데이터를 산출합니다.
@@ -113,7 +114,7 @@ export function renderMonsterDetailCardHTML(monster, player = null) {
 
   const isUnique = monster.flags?.includes('UNIQUE') || monster.isUnique;
   const killCount = player && player.getKillCount ? (player.getKillCount(monster.key) || player.getKillCount(monster.name) || player.getKillCount(monster.type) || 0) : 0;
-  const loreXp = player && player.body?.loreRegistry ? (player.body.loreRegistry[monster.key] || player.body.loreRegistry[monster.name] || player.body.loreRegistry[monster.type] || 0) : 0;
+  const loreXp = player && player.body?.getLoreXp ? player.body.getLoreXp(monster.key || monster.type) : (player && player.body?.loreRegistry ? (player.body.loreRegistry[monster.key] || player.body.loreRegistry[monster.name] || player.body.loreRegistry[monster.type] || 0) : 0);
   const loreLvl = player && player.body?.getLoreLevel ? player.body.getLoreLevel(monster.type || monster.key) : 1;
   const loreMult = player && player.body?.getLoreMultiplier ? player.body.getLoreMultiplier(monster.type || monster.key) : 1.0;
 
@@ -137,6 +138,50 @@ export function renderMonsterDetailCardHTML(monster, player = null) {
       <div style="margin-top:0.35rem;">
         <span style="font-size:0.7rem; color:#c084fc; font-weight:bold;">비전 주문 & 마법:</span>
         <div style="display:flex; flex-wrap:wrap; gap:0.25rem; margin-top:0.15rem;">${spellBadges}</div>
+      </div>
+    `;
+  }
+
+  // 4대 고유 의태 스킬 (Innate Skills) 및 실시간 해금 상태
+  const monsterKey = monster.key || monster.type || 'HUMAN';
+  const innateSkills = MonsterSpellFactory.createInnateSkills(monsterKey);
+  let innateSkillsHTML = '';
+  if (innateSkills && innateSkills.length > 0) {
+    const skillCards = innateSkills.map(skill => {
+      const isUnlocked = skill.isUnlocked ? skill.isUnlocked(loreLvl) : (loreLvl >= (skill.requiredMastery || 1));
+      const reqMastery = skill.requiredMastery || 1;
+      const effectiveCd = skill.getEffectiveCooldown ? skill.getEffectiveCooldown(loreLvl) : skill.cooldown;
+      const badgeColor = isUnlocked ? '#34d399' : '#f87171';
+      const badgeText = isUnlocked ? `🟢 해금 (Lv.${reqMastery})` : `🔒 잠김 (요구 Lv.${reqMastery})`;
+
+      return `
+        <div style="background: rgba(0,0,0,0.3); border: 1px solid ${isUnlocked ? (skill.color || '#38bdf8') : 'rgba(255,255,255,0.08)'}; border-radius: 5px; padding: 0.35rem 0.5rem; opacity: ${isUnlocked ? '1' : '0.65'}; font-size: 0.72rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.15rem;">
+            <span style="font-weight: bold; color: ${skill.color || '#38bdf8'}; display: flex; align-items: center; gap: 0.25rem;">
+              <span>${skill.icon || '⚔️'}</span>
+              <span>${skill.name}</span>
+            </span>
+            <span style="font-size: 0.65rem; color: ${badgeColor}; font-weight: bold;">${badgeText}</span>
+          </div>
+          <div style="color: var(--text-muted); font-size: 0.68rem; line-height: 1.3;">${skill.desc}</div>
+          <div style="display: flex; gap: 0.5rem; font-size: 0.65rem; font-family: monospace; color: #94a3b8; margin-top: 0.15rem;">
+            <span>쿨다운: <b style="color: #f59e0b;">${effectiveCd}턴</b></span>
+            <span>사거리: <b style="color: #34d399;">${skill.maxRange}칸</b></span>
+            <span>위력: <b style="color: #cbd5e1;">${skill.dice}</b></span>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    innateSkillsHTML = `
+      <div style="margin-top: 0.1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+          <p style="font-size: 0.74rem; font-weight: bold; color: #38bdf8; margin: 0;">🧬 4대 고유 의태 스킬 (Innate Skills)</p>
+          <span style="font-size: 0.68rem; color: #a855f7; font-weight: bold;">로어 숙련도 Lv.${loreLvl}/50 (x${loreMult.toFixed(2)})</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+          ${skillCards}
+        </div>
       </div>
     `;
   }
@@ -172,7 +217,7 @@ export function renderMonsterDetailCardHTML(monster, player = null) {
             💀 킬 카운트: <b>${killCount}</b>회
           </div>
           <div style="font-size: 0.68rem; color: #a855f7;">
-            🧬 로어: <b>Lv.${loreLvl}</b> (${loreXp} XP)
+            🧬 로어 숙련도: <b>Lv.${loreLvl}</b> (${loreXp} XP)
           </div>
         </div>
       </div>
@@ -201,6 +246,9 @@ export function renderMonsterDetailCardHTML(monster, player = null) {
         </div>
         ${spellsHTML}
       </div>
+
+      <!-- 4대 고유 의태 스킬 -->
+      ${innateSkillsHTML}
 
       <!-- 플레이버 텍스트 / 서사 -->
       <div style="background: rgba(30, 41, 59, 0.45); border-left: 3px solid #fbbf24; border-radius: 4px; padding: 0.45rem 0.65rem; margin-top: 0.1rem;">
@@ -559,18 +607,18 @@ export function renderLoreMasterySummaryHTML(player) {
       </div>
 
       <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.6rem 0.75rem;">
-        <p style="font-weight: bold; color: #34d399; font-size: 0.78rem; margin: 0 0 0.35rem 0;">📚 몬스터 종족 로어 숙련도 현황</p>
+        <p style="font-weight: bold; color: #34d399; font-size: 0.78rem; margin: 0 0 0.35rem 0;">🧬 몬스터 로어 숙련도 현황 (Lore Mastery Lv.1~50)</p>
         <table style="width: 100%; border-collapse: collapse; font-size: 0.72rem; text-align: left;">
           <thead>
             <tr style="background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.06);">
-              <th style="padding: 0.25rem 0.4rem; color: var(--text-muted);">종족</th>
-              <th style="padding: 0.25rem 0.4rem; text-align: center; color: var(--text-muted);">마스터리</th>
-              <th style="padding: 0.25rem 0.4rem; text-align: center; color: var(--text-muted);">의태보정</th>
+              <th style="padding: 0.25rem 0.4rem; color: var(--text-muted);">종족/몬스터</th>
+              <th style="padding: 0.25rem 0.4rem; text-align: center; color: var(--text-muted);">로어 레벨</th>
+              <th style="padding: 0.25rem 0.4rem; text-align: center; color: var(--text-muted);">의태 증폭</th>
               <th style="padding: 0.25rem 0.4rem; text-align: right; color: var(--text-muted);">누적 로어</th>
             </tr>
           </thead>
           <tbody>
-            ${renderedLoreRows.length > 0 ? renderedLoreRows : `<tr><td colspan="4" style="text-align:center; padding:0.8rem; color:var(--text-muted); font-style:italic;">섭취/사냥을 통해 해금된 종족 로어가 아직 없습니다.</td></tr>`}
+            ${renderedLoreRows.length > 0 ? renderedLoreRows : `<tr><td colspan="4" style="text-align:center; padding:0.8rem; color:var(--text-muted); font-style:italic;">처치/의태를 통해 획득한 몬스터 로어가 아직 없습니다.</td></tr>`}
           </tbody>
         </table>
       </div>
@@ -604,7 +652,7 @@ export function renderMonsterLoreModalHTML(player, activeTab = 'lore', options =
   return `
     <div class="detail-header" style="text-align: left; display: flex; flex-direction: column; gap: 0.4rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.6rem;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span class="detail-type" style="font-size: 0.7rem; color: #34d399; text-transform: uppercase; font-weight: bold;">[📚 TomeNET 인게임 몬스터 로어 & 유니크 토벌 도감]</span>
+        <span class="detail-type" style="font-size: 0.7rem; color: #34d399; text-transform: uppercase; font-weight: bold;">[🧬 몬스터 로어 숙련도 & ToME 도감 (Lore Mastery Lv.1~50)]</span>
         <span style="font-size: 0.72rem; color: #fbbf24; font-weight: bold; font-family: monospace;">👑 토벌 진척: ${stats.killed}/168 (${stats.killRate}%)</span>
       </div>
       
@@ -637,7 +685,7 @@ export function renderMonsterLoreModalHTML(player, activeTab = 'lore', options =
           color: ${masteryActive ? '#38bdf8' : 'var(--text-muted)'};
           transition: all 0.15s ease;
         ">
-          ⚔️ 무기/의태 마스터리
+          🧬 로어 숙련도 & 무기 마스터리
         </button>
       </div>
     </div>

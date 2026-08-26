@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-08-26T12:33:03Z",
+  "generatedAt": "2026-08-26T12:39:58Z",
   "summary": {
     "totalModules": 65,
-    "totalLines": 103207,
+    "totalLines": 103256,
     "categories": {
       "configs": 4,
       "core": 14,
@@ -1607,14 +1607,15 @@
       "filePath": "src/ui/InventoryView.js",
       "moduleName": "InventoryView",
       "category": "ui",
-      "lines": 853,
+      "lines": 854,
       "responsibility": "인벤토리 그리드, 아이템 슬롯, 장착/해제/포식 모달 및 코어 수치 계승 뷰 렌더러",
       "purity": "DOM Renderer",
       "dependencies": [
         "Tags.js",
         "MonsterRegistry.js",
         "Perks.js",
-        "TomeSpellEngine.js"
+        "TomeSpellEngine.js",
+        "MonsterSpellFactory.js"
       ],
       "exports": [
         "EQUIP_BADGE_STYLES",
@@ -1631,13 +1632,13 @@
         "renderItemDetailHTML",
         "renderTransferMaterialHTML"
       ],
-      "lastModified": "2026-08-26T11:20:58Z"
+      "lastModified": "2026-08-26T12:36:58Z"
     },
     {
       "filePath": "src/ui/MonsterLoreView.js",
       "moduleName": "MonsterLoreView",
       "category": "ui",
-      "lines": 650,
+      "lines": 698,
       "responsibility": "TomeNET 스타일 851종 ToME 몬스터 도감, 검색/필터링, 168종 유니크 처치 체크리스트 및 로어/의태 마스터리 뷰 렌더러",
       "purity": "DOM Renderer",
       "dependencies": [
@@ -1646,7 +1647,8 @@
         "Tags.js",
         "Perks.js",
         "MimicBody.js",
-        "MonsterRegistry.js"
+        "MonsterRegistry.js",
+        "MonsterSpellFactory.js"
       ],
       "exports": [
         "renderMonsterLoreModalHTML",
@@ -1666,7 +1668,7 @@
         "renderMonsterLoreModalHTML",
         "renderUniqueChecklistHTML"
       ],
-      "lastModified": "2026-08-26T11:41:08Z"
+      "lastModified": "2026-08-26T12:37:47Z"
     },
     {
       "filePath": "src/ui/UIManager.js",

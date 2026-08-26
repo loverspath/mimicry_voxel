@@ -11,6 +11,7 @@ import { PREFIX_TAGS, SUFFIX_TAGS } from '../entities/Tags.js';
 import { getSpeciesConfig, MONSTER_GROWTH_PATTERNS } from '../entities/MonsterRegistry.js';
 import { MONSTER_PERKS } from '../entities/Perks.js';
 import { TomeSpellEngine } from '../systems/TomeSpellEngine.js';
+import { MonsterSpellFactory } from '../systems/MonsterSpellFactory.js';
 
 /** 장비 슬롯 배지 메타 데이터 (슬롯명 → 표시 텍스트, 색상) */
 export const EQUIP_BADGE_STYLES = {
@@ -754,10 +755,10 @@ export function renderActiveCoreDetailsHTML(player) {
     </div>
   `;
 
-  // 4. 의태 고유 스킬 및 종족 숙련도 레벨
-  const masteryLvl = player.getMorphMasteryLevel ? player.getMorphMasteryLevel(coreType) : (player.body?.getLoreLevel ? player.body.getLoreLevel(coreType) : 1);
-  const loreXp = player.body?.loreRegistry?.[coreType] || 0;
-  const innateSkills = player.getInnateSkills ? player.getInnateSkills() : (player.activeSkills || []);
+  // 4. 의태 고유 스킬 및 몬스터 로어 숙련도 레벨
+  const masteryLvl = player.body?.getLoreLevel ? player.body.getLoreLevel(coreType) : (player.getMorphMasteryLevel ? player.getMorphMasteryLevel(coreType) : 1);
+  const loreXp = player.body?.getLoreXp ? player.body.getLoreXp(coreType) : (player.body?.loreRegistry?.[coreType] || 0);
+  const innateSkills = MonsterSpellFactory.createInnateSkills(coreType);
 
   const skillsListHTML = innateSkills.length > 0 ? innateSkills.map(skill => {
     const isUnlocked = skill.isUnlocked ? skill.isUnlocked(masteryLvl) : true;

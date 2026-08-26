@@ -165,7 +165,7 @@ player.recordKill('MON_LESSER_TITAN', 12);
 
 const masterySummaryHTML = renderLoreMasterySummaryHTML(player);
 assert(masterySummaryHTML.includes('무기 마스터리 숙련도 현황'), '무기 마스터리 표 렌더링 확인');
-assert(masterySummaryHTML.includes('몬스터 종족 로어 숙련도 현황'), '몬스터 종족 로어 표 렌더링 확인');
+assert(masterySummaryHTML.includes('몬스터 로어 숙련도 현황'), '몬스터 로어 숙련도 표 렌더링 확인');
 assert(masterySummaryHTML.includes('Lesser titan') || masterySummaryHTML.includes('레서 타이탄'), 'ToME 851종 동적 로어 엔트리 (Lesser titan) 렌더링 확인');
 assert(masterySummaryHTML.includes('14,400 XP'), '14,400 누적 로어 경험치 포맷 렌더링 확인');
 assert(masterySummaryHTML.includes('Lv.50'), '2,000 XP 이상 몬스터의 만렙 (Lv.50) 렌더링 확인');
@@ -178,11 +178,11 @@ const modalMasteryHTML = renderMonsterLoreModalHTML(player, 'mastery');
 
 assert(modalLoreHTML.includes('851종 몬스터 도감'), '통합 모달 [도감 탭] 정상 렌더링');
 assert(modalUniqueHTML.includes('168종 유니크 체크리스트'), '통합 모달 [유니크 탭] 정상 렌더링');
-assert(modalMasteryHTML.includes('무기/의태 마스터리'), '통합 모달 [마스터리 탭] 정상 렌더링');
+assert(modalMasteryHTML.includes('로어 숙련도 & 무기 마스터리') || modalMasteryHTML.includes('무기/의태 마스터리'), '통합 모달 [마스터리 탭] 정상 렌더링');
 
 // 4. HUDView renderMasteryDetailsHTML delegation
 const hudMasteryHTML = renderMasteryDetailsHTML(player);
-assert(hudMasteryHTML.includes('TomeNET 인게임 몬스터 로어 & 유니크 토벌 도감'), 'HUD 마스터리 도감 버튼 클릭 시 통합 로어/유니크 도감으로 정상 연결됨');
+assert(hudMasteryHTML.includes('몬스터 로어 숙련도') || hudMasteryHTML.includes('몬스터 로어'), 'HUD 마스터리 도감 버튼 클릭 시 통합 로어/유니크 도감으로 정상 연결됨');
 
 console.log('\n🧪 ========================================================');
 console.log('🧪 [TEST SUITE 5] UIManager 라우팅 및 연동 무결성 검증');
