@@ -277,6 +277,18 @@ export class Game {
         a
           ? (this.attackMonster(this.player, a), (n = !0))
           : (n = this.player.move(e, t, this.map));
+      } else if (this.input.isActionActive(`SKILL_1`)) {
+        n = this.player.castActiveSkill(1, this);
+        this.input.clear();
+      } else if (this.input.isActionActive(`SKILL_2`)) {
+        n = this.player.castActiveSkill(2, this);
+        this.input.clear();
+      } else if (this.input.isActionActive(`SKILL_3`)) {
+        n = this.player.castActiveSkill(3, this);
+        this.input.clear();
+      } else if (this.input.isActionActive(`SKILL_4`)) {
+        n = this.player.castActiveSkill(4, this);
+        this.input.clear();
       } else if (this.input.isActionActive(`WAIT`)) {
         n = !0;
         if (this.player.stats.hp < this.player.stats.maxHp) {

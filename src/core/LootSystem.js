@@ -60,7 +60,7 @@ export class LootSystem {
             // 현재 전투를 수행한 변신 본체 폼에도 처치 보너스 로어 XP 가산
             const currentMorphKey = player.mimicCore?.coreType || player.mimicCore?.name;
             if (currentMorphKey) {
-                const morphKillBonus = Math.max(1, Math.floor(slayLore * 0.5));
+                const morphKillBonus = Math.max(2, Math.floor(slayLore * 0.5));
                 player.body.gainLoreXp(currentMorphKey, morphKillBonus);
             }
         }

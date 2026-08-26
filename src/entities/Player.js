@@ -635,6 +635,37 @@ export class Player {
     return cType.includes('GOBLIN') || name.includes('고블린') || cType.includes('HUMAN') || name.includes('인간');
   }
 
+  // Record a monster kill, delegating directly to body
+  recordKill(keyOrType, amount = 1) {
+    if (this.body && typeof this.body.recordKill === 'function') {
+      return this.body.recordKill(keyOrType, amount);
+    }
+  }
+
+  // Get kill count for a monster or species, delegating to body
+  getKillCount(keyOrType) {
+    if (this.body && typeof this.body.getKillCount === 'function') {
+      return this.body.getKillCount(keyOrType);
+    }
+    return 0;
+  }
+
+  // Add lore experience points, delegating directly to body
+  gainLoreXp(speciesType, amount) {
+    if (this.body && typeof this.body.gainLoreXp === 'function') {
+      return this.body.gainLoreXp(speciesType, amount);
+    }
+    return [];
+  }
+
+  // Get accumulated lore experience points, delegating to body
+  getLoreXp(speciesType) {
+    if (this.body && typeof this.body.getLoreXp === 'function') {
+      return this.body.getLoreXp(speciesType);
+    }
+    return 0;
+  }
+
   getMorphMasteryLevel(speciesType = null) {
     const sType = speciesType || this.mimicCore?.coreType || this.mimicCore?.name || 'MON_NOVICE_WARRIOR';
     if (this.body && this.body.getLoreLevel) {

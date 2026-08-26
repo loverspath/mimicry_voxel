@@ -11,6 +11,23 @@ export class Input {
   constructor() {
     this.activeActions = new Set();
     
+    // Code mapping for physical key disambiguation (Top row digits for skills, Numpad for 8-way movement)
+    this.codeMap = {
+      'Digit1': 'SKILL_1',
+      'Digit2': 'SKILL_2',
+      'Digit3': 'SKILL_3',
+      'Digit4': 'SKILL_4',
+      'Numpad1': 'MOVE_SW',
+      'Numpad2': 'MOVE_S',
+      'Numpad3': 'MOVE_SE',
+      'Numpad4': 'MOVE_W',
+      'Numpad5': 'WAIT',
+      'Numpad6': 'MOVE_E',
+      'Numpad7': 'MOVE_NW',
+      'Numpad8': 'MOVE_N',
+      'Numpad9': 'MOVE_NE'
+    };
+
     // Key mapping to abstract actions
     this.keyMap = {
       // Arrow keys (4-way)
@@ -21,50 +38,54 @@ export class Input {
       
       // WASD (4-way fallback)
       'w': 'MOVE_N',
+      'W': 'MOVE_N',
       'd': 'MOVE_E',
+      'D': 'MOVE_E',
       's': 'MOVE_S',
+      'S': 'MOVE_S',
       'a': 'MOVE_W',
-      
-      // Numpad (8-way)
-      '8': 'MOVE_N',
-      '9': 'MOVE_NE',
-      '6': 'MOVE_E',
-      '3': 'MOVE_SE',
-      '2': 'MOVE_S',
-      '1': 'MOVE_SW',
-      '4': 'MOVE_W',
-      '7': 'MOVE_NW',
-      '5': 'WAIT',
+      'A': 'MOVE_W',
 
       // Vi keys (8-way)
       'k': 'MOVE_N',
+      'K': 'MOVE_N',
       'u': 'MOVE_NE',
+      'U': 'MOVE_NE',
       'l': 'MOVE_E',
+      'L': 'MOVE_E',
       'n': 'MOVE_SE',
+      'N': 'MOVE_SE',
       'j': 'MOVE_S',
+      'J': 'MOVE_S',
       'b': 'MOVE_SW',
+      'B': 'MOVE_SW',
       'h': 'MOVE_W',
+      'H': 'MOVE_W',
       'y': 'MOVE_NW',
+      'Y': 'MOVE_NW',
       '.': 'WAIT',
 
       // Other actions
       'i': 'INVENTORY',
+      'I': 'INVENTORY',
       'c': 'COMBAT_LOG',
+      'C': 'COMBAT_LOG',
       'e': 'INTERACT',
+      'E': 'INTERACT',
       'Enter': 'INTERACT',
       't': 'AUTOFIRE',
       'T': 'AUTOFIRE'
     };
 
     window.addEventListener('keydown', (e) => {
-      const action = this.keyMap[e.key];
+      const action = (e.code && this.codeMap[e.code]) || this.keyMap[e.key];
       if (action) {
         this.activeActions.add(action);
       }
     });
 
     window.addEventListener('keyup', (e) => {
-      const action = this.keyMap[e.key];
+      const action = (e.code && this.codeMap[e.code]) || this.keyMap[e.key];
       if (action) {
         this.activeActions.delete(action);
       }

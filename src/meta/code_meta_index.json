@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-08-26T11:56:53Z",
+  "generatedAt": "2026-08-26T12:08:32Z",
   "summary": {
     "totalModules": 65,
-    "totalLines": 103067,
+    "totalLines": 103131,
     "categories": {
       "configs": 4,
       "core": 14,
@@ -264,7 +264,7 @@
       "filePath": "src/core/Game.js",
       "moduleName": "Game",
       "category": "core",
-      "lines": 1995,
+      "lines": 2007,
       "responsibility": "미미크리 로그라이크 핵심 게임 루프, 턴 스케줄링, 엔티티 상호작용 및 UI 모달 이벤트 통합 조율 오케스트레이터",
       "purity": "State Store",
       "dependencies": [
@@ -308,7 +308,7 @@
         "setClick",
         "updateSlotLabels"
       ],
-      "lastModified": "2026-08-26T11:12:27Z"
+      "lastModified": "2026-08-26T12:07:20Z"
     },
     {
       "filePath": "src/core/GameEngine.js",
@@ -335,7 +335,7 @@
       "filePath": "src/core/Input.js",
       "moduleName": "Input",
       "category": "core",
-      "lines": 90,
+      "lines": 111,
       "responsibility": "키보드(화살표, WASD, 넘패드), 마우스 및 가상 패드 입력을 추상화된 게임 액션으로 매핑하고 발송하는 입력 제어 모듈",
       "purity": "DOM Event Handler",
       "dependencies": [],
@@ -346,7 +346,7 @@
         "Input"
       ],
       "functions": [],
-      "lastModified": "2026-08-25T15:05:50Z"
+      "lastModified": "2026-08-26T12:07:12Z"
     },
     {
       "filePath": "src/core/LootSystem.js",
@@ -370,7 +370,7 @@
         "LootSystem"
       ],
       "functions": [],
-      "lastModified": "2026-08-26T11:53:46Z"
+      "lastModified": "2026-08-26T12:06:59Z"
     },
     {
       "filePath": "src/core/ReactionRegistry.js",
@@ -730,7 +730,7 @@
       "filePath": "src/entities/Player.js",
       "moduleName": "Player",
       "category": "entities",
-      "lines": 975,
+      "lines": 1006,
       "responsibility": "플레이어 엔티티 모델 (Zero-Logic 순수 데이터 컴포넌트). 스탯/저항/광원 계산은 UnifiedTraitEngine 및 PlayerStatCalculator에, 의태 스킬 관리는 MonsterSpellFactory 및 TomeSpellEngine에 100% 위임합니다.",
       "purity": "Data Model / State Store",
       "dependencies": [
@@ -758,7 +758,7 @@
         "getGrowth",
         "getGrowthDelta"
       ],
-      "lastModified": "2026-08-26T11:51:58Z"
+      "lastModified": "2026-08-26T12:06:49Z"
     },
     {
       "filePath": "src/entities/Tags.js",
