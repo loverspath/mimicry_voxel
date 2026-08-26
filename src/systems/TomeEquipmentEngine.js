@@ -262,7 +262,7 @@ export class TomeEquipmentEngine {
     const count = item.count || 1;
 
     const tval = item.tval;
-    const isAmmo = tval === TVAL.SHOT || tval === TVAL.ARROW || tval === TVAL.BOLT || item.slotType === 'QUIVER' || item.type === 'QUIVER';
+    const isAmmo = tval === TVAL.SHOT || tval === TVAL.ARROW || tval === TVAL.BOLT || item.slotType === 'QUIVER' || item.type === 'QUIVER' || item.type === 'ARROW' || item.type === 'BOLT' || item.type === 'SHOT' || (item.specialTags && item.specialTags.includes('AMMO'));
 
     if (item._weight !== undefined && item._weight !== null) {
       if (isAmmo) {
@@ -278,25 +278,26 @@ export class TomeEquipmentEngine {
         const strBase = config.coreBase.str || 8;
         const conBase = config.coreBase.con || 8;
         const hpBase = config.coreBaseHp || 10;
-        return Math.floor((strBase * 0.3) + (conBase * 0.3) + (hpBase * 0.1));
+        const rawWeight = (strBase * 0.05) + (conBase * 0.05) + (hpBase * 0.005);
+        return Math.min(20, Math.max(3, Math.floor(rawWeight)));
       }
       return 5.0;
     }
 
     if (tval === TVAL.POTION || item.type === 'POTION' || tval === TVAL.FLASK || item.type === 'FLASK') {
-      return 2.0 * count;
+      return +(0.4 * count).toFixed(1);
     }
     if (tval === TVAL.SCROLL || item.type === 'SCROLL') {
-      return 0.5 * count;
+      return +(0.2 * count).toFixed(1);
     }
     if (tval === TVAL.WAND || item.type === 'WAND' || tval === TVAL.ROD || item.type === 'ROD') {
-      return 1.0 * count;
+      return +(0.5 * count).toFixed(1);
     }
     if (tval === TVAL.STAFF || item.type === 'STAFF') {
-      return 3.0 * count;
+      return +(1.5 * count).toFixed(1);
     }
     if (tval === TVAL.FOOD || item.type === 'FOOD') {
-      return 1.0 * count;
+      return +(0.5 * count).toFixed(1);
     }
     if (tval === TVAL.SHOT || tval === TVAL.ARROW || tval === TVAL.BOLT || item.slotType === 'QUIVER' || item.type === 'QUIVER') {
       return Math.max(1, Math.floor(0.1 * count));

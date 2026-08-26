@@ -236,7 +236,8 @@ export class MimicBody {
         const strBase = config.coreBase.str || 8;
         const conBase = config.coreBase.con || 8;
         const hpBase = config.coreBaseHp || 10;
-        coreWeight = Math.floor((strBase * 0.3) + (conBase * 0.3) + (hpBase * 0.1));
+        const rawWeight = (strBase * 0.05) + (conBase * 0.05) + (hpBase * 0.005);
+        coreWeight = Math.min(20, Math.max(3, Math.floor(rawWeight)));
       }
       total += coreWeight;
     }
@@ -275,13 +276,14 @@ export class MimicBody {
   }
 
   /**
-   * Maximum weight load capacity based on Strength and Constitution.
-   * Max Weight = (STR * 3.5) + (CON * 1.5)
+   * Maximum weight load capacity based on baseline, Strength, Constitution, and Level.
+   * Max Weight = 40 + (STR * 2.5) + (CON * 1.5) + (LVL * 1.5)
    */
   getMaxWeightLimit() {
     const str = this.player.getEffectiveStat('str');
     const con = this.player.getEffectiveStat('con');
-    return Math.floor((str * 3.5) + (con * 1.5));
+    const lvl = this.player.level || 1;
+    return Math.floor(40 + (str * 2.5) + (con * 1.5) + (lvl * 1.5));
   }
 
   /**

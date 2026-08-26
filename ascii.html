@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#06070b">
     <link rel="icon" type="image/svg+xml" href="./icon.svg">
-    <link rel="stylesheet" href="./style.css?v=0.18.4">
+    <link rel="stylesheet" href="./style.css?v=0.18.6">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <script>
       // Force default 2D Classic ASCII render mode on this entrypoint
@@ -146,6 +146,7 @@
               <div style="display: flex; gap: 0.6rem; margin-top: 0.2rem;">
                 <button id="btn-export-save" class="ui-btn" style="flex: 1; padding: 0.5rem; background: #3b82f6; color: #fff; font-weight: bold; border-radius: 6px; border: none; cursor: pointer;">💾 백업 파일 내보내기</button>
                 <button id="btn-import-save" class="ui-btn" style="flex: 1; padding: 0.5rem; background: #10b981; color: #fff; font-weight: bold; border-radius: 6px; border: none; cursor: pointer;">📂 백업 파일 가져오기</button>
+                <button id="btn-force-save-debug" class="ui-btn" style="flex: 1; padding: 0.5rem; background: #f59e0b; color: #fff; font-weight: bold; border-radius: 6px; border: none; cursor: pointer;" title="단축키 F9: 전체 세이브 JSON 파일 다운로드 및 서버 전송">⚡ 강제 세이브 (F9)</button>
                 <input type="file" id="save-import-input" accept=".json" style="display: none;">
               </div>
             </div>
@@ -216,6 +217,6 @@
         </div>
       </div>
     </div>
-    <script type="module" src="./main.js?v=0.18.4"></script>
+    <script type="module" src="./main.js?v=0.18.6"></script>
   </body>
 </html>

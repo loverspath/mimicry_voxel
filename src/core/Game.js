@@ -198,12 +198,68 @@ export class Game {
       if (e.key === "t" || e.key === "T") {
         this.toggleAutoFire();
       }
+      if (e.key === "F9") {
+        e.preventDefault();
+        this.forceSaveDebug();
+      }
     });
 
     let e = document.getElementById("btn-save");
     e && (e.onclick = () => this.saveGame());
     let t = document.getElementById("btn-load");
     t && (t.onclick = () => this.loadGame());
+    let fsBtn = document.getElementById("btn-force-save-debug");
+    fsBtn && (fsBtn.onclick = () => this.forceSaveDebug());
+  }
+
+  /**
+   * 전체 세이브 데이터를 추출하여 로컬 서버(/api/save_debug)로 전송하고,
+   * 브라우저 JSON 파일 다운로드를 동시에 트리거합니다.
+   */
+  forceSaveDebug() {
+    try {
+      const saveData = SaveSystem.serialize(this);
+      const jsonString = JSON.stringify(saveData, null, 2);
+
+      // 1. Send to local dev server
+      if (typeof fetch === 'function') {
+        fetch('/api/save_debug', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: jsonString
+        }).then(res => {
+          if (res.ok) {
+            this.addLogEntry(`[Server] 💾 로컬 서버 logs/debug_save.json 강제 저장 성공!`, `system`);
+          }
+        }).catch(() => {
+          // Dev server not reachable (e.g. GitHub Pages)
+        });
+      }
+
+      // 2. Trigger browser file download (Blob)
+      if (typeof document !== 'undefined' && typeof Blob !== 'undefined' && typeof URL !== 'undefined') {
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const filename = `mimicry_debug_save_F${this.floor || 1}_${Date.now()}.json`;
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        this.addLogEntry(`[Debug] 💾 강제 세이브 추출 완료! (${filename})`, `loot`);
+      }
+
+      return saveData;
+    } catch (err) {
+      console.error('Failed to force save debug:', err);
+      if (this.addLogEntry) {
+        this.addLogEntry(`[Error] ❌ 디버그 세이브 저장 실패: ${err.message}`, `system`);
+      }
+      return null;
+    }
   }
 
   toggleAutoFire() {
@@ -539,6 +595,11 @@ export class Game {
   }
   killMonster(monster, source = "스킬 공격") {
     if (!monster) return;
+    monster.stats.hp = 0;
+    const idx = this.monsters.indexOf(monster);
+    if (idx !== -1) {
+      this.monsters.splice(idx, 1);
+    }
     LootSystem.processMonsterDeath(this, this.player, monster, source);
   }
   handleMonsterBuffsAndHeals(monster) {

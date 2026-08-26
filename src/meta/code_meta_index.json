@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-08-26T12:08:32Z",
+  "generatedAt": "2026-08-26T12:21:33Z",
   "summary": {
     "totalModules": 65,
-    "totalLines": 103131,
+    "totalLines": 103195,
     "categories": {
       "configs": 4,
       "core": 14,
@@ -264,7 +264,7 @@
       "filePath": "src/core/Game.js",
       "moduleName": "Game",
       "category": "core",
-      "lines": 2007,
+      "lines": 2068,
       "responsibility": "미미크리 로그라이크 핵심 게임 루프, 턴 스케줄링, 엔티티 상호작용 및 UI 모달 이벤트 통합 조율 오케스트레이터",
       "purity": "State Store",
       "dependencies": [
@@ -308,7 +308,7 @@
         "setClick",
         "updateSlotLabels"
       ],
-      "lastModified": "2026-08-26T12:07:20Z"
+      "lastModified": "2026-08-26T12:20:57Z"
     },
     {
       "filePath": "src/core/GameEngine.js",
@@ -623,7 +623,7 @@
       "filePath": "src/entities/MimicBody.js",
       "moduleName": "MimicBody",
       "category": "entities",
-      "lines": 414,
+      "lines": 416,
       "responsibility": "무정형 미믹의 영구 본체 컨테이너 클래스. 메인 코어의 탈착과 상관없이 스탯, 로어 숙련도, 몬스터 킬 카운트, 돌연변이 태그를 영구 보존하며 무게 한도 및 감속 배율을 수학적으로 도출합니다.",
       "purity": "State Store / Logic Container",
       "dependencies": [
@@ -644,7 +644,7 @@
         "addTags",
         "checkSubCoreSkills"
       ],
-      "lastModified": "2026-08-26T11:49:14Z"
+      "lastModified": "2026-08-26T12:17:26Z"
     },
     {
       "filePath": "src/entities/Monster.js",
@@ -1325,7 +1325,7 @@
       "filePath": "src/systems/TomeEquipmentEngine.js",
       "moduleName": "TomeEquipmentEngine",
       "category": "systems",
-      "lines": 349,
+      "lines": 350,
       "responsibility": "ToME 2.3.5 정통 tval 기반 슬롯(slotType), 아스키 심볼, 무게, 방어력(AC), 무기 카테고리 무상태 연산 엔진",
       "purity": "Pure Stateless Engine",
       "dependencies": [
@@ -1339,7 +1339,7 @@
         "TomeEquipmentEngine"
       ],
       "functions": [],
-      "lastModified": "2026-08-26T09:41:50Z"
+      "lastModified": "2026-08-26T12:17:20Z"
     },
     {
       "filePath": "src/systems/TomeFlagResolver.js",

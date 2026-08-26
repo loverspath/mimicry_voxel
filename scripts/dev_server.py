@@ -32,6 +32,39 @@ class NoCacheCORSRequestHandler(SimpleHTTPRequestHandler):
         self.send_response(204)
         self.end_headers()
 
+    def do_POST(self):
+        if self.path == '/api/save_debug':
+            try:
+                content_length = int(self.headers.get('Content-Length', 0))
+                body = self.rfile.read(content_length)
+                
+                # Ensure logs directory exists
+                project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+                logs_dir = os.path.join(project_root, 'logs')
+                os.makedirs(logs_dir, exist_ok=True)
+                
+                target_file = os.path.join(logs_dir, 'debug_save.json')
+                with open(target_file, 'wb') as f:
+                    f.write(body)
+                
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.end_headers()
+                response = '{"success": true, "message": "Debug save saved successfully", "path": "logs/debug_save.json"}'
+                self.wfile.write(response.encode('utf-8'))
+                print(f"💾 [Debug Save] Successfully saved {len(body)} bytes to {target_file}")
+                return
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.end_headers()
+                response = f'{{"success": false, "error": "{str(e)}"}}'
+                self.wfile.write(response.encode('utf-8'))
+                return
+        
+        self.send_response(404)
+        self.end_headers()
+
     def log_message(self, format, *args):
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         client_ip = self.client_address[0]
