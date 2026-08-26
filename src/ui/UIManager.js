@@ -101,13 +101,13 @@ export class UIManager {
     if (!this.inventoryList) return;
     this.inventoryList.innerHTML = '';
 
-    const maxSlots = 25;
+    const maxSlots = Math.max(24, (player.inventory && player.inventory.length) || 0);
     for (let i = 0; i < maxSlots; i++) {
       const item = player.inventory[i] || null;
       const slotEl = document.createElement('div');
       slotEl.className = 'inventory-slot';
       
-      const { html, isEquipped } = renderInventorySlotHTML(item, player);
+      const { html, isEquipped } = renderInventorySlotHTML(item, player, i);
       if (isEquipped) slotEl.classList.add('equipped');
       slotEl.innerHTML = html;
 

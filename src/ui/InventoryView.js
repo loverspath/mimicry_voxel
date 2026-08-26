@@ -37,10 +37,16 @@ export const EQUIP_BADGE_STYLES = {
  * @param {Object} player - 플레이어 인스턴스
  * @returns {{ html: string, isEquipped: boolean, slotKey: string|null }}
  */
-export function renderInventorySlotHTML(item, player) {
+export function renderInventorySlotHTML(item, player, index = null) {
+  let indexBadge = '';
+  if (typeof index === 'number') {
+    const label = index >= 0 && index < 26 ? `${String.fromCharCode(97 + index)})` : `${index + 1})`;
+    indexBadge = `<span class="slot-index" style="color: #64748b; font-family: monospace; font-size: 0.8rem; font-weight: 600; min-width: 1.4rem; display: inline-block;">${label}</span>`;
+  }
+
   if (!item) {
     return {
-      html: `<span style="color:rgba(255,255,255,0.06); font-size: 0.8rem;">empty</span>`,
+      html: `${indexBadge}<span style="color:rgba(255,255,255,0.06); font-size: 0.8rem;">empty</span>`,
       isEquipped: false,
       slotKey: null,
     };
@@ -80,6 +86,7 @@ export function renderInventorySlotHTML(item, player) {
   }
 
   const html = `
+    ${indexBadge}
     <span class="slot-char" style="color: ${item.color}">${item.char}</span>
     <span class="slot-name">${displayName}</span>
     ${equipLabel}

@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-08-26T11:08:29Z",
+  "generatedAt": "2026-08-26T11:14:00Z",
   "summary": {
     "totalModules": 65,
-    "totalLines": 102922,
+    "totalLines": 102930,
     "categories": {
       "configs": 4,
       "core": 14,
@@ -264,7 +264,7 @@
       "filePath": "src/core/Game.js",
       "moduleName": "Game",
       "category": "core",
-      "lines": 1994,
+      "lines": 1995,
       "responsibility": "미미크리 로그라이크 핵심 게임 루프, 턴 스케줄링, 엔티티 상호작용 및 UI 모달 이벤트 통합 조율 오케스트레이터",
       "purity": "State Store",
       "dependencies": [
@@ -308,7 +308,7 @@
         "setClick",
         "updateSlotLabels"
       ],
-      "lastModified": "2026-08-26T11:05:12Z"
+      "lastModified": "2026-08-26T11:12:27Z"
     },
     {
       "filePath": "src/core/GameEngine.js",
@@ -1607,7 +1607,7 @@
       "filePath": "src/ui/InventoryView.js",
       "moduleName": "InventoryView",
       "category": "ui",
-      "lines": 839,
+      "lines": 846,
       "responsibility": "인벤토리 그리드, 아이템 슬롯, 장착/해제/포식 모달 및 코어 수치 계승 뷰 렌더러",
       "purity": "DOM Renderer",
       "dependencies": [
@@ -1631,7 +1631,7 @@
         "renderItemDetailHTML",
         "renderTransferMaterialHTML"
       ],
-      "lastModified": "2026-08-26T04:40:20Z"
+      "lastModified": "2026-08-26T11:12:18Z"
     },
     {
       "filePath": "src/ui/MonsterLoreView.js",
@@ -1691,7 +1691,7 @@
       "functions": [
         "getEl"
       ],
-      "lastModified": "2026-08-26T03:28:14Z"
+      "lastModified": "2026-08-26T11:12:37Z"
     },
     {
       "filePath": "src/ui/VirtualController.js",

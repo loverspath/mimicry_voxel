@@ -1283,11 +1283,12 @@ export class Game {
         this.showSkillTree()),
       (document.getElementById(`mastery-info-btn`).onclick = () =>
         this.showMasteryDetails()));
-    for (let t = 0; t < 24; t++) {
+    const totalSlots = Math.max(24, (this.player.inventory && this.player.inventory.length) || 0);
+    for (let t = 0; t < totalSlots; t++) {
       let n = this.player.inventory[t],
         r = document.createElement(`div`);
       r.className = `inventory-slot`;
-      let { html: i, isEquipped: a } = Q(n, this.player);
+      let { html: i, isEquipped: a } = Q(n, this.player, t);
       ((r.innerHTML = i),
         n
           ? (a && r.classList.add(`equipped`),
