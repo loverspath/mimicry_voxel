@@ -222,6 +222,8 @@ console.log("\n--- TEST 5: Game.prototype.killMonster Integration ---");
 assert(typeof Game.prototype.killMonster === 'function', "Game.prototype.killMonster is defined as a function");
 
 const testGame = new Game();
+testGame.render = () => {};
+testGame.updateUI = () => {};
 testGame.player = new Player(10, 10);
 const targetMonster = new Monster(15, 15, 'BAT');
 testGame.monsters = [targetMonster];

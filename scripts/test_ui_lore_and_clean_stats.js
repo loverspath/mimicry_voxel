@@ -160,9 +160,16 @@ assert(player.getKillCount('MON_SCRAWNY_CAT') === 5, '일반 몬스터 처치 �
 
 // 2. 무기 및 로어 마스터리 요약 뷰 렌더링
 player.body.loreRegistry['SLIME'] = 120;
+player.body.loreRegistry['MON_LESSER_TITAN'] = 14400;
+player.recordKill('MON_LESSER_TITAN', 12);
+
 const masterySummaryHTML = renderLoreMasterySummaryHTML(player);
 assert(masterySummaryHTML.includes('무기 마스터리 숙련도 현황'), '무기 마스터리 표 렌더링 확인');
 assert(masterySummaryHTML.includes('몬스터 종족 로어 숙련도 현황'), '몬스터 종족 로어 표 렌더링 확인');
+assert(masterySummaryHTML.includes('Lesser titan') || masterySummaryHTML.includes('레서 타이탄'), 'ToME 851종 동적 로어 엔트리 (Lesser titan) 렌더링 확인');
+assert(masterySummaryHTML.includes('14,400 XP'), '14,400 누적 로어 경험치 포맷 렌더링 확인');
+assert(masterySummaryHTML.includes('Lv.50'), '2,000 XP 이상 몬스터의 만렙 (Lv.50) 렌더링 확인');
+assert(masterySummaryHTML.includes('x1.50'), 'Lv.50 의태 보정 배율 (x1.50) 렌더링 확인');
 
 // 3. 통합 모달 탭 전환 렌더링
 const modalLoreHTML = renderMonsterLoreModalHTML(player, 'lore');

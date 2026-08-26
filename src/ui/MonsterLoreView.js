@@ -482,30 +482,60 @@ export function renderLoreMasterySummaryHTML(player) {
   const activeWeapon = player.equipment?.weapon;
   const activeWeaponName = activeWeapon ? activeWeapon.name : "맨손 주먹";
 
-  const LORE_SPECIES = ["HUMAN", "SLIME", "GOBLIN", "BAT", "ORC", "OGRE", "HATCHLING", "DRAGON", "IMP", "ANGEL", "TITAN"];
-  const loreRows = [];
-  LORE_SPECIES.forEach(sp => {
-    const config = getSpeciesConfig(sp);
-    if (config) {
-      const xp = player.body.loreRegistry[sp] || 0;
-      const kills = player.getKillCount ? player.getKillCount(sp) : 0;
-      if (xp === 0 && kills === 0) return;
+  // 동적 로어 및 킬 레지스트리 합집합 순회
+  const loreKeysSet = new Set([
+    ...Object.keys(player.body.loreRegistry || {}),
+    ...Object.keys(player.body.killRegistry || {}),
+    ...Object.keys(player.killRegistry || {})
+  ]);
 
-      const lvl = player.body.getLoreLevel(sp);
-      const mult = player.body.getLoreMultiplier(sp);
-      
-      loreRows.push(`
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
-          <td style="padding: 0.3rem 0.4rem; color: var(--text-main); font-weight: bold; font-size: 0.74rem;">${config.name}</td>
-          <td style="padding: 0.3rem 0.4rem; text-align: center;">
-            <span style="background: rgba(56,189,248,0.15); color: #38bdf8; font-weight: bold; font-size: 0.68rem; padding: 0.05rem 0.25rem; border-radius: 4px;">Lv.${lvl}</span>
-          </td>
-          <td style="padding: 0.3rem 0.4rem; text-align: center; color: #a855f7; font-size: 0.68rem; font-weight: bold;">x${mult.toFixed(2)}</td>
-          <td style="padding: 0.3rem 0.4rem; text-align: right; color: var(--text-muted); font-size: 0.68rem;">${xp} XP (${kills}킬)</td>
-        </tr>
-      `);
-    }
+  const loreRows = [];
+  const processedSpecies = new Set();
+
+  loreKeysSet.forEach(sp => {
+    if (!sp || processedSpecies.has(sp)) return;
+    processedSpecies.add(sp);
+
+    const xp = (player.body.loreRegistry && player.body.loreRegistry[sp]) || 0;
+    const kills = (player.getKillCount ? player.getKillCount(sp) : 0) || (player.body.getKillCount ? player.body.getKillCount(sp) : 0);
+    if (xp === 0 && kills === 0) return;
+
+    const config = getSpeciesConfig(sp);
+    const displayName = (config && (config.displayName || config.name)) || sp;
+    const lvl = player.body.getLoreLevel ? player.body.getLoreLevel(sp) : 1;
+    const mult = player.body.getLoreMultiplier ? player.body.getLoreMultiplier(sp) : 1.0;
+
+    loreRows.push({
+      key: sp,
+      name: displayName,
+      lvl,
+      mult,
+      xp,
+      kills
+    });
   });
+
+  // 누적 경험치 내림차순, 킬수 내림차순 정렬
+  loreRows.sort((a, b) => b.xp - a.xp || b.kills - a.kills || a.name.localeCompare(b.name));
+
+  const renderedLoreRows = loreRows.map(entry => {
+    let levelBadgeColor = "rgba(56,189,248,0.15)";
+    let levelBadgeText = "#38bdf8";
+    if (entry.lvl >= 50) { levelBadgeColor = "rgba(239,68,68,0.18)"; levelBadgeText = "#f87171"; }
+    else if (entry.lvl >= 25) { levelBadgeColor = "rgba(251,191,36,0.18)"; levelBadgeText = "#fbbf24"; }
+    else if (entry.lvl >= 10) { levelBadgeColor = "rgba(168,85,247,0.18)"; levelBadgeText = "#c084fc"; }
+
+    return `
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+        <td style="padding: 0.3rem 0.4rem; color: var(--text-main); font-weight: bold; font-size: 0.74rem;">${entry.name}</td>
+        <td style="padding: 0.3rem 0.4rem; text-align: center;">
+          <span style="background: ${levelBadgeColor}; color: ${levelBadgeText}; font-weight: bold; font-size: 0.68rem; padding: 0.05rem 0.25rem; border-radius: 4px; border: 1px solid ${levelBadgeText}33;">Lv.${entry.lvl}</span>
+        </td>
+        <td style="padding: 0.3rem 0.4rem; text-align: center; color: #a855f7; font-size: 0.68rem; font-weight: bold;">x${entry.mult.toFixed(2)}</td>
+        <td style="padding: 0.3rem 0.4rem; text-align: right; color: var(--text-muted); font-size: 0.68rem; font-family: monospace;">${entry.xp.toLocaleString()} XP (${entry.kills}킬)</td>
+      </tr>
+    `;
+  }).join('');
 
   return `
     <div style="display: flex; flex-direction: column; gap: 0.6rem;">
@@ -540,7 +570,7 @@ export function renderLoreMasterySummaryHTML(player) {
             </tr>
           </thead>
           <tbody>
-            ${loreRows.length > 0 ? loreRows.join('') : `<tr><td colspan="4" style="text-align:center; padding:0.8rem; color:var(--text-muted); font-style:italic;">섭취/사냥을 통해 해금된 종족 로어가 아직 없습니다.</td></tr>`}
+            ${renderedLoreRows.length > 0 ? renderedLoreRows : `<tr><td colspan="4" style="text-align:center; padding:0.8rem; color:var(--text-muted); font-style:italic;">섭취/사냥을 통해 해금된 종족 로어가 아직 없습니다.</td></tr>`}
           </tbody>
         </table>
       </div>
