@@ -1,11 +1,11 @@
-# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.32.0)
+# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.33.0)
 
-> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 18 집대성)**
+> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 19 집대성)**
 
-[![Version](https://img.shields.io/badge/version-0.32.0-emerald.svg)](package.json)
-[![Tests](https://img.shields.io/badge/test%20suites-61%2F61%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
-[![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(109%2C316%20LOC)-indigo.svg)](CODE_META_INDEX.md)
-[![Engines](https://img.shields.io/badge/stateless%20engines-15%20engines%20(Next--Gen%20UI%20Promotion)-blue.svg)](src/systems/)
+[![Version](https://img.shields.io/badge/version-0.33.0-emerald.svg)](package.json)
+[![Tests](https://img.shields.io/badge/test%20suites-63%2F63%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
+[![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(109%2C527%20LOC)-indigo.svg)](CODE_META_INDEX.md)
+[![Engines](https://img.shields.io/badge/stateless%20engines-15%20engines%20(Curse%20Sanctuary%20%26%20Scrolls)-blue.svg)](src/systems/)
 [![Renderers](https://img.shields.io/badge/tri--mode%20renderers-Voxel%20|%203D%20|%20ASCII-teal.svg)](src/renderer/)
 [![Entities](https://img.shields.io/badge/canonical%20entities-1%2C636-purple.svg)](src/entities/)
 [![Architecture](https://img.shields.io/badge/architecture-5--layer%20Clean%20DOD-orange.svg)](src/meta/code_meta_index.json)
@@ -15,11 +15,11 @@
 ## 🧭 프로젝트 개요 및 엔진 진화 여정
 
 **미미크리 복셀(Mimicry Voxel)**은 플레이어가 쓰러뜨린 몬스터의 정수 코어(Core)를 흡수하여 그 신체 능력과 고유 마법을 의태(Mimicry)하는 전술적 복셀 로그라이크 엔진입니다. 
-초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook)**, **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템**, **물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 VFX 엔진**, **5대 던전 테마 맞춤형 바닥 & 천장 실사 텍스처 10종 탑재 및 플로어캐스팅 렌더러**, **1인칭 3D 공간 일체화**, **바닥-천장 관통형 3D 복셀 계단 구조체 및 3D 복셀 사다리 시스템**, **전사 SHIELD_BASH(방패 강타) 및 오토캐스트 On/Off 토글**, **ToME/TomeNET 정통 드랍 플래그 엔진**, 그리고 **차세대 UI/UX 포크의 공식 메인(index.html) 정식 승격 및 레거시 메인(legacy_main/, classic.html) 안전 백업 이전**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
+초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook)**, **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템**, **물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 VFX 엔진**, **5대 던전 테마 맞춤형 바닥 & 천장 실사 텍스처 10종 탑재 및 플로어캐스팅 렌더러**, **1인칭 3D 공간 일체화**, **바닥-천장 관통형 3D 복셀 계단 구조체 및 3D 복셀 사다리 시스템**, **전사 SHIELD_BASH(방패 강타) 및 오토캐스트 On/Off 토글**, **ToME/TomeNET 정통 드랍 플래그 엔진**, **차세대 UI/UX 포크의 공식 메인(index.html) 승격 및 레거시 메인 백업 이전**, 그리고 **감정/저주해제 주문서 연동, 조크 몬스터 원천 박멸, 저주 장비 버리기 차단 및 인벤토리 슬롯 고스트 먹통 결함 완치**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
 
 ```mermaid
 timeline
-    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 18)
+    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 19)
     Phase 1 : 3대 원소 상호작용 프로토타입 (v0.1.0 ~ v0.6.0)
             : 의태 코어 흡수 및 기초 복셀 렌더러 구축
     Phase 2 : 5대 갓오브젝트 해체 및 5대 계층 클린 아키텍처 확립 (v0.7.0 ~ v0.12.0)
@@ -56,6 +56,8 @@ timeline
             : 하드코딩 드랍 전면 제거, DROP_1D2~4D2/GREAT/GOOD/ONLY 플래그
     Phase 18: 차세대 UI/UX 공식 메인 승격 & 레거시 백업 이전 완비 (v0.32.0)
             : fork_experimental 공식 승격, legacy_main/ 및 classic.html 보존
+    Phase 19: 감정/저주해제 주문서 & 저주 버리기 차단 & 슬롯 완치 (v0.33.0)
+            : 주문서 2종, 조크 박멸, canDrop 모듈화, 인벤토리 고스트 슬롯 완치
 ```
 
 ---
@@ -89,6 +91,36 @@ timeline
 │    (TomeMonstersData, TomeArtifactsData, GameBalanceConfig) │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 🏛️ Phase 19: 감정/저주해제 주문서 드롭 연동, 조크 몬스터 원천 박멸, 저주 장비 버리기 차단 및 슬롯 영구 먹통 완치 (v0.33.0)
+
+### 🏛️ v0.33.0 — 감정/저주해제 주문서 드롭 연동, 조크 몬스터 원천 박멸, 저주 장비 버리기 차단 및 슬롯 영구 먹통 완치
+- **배포일**: 2026-09-03 | **버전**: `v0.33.0` | **모듈 현황**: 75개 모듈 (109,527 LOC) | **테스트 통과**: 63/63 Suites (100% ALL PASS)
+- **개요 및 설계 배경**:
+  - 미미크리 복셀 엔진의 ToME/TomeNET 정통 아이템 감정 및 저주 라이프사이클을 완성하기 위해, 정통 **감정의 주문서(Scroll of Identify)** 및 **저주 해제의 주문서(Scroll of Remove Curse)**를 정식 아이템 카탈로그에 등록하고 절차적 전리품 생성 및 층별 바닥 드롭 풀에 전면 연동하였습니다.
+  - 게임의 몰입도와 정통 다크 판타지 톤앤매너를 저해하던 ToME 계열의 패러디/조크 몬스터들을 스폰 및 밸런스 설정에서 원천적으로 필터링하여 스폰 풀의 순도를 확보하였습니다.
+  - 저주받은 장비를 인벤토리 창에서 땅에 버리는 방식(`Drop`)으로 우회 탈착하던 취약점을 전면 차단하고, 장비 착용/해제/버리기 과정에서 인벤토리 배열 내 `null` 고스트 슬롯이 잔류하여 슬롯이 영구적으로 먹통되는 결함을 완벽히 완치하였습니다.
+
+- **주요 변경 사항**:
+  1. **감정(Identify) 및 저주 해제(Remove Curse) 주문서 공식 등록 및 드롭 연동 ([`src/entities/TomeKindsData.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/TomeKindsData.js), [`src/core/Game.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Game.js), [`src/systems/TomeLootGenerator.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeLootGenerator.js))**:
+     - `scroll_identify`: 미감정 장비의 의사 감정 상태 및 에고/아티팩트 옵션을 즉시 식별.
+     - `scroll_remove_curse`: 착용 장비 및 인벤토리 아이템에 부여된 저주 태그(`CURSED`, `HEAVY_CURSE` 등)를 정화하여 안전하게 탈착 가능 상태로 전환.
+     - `TomeLootGenerator`와 `Spawner`의 소모품 생성 풀에 주문서 2종을 정규 배정하여 던전 전 층에서 합리적인 확률로 획득 가능하도록 구성.
+  2. **조크 몬스터 원천 박멸 ([`src/core/Spawner.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Spawner.js), [`src/configs/GameBalanceConfig.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/configs/GameBalanceConfig.js))**:
+     - 원작 ToME 2.3.5 데이터베이스에 혼재된 패러디/조크 몬스터들을 탐지하는 정밀 필터링 로직을 `Spawner` 및 `GameBalanceConfig`에 탑재.
+     - 던전 생성 시 조크 몬스터가 절대 스폰되지 않도록 원천 차단하여 정통 톨킨 세계관의 무거운 분위기 확립.
+  3. **저주 장비 버리기 차단 및 `canDrop` 모듈화 ([`src/systems/TomeTagSystem.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeTagSystem.js), [`src/ui/InventoryView.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/InventoryView.js))**:
+     - 저주받은 아이템을 땅에 버려서 강제로 벗어던지려는 꼼수를 차단하기 위해 `TomeTagSystem.canDrop(item)` 메서드 신설.
+     - 장착된 저주 아이템에 대해 탈착(`Unequip`) 및 버리기(`Drop`)를 시도할 경우 명확한 저주 속박 경고 메시지를 출력하며 작업 차단.
+  4. **인벤토리 고스트 슬롯 결함 완치 ([`src/entities/Player.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/Player.js), [`src/core/Game.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Game.js))**:
+     - 아이템 탈착 및 인벤토리 이동 시 비정상적으로 슬롯이 `null`로 남아 장비 슬롯이 영구적으로 비활성화되던 버그를 정밀 색인 압축(`cleanInventory`) 및 인덱스 리파인먼트를 통해 근본 완치.
+  5. **신규 단위/통합 테스트 스위트 2종 추가 및 무결성 검증**:
+     - [`scripts/test_scrolls_curse_and_jokes.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/scripts/test_scrolls_curse_and_jokes.js) 신설 (176 라인): 주문서 사용, 조크 박멸, 장착 경고 검증.
+     - [`scripts/test_curse_drop_prevention.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/scripts/test_curse_drop_prevention.js) 신설 (123 라인): 저주 버리기 차단 및 고스트 슬롯 완치 검증.
+     - **63개 전체 테스트 스위트 100% ALL PASS 달성 (63/63 PASSED, 0 FAILED)**.
+     - **메타 인덱서 갱신**: `meta_indexer.py --update-wiki` 실행으로 75개 모듈(109,527 LOC) 메타 인덱스 및 위키 문서 최신화 완료.
 
 ---
 
