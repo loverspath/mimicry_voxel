@@ -643,6 +643,21 @@ export const TOME_ATTACK_DEFINITIONS = {
     color: '#94a3b8',
     icon: '⚔️',
     multiplier: 1.2
+  },
+  'SHIELD_BASH': {
+    name: '🛡️ 방패 강타 (Shield Bash)',
+    desc: '단단한 방패로 적을 내리쳐 2d6 물리 피해를 입히고 1턴간 기절 및 뒤로 1칸 밀쳐냅니다.',
+    type: 'MELEE_STRIKE',
+    element: 'PHYSICAL',
+    manaCost: 2,
+    cooldown: 3,
+    maxRange: 1.5,
+    dice: '2d6',
+    color: '#60a5fa',
+    icon: '🛡️',
+    multiplier: 1.5,
+    pushBack: true,
+    stunTurns: 1
   }
 };
 
@@ -772,14 +787,21 @@ export class MonsterSpellFactory {
     }
 
     // 5. Fill any remaining slots up to 4 with Standard Innate Techniques
+    const growthType = config.growthType || (monsterData && monsterData.growthType) || '';
+    const isWarriorPhysical = (growthType === 'WARRIOR') || (validSpells.length === 0);
+
     while (collectedSkills.length < 4) {
       const slotNum = collectedSkills.length + 1;
       const reqMastery = slotNum <= 2 ? 1 : (slotNum === 3 ? 10 : 25);
       let fallbackKey = 'BASIC_STRIKE';
-      if (slotNum === 3) fallbackKey = 'BLINK'; // Standard mobility
-      else if (slotNum === 4) fallbackKey = 'CRUSH_STRIKE'; // Heavy smash
+      if (slotNum === 3) {
+        fallbackKey = isWarriorPhysical ? 'SHIELD_BASH' : 'BLINK';
+      } else if (slotNum === 4) {
+        fallbackKey = 'CRUSH_STRIKE'; // Heavy smash
+      }
 
       const spec = TOME_SPELL_DEFINITIONS[fallbackKey] || TOME_ATTACK_DEFINITIONS[fallbackKey] || TOME_ATTACK_DEFINITIONS.BASIC_STRIKE;
+      const dice = spec.dice || (fallbackKey === 'SHIELD_BASH' ? '2d6' : '1d6');
 
       collectedSkills.push(new ActiveSkill({
         id: `${speciesIdentifier}_SLOT_${slotNum}`,
@@ -791,12 +813,12 @@ export class MonsterSpellFactory {
         type: spec.type,
         element: spec.element,
         manaCost: spec.manaCost || 2,
-        cooldown: spec.cooldown || 2,
+        cooldown: spec.cooldown || (fallbackKey === 'SHIELD_BASH' ? 3 : 2),
         maxRange: spec.maxRange || 1.5,
-        dice: spec.dice || '1d6',
+        dice: dice,
         color: spec.color || '#38bdf8',
         icon: spec.icon || '⚔️',
-        execute: (game, player, target, skill) => spec.type === 'TELEPORT' ? this._executePhaseDoor(game, player, skill) : this._executeAttackStrike(game, player, target, skill, spec, '1d6')
+        execute: (game, player, target, skill) => spec.type === 'TELEPORT' ? this._executePhaseDoor(game, player, skill) : this._executeAttackStrike(game, player, target, skill, spec, dice)
       }));
     }
 
@@ -907,6 +929,29 @@ export class MonsterSpellFactory {
     if (spec.poisonTurns) {
       if (!enemy.debuffs) enemy.debuffs = { poison: 0, frost: 0, paralyzed: false };
       enemy.debuffs.poison = Math.max(enemy.debuffs.poison || 0, spec.poisonTurns);
+    }
+
+    if (spec.stunTurns) {
+      if (!enemy.debuffs) enemy.debuffs = { poison: 0, frost: 0, paralyzed: false };
+      enemy.debuffs.paralyzed = true;
+      if (game.addLogEntry) {
+        game.addLogEntry(`💫 ${enemy.displayName}이(가) 방패 강타의 충격으로 기절했습니다!`, 'combat');
+      }
+    }
+
+    if (spec.pushBack) {
+      const dx = Math.sign(enemy.x - player.x);
+      const dy = Math.sign(enemy.y - player.y);
+      const pushX = enemy.x + dx;
+      const pushY = enemy.y + dy;
+      if (game.map && game.map.isWalkable(pushX, pushY) && !game.isMonsterAt(pushX, pushY)) {
+        enemy.x = pushX;
+        enemy.y = pushY;
+        if (enemy.markDirty) enemy.markDirty('방패 강타 밀쳐내기');
+        if (game.addLogEntry) {
+          game.addLogEntry(`🛡️ 방패의 강력한 완력으로 ${enemy.displayName}을(를) 뒤로 밀쳐냈습니다!`, 'combat');
+        }
+      }
     }
 
     if (enemy.stats.hp <= 0 && game.killMonster) {

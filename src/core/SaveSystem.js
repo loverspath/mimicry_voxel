@@ -113,6 +113,7 @@ export class SaveSystem {
                 debuffs: game.player.debuffs,
                 statuses: game.player.statuses || {},
                 autoFireEnabled: game.player.autoFireEnabled !== undefined ? game.player.autoFireEnabled : true,
+                disabledAutoCastSkills: game.player.disabledAutoCastSkills || {},
                 stats: { hp: game.player.stats.hp, maxHp: game.player.stats.maxHp },
                 mimicCore: game.player.mimicCore,
                 animationTime: game.player.animationTime,
@@ -216,6 +217,9 @@ export class SaveSystem {
         game.player.xpNeeded = pData.xpNeeded || 50;
         if (pData.autoFireEnabled !== undefined) {
             game.player.autoFireEnabled = pData.autoFireEnabled;
+        }
+        if (pData.disabledAutoCastSkills !== undefined) {
+            game.player.disabledAutoCastSkills = pData.disabledAutoCastSkills;
         }
         
         // Restore stats and ensure MimicBody stays in sync

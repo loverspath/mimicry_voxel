@@ -102,6 +102,7 @@ export class Player {
     this.inventory = [];
     this.energy = 0;
     this.autoFireEnabled = true;
+    this.disabledAutoCastSkills = {};
     
     this.legacyStats = this.body.legacyStats;
 
@@ -160,6 +161,18 @@ export class Player {
   toggleAutoFire() {
     this.autoFireEnabled = !this.autoFireEnabled;
     return this.autoFireEnabled;
+  }
+
+  isAutoCastEnabled(skillId) {
+    if (!skillId) return true;
+    return !this.disabledAutoCastSkills || !this.disabledAutoCastSkills[skillId];
+  }
+
+  toggleAutoCast(skillId) {
+    if (!skillId) return true;
+    if (!this.disabledAutoCastSkills) this.disabledAutoCastSkills = {};
+    this.disabledAutoCastSkills[skillId] = !this.disabledAutoCastSkills[skillId];
+    return !this.disabledAutoCastSkills[skillId];
   }
 
   markDirty(reason = "이유 미상") {
@@ -720,6 +733,7 @@ export class Player {
 
     for (const skill of skills) {
       if (!skill.isUnlocked(masteryLvl)) continue;
+      if (!this.isAutoCastEnabled(skill.id)) continue;
       const cd = this.getTracker(skill.id, 'cooldown');
       if (cd > 0) continue;
 
@@ -740,7 +754,8 @@ export class Player {
         continue;
       }
 
-      // 2. 위기 탈출 (PHASE_DOOR / 점멸 / TELEPORT) - 체력 35% 미만 및 인접 적 존재 시 자동 시전
+      // 2. 위기 탈출:
+      // (A) 마법 점멸/텔레포트 (PHASE_DOOR / 점멸 / TELEPORT) - 마법 계열 위기 탈출
       const isTeleport = skillType === 'TELEPORT' || skillId.includes('PHASE') || skillId.includes('DOOR') || skillName.includes('점멸');
       if (isTeleport) {
         if (this.stats && this.stats.hp < this.stats.maxHp * 0.35) {
@@ -755,6 +770,22 @@ export class Player {
           }
         }
         continue;
+      }
+
+      // (B) 전사 방패 강타 (SHIELD_BASH / 방패 강타) - 체력 35% 미만 및 인접 적 존재 시 적을 밀쳐내고 기절시켜 위기 탈출
+      const isShieldBash = skillId.includes('SHIELD_BASH') || skillName.includes('방패 강타') || (skill.tomeKey === 'SHIELD_BASH');
+      if (isShieldBash) {
+        if (this.stats && this.stats.hp < this.stats.maxHp * 0.35) {
+          const monsterList = game.dungeon?.monsters || game.monsters || [];
+          const adjEnemy = monsterList.find(m => m && m.stats && m.stats.hp > 0 && Math.hypot(m.x - this.x, m.y - this.y) <= 1.8);
+          if (adjEnemy) {
+            const success = skill.execute(game, this, adjEnemy);
+            if (success) {
+              didCast = true;
+              continue;
+            }
+          }
+        }
       }
 
       // 3. 자가 버프 (HASTE / 가속 / SELF)

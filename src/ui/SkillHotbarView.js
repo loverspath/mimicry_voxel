@@ -69,11 +69,16 @@ export function renderSkillHotbarHTML(player) {
 
     const color = skill.color || '#38bdf8';
     const icon = skill.icon || '⚡';
-    const tooltipText = `${skill.name} [단축키: ${slotNum}] - ${skill.desc || ''} (쿨다운: ${maxCd}턴, 사거리: ${skill.maxRange || 1}칸)`;
+    const isAuto = typeof player.isAutoCastEnabled === 'function' ? player.isAutoCastEnabled(skill.id) : true;
+    const autoBadgeHtml = isUnlocked 
+      ? `<span class="slot-auto-badge ${isAuto ? 'on' : 'off'}" style="position: absolute; top: 2px; right: 2px; font-size: 0.52rem; font-weight: bold; padding: 1px 3px; border-radius: 3px; background: ${isAuto ? 'rgba(16,185,129,0.85)' : 'rgba(239,68,68,0.85)'}; color: #fff; z-index: 5;">${isAuto ? 'AUTO' : 'MAN'}</span>`
+      : '';
+    const tooltipText = `${skill.name} [단축키: ${slotNum}] (${isAuto ? '오토 ON' : '수동 전용'}) - ${skill.desc || ''} (쿨다운: ${maxCd}턴, 사거리: ${skill.maxRange || 1}칸)`;
 
     slotsHtml += `
       <button type="button" class="${slotClasses}" data-slot="${slotNum}" data-skill-id="${skill.id}" title="${tooltipText}" style="--skill-accent: ${color};">
         <span class="slot-num-badge">${slotNum}</span>
+        ${autoBadgeHtml}
         <span class="skill-icon">${icon}</span>
         <span class="skill-name-mini">${skill.name}</span>
         ${overlayHtml}

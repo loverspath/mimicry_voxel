@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-09-03T05:36:01Z",
+  "generatedAt": "2026-09-03T05:53:01Z",
   "summary": {
     "totalModules": 75,
-    "totalLines": 109122,
+    "totalLines": 109240,
     "categories": {
       "configs": 5,
       "core": 14,
@@ -440,7 +440,7 @@
       "filePath": "src/core/SaveSystem.js",
       "moduleName": "SaveSystem",
       "category": "core",
-      "lines": 535,
+      "lines": 539,
       "responsibility": "로컬스토리지 기반 다중 슬롯 게임 상태(맵, 플레이어, 인벤토리, 몬스터, 유니크 몬스터 생태계) 직렬화 및 역직렬화 세이브/로드 엔진",
       "purity": "State Store",
       "dependencies": [
@@ -465,7 +465,7 @@
         "serializeItem",
         "serializeMonster"
       ],
-      "lastModified": "2026-09-03T00:24:00Z"
+      "lastModified": "2026-09-03T05:47:35Z"
     },
     {
       "filePath": "src/core/Skills.js",
@@ -759,7 +759,7 @@
       "filePath": "src/entities/Player.js",
       "moduleName": "Player",
       "category": "entities",
-      "lines": 1121,
+      "lines": 1152,
       "responsibility": "플레이어 엔티티 모델 (Zero-Logic 순수 데이터 컴포넌트). 스탯/저항/광원 계산은 UnifiedTraitEngine 및 PlayerStatCalculator에, 의태 스킬 관리는 MonsterSpellFactory 및 TomeSpellEngine에 100% 위임합니다.",
       "purity": "Data Model / State Store",
       "dependencies": [
@@ -788,7 +788,7 @@
         "getGrowth",
         "getGrowthDelta"
       ],
-      "lastModified": "2026-09-03T00:31:09Z"
+      "lastModified": "2026-09-03T05:48:16Z"
     },
     {
       "filePath": "src/entities/Tags.js",
@@ -1333,7 +1333,7 @@
       "filePath": "src/systems/MonsterSpellFactory.js",
       "moduleName": "MonsterSpellFactory",
       "category": "systems",
-      "lines": 1063,
+      "lines": 1108,
       "responsibility": "ToME 2.3.5 정통 몬스터 DB(TomeMonstersData.js)의 106종 spells 플래그 및 attacks 데이터를 100% 기반으로 몬스터 코어 변신 시 플레이어 스킬바(1, 2, 3, 4번 슬롯)에 1:1 정확하게 바인딩하는 순수 의태 스펠 엔진.",
       "purity": "Stateless System / Logic",
       "dependencies": [
@@ -1351,7 +1351,7 @@
         "MonsterSpellFactory"
       ],
       "functions": [],
-      "lastModified": "2026-08-26T12:58:12Z"
+      "lastModified": "2026-09-03T05:49:57Z"
     },
     {
       "filePath": "src/systems/PlayerStatCalculator.js",
@@ -1758,7 +1758,7 @@
       "filePath": "src/ui/HUDView.js",
       "moduleName": "HUDView",
       "category": "ui",
-      "lines": 814,
+      "lines": 847,
       "responsibility": "상단 상태바(SPD, HP, Floor), 플레이어 상세 스테이터스창, 스킬 수련 트리, 무기/로어 마스터리 도감 뷰",
       "purity": "DOM Renderer",
       "dependencies": [
@@ -1791,7 +1791,7 @@
         "updateFloatingAutoFireButton",
         "updateTopBarHUD"
       ],
-      "lastModified": "2026-08-26T11:49:33Z"
+      "lastModified": "2026-09-03T05:51:44Z"
     },
     {
       "filePath": "src/ui/InspectModalView.js",
@@ -1912,7 +1912,7 @@
       "filePath": "src/ui/SkillHotbarView.js",
       "moduleName": "SkillHotbarView",
       "category": "ui",
-      "lines": 210,
+      "lines": 215,
       "responsibility": "화면 하단 상시 노출 4대 의태 액티브 스킬 핫바 및 실시간 쿨다운 방사형 애니메이션/원터치 격발 렌더러",
       "purity": "DOM Renderer",
       "dependencies": [
@@ -1929,7 +1929,7 @@
       "functions": [
         "renderSkillHotbarHTML"
       ],
-      "lastModified": "2026-09-03T00:20:53Z"
+      "lastModified": "2026-09-03T05:49:17Z"
     },
     {
       "filePath": "src/ui/UIManager.js",

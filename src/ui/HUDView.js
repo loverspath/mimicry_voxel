@@ -523,16 +523,29 @@ export function renderSkillTreeHTML(player) {
     const isUnlocked = skill.isUnlocked(masteryLvl);
     const cd = player.getTracker ? player.getTracker(skill.id, 'cooldown') : 0;
     const effectiveCd = skill.getEffectiveCooldown ? skill.getEffectiveCooldown(masteryLvl) : skill.cooldown;
+    const isAutoOn = player.isAutoCastEnabled ? player.isAutoCastEnabled(skill.id) : true;
     
-    let statusBadge = `<span style="background: rgba(16,185,129,0.15); color: #34d399; font-weight: bold; font-size: 0.7rem; padding: 0.1rem 0.35rem; border-radius: 4px; border: 1px solid rgba(16,185,129,0.3);">🟢 자동 격발 대기 (Auto-Ready)</span>`;
+    let statusBadge = '';
+    let toggleBtnHTML = '';
+
     if (!isUnlocked) {
       statusBadge = `<span style="background: rgba(239,68,68,0.15); color: #f87171; font-weight: bold; font-size: 0.7rem; padding: 0.1rem 0.35rem; border-radius: 4px; border: 1px solid rgba(239,68,68,0.3);">🔒 잠김 (숙련도 Lv.${skill.requiredMastery} 필요)</span>`;
-    } else if (cd > 0) {
-      statusBadge = `<span style="background: rgba(251,191,36,0.15); color: #fbbf24; font-weight: bold; font-size: 0.7rem; padding: 0.1rem 0.35rem; border-radius: 4px; border: 1px solid rgba(251,191,36,0.3);">⏳ 쿨다운 ${cd}턴 (회복 중)</span>`;
+    } else {
+      if (isAutoOn) {
+        if (cd > 0) {
+          statusBadge = `<span style="background: rgba(251,191,36,0.15); color: #fbbf24; font-weight: bold; font-size: 0.7rem; padding: 0.1rem 0.35rem; border-radius: 4px; border: 1px solid rgba(251,191,36,0.3);">⏳ 쿨다운 ${cd}턴</span>`;
+        } else {
+          statusBadge = `<span style="background: rgba(16,185,129,0.15); color: #34d399; font-weight: bold; font-size: 0.7rem; padding: 0.1rem 0.35rem; border-radius: 4px; border: 1px solid rgba(16,185,129,0.3);">🟢 자동 격발 대기 (Auto-Ready)</span>`;
+        }
+        toggleBtnHTML = `<button type="button" class="autocast-toggle-btn on" data-skill-id="${skill.id}" onclick="window.__toggleSkillAutoCast('${skill.id}')" style="cursor: pointer; background: rgba(16,185,129,0.22); color: #34d399; font-weight: bold; font-size: 0.7rem; padding: 0.12rem 0.45rem; border-radius: 4px; border: 1px solid #10b981; transition: all 0.15s ease;">🟢 오토: ON</button>`;
+      } else {
+        statusBadge = `<span style="background: rgba(148,163,184,0.15); color: #94a3b8; font-weight: bold; font-size: 0.7rem; padding: 0.1rem 0.35rem; border-radius: 4px; border: 1px solid rgba(148,163,184,0.3);">🔴 수동 전용</span>`;
+        toggleBtnHTML = `<button type="button" class="autocast-toggle-btn off" data-skill-id="${skill.id}" onclick="window.__toggleSkillAutoCast('${skill.id}')" style="cursor: pointer; background: rgba(239,68,68,0.22); color: #f87171; font-weight: bold; font-size: 0.7rem; padding: 0.12rem 0.45rem; border-radius: 4px; border: 1px solid #ef4444; transition: all 0.15s ease;">🔴 오토: OFF</button>`;
+      }
     }
 
     const cardOpacity = isUnlocked ? '1' : '0.6';
-    const borderCol = isUnlocked ? skill.color : 'rgba(255,255,255,0.1)';
+    const borderCol = isUnlocked ? (isAutoOn ? skill.color : '#64748b') : 'rgba(255,255,255,0.1)';
 
     return `
       <div style="background: rgba(0,0,0,0.3); border: 1px solid ${borderCol}; border-radius: 6px; padding: 0.5rem; display: flex; flex-direction: column; gap: 0.25rem; opacity: ${cardOpacity};">
@@ -541,7 +554,10 @@ export function renderSkillTreeHTML(player) {
             <span style="font-size: 1rem;">${skill.icon}</span>
             <b style="color: ${skill.color}; font-size: 0.85rem;">${skill.name}</b>
           </div>
-          ${statusBadge}
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            ${statusBadge}
+            ${toggleBtnHTML}
+          </div>
         </div>
         <div style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.35;">
           ${skill.desc}
@@ -550,7 +566,7 @@ export function renderSkillTreeHTML(player) {
           <span>⏳ 쿨다운: <b style="color: #f59e0b;">${effectiveCd}턴</b></span>
           <span>🎯 사거리: <b style="color: #34d399;">${skill.maxRange}칸</b></span>
           <span>🎲 위력: <b style="color: #cbd5e1;">${skill.dice}</b></span>
-          <span>⚡ 발동: <b style="color: #38bdf8;">자동 조준 격발</b></span>
+          <span>⚡ 모드: <b style="color: ${isAutoOn ? '#38bdf8' : '#f87171'};">${isAutoOn ? '자동 조준 격발' : '수동 격발 (단축키)'}</b></span>
         </div>
       </div>
     `;
@@ -605,6 +621,23 @@ if (typeof window !== 'undefined') {
         searchQuery: window.__currentLoreSearch,
         selectedKey: window.__currentSelectedMonsterKey
       });
+    }
+  };
+
+  window.__toggleSkillAutoCast = function(skillId) {
+    const game = window.__game || window.game;
+    const player = game?.player;
+    if (!player) return;
+    const newState = player.toggleAutoCast(skillId);
+    if (game.addLogEntry) {
+      game.addLogEntry(`⚙️ [오토캐스트 설정] <b>${skillId}</b> 자동 발동: <b>${newState ? '🟢 ON' : '🔴 OFF (수동 전용)'}</b>`, 'system');
+    }
+    const detailEl = document.getElementById('item-detail');
+    if (detailEl) {
+      detailEl.innerHTML = renderSkillTreeHTML(player);
+    }
+    if (game.skillHotbarView && typeof game.skillHotbarView.render === 'function') {
+      game.skillHotbarView.render(player);
     }
   };
 
