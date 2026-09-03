@@ -1,11 +1,11 @@
-# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.31.0)
+# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.32.0)
 
-> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 17 집대성)**
+> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 18 집대성)**
 
-[![Version](https://img.shields.io/badge/version-0.31.0-emerald.svg)](package.json)
+[![Version](https://img.shields.io/badge/version-0.32.0-emerald.svg)](package.json)
 [![Tests](https://img.shields.io/badge/test%20suites-61%2F61%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
 [![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(109%2C316%20LOC)-indigo.svg)](CODE_META_INDEX.md)
-[![Engines](https://img.shields.io/badge/stateless%20engines-15%20engines%20(ToME%20Procedural%20Drop%20Engine)-blue.svg)](src/systems/)
+[![Engines](https://img.shields.io/badge/stateless%20engines-15%20engines%20(Next--Gen%20UI%20Promotion)-blue.svg)](src/systems/)
 [![Renderers](https://img.shields.io/badge/tri--mode%20renderers-Voxel%20|%203D%20|%20ASCII-teal.svg)](src/renderer/)
 [![Entities](https://img.shields.io/badge/canonical%20entities-1%2C636-purple.svg)](src/entities/)
 [![Architecture](https://img.shields.io/badge/architecture-5--layer%20Clean%20DOD-orange.svg)](src/meta/code_meta_index.json)
@@ -15,11 +15,11 @@
 ## 🧭 프로젝트 개요 및 엔진 진화 여정
 
 **미미크리 복셀(Mimicry Voxel)**은 플레이어가 쓰러뜨린 몬스터의 정수 코어(Core)를 흡수하여 그 신체 능력과 고유 마법을 의태(Mimicry)하는 전술적 복셀 로그라이크 엔진입니다. 
-초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook)**, **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템**, **물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 VFX 엔진**, **5대 던전 테마 맞춤형 바닥 & 천장 실사 텍스처 10종 탑재 및 플로어캐스팅 렌더러**, **1인칭 3D 공간 일체화**, **바닥-천장 관통형 3D 복셀 계단 구조체 및 3D 복셀 사다리 시스템**, **전사 SHIELD_BASH(방패 강타) 및 오토캐스트 On/Off 토글**, 그리고 **ToME/TomeNET 정통 드랍 플래그 엔진, 유니크 하드코딩 드랍 제거 및 절차적 전리품 생성 연동**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
+초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook)**, **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템**, **물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 VFX 엔진**, **5대 던전 테마 맞춤형 바닥 & 천장 실사 텍스처 10종 탑재 및 플로어캐스팅 렌더러**, **1인칭 3D 공간 일체화**, **바닥-천장 관통형 3D 복셀 계단 구조체 및 3D 복셀 사다리 시스템**, **전사 SHIELD_BASH(방패 강타) 및 오토캐스트 On/Off 토글**, **ToME/TomeNET 정통 드랍 플래그 엔진**, 그리고 **차세대 UI/UX 포크의 공식 메인(index.html) 정식 승격 및 레거시 메인(legacy_main/, classic.html) 안전 백업 이전**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
 
 ```mermaid
 timeline
-    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 17)
+    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 18)
     Phase 1 : 3대 원소 상호작용 프로토타입 (v0.1.0 ~ v0.6.0)
             : 의태 코어 흡수 및 기초 복셀 렌더러 구축
     Phase 2 : 5대 갓오브젝트 해체 및 5대 계층 클린 아키텍처 확립 (v0.7.0 ~ v0.12.0)
@@ -54,6 +54,8 @@ timeline
             : 3종 사다리 텍스처, SHIELD_BASH(스턴), Shift+1~8 오토캐스트 토글
     Phase 17: ToME 정통 드랍 플래그 엔진 & 유니크 절차적 전리품 연동 (v0.31.0)
             : 하드코딩 드랍 전면 제거, DROP_1D2~4D2/GREAT/GOOD/ONLY 플래그
+    Phase 18: 차세대 UI/UX 공식 메인 승격 & 레거시 백업 이전 완비 (v0.32.0)
+            : fork_experimental 공식 승격, legacy_main/ 및 classic.html 보존
 ```
 
 ---
@@ -87,6 +89,28 @@ timeline
 │    (TomeMonstersData, TomeArtifactsData, GameBalanceConfig) │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 🏛️ Phase 18: 차세대 UI/UX 포크의 공식 메인(index.html) 승격 및 레거시 메인(legacy_main/, classic.html) 백업 이전 (v0.32.0)
+
+### 🏛️ v0.32.0 — 차세대 UI/UX 포크의 공식 메인(index.html) 승격 및 레거시 메인(legacy_main/, classic.html) 백업 이전
+- **배포일**: 2026-09-03 | **버전**: `v0.32.0` | **모듈 현황**: 75개 모듈 (109,316 LOC) | **테스트 통과**: 61/61 Suites (100% ALL PASS)
+- **개요 및 설계 배경**:
+  - Phase 5부터 실험적으로 격리 개발되어 오던 **차세대 글래스모피즘(Glassmorphism) 반응형 UI/UX 포크(`fork_experimental/`)**의 모든 뷰 컴포넌트, 모바일 터치 액션 바, 저체력 위기 비네팅, 반응형 대형 캔버스 및 동적 레이아웃 엔진을 **프로젝트 공식 메인 진입점(`index.html`, `main.js`, `style.css`)으로 정식 승격(Promote)**시켰습니다.
+  - 기존 클래식 버전의 고유한 사용자 경험과 레거시 인터페이스를 선호하는 사용자를 위해, 구형 메인 진입점을 **[`legacy_main/`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/legacy_main) 디렉토리 및 루트 [`classic.html`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/classic.html)**로 완벽히 백업 분리하여 레거시 호환성과 아카이빙 무결성을 동시에 달성하였습니다.
+
+- **주요 변경 사항**:
+  1. **차세대 UI/UX 포크의 공식 메인 승격 ([`index.html`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/index.html), [`main.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/main.js), [`style.css`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/style.css))**:
+     - `index.html`: 차세대 글래스모피즘 상단 HUD(OFFICIAL 뱃지, 실시간 HP/SP/Floor 게이지 바), 저체력 위기 비네팅 레이어, 모바일 최적화 하단 조작 패널을 기본 메인 화면으로 전격 배치.
+     - `main.js`: 밸런스 프리셋 모달 연동, 3단 렌더러 토글 파이프라인, 모바일 롱프레스 토글 및 터치 제스처를 공식 진입점에 완벽 통합.
+     - `style.css`: 1,021라인 분량의 현대적 반응형 디자인 시스템 전면 도입(세련된 그라디언트, 네온 인디케이터, 유동적 뷰포트 스케일링).
+  2. **레거시 메인 진입점 백업 및 이전 ([`legacy_main/`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/legacy_main), [`classic.html`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/classic.html))**:
+     - 기존의 구형 `index.html` 및 `main.js`를 `legacy_main/index.html` 및 `legacy_main/main.js`로 안전 이전.
+     - 루트 디렉토리에 `classic.html`을 신설하여 레거시 인터페이스로 즉시 접속 가능한 백업 진입점 제공.
+  3. **전체 테스트 스위트 및 메타 인덱스 무결성 검증**:
+     - 61개 전체 단위/통합 테스트 스위트 100% ALL PASS 달성 (61/61 PASSED, 0 FAILED).
+     - 메타 인덱서 동기화: 75개 모듈 (109,316 LOC) 무결성 검증 완료.
 
 ---
 
