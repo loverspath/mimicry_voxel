@@ -13,17 +13,264 @@ import { TOME_KINDS_DATA } from '../entities/TomeKindsData.js';
 import { TOME_ARTIFACTS_DATA } from '../entities/TomeArtifactsData.js';
 import { TOME_EGOS_DATA } from '../entities/TomeEgosData.js';
 import { DungeonValueBudgetEngine } from './DungeonValueBudgetEngine.js';
+import { TomeRandartEngine } from './TomeRandartEngine.js';
 
 export class TomeLootGenerator {
-  static _cachedKinds = Object.values(TOME_KINDS_DATA || {});
+  static _cachedKinds = Object.values(TOME_KINDS_DATA || {}).filter(k =>
+    k && k.tval !== 102 && k.key !== 'KIND_RANDOM_ARTIFACT'
+  );
   static _cachedEgos = Object.values(TOME_EGOS_DATA || {});
   static _cachedArtifacts = Object.values(TOME_ARTIFACTS_DATA || {});
+
+  /**
+   * 3대 랜덤 플래그(RANDOM_RESIST, RANDOM_POWER, RANDOM_RES_OR_POWER)를 구체적인 저항 및 권능 플래그로 100% 치환합니다.
+   * @param {string[]} flags - 원본 플래그 배열
+   * @returns {string[]} 치환 완료된 고유 플래그 배열
+   */
+  static resolveRandomFlags(flags) {
+    const flagSet = new Set(flags || []);
+
+    while (flagSet.has('RANDOM_RESIST')) {
+      flagSet.delete('RANDOM_RESIST');
+      const r = Math.random();
+      let res;
+      if (r < 0.60) {
+        const base4 = ['RES_FIRE', 'RES_COLD', 'RES_ELEC', 'RES_ACID'];
+        res = base4[Math.floor(Math.random() * base4.length)];
+      } else if (r < 0.88) {
+        const adv = ['RES_POIS', 'RES_DARK', 'RES_LITE', 'RES_FEAR'];
+        res = adv[Math.floor(Math.random() * adv.length)];
+      } else {
+        const high = ['RES_CONF', 'RES_SOUND', 'RES_SHARDS', 'RES_NETHER', 'RES_NEXUS', 'RES_CHAOS'];
+        res = high[Math.floor(Math.random() * high.length)];
+      }
+      flagSet.add(res);
+    }
+
+    while (flagSet.has('RANDOM_POWER')) {
+      flagSet.delete('RANDOM_POWER');
+      const powers = [
+        { flag: 'FREE_ACT', w: 20 },
+        { flag: 'SEE_INVIS', w: 20 },
+        { flag: 'SLOW_DIGEST', w: 15 },
+        { flag: 'REGEN', w: 15 },
+        { flag: 'FEATHER', w: 10 },
+        { flag: 'TELEPATHY', w: 8 },
+        { flag: 'SPEED', w: 7 },
+        { flag: 'EXTRA_ATTACK', w: 5 }
+      ];
+      const totalW = powers.reduce((acc, p) => acc + p.w, 0);
+      let rollW = Math.random() * totalW;
+      let chosen = powers[0].flag;
+      for (const p of powers) {
+        if (rollW < p.w) {
+          chosen = p.flag;
+          break;
+        }
+        rollW -= p.w;
+      }
+      flagSet.add(chosen);
+    }
+
+    while (flagSet.has('RANDOM_RES_OR_POWER')) {
+      flagSet.delete('RANDOM_RES_OR_POWER');
+      if (Math.random() < 0.5) {
+        flagSet.add('RANDOM_RESIST');
+      } else {
+        flagSet.add('RANDOM_POWER');
+      }
+    }
+
+    if (flagSet.has('RANDOM_RESIST') || flagSet.has('RANDOM_POWER')) {
+      return this.resolveRandomFlags(Array.from(flagSet));
+    }
+
+    return Array.from(flagSet);
+  }
+
+  /**
+   * 베이스 장비명과 아티팩트 rawName을 ToME 정통 4대 네이밍 룰에 따라 결합합니다.
+   * @param {Object} art - 아티팩트 데이터 객체
+   * @param {string} [baseName=null] - 베이스 장비명
+   * @returns {string} 완성된 아티팩트 정통 명칭
+   */
+  static getArtifactDisplayName(art, baseName = null) {
+    let base = baseName;
+    if (!base) {
+      const match = this._cachedKinds.find(k => k.tval === art.tval && k.sval === art.sval);
+      if (match && match.name) {
+        base = match.name.replace(/^[&]\s*/, '').replace(/~$/, '').trim();
+      } else {
+        if (art.tval === 45 || art.type === 'RING') base = 'Ring';
+        else if (art.tval === 40 || art.type === 'AMULET') base = 'Amulet';
+        else if (art.tval === 39 || art.type === 'LAMP') {
+          if (art.key === 'ART_OF_GALADRIEL') base = 'The Phial';
+          else if (art.key === 'ART_OF_MINAS_ITHIL') base = 'The Palantir';
+          else if (art.key === 'ART_OF_SPACE_TIME') base = 'The Stone';
+          else base = 'Phial';
+        } else {
+          base = art.type || 'Artifact';
+        }
+      }
+    }
+
+    const raw = (art.rawName || art.name || '').replace(/^유물:\s*/, '').trim();
+
+    if (art.flags && art.flags.includes('HIDE_TYPE')) {
+      if (raw.startsWith('of ') || raw.startsWith('the ')) {
+        return `${base} ${raw}`;
+      }
+      return raw;
+    }
+
+    if (raw.startsWith('of ') || raw.startsWith('the ')) {
+      return `${base} ${raw}`;
+    }
+
+    if (raw.startsWith("'") && raw.endsWith("'")) {
+      return `${base} ${raw}`;
+    }
+
+    if (raw.includes("'")) {
+      return `${base} ${raw}`;
+    }
+
+    return `${base} of ${raw}`;
+  }
+
+  static _egoPools = null;
+
+  static _initEgoPools() {
+    if (this._egoPools) return;
+    const egos = this._cachedEgos || Object.values(TOME_EGOS_DATA || {});
+    this._egoPools = {
+      weapon: egos.filter(e =>
+        (e.flags && e.flags.some(f => f.startsWith('BRAND_') || f.startsWith('SLAY_') || f === 'VORPAL' || f === 'BLOWS')) ||
+        /Flame|Frost|Lightning|Acid|Venom|Westernesse|Slay|Defender|Vampiric|Gondolin|Accuracy|Sharp|Earthquakes|Chaotic/i.test(e.name)
+      ),
+      bow: egos.filter(e =>
+        /Extra Might|Extra Shots|Accuracy|Velocity|Westernesse/i.test(e.name)
+      ),
+      boots: egos.filter(e =>
+        /Speed|Free Action|Stealth|Agility|Levitation/i.test(e.name)
+      ),
+      armor: egos.filter(e =>
+        (e.flags && e.flags.some(f => f.startsWith('RES_') || f === 'REFLECT' || f === 'STEALTH' || f === 'FREE_ACT')) ||
+        /Resistance|Elven|Dwarven|Protection|Reflection|Noldor|Aman/i.test(e.name)
+      ),
+      jewelry: egos.filter(e =>
+        /Might|Lordliness|Wisdom|Intelligence|Regeneration|Power/i.test(e.name)
+      ),
+      general: egos
+    };
+  }
+
+  static _getEgosForSlot(type, slotType) {
+    if (!this._egoPools) this._initEgoPools();
+    const t = (slotType || type || '').toUpperCase();
+    if (t === 'WEAPON') return this._egoPools.weapon;
+    if (t === 'BOW') return this._egoPools.bow;
+    if (t === 'BOOTS') return this._egoPools.boots;
+    if (['ARMOR', 'SHIELD', 'HELMET', 'CLOAK', 'GLOVES'].includes(t)) return this._egoPools.armor;
+    if (['RING', 'AMULET'].includes(t)) return this._egoPools.jewelry;
+    return this._egoPools.general;
+  }
 
   /**
    * ToME 데이터셋 초기 로더 (호환성 유지용)
    */
   static async initDataset() {
     return true;
+  }
+
+  /**
+   * 고정 아티팩트(Artifact) 인스턴스를 생성합니다. 베이스 장비명 결합 및 3대 랜덤 플래그를 100% 치환합니다.
+   * @param {number} x 
+   * @param {number} y 
+   * @param {Object} art 
+   * @param {number} [danger=20] 
+   * @returns {Item}
+   */
+  static _createArtifactItemInstance(x, y, art, danger = 20) {
+    if (!art) return null;
+    let type = art.type || 'WEAPON';
+    let slotType = art.slotType || null;
+    let char = art.char || '|';
+
+    const baseKind = this._cachedKinds.find(k => k.tval === art.tval && k.sval === art.sval);
+    const finalName = this.getArtifactDisplayName(art, baseKind?.name);
+    const resolvedFlags = this.resolveRandomFlags(art.flags);
+
+    if (art.tval === 19 || type === 'BOW' || baseKind?.type === 'BOW') {
+      type = 'BOW';
+      slotType = 'BOW';
+      char = '}';
+    } else if (art.tval === 31 || type === 'GLOVES') {
+      type = 'GLOVES';
+      slotType = 'GLOVES';
+      char = ']';
+    } else if (art.tval === 34 || type === 'SHIELD') {
+      type = 'SHIELD';
+      slotType = 'SHIELD';
+      char = ')';
+    } else if (art.tval === 30 || type === 'BOOTS') {
+      type = 'BOOTS';
+      slotType = 'BOOTS';
+      char = ']';
+    } else if (art.tval === 35 || type === 'CLOAK') {
+      type = 'CLOAK';
+      slotType = 'CLOAK';
+      char = '(';
+    } else if (art.tval === 32 || art.tval === 33 || type === 'HELMET' || type === 'CROWN') {
+      type = 'HELMET';
+      slotType = 'HELMET';
+      char = ']';
+    } else if (art.tval === 36 || art.tval === 37 || art.tval === 38 || type === 'ARMOR') {
+      type = 'ARMOR';
+      slotType = 'ARMOR';
+      char = '[';
+    } else if (art.tval === 45 || type === 'RING') {
+      type = 'RING';
+      slotType = 'RING';
+      char = '=';
+    } else if (art.tval === 40 || type === 'AMULET') {
+      type = 'AMULET';
+      slotType = 'AMULET';
+      char = '"';
+    }
+
+    const statBonuses = { ...(art.statBonuses || {}) };
+    if (resolvedFlags.includes('SPEED')) {
+      statBonuses.speed = (statBonuses.speed || 0) + 3;
+    }
+
+    const artifactItem = new Item(
+      x, y,
+      type,
+      char,
+      art.color || '#ffd700',
+      finalName,
+      art.type === 'LAMP' ? 3 : 0,
+      slotType,
+      statBonuses,
+      art.dice || baseKind?.dice || null,
+      null,
+      [],
+      [],
+      ['ARTIFACT', ...(art.specialTags || [])],
+      art.flavorText || "고대 발리노르의 권능이 깃든 전설의 유물입니다."
+    );
+
+    artifactItem.artifactKey = art.key;
+    if (art.tval !== undefined) artifactItem.tval = art.tval;
+    if (art.sval !== undefined) artifactItem.sval = art.sval;
+    if (typeof art.baseAC === 'number') artifactItem.baseAC = art.baseAC;
+    if (typeof art.cost === 'number') artifactItem.cost = art.cost;
+    if (typeof art.weight === 'number') artifactItem.weight = art.weight;
+    if (baseKind?.multiplier) artifactItem.multiplier = baseKind.multiplier;
+    artifactItem.flags = resolvedFlags;
+    artifactItem.syncComponents();
+    return artifactItem;
   }
 
   /**
@@ -41,79 +288,30 @@ export class TomeLootGenerator {
     // 1. 유물(Artifact) 드랍 판정 (1~5F는 0% 완전 차단, 6~20F 10%, 21~40F 20%, 41~50F 35%)
     const artChance = isSpecialRoom ? tierConfig.loot.artifactDropChanceSpecial : tierConfig.loot.artifactDropChanceNormal;
     if (this._cachedArtifacts && this._cachedArtifacts.length > 0 && Math.random() < artChance) {
+      // 심도 15층 이상에서는 25% 확률로 파워 예산 기반 절차적 란다트(Randart) 생성
+      if (danger >= 15 && Math.random() < 0.25) {
+        const equipKinds = this._cachedKinds.filter(k =>
+          k.tval !== 102 && k.key !== 'KIND_RANDOM_ARTIFACT' && k.cost > 40 &&
+          ['WEAPON', 'BOW', 'ARMOR', 'SHIELD', 'HELMET', 'BOOTS', 'GLOVES', 'CLOAK'].includes(k.type || k.slotType)
+        );
+        if (equipKinds.length > 0) {
+          const randBase = equipKinds[Math.floor(Math.random() * equipKinds.length)];
+          return TomeRandartEngine.createRandart(x, y, randBase, danger);
+        }
+      }
+
+      // 정규 고정 아티팩트(Static Artifact) 생성
       const validArts = this._cachedArtifacts.filter(a => a.level <= danger + 10);
       if (validArts.length > 0) {
         const art = validArts[Math.floor(Math.random() * validArts.length)];
-        let type = art.type || 'WEAPON';
-        let slotType = art.slotType || null;
-        let char = art.char || '|';
-
-        if (art.tval === 31 || type === 'GLOVES') {
-          type = 'GLOVES';
-          slotType = 'GLOVES';
-          char = ']';
-        } else if (art.tval === 34 || type === 'SHIELD') {
-          type = 'SHIELD';
-          slotType = 'SHIELD';
-          char = ')';
-        } else if (art.tval === 30 || type === 'BOOTS') {
-          type = 'BOOTS';
-          slotType = 'BOOTS';
-          char = ']';
-        } else if (art.tval === 35 || type === 'CLOAK') {
-          type = 'CLOAK';
-          slotType = 'CLOAK';
-          char = '(';
-        } else if (art.tval === 32 || art.tval === 33 || type === 'HELMET' || type === 'CROWN') {
-          type = 'HELMET';
-          slotType = 'HELMET';
-          char = ']';
-        } else if (art.tval === 36 || art.tval === 37 || art.tval === 38 || type === 'ARMOR') {
-          type = 'ARMOR';
-          slotType = 'ARMOR';
-          char = '[';
-        }
-
-        const artifactItem = new Item(
-          x, y,
-          type,
-          char,
-          art.color || '#ffd700',
-          art.name,
-          art.type === 'LAMP' ? 3 : 0,
-          slotType,
-          art.statBonuses || {},
-          art.dice,
-          null,
-          [],
-          [],
-          ['ARTIFACT', ...(art.specialTags || [])],
-          art.flavorText || "고대 발리노르의 권능이 깃든 전설의 유물입니다."
-        );
-        artifactItem.artifactKey = art.key;
-        if (art.tval !== undefined) artifactItem.tval = art.tval;
-        if (art.sval !== undefined) artifactItem.sval = art.sval;
-        if (typeof art.baseAC === 'number') {
-          artifactItem.baseAC = art.baseAC;
-        }
-        if (typeof art.cost === 'number') {
-          artifactItem.cost = art.cost;
-        }
-        if (typeof art.weight === 'number') {
-          artifactItem.weight = art.weight;
-        }
-        if (art.flags && Array.isArray(art.flags)) {
-          artifactItem.flags = [...art.flags];
-        }
-        artifactItem.syncComponents();
-        return artifactItem;
+        return this._createArtifactItemInstance(x, y, art, danger);
       }
     }
 
     // 2. 기본 아이템 풀 추출
     let baseKind = null;
     if (this._cachedKinds && this._cachedKinds.length > 0) {
-      const candidates = this._cachedKinds.filter(k => k.level <= danger + 4);
+      const candidates = this._cachedKinds.filter(k => k.tval !== 102 && k.key !== 'KIND_RANDOM_ARTIFACT' && k.level <= danger + 4);
       if (candidates.length > 0) {
         baseKind = candidates[Math.floor(Math.random() * candidates.length)];
       }
@@ -139,19 +337,50 @@ export class TomeLootGenerator {
       baseKind = fallbackTemplates[Math.floor(Math.random() * fallbackTemplates.length)];
     }
 
-    // 3. 에고(Ego) 접사 부여 판정 (티어별 에고 풀 분리)
+    // 3. 에고(Ego) 접사 부여 판정 (TomeEgosData 101종 정통 풀 연동)
     const egoChance = isSpecialRoom ? tierConfig.loot.egoChanceSpecial : tierConfig.loot.egoChanceNormal;
     const prefixes = [];
     const suffixes = [];
     const specialTags = [];
+    let egoData = null;
 
-    if (Math.random() < egoChance && ['WEAPON', 'SHIELD', 'BOW', 'ARMOR', 'HELMET', 'GLOVES', 'BOOTS', 'CLOAK', 'RING', 'AMULET', 'LAMP'].includes(baseKind.type)) {
+    const isEligibleEquip = ['WEAPON', 'SHIELD', 'BOW', 'ARMOR', 'HELMET', 'GLOVES', 'BOOTS', 'CLOAK', 'RING', 'AMULET', 'LAMP'].includes(baseKind.type) ||
+                           ['WEAPON', 'SHIELD', 'BOW', 'ARMOR', 'HELMET', 'GLOVES', 'BOOTS', 'CLOAK', 'RING', 'AMULET', 'LIGHT'].includes(baseKind.slotType);
+
+    if (Math.random() < egoChance && isEligibleEquip) {
+      const slotEgos = this._getEgosForSlot(baseKind.type, baseKind.slotType);
+      if (slotEgos && slotEgos.length > 0) {
+        egoData = slotEgos[Math.floor(Math.random() * slotEgos.length)];
+      }
+
       const allowedPrefixes = tierConfig.loot.allowedEgoPrefixes || ["FIRE", "COLD", "LIGHTNING", "TOXIC", "IRON", "HOLY"];
       const allowedSuffixes = tierConfig.loot.allowedEgoSuffixes || ["SLAYER", "GALE", "AEGIS", "SAGE"];
-      prefixes.push(allowedPrefixes[Math.floor(Math.random() * allowedPrefixes.length)]);
-      if (Math.random() < 0.40 && allowedSuffixes.length > 0) {
-        suffixes.push(allowedSuffixes[Math.floor(Math.random() * allowedSuffixes.length)]);
+
+      if (egoData) {
+        const resolvedEgoFlags = this.resolveRandomFlags(egoData.flags);
+        for (const f of resolvedEgoFlags) specialTags.push(f);
+
+        // 정통 브랜드/에고 태그 매핑
+        if (resolvedEgoFlags.includes('BRAND_FIRE') || /Flame|Fire|Fiery/i.test(egoData.name)) prefixes.push('FIRE');
+        else if (resolvedEgoFlags.includes('BRAND_COLD') || /Frost|Cold|Frozen/i.test(egoData.name)) prefixes.push('COLD');
+        else if (resolvedEgoFlags.includes('BRAND_ELEC') || /Lightning|Shock/i.test(egoData.name)) prefixes.push('LIGHTNING');
+        else if (resolvedEgoFlags.includes('BRAND_ACID') || /Acid/i.test(egoData.name)) prefixes.push('ACID');
+        else if (resolvedEgoFlags.includes('BRAND_POIS') || /Venom|Toxic/i.test(egoData.name)) prefixes.push('TOXIC');
+        else if (/Holy|Blessed|Aman/i.test(egoData.name)) prefixes.push('HOLY');
+        else prefixes.push(allowedPrefixes[Math.floor(Math.random() * allowedPrefixes.length)]);
+
+        if (/Westernesse/i.test(egoData.name)) suffixes.push('WESTERNESSE');
+        else if (/Slay|Defender/i.test(egoData.name)) suffixes.push('SLAYER');
+        else if (Math.random() < 0.40 && allowedSuffixes.length > 0) {
+          suffixes.push(allowedSuffixes[Math.floor(Math.random() * allowedSuffixes.length)]);
+        }
+      } else {
+        prefixes.push(allowedPrefixes[Math.floor(Math.random() * allowedPrefixes.length)]);
+        if (Math.random() < 0.40 && allowedSuffixes.length > 0) {
+          suffixes.push(allowedSuffixes[Math.floor(Math.random() * allowedSuffixes.length)]);
+        }
       }
+
       if (isSpecialRoom && danger >= 6 && Math.random() < 0.35) {
         specialTags.push("EXTRA_ATTACK");
       }
@@ -161,10 +390,14 @@ export class TomeLootGenerator {
     let slotType = baseKind.slotType;
     let char = baseKind.char || Item.getDefaultSymbol(type, slotType, baseKind.name);
 
-    if (baseKind.tval === 16 || baseKind.tval === 17 || baseKind.tval === 18 || type === 'QUIVER' || slotType === 'QUIVER') {
-      type = 'QUIVER';
+    if (baseKind.tval === 19 || type === 'BOW' || slotType === 'BOW') {
+      type = 'BOW';
+      slotType = 'BOW';
+      char = '}';
+    } else if (baseKind.tval === 16 || baseKind.tval === 17 || baseKind.tval === 18 || type === 'AMMO' || type === 'QUIVER' || slotType === 'QUIVER') {
+      type = 'AMMO';
       slotType = 'QUIVER';
-      char = '{';
+      char = '}';
     } else if (baseKind.tval === 31 || type === 'GLOVES') {
       type = 'GLOVES';
       slotType = 'GLOVES';
@@ -191,15 +424,35 @@ export class TomeLootGenerator {
       char = '[';
     }
 
+    let itemName = baseKind.name;
+    const cleanBase = (baseKind.name || 'Equipment').replace(/^[&]\s*/, '').replace(/~$/, '').trim();
+    if (egoData) {
+      if (egoData.name.startsWith('of ') || egoData.name.startsWith('(')) {
+        itemName = `${cleanBase} ${egoData.name}`;
+      } else {
+        itemName = `${egoData.name} ${cleanBase}`;
+      }
+    }
+
+    const itemStatBonuses = { ...(baseKind.statBonuses || {}) };
+    if (egoData && egoData.flags) {
+      if (egoData.flags.includes('STR')) itemStatBonuses.str = (itemStatBonuses.str || 0) + 2;
+      if (egoData.flags.includes('DEX')) itemStatBonuses.dex = (itemStatBonuses.dex || 0) + 2;
+      if (egoData.flags.includes('CON')) itemStatBonuses.con = (itemStatBonuses.con || 0) + 2;
+      if (egoData.flags.includes('INT')) itemStatBonuses.int = (itemStatBonuses.int || 0) + 2;
+      if (egoData.flags.includes('WIS')) itemStatBonuses.wis = (itemStatBonuses.wis || 0) + 2;
+      if (egoData.flags.includes('SPEED') || egoData.name === 'of Speed') itemStatBonuses.speed = (itemStatBonuses.speed || 0) + 5;
+    }
+
     const item = new Item(
       x, y,
       type,
       char,
       baseKind.color || "#cbd5e1",
-      baseKind.name,
+      itemName,
       baseKind.lightBonus || (baseKind.type === 'LAMP' ? 2 : 0),
       slotType,
-      baseKind.statBonuses || {},
+      itemStatBonuses,
       baseKind.dice || null,
       null,
       prefixes,
@@ -214,11 +467,12 @@ export class TomeLootGenerator {
     if (typeof baseKind.weight === 'number') item.weight = baseKind.weight;
     if (typeof baseKind.cost === 'number') item.cost = baseKind.cost;
     if (typeof baseKind.level === 'number') item.level = baseKind.level;
-    if (baseKind.flags && Array.isArray(baseKind.flags)) item.flags = baseKind.flags;
+    if (baseKind.flags && Array.isArray(baseKind.flags)) item.flags = [...baseKind.flags];
+    if (baseKind.multiplier) item.multiplier = baseKind.multiplier;
 
     // 탄약류(화살/볼트/탄환) 15~35발 다발(Bundle) 롤링 적용
     const isAmmo = item.tval === 16 || item.tval === 17 || item.tval === 18 ||
-                   item.slotType === 'QUIVER' || item.type === 'QUIVER' ||
+                   item.slotType === 'QUIVER' || item.type === 'AMMO' || item.type === 'QUIVER' ||
                    /arrow|bolt|shot|화살|볼트|탄환/i.test(item.name || '') ||
                    /arrow|bolt|shot|화살|볼트|탄환/i.test(baseKind?.name || '');
     if (isAmmo) {
@@ -240,12 +494,21 @@ export class TomeLootGenerator {
       item.pval = enchants.pval;
     }
 
+    if (egoData) {
+      if (egoData.name.includes('Defender')) item.baseAC = (item.baseAC || 0) + 15;
+      if (egoData.name.includes('Slaying')) {
+        item.toHit = (item.toHit || 0) + 7;
+        item.toDmg = (item.toDmg || 0) + 7;
+      }
+    }
+
     if (item.tval === 65 || item.type === 'WAND') item.charges = 5;
     if (item.tval === 55 || item.type === 'STAFF') item.charges = 5;
     if (item.tval === 66 || item.type === 'ROD') item.timeout = 0;
 
     // ToME 정통 역보정 & 저주 에고 출현 파이프라인
     this.applyNegativeCalibration(item, danger);
+    item.syncComponents();
 
     return item;
   }

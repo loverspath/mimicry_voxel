@@ -2,9 +2,9 @@
 
 > **자동 생성 메타데이터**
 > - **엔진 버전**: `v1.2.0`
-> - **생성 일시**: `2026-09-03T12:18:19Z`
-> - **총 모듈 수**: `75개`
-> - **총 코드 라인 수**: `109,527줄`
+> - **생성 일시**: `2026-09-03T12:43:42Z`
+> - **총 모듈 수**: `76개`
+> - **총 코드 라인 수**: `109,918줄`
 
 ---
 
@@ -19,7 +19,7 @@
 | `events` | 2개 | 모듈 집합 |
 | `map` | 2개 | 2D 던전 맵 생성기 및 3D 다층 복셀 높이맵 브릿지 |
 | `renderer` | 5개 | 2.5D 아이소메트릭 3D 복셀 렌더러 및 파티클 물리 시스템 |
-| `systems` | 22개 | 모듈 집합 |
+| `systems` | 23개 | 모듈 집합 |
 | `ui` | 10개 | 가상 컨트롤러 및 뷰 컴포넌트 |
 
 ---
@@ -48,7 +48,7 @@
 | [`src/core/TraceLogger.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/TraceLogger.js) | **TraceLogger** | `core` | 64 | 게임의 복잡한 스탯 재계산 격발 원인, 더티 플래그 만료 시점 및 전투 대미지 감쇄 계산 경로 등 모든 중요 상태 변화 시점을 정밀하게 기록하고 역추적(Traceability)할 수 있도록 전담하는 중앙 집중형 디버그 로그 엔진. | Stateless System / Logic | `TraceLogger` |
 | [`src/core/UIHelper.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/UIHelper.js) | **UIHelper** | `core` | 34 | UI 컴포넌트 3분할(InventoryView, InspectModalView, HUDView, UIManager) 통합 경량 파사드 모듈 | DOM Facade / Pure Export | `EQUIP_BADGE_STYLES, renderInventorySlotHTML, renderItemDetailHTML 외 11개` |
 | [`src/counter.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/counter.js) | **counter** | `root` | 9 | counter module | Unspecified | `setupCounter` |
-| [`src/entities/Item.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/Item.js) | **Item** | `entities` | 338 | 던전 바닥 및 인벤토리 내의 장비, 소모품, 마법 디바이스, 정수 코어 아이템 데이터 컨테이너 모델 | Zero-Logic Data Container | `Item` |
+| [`src/entities/Item.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/Item.js) | **Item** | `entities` | 358 | 던전 바닥 및 인벤토리 내의 장비, 소모품, 마법 디바이스, 정수 코어 아이템 데이터 컨테이너 모델 | Zero-Logic Data Container | `Item` |
 | [`src/entities/ItemRegistry.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/ItemRegistry.js) | **ItemRegistry** | `entities` | 824 | ToME 2.3.5 기반 560+종 기본 아이템 및 190+종 전설 유물(Artifacts) 중앙 레지스트리 | Pure Registry / Data Store | `TOME_BASE_ITEMS, TOME_ARTIFACTS, createTomeItem 외 2개` |
 | [`src/entities/MimicBody.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/MimicBody.js) | **MimicBody** | `entities` | 457 | 무정형 미믹의 영구 본체 컨테이너 클래스. 메인 코어의 탈착과 상관없이 스탯, 로어 숙련도, 몬스터 킬 카운트, 돌연변이 태그를 영구 보존하며 무게 한도 및 감속 배율을 수학적으로 도출합니다. | State Store / Logic Container | `WEAPON_MASTERY_CONFIG, WEAPON_REQUIREMENT_CONFIG, MimicBody` |
 | [`src/entities/Monster.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/Monster.js) | **Monster** | `entities` | 543 | 몬스터 엔티티 모델 (Zero-Logic 순수 데이터 컴포넌트). 스펠/공격 연산은 TomeSpellEngine에, 스탯/저항/플래그 판정은 TomeFlagResolver 및 UnifiedTraitEngine에 위임합니다. | Data Model / State Store | `MONSTER_ATTACK_SKILL_NAMES, Monster` |
@@ -58,7 +58,7 @@
 | [`src/entities/Tags.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/Tags.js) | **Tags** | `entities` | 572 | 장비 및 몬스터에 적용되는 접두사(Prefix)와 접미사(Suffix) 태그 시스템 정의 모듈. 등급 색상, 크로매틱 애니메이션 연산, 무작위 롤링 함수 및 원소 메타데이터(ELEMENT_METADATA)를 통합 관리합니다. | Data Model / State Store | `ELEMENT_METADATA, PREFIX_TAGS, SUFFIX_TAGS 외 6개` |
 | [`src/entities/TomeArtifactsData.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/TomeArtifactsData.js) | **TomeArtifactsData** | `entities` | 5944 | ToME 2.3.5 정통 190종 전설 유물(Artifacts) 정적 데이터셋. | Data Model / State Store | `TOME_ARTIFACTS_DATA` |
 | [`src/entities/TomeEgosData.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/TomeEgosData.js) | **TomeEgosData.js** | `entities` | 1168 | ToME 2.3.5 Pure ESM Data Module (101 entries) | Data Model / State Store | `TOME_EGOS_DATA` |
-| [`src/entities/TomeKindsData.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/TomeKindsData.js) | **TomeKindsData** | `entities` | 10060 | ToME 2.3.5 정통 560종 베이스 아이템(Kinds) 정적 데이터셋. | Data Model / State Store | `TOME_KINDS_DATA` |
+| [`src/entities/TomeKindsData.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/TomeKindsData.js) | **TomeKindsData** | `entities` | 10065 | ToME 2.3.5 정통 560종 베이스 아이템(Kinds) 정적 데이터셋. | Data Model / State Store | `TOME_KINDS_DATA` |
 | [`src/entities/TomeMonstersData.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/TomeMonstersData.js) | **TomeMonstersData.js** | `entities` | 57880 | ToME 2.3.5 Pure ESM Data Module (851 entries) | Data Model / State Store | `TOME_MONSTERS_DATA` |
 | [`src/entities/VoxelMimicBridge.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/VoxelMimicBridge.js) | **VoxelMimicBridge** | `entities` | 97 | 미믹(Mimic)의 코어 융합, 변신(위장), 포식, 몬스터별 3D 크로매틱 셰이딩 및 복셀 모핑 이펙트 연동 브릿지. | Data Model / State Store | `VoxelMimicBridge` |
 | [`src/events/EventBus.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/events/EventBus.js) | **EventBus** | `events` | 81 | 게임 엔진과 UI 컴포넌트 간의 결합도를 완전히 분리하는 싱글톤 Pub/Sub 중앙 메시지 브로커 | State Store / Event Broker | `EventBus, eventBus` |
@@ -87,11 +87,12 @@
 | [`src/systems/TomeEquipmentEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeEquipmentEngine.js) | **TomeEquipmentEngine** | `systems` | 359 | ToME 2.3.5 정통 tval 기반 슬롯(slotType), 아스키 심볼, 무게, 방어력(AC), 무기 카테고리 무상태 연산 엔진 | Pure Stateless Engine | `TomeEquipmentEngine, TVAL` |
 | [`src/systems/TomeFlagResolver.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeFlagResolver.js) | **TomeFlagResolver** | `systems` | 386 | ToME 2.3.5 몬스터 종족(tomeKey), 장비(베이스+에고+유물), 의태 변이(mutations/perks), 소모품 및 임시 상태로부터 모든 ToME 플래그(RES_*, IM_*, LITE*, SUST_*, SLAY_*, ESP_*, FREE_ACT, NO_*, CAN_FLY, PASS_WALL, REFLECT 등)를 O(1) 단일 Set으로 일괄 추출 및 병합하는 순수 무상태 엔진. | Stateless System | `TomeFlagResolver` |
 | [`src/systems/TomeIdentificationEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeIdentificationEngine.js) | **TomeIdentificationEngine** | `systems` | 264 | ToME 2.3.5 / TomeNET 정통 4단계 의사 감정(Pseudo-ID) 및 점진적 정보 개방 무상태 엔진 | Stateless System | `TomeIdentificationEngine, ID_STATES, PSEUDO_SENSES` |
-| [`src/systems/TomeLootGenerator.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeLootGenerator.js) | **TomeLootGenerator** | `systems` | 399 | ToME 2.3.5 정통 알고리즘 기반 던전 깊이(Depth)별 아이템 롤링, 에고(Ego) 접사 합성 및 전설 유물(Artifact) 드랍 파이프라인 엔진 | Pure Loot Factory | `TomeLootGenerator` |
+| [`src/systems/TomeLootGenerator.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeLootGenerator.js) | **TomeLootGenerator** | `systems` | 662 | ToME 2.3.5 정통 알고리즘 기반 던전 깊이(Depth)별 아이템 롤링, 에고(Ego) 접사 합성 및 전설 유물(Artifact) 드랍 파이프라인 엔진 | Pure Loot Factory | `TomeLootGenerator` |
+| [`src/systems/TomeRandartEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeRandartEngine.js) | **TomeRandartEngine** | `systems` | 154 | ToME 2.3.5 정통 파워 예산(Power Budget) 기반 절차적 랜덤 아티팩트(Randart) 생성 엔진. 신다린/퀘냐 조합형 네이밍 및 스탯, 브랜드, 슬레이어, 저항, 특수 권능 절차적 합성 | Pure Factory | `TomeRandartEngine` |
 | [`src/systems/TomeSpellEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeSpellEngine.js) | **TomeSpellEngine** | `systems` | 939 | ToME 2.3.5 정통 몬스터 851종의 106종 C 원작 spells (볼트 14종, 볼 13종, 브레스 21종, 상태이상 23종, 소환 17종, 유틸 18종) 및 20종 attacks 메소드 / 27종 effects를 1:1 정확하게 해석 및 실행하는 통합 주문/전투 엔진. 플레이어 의태 스킬(1~4 슬롯) 및 몬스터 AI 공통 사용. | Stateless System | `TomeSpellEngine, TOME_CANONICAL_SPELLS, TOME_ATTACK_METHODS 외 1개` |
 | [`src/systems/TomeTagSystem.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeTagSystem.js) | **TomeTagSystem** | `systems` | 369 | 데이터 지향 3대 극성(Positive, Neutral, Detrimental) 태그 정의, 저주 장착 결속 제약, 턴 라이프사이클 훅 및 정화 엔진 | Stateless System | `TomeTagSystem, POLARITY, DETRIMENTAL_TAGS` |
 | [`src/systems/UnifiedTraitEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/UnifiedTraitEngine.js) | **UnifiedTraitEngine** | `systems` | 442 | TomeFlagResolver가 취합한 ToME 2.3.5 정통 플래그를 정밀 해석하여 6대 스탯 보너스(str, int, wis, dex, con, chr), 21종 원소 저항률(%) 및 면역(Immunity), 광원 반경(Lite Radius), 속도 보정(Speed), 슬레이(Slay) 및 브랜드(Brand) 공격 배율, 상태이상 면역을 일괄 산출하는 순수 무상태 특성 판정 엔진. | Stateless System | `UnifiedTraitEngine` |
-| [`src/systems/UniqueMonsterManager.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/UniqueMonsterManager.js) | **UniqueMonsterManager** | `systems` | 630 | ToME 2.3.5 정통 168종 유니크 몬스터 1회성 스폰 생태계 제어, 전설 유물 및 특급 에고 확정 드랍 파이프라인 엔진 | State Store / Logic System | `UniqueMonsterManager, uniqueMonsterManager, LEGACY_DUMMY_ITEMS` |
+| [`src/systems/UniqueMonsterManager.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/UniqueMonsterManager.js) | **UniqueMonsterManager** | `systems` | 579 | ToME 2.3.5 정통 168종 유니크 몬스터 1회성 스폰 생태계 제어, 전설 유물 및 특급 에고 확정 드랍 파이프라인 엔진 | State Store / Logic System | `UniqueMonsterManager, uniqueMonsterManager, LEGACY_DUMMY_ITEMS` |
 | [`src/systems/VisionLightingEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/VisionLightingEngine.js) | **VisionLightingEngine** | `systems` | 246 | ToME 2.3.5 정통 광원 반경(Lite Radius), 9종 ESP(초감각 텔레파시: ESP_ORC, ESP_DRAGON, ESP_UNDEAD, ESP_DEMON, ESP_GIANT, ESP_TROLL, ESP_ANIMAL, ESP_HUMAN, ESP_EVIL, TELEPATHY), 적외선 시야(Infravision), 투명 감지(See Invisible)를 종합 연산하는 순수 무상태 시야/조명 엔진. | Stateless System | `VisionLightingEngine` |
 | [`src/ui/AscensionModalView.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/AscensionModalView.js) | **AscensionModalView** | `ui` | 1351 | 50F 모르고스 토벌 승천(Ascension) 엔딩 컷씬, 발리노르의 빛 연출, 영구 명예의 전당(Hall of Fame) 및 사망 묘비명(Graveyard) 저장/렌더링 및 상세 스펙/인벤토리/전투로그 인스펙터 시스템 | DOM Manager / State Store | `saveAscensionRecord, getHallOfFameRecords, saveGraveyardRecord 외 16개` |
 | [`src/ui/GameStartPresetModalView.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/GameStartPresetModalView.js) | **GameStartPresetModalView** | `ui` | 352 | 게임 시작 시 4대 난이도 프리셋 선택 및 세부 모디파이어(드랍률, 몬스터 밀도, 사망 모드 등) 커스터마이징 대화상자 렌더러 | DOM Renderer | `GameStartPresetModalView, renderPresetModalHTML` |

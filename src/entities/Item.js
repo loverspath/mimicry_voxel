@@ -71,6 +71,7 @@ export class Item {
     this.toDmg = 0;
     this.charges = undefined;
     this.timeout = 0;
+    this.multiplier = 1;
 
     // 4단계 의사 감정(Pseudo-ID) 및 저주 상태 모델
     this.idState = (type === 'POTION' || type === 'SCROLL' || type === 'CORE' || type === 'FOOD' || type === 'GOLD') ? 'IDENTIFIED' : 'UNIDENTIFIED';
@@ -125,7 +126,18 @@ export class Item {
       else if (u === 'RES_ACID') this.resistances['ACID'] = 0.50;
       else if (u === 'RES_LITE') this.resistances['LIGHT'] = 0.50;
       else if (u === 'RES_DARK') this.resistances['DARK'] = 0.50;
-      else if (u === 'IM_FIRE') this.resistances['FIRE'] = 1.0;
+      else if (u === 'RES_SOUND') this.resistances['SOUND'] = 0.50;
+      else if (u === 'RES_SHARDS') this.resistances['SHARDS'] = 0.50;
+      else if (u === 'RES_NETHER' || u === 'RES_NETH') this.resistances['NETHER'] = 0.50;
+      else if (u === 'RES_NEXUS') this.resistances['NEXUS'] = 0.50;
+      else if (u === 'RES_CHAOS') this.resistances['CHAOS'] = 0.50;
+      else if (u === 'RES_FEAR') {
+        this.immunities.add('FEAR');
+        this.perks.add('RES_FEAR');
+      } else if (u === 'RES_CONF' || u === 'RES_BLIND') {
+        this.immunities.add('CONFUSION');
+        this.perks.add('RES_CONF');
+      } else if (u === 'IM_FIRE') this.resistances['FIRE'] = 1.0;
       else if (u === 'IM_COLD') this.resistances['COLD'] = 1.0;
       else if (u === 'IM_ELEC') this.resistances['LIGHTNING'] = 1.0;
       else if (u === 'IM_ACID') this.resistances['ACID'] = 1.0;
@@ -135,10 +147,18 @@ export class Item {
         this.perks.add('FREE_ACT');
       } else if (u === 'SEE_INVIS') {
         this.perks.add('SEE_INVIS');
-      } else if (u === 'TELEPATHY') {
+      } else if (u === 'TELEPATHY' || u === 'ESP_ALL') {
         this.perks.add('TELEPATHY');
       } else if (u === 'REGEN') {
         this.perks.add('REGEN');
+      } else if (u === 'FEATHER') {
+        this.perks.add('FEATHER');
+      } else if (u === 'SLOW_DIGEST') {
+        this.perks.add('SLOW_DIGEST');
+      } else if (u === 'EXTRA_ATTACK') {
+        this.perks.add('EXTRA_ATTACK');
+      } else if (u === 'SPEED') {
+        this.perks.add('SPEED');
       }
     }
 

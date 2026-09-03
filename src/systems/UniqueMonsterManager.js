@@ -513,61 +513,10 @@ export class UniqueMonsterManager {
     const posArt = getDropPos(0);
     if (chosenArtifact) {
       this.droppedArtifacts.add(chosenArtifact.key);
-      let type = chosenArtifact.type || 'WEAPON';
-      let slotType = chosenArtifact.slotType || null;
-      let char = chosenArtifact.char || '|';
-
-      if (chosenArtifact.tval === 31 || type === 'GLOVES') {
-        type = 'GLOVES';
-        slotType = 'GLOVES';
-        char = ']';
-      } else if (chosenArtifact.tval === 34 || type === 'SHIELD') {
-        type = 'SHIELD';
-        slotType = 'SHIELD';
-        char = ')';
-      } else if (chosenArtifact.tval === 30 || type === 'BOOTS') {
-        type = 'BOOTS';
-        slotType = 'BOOTS';
-        char = ']';
-      } else if (chosenArtifact.tval === 35 || type === 'CLOAK') {
-        type = 'CLOAK';
-        slotType = 'CLOAK';
-        char = '(';
-      } else if (chosenArtifact.tval === 32 || chosenArtifact.tval === 33 || type === 'HELMET' || type === 'CROWN') {
-        type = 'HELMET';
-        slotType = 'HELMET';
-        char = ']';
-      } else if (chosenArtifact.tval === 36 || chosenArtifact.tval === 37 || chosenArtifact.tval === 38 || type === 'ARMOR') {
-        type = 'ARMOR';
-        slotType = 'ARMOR';
-        char = '[';
+      const artItem = TomeLootGenerator._createArtifactItemInstance(posArt.x, posArt.y, chosenArtifact, effectiveFloor);
+      if (artItem) {
+        drops.push(artItem);
       }
-
-      const artItem = new Item(
-        posArt.x, posArt.y,
-        type,
-        char,
-        chosenArtifact.color || '#ffd700',
-        chosenArtifact.name,
-        chosenArtifact.type === 'LAMP' ? 3 : 1,
-        slotType,
-        chosenArtifact.statBonuses || { str: 3, dex: 3, con: 3 },
-        chosenArtifact.dice || "2d8",
-        null,
-        [],
-        [],
-        ['ARTIFACT', ...(chosenArtifact.specialTags || [])],
-        chosenArtifact.flavorText || `전설의 유니크 몬스터 [${monster.displayName}]을(를) 물리치고 획득한 고대 발리노르의 전설 유물입니다.`
-      );
-
-      if (typeof chosenArtifact.baseAC === 'number') artItem.baseAC = chosenArtifact.baseAC;
-      if (typeof chosenArtifact.cost === 'number') artItem.cost = chosenArtifact.cost;
-      if (typeof chosenArtifact.weight === 'number') artItem.weight = chosenArtifact.weight;
-      if (chosenArtifact.flags && Array.isArray(chosenArtifact.flags)) artItem.flags = [...chosenArtifact.flags];
-      artItem.artifactKey = chosenArtifact.key;
-      artItem.syncComponents();
-
-      drops.push(artItem);
     } else {
       // 유물이 모두 소진된 경우: TomeLootGenerator 기반 최고급 2중 에고 장비 절차적 생성
       const fallbackItem = TomeLootGenerator.generateFloorItem(posArt.x, posArt.y, effectiveFloor + 5, true);
