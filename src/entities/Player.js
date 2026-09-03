@@ -386,10 +386,10 @@ export class Player {
     if (item.isCursed || tags.includes('CURSED') || tags.includes('HEAVY_CURSED') || tags.includes('PERMA_CURSED')) {
       item.isCursed = true;
     }
-    if (item.slotType === 'BOW' || item.char === '}' || item.type === 'BOW') {
-      this.equipment.bow = item;
-    } else if (item.slotType === 'QUIVER' || item.char === '{' || item.type === 'QUIVER') {
+    if (item.slotType === 'QUIVER' || item.type === 'AMMO' || item.type === 'QUIVER' || item.char === '{' || item.tval === 16 || item.tval === 17 || item.tval === 18) {
       this.equipment.quiver = item;
+    } else if (item.slotType === 'BOW' || item.type === 'BOW' || item.tval === 19 || item.char === '}') {
+      this.equipment.bow = item;
     } else if (item.slotType === 'WEAPON' || item.type === 'WEAPON') {
       this.equipment.weapon = item;
     } else if (item.slotType === 'SHIELD' || item.type === 'SHIELD' || item.char === ')') {

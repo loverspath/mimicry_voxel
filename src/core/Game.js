@@ -1773,10 +1773,10 @@ export class Game {
       }
     } else {
       let t = null;
-      if (e.slotType === `BOW` || e.char === `}` || e.type === `BOW`) {
-        t = this.player.equipment.bow;
-      } else if (e.slotType === `QUIVER` || e.char === `{` || e.type === `QUIVER`) {
+      if (e.slotType === `QUIVER` || e.type === `AMMO` || e.type === `QUIVER` || e.char === `{` || e.tval === 16 || e.tval === 17 || e.tval === 18) {
         t = this.player.equipment.quiver;
+      } else if (e.slotType === `BOW` || e.type === `BOW` || e.tval === 19 || e.char === `}`) {
+        t = this.player.equipment.bow;
       } else if (e.slotType === `WEAPON` || e.type === `WEAPON`) {
         t = this.player.equipment.weapon;
       } else if (e.slotType === `SHIELD` || e.type === `SHIELD` || e.char === `)`) {

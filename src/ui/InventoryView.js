@@ -450,8 +450,9 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
   const SLOT_NAME_MAP = {
     WEAPON: '근접 무기',
     SHIELD: '방패',
-    BOW: '원거리 활',
-    QUIVER: '화살통',
+    BOW: '원거리 무기 (활/슬링/석궁)',
+    QUIVER: '화살통 (탄약)',
+    AMMO: '화살통 (탄약)',
     ARMOR: '갑옷',
     HELMET: '투구',
     GLOVES: '장갑',
@@ -464,7 +465,7 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
   };
   const slotNameKor = SLOT_NAME_MAP[item.slotType] || SLOT_NAME_MAP[item.type] || item.type;
 
-  // 1. 핵심 스펙 그리드 블록 (Dice, AC, Range, Light)
+  // 1. 핵심 스펙 그리드 블록 (Dice, AC, Range, Light, Ammo/Launcher Info)
   const specItems = [];
   if (item.dice) {
     specItems.push(`<div><span style="color: #94a3b8;">⚔️ 공격 다이스:</span> <b style="color: #f87171;">${item.dice}</b></div>`);
@@ -486,6 +487,36 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
   }
   if (item.lightBonus > 0) {
     specItems.push(`<div><span style="color: #94a3b8;">🏮 시야 광원:</span> <b style="color: #fbbf24;">+${item.lightBonus}칸</b></div>`);
+  }
+
+  // ToME 탄약류 규격 및 호환 정보 안내
+  if (item.tval === 16 || item.name?.toLowerCase().includes('pebble') || item.name?.toLowerCase().includes('shot')) {
+    specItems.push(`<div><span style="color: #94a3b8;">🎯 탄약 종류:</span> <b style="color: #fbbf24;">슬링 전용 탄약 (Sling Shot)</b></div>`);
+  } else if (item.tval === 17 || item.name?.toLowerCase().includes('arrow')) {
+    specItems.push(`<div><span style="color: #94a3b8;">🎯 탄약 종류:</span> <b style="color: #38bdf8;">활 전용 화살 (Bow Arrow)</b></div>`);
+  } else if (item.tval === 18 || item.name?.toLowerCase().includes('bolt')) {
+    specItems.push(`<div><span style="color: #94a3b8;">🎯 탄약 종류:</span> <b style="color: #a855f7;">석궁 전용 볼트 (Crossbow Bolt)</b></div>`);
+  }
+
+  if (item.type === 'AMMO' || item.slotType === 'QUIVER' || item.tval === 16 || item.tval === 17 || item.tval === 18) {
+    if (typeof item.count === 'number' && item.count > 0) {
+      specItems.push(`<div><span style="color: #94a3b8;">📦 보유 수량:</span> <b style="color: #facc15;">${item.count}발 다발</b></div>`);
+    }
+  }
+
+  // 원거리 발사기(활/슬링/석궁) 배율 및 호환 탄약 안내
+  if (item.type === 'BOW' || item.slotType === 'BOW' || item.tval === 19) {
+    if (item.multiplier && item.multiplier > 1) {
+      specItems.push(`<div><span style="color: #94a3b8;">🏹 사격 배율:</span> <b style="color: #34d399;">x${item.multiplier}</b></div>`);
+    }
+    const lowerName = (item.name || '').toLowerCase();
+    if (lowerName.includes('sling')) {
+      specItems.push(`<div><span style="color: #94a3b8;">🎯 호환 탄약:</span> <b style="color: #fbbf24;">슬링 탄약 (Pebbles, Shots, tval: 16)</b></div>`);
+    } else if (lowerName.includes('crossbow')) {
+      specItems.push(`<div><span style="color: #94a3b8;">🎯 호환 탄약:</span> <b style="color: #a855f7;">석궁 볼트 (Bolts, tval: 18)</b></div>`);
+    } else {
+      specItems.push(`<div><span style="color: #94a3b8;">🎯 호환 탄약:</span> <b style="color: #38bdf8;">화살 (Arrows, tval: 17)</b></div>`);
+    }
   }
 
   const specGridHTML = specItems.length > 0 ? `

@@ -108,6 +108,7 @@ const TYPE_SLOT_MAP = Object.freeze({
   WEAPON: 'WEAPON',
   BOW: 'BOW',
   QUIVER: 'QUIVER',
+  AMMO: 'QUIVER',
   ARMOR: 'ARMOR',
   HELMET: 'HELMET',
   CROWN: 'HELMET',
@@ -184,7 +185,7 @@ export class TomeEquipmentEngine {
     if (slotType === 'SHIELD' || type === 'SHIELD') return ')';
     if (slotType === 'CLOAK' || type === 'CLOAK') return '(';
     if (slotType === 'BOW' || type === 'BOW') return '}';
-    if (slotType === 'QUIVER' || type === 'QUIVER') return '{';
+    if (slotType === 'QUIVER' || type === 'QUIVER' || type === 'AMMO') return '{';
     if (slotType === 'WEAPON' || type === 'WEAPON') return '|';
 
     return '?';
@@ -201,6 +202,14 @@ export class TomeEquipmentEngine {
   static sanitizeSymbol(char, type, slotType = null, tval = null) {
     if (char && LEGACY_SYMBOL_MAP[char]) {
       return LEGACY_SYMBOL_MAP[char];
+    }
+    // 탄약류(Ammo/Quiver)는 항상 정통 심볼 '{' 보장
+    if (slotType === 'QUIVER' || type === 'AMMO' || type === 'QUIVER' || tval === TVAL.SHOT || tval === TVAL.ARROW || tval === TVAL.BOLT) {
+      return '{';
+    }
+    // 원거리 발사기(Bow)는 항상 정통 심볼 '}' 보장
+    if (slotType === 'BOW' || type === 'BOW' || tval === TVAL.BOW) {
+      return '}';
     }
     if (char && VALID_TOME_SYMBOLS.has(char)) {
       return char;

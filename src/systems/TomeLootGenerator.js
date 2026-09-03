@@ -216,7 +216,11 @@ export class TomeLootGenerator {
     const finalName = this.getArtifactDisplayName(art, baseKind?.name);
     const resolvedFlags = this.resolveRandomFlags(art.flags);
 
-    if (art.tval === 19 || type === 'BOW' || baseKind?.type === 'BOW') {
+    if (art.tval === 16 || art.tval === 17 || art.tval === 18 || type === 'AMMO' || slotType === 'QUIVER') {
+      type = 'AMMO';
+      slotType = 'QUIVER';
+      char = '{';
+    } else if (art.tval === 19 || type === 'BOW' || baseKind?.type === 'BOW') {
       type = 'BOW';
       slotType = 'BOW';
       char = '}';
@@ -405,13 +409,13 @@ export class TomeLootGenerator {
     let slotType = baseKind.slotType;
     let char = baseKind.char || Item.getDefaultSymbol(type, slotType, baseKind.name);
 
-    if (baseKind.tval === 19 || type === 'BOW' || slotType === 'BOW') {
-      type = 'BOW';
-      slotType = 'BOW';
-      char = '}';
-    } else if (baseKind.tval === 16 || baseKind.tval === 17 || baseKind.tval === 18 || type === 'AMMO' || type === 'QUIVER' || slotType === 'QUIVER') {
+    if (baseKind.tval === 16 || baseKind.tval === 17 || baseKind.tval === 18 || type === 'AMMO' || type === 'QUIVER' || slotType === 'QUIVER') {
       type = 'AMMO';
       slotType = 'QUIVER';
+      char = '{';
+    } else if (baseKind.tval === 19 || type === 'BOW' || slotType === 'BOW') {
+      type = 'BOW';
+      slotType = 'BOW';
       char = '}';
     } else if (baseKind.tval === 31 || type === 'GLOVES') {
       type = 'GLOVES';
@@ -490,8 +494,8 @@ export class TomeLootGenerator {
     // 탄약류(화살/볼트/탄환) 15~35발 다발(Bundle) 롤링 적용
     const isAmmo = item.tval === 16 || item.tval === 17 || item.tval === 18 ||
                    item.slotType === 'QUIVER' || item.type === 'AMMO' || item.type === 'QUIVER' ||
-                   /arrow|bolt|shot|화살|볼트|탄환/i.test(item.name || '') ||
-                   /arrow|bolt|shot|화살|볼트|탄환/i.test(baseKind?.name || '');
+                   /arrow|bolt|shot|pebble|화살|볼트|탄환|페블/i.test(item.name || '') ||
+                   /arrow|bolt|shot|pebble|화살|볼트|탄환|페블/i.test(baseKind?.name || '');
     if (isAmmo) {
       item.count = Math.floor(Math.random() * 21) + 15; // 15 ~ 35발
     }
