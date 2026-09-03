@@ -366,6 +366,28 @@ export class TomeLootGenerator {
     return drops;
   }
 
+  /**
+   * 던전 층수에 맞는 ToME 장비(무기/방어구/투구/방패/신발/장갑/망토/활 등) 1개를 절차적으로 생성합니다.
+   * @param {number} x 
+   * @param {number} y 
+   * @param {number} floor 
+   * @param {boolean} isSpecialRoom 
+   * @returns {Item}
+   */
+  static generateEquipmentItem(x, y, floor = 1, isSpecialRoom = false) {
+    const validEquipTypes = ['WEAPON', 'ARMOR', 'HELMET', 'SHIELD', 'BOOTS', 'GLOVES', 'CLOAK', 'BOW'];
+    for (let i = 0; i < 15; i++) {
+      const item = this.generateFloorItem(x, y, floor, isSpecialRoom);
+      if (item && validEquipTypes.includes(item.type)) {
+        return item;
+      }
+    }
+    // 폴백 기본 무기
+    const fallback = new Item(x, y, 'WEAPON', '|', '#cbd5e1', '롱소드', 1, 'WEAPON', { str: 2 }, '1d8', null, [], [], [], '날이 곧고 양날이 서 있는 정통 롱소드입니다.');
+    fallback.syncComponents();
+    return fallback;
+  }
+
   // Alias for backward compatibility
   static generateLoot(x, y, depth = 1, isBossDrop = false) {
     return this.generateFloorItem(x, y, depth, isBossDrop);

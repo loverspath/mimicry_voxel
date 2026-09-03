@@ -16,6 +16,19 @@ import { eventBus } from '../events/EventBus.js';
 import { GameEvents } from '../events/GameEvents.js';
 import { isJokeMonster } from '../configs/GameBalanceConfig.js';
 import { clampMonsterHp } from './DungeonValueBudgetEngine.js';
+import { TomeLootGenerator } from './TomeLootGenerator.js';
+
+/**
+ * @deprecated [LEGACY_DUMMY_ITEMS]
+ * 하드코딩된 구형 더미 아이템 명칭 레코드 (인게임 실제 드랍 파이프라인에서 완전 퇴출 및 격리됨)
+ * ToME/TomeNET 정통 드랍 플래그/테이블(DROP_2D2, DROP_GREAT 등) 기반 절차적 엔진으로 전면 교체.
+ */
+export const LEGACY_DUMMY_ITEMS = Object.freeze([
+  '축복받은 기사의 명검',
+  '발리노르의 신성한 명검',
+  '발리노르의 무기 대강화 주문서',
+  '영구 전능 성장 영약'
+]);
 
 export class UniqueMonsterManager {
   /**
@@ -310,12 +323,65 @@ export class UniqueMonsterManager {
   }
 
   /**
-   * 유니크 몬스터 처치 시 전설 유물 또는 최고급 에고 장비 확정 드랍을 생성합니다.
+   * ToME / TomeNET 정통 몬스터 드랍 플래그를 분석하여 생성할 아이템 수와 품질 보정치를 산출합니다.
+   * @param {Object} monster 
+   * @returns {{ count: number, isGood: boolean, isGreat: boolean, onlyItem: boolean, onlyGold: boolean }}
+   */
+  parseMonsterDropRules(monster) {
+    const uData = this.getUniqueMonsterByKey(monster.uniqueKey || monster.type) || TOME_MONSTERS_DATA[monster.uniqueKey || monster.type] || {};
+    const flags = monster.flags || uData.flags || [];
+
+    let count = 0;
+    let isGood = false;
+    let isGreat = false;
+    let onlyItem = false;
+    let onlyGold = false;
+
+    for (const flag of flags) {
+      if (flag === 'DROP_4D2') {
+        count += 4 + Math.floor(Math.random() * 4) + 1; // 4 + 1d4 (5~8개)
+      } else if (flag === 'DROP_3D2') {
+        count += 3 + Math.floor(Math.random() * 3) + 1; // 3 + 1d3 (4~6개)
+      } else if (flag === 'DROP_2D2') {
+        count += 2 + Math.floor(Math.random() * 2) + 1; // 2 + 1d2 (3~4개)
+      } else if (flag === 'DROP_1D2') {
+        count += 1 + (Math.random() < 0.5 ? 1 : 0); // 1~2개
+      } else if (flag === 'DROP_90') {
+        if (Math.random() < 0.90) count += 1;
+      } else if (flag === 'DROP_60') {
+        if (Math.random() < 0.60) count += 1;
+      } else if (flag === 'DROP_GOOD') {
+        isGood = true;
+      } else if (flag === 'DROP_GREAT') {
+        isGreat = true;
+        isGood = true;
+      } else if (flag === 'ONLY_ITEM') {
+        onlyItem = true;
+      } else if (flag === 'ONLY_GOLD') {
+        onlyGold = true;
+      }
+    }
+
+    // 유니크 몬스터 기본 보장 (플래그가 없거나 적은 경우 최소 2~3개 보장)
+    if (monster.isUnique || uData.isUnique) {
+      if (count < 2) {
+        count = 2 + (Math.random() < 0.5 ? 1 : 0);
+      }
+      isGood = true;
+    }
+
+    return { count: Math.max(1, count), isGood, isGreat, onlyItem, onlyGold };
+  }
+
+  /**
+   * 유니크 몬스터 처치 시 ToME 2.3.5 / TomeNET 정통 규칙에 기반한 전리품을 절차적으로 생성합니다.
    * @param {Object} monster - 처치된 유니크 몬스터 인스턴스
    * @param {number} floor - 현재 던전 층수
+   * @param {Object} [map=null] - 던전 맵 객체
    * @returns {Array<Item>} 드랍될 아이템 배열
    */
   generateUniqueMonsterDrops(monster, floor = 1, map = null) {
+    if (!monster) return [];
     const drops = [];
     const mx = monster.x || 0;
     const my = monster.y || 0;
@@ -329,42 +395,69 @@ export class UniqueMonsterManager {
       return true;
     };
 
+    // 타일 위치 후보군 (중첩 방지용)
+    const getDropPos = (index) => {
+      const offsets = [
+        { dx: 0, dy: 0 },
+        { dx: 1, dy: 0 },
+        { dx: 0, dy: 1 },
+        { dx: -1, dy: 0 },
+        { dx: 0, dy: -1 },
+        { dx: 1, dy: 1 },
+        { dx: -1, dy: 1 },
+        { dx: 1, dy: -1 },
+        { dx: -1, dy: -1 },
+        { dx: 2, dy: 0 },
+        { dx: 0, dy: 2 }
+      ];
+      const offset = offsets[index % offsets.length];
+      const targetX = mx + offset.dx;
+      const targetY = my + offset.dy;
+      if (isWalkable(targetX, targetY)) {
+        return { x: targetX, y: targetY };
+      }
+      return { x: mx, y: my };
+    };
+
     // 처치 상태 마킹
     const key = monster.uniqueKey || monster.type;
     if (key) {
       this.markKilled(key);
     }
 
-    // 1~5층(Tier 1) 초심자 구역: 유물 및 영구 영약/대강화 주문서 확정 드랍 차단 -> 티어 1 최고급 에고 + 일반 소모품으로 치환
-    if (effectiveFloor <= 5) {
-      const tier1EgoWeapon = new Item(
-        mx, my,
-        'WEAPON',
-        '|',
-        '#38bdf8',
-        '축복받은 기사의 명검',
-        1,
-        'WEAPON',
-        { str: 3, dex: 2, con: 2 },
-        '1d8',
-        null,
-        ['HOLY'],
-        ['SLAYER'],
-        [],
-        `유니크 [${monster.displayName}]을(를) 물리치고 획득한 고결한 기운이 깃든 에고 무기입니다.`
-      );
-      tier1EgoWeapon.baseAC = 2;
-      tier1EgoWeapon.cost = 1500;
-      drops.push(tier1EgoWeapon);
+    const dropRules = this.parseMonsterDropRules(monster);
+    const totalCount = Math.max(2, dropRules.count);
 
-      // 일반 무기/방어구 강화 주문서
-      const scrollPos = isWalkable(mx + 1, my) ? { x: mx + 1, y: my } : { x: mx, y: my };
+    // -------------------------------------------------------------------------
+    // 1~5층 (초심자 티어): ToME 정규 드랍 테이블 기반 고결한 에고 무기 + 정규 소모품
+    // -------------------------------------------------------------------------
+    if (effectiveFloor <= 5) {
+      // 1) 고결한 ToME 에고 무기/장비 (하드코딩 검 퇴출, 정규 기본 장비에 HOLY 에고 부여)
+      const p1 = getDropPos(0);
+      const baseEquip = TomeLootGenerator.generateEquipmentItem(p1.x, p1.y, effectiveFloor, true);
+      if (baseEquip) {
+        if (!baseEquip.prefixes) baseEquip.prefixes = [];
+        if (!baseEquip.prefixes.includes('HOLY')) {
+          baseEquip.prefixes.unshift('HOLY');
+        }
+        if (!baseEquip.suffixes) baseEquip.suffixes = [];
+        if (baseEquip.suffixes.length === 0) {
+          baseEquip.suffixes.push('SLAYER');
+        }
+        baseEquip.flavorText = `유니크 [${monster.displayName}]을(를) 물리치고 획득한 ToME 정통 에고 장비입니다.`;
+        baseEquip.syncComponents();
+        drops.push(baseEquip);
+      }
+
+      // 2) ToME 정규 마법 강화 주문서 (무기 강화 주문서 또는 방어구 강화 주문서)
+      const p2 = getDropPos(1);
+      const isScrollWeapon = Math.random() < 0.6;
       const standardScroll = new Item(
-        scrollPos.x, scrollPos.y,
+        p2.x, p2.y,
         'SCROLL',
         '?',
         '#fb7185',
-        '무기 강화 주문서',
+        isScrollWeapon ? '무기 강화 주문서' : '방어구 강화 주문서',
         0,
         null,
         {},
@@ -373,45 +466,51 @@ export class UniqueMonsterManager {
         [],
         [],
         [],
-        "무기에 마법의 예리함을 각인하는 강화 주문서입니다."
+        isScrollWeapon ? "무기에 마법의 예리함을 각인하는 강화 주문서입니다." : "방어구의 내구력과 마법 저항을 강화하는 마법 주문서입니다."
       );
+      standardScroll.syncComponents();
       drops.push(standardScroll);
 
-      // 상급 체력 회복 물약
-      const potionPos = isWalkable(mx, my + 1) ? { x: mx, y: my + 1 } : { x: mx, y: my };
-      const standardPotion = new Item(
-        potionPos.x, potionPos.y,
-        'POTION',
-        '!',
-        '#f43f5e',
-        '상급 체력 물약',
-        0,
-        null,
-        {},
-        null,
-        null,
-        [],
-        [],
-        [],
-        "상처를 즉시 봉합하고 체력을 회복시켜주는 고농축 물약입니다."
-      );
-      standardPotion.potionEffect = { type: 'HEAL', amount: 50 };
-      drops.push(standardPotion);
+      // 3) ToME 정규 회복 물약 (추가 슬롯이 있을 시)
+      if (totalCount >= 3) {
+        const p3 = getDropPos(2);
+        const standardPotion = new Item(
+          p3.x, p3.y,
+          'POTION',
+          '!',
+          '#f43f5e',
+          '상급 체력 물약',
+          0,
+          null,
+          {},
+          null,
+          null,
+          [],
+          [],
+          [],
+          "상처를 즉시 봉합하고 체력을 회복시켜주는 고농축 물약입니다."
+        );
+        standardPotion.potionEffect = { type: 'HEAL', amount: 50 };
+        standardPotion.syncComponents();
+        drops.push(standardPotion);
+      }
 
       return drops;
     }
 
-    // 6층 이상: 전설 유물(Artifact) 롤링 (미드랍 유물 우선)
+    // -------------------------------------------------------------------------
+    // 6층 이상: ToME 전설 유물(Artifact) 우선 선별 + 정규 절차적 추가 드랍
+    // -------------------------------------------------------------------------
     let chosenArtifact = null;
     const availableArts = this._artifactList.filter(art => !this.droppedArtifacts.has(art.key) && (art.level <= mLevel + 12));
     
     if (availableArts.length > 0) {
-      // 레벨이 가장 근접한 유물 풀에서 랜덤 선택
       const closeArts = availableArts.filter(art => Math.abs(art.level - mLevel) <= 15);
       const pool = closeArts.length > 0 ? closeArts : availableArts;
       chosenArtifact = pool[Math.floor(Math.random() * pool.length)];
     }
 
+    const posArt = getDropPos(0);
     if (chosenArtifact) {
       this.droppedArtifacts.add(chosenArtifact.key);
       let type = chosenArtifact.type || 'WEAPON';
@@ -445,7 +544,7 @@ export class UniqueMonsterManager {
       }
 
       const artItem = new Item(
-        mx, my,
+        posArt.x, posArt.y,
         type,
         char,
         chosenArtifact.color || '#ffd700',
@@ -470,67 +569,26 @@ export class UniqueMonsterManager {
 
       drops.push(artItem);
     } else {
-      // 전설 유물이 모두 소진된 경우 최고급 2중 에고 무기/방어구 생성
-      const fallbackItem = new Item(
-        mx, my,
-        'WEAPON',
-        '|',
-        '#f59e0b',
-        '발리노르의 신성한 명검',
-        2,
-        'WEAPON',
-        { str: 5, dex: 4, con: 4, int: 3 },
-        '3d6',
-        null,
-        ['HOLY', 'FURIOUS'],
-        ['SLAYER', 'BLOODLUST'],
-        ['LEGENDARY', 'EXTRA_ATTACK'],
-        `유니크 [${monster.displayName}]의 유해에서 추출한 강력한 영혼이 깃든 에고 무기입니다.`
-      );
-      fallbackItem.baseAC = 5;
-      fallbackItem.cost = 15000;
-      drops.push(fallbackItem);
+      // 유물이 모두 소진된 경우: TomeLootGenerator 기반 최고급 2중 에고 장비 절차적 생성
+      const fallbackItem = TomeLootGenerator.generateFloorItem(posArt.x, posArt.y, effectiveFloor + 5, true);
+      if (fallbackItem) {
+        if (!fallbackItem.prefixes.includes('LEGENDARY')) fallbackItem.prefixes.unshift('LEGENDARY');
+        if (!fallbackItem.specialTags.includes('EXTRA_ATTACK')) fallbackItem.specialTags.push('EXTRA_ATTACK');
+        fallbackItem.syncComponents();
+        drops.push(fallbackItem);
+      }
     }
 
-    // 2. 보너스 전리품: 무기/방어구 대강화 주문서 및 최고급 영약 확정 드랍 (6층 이상)
-    const bonusScrollPos = isWalkable(mx + 1, my) ? { x: mx + 1, y: my } : { x: mx, y: my };
-    const bonusScroll = new Item(
-      bonusScrollPos.x, bonusScrollPos.y,
-      'SCROLL',
-      '?',
-      '#fb7185',
-      '발리노르의 무기 대강화 주문서',
-      0,
-      null,
-      {},
-      null,
-      null,
-      ['IMMORTAL'],
-      [],
-      [],
-      "유니크 몬스터의 정수가 농축된 최상급 마법 강화 주문서입니다."
-    );
-    drops.push(bonusScroll);
-
-    const bonusPotionPos = isWalkable(mx, my + 1) ? { x: mx, y: my + 1 } : { x: mx, y: my };
-    const bonusPotion = new Item(
-      bonusPotionPos.x, bonusPotionPos.y,
-      'POTION',
-      '!',
-      '#10b981',
-      '영구 전능 성장 영약',
-      1,
-      null,
-      {},
-      null,
-      null,
-      ['HOLY'],
-      [],
-      [],
-      "모든 능력치를 영구적으로 상승시키는 신비한 비약입니다."
-    );
-    bonusPotion.potionEffect = { type: 'STAT_BOOST', amount: 2 };
-    drops.push(bonusPotion);
+    // 2. 추가 전리품 (ToME 드랍 룰셋의 남은 수량만큼 정규 절차적 생성)
+    const remainingSlots = Math.max(1, totalCount - drops.length);
+    for (let i = 0; i < remainingSlots; i++) {
+      const pos = getDropPos(drops.length);
+      const bonusDepth = effectiveFloor + (dropRules.isGreat ? 5 : (dropRules.isGood ? 2 : 0));
+      const bonusItem = TomeLootGenerator.generateFloorItem(pos.x, pos.y, bonusDepth, true);
+      if (bonusItem) {
+        drops.push(bonusItem);
+      }
+    }
 
     return drops;
   }

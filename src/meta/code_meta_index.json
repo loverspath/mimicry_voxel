@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-09-03T07:37:01Z",
+  "generatedAt": "2026-09-03T08:17:28Z",
   "summary": {
     "totalModules": 75,
-    "totalLines": 109240,
+    "totalLines": 109316,
     "categories": {
       "configs": 5,
       "core": 14,
@@ -499,7 +499,7 @@
       "filePath": "src/core/Spawner.js",
       "moduleName": "Spawner",
       "category": "core",
-      "lines": 799,
+      "lines": 795,
       "responsibility": "ToME 2.3.5 정통 던전 깊이(Depth) 기반 동적 몬스터 및 아이템 스포너 엔진. 851종 몬스터 풀, 유니크 몬스터 1회성 스폰 생태계, Vault 및 Monster Pit 전용 군집 스폰, 테마별 절차적 배치 지원.",
       "purity": "Pure Factory / Spawner Logic",
       "dependencies": [
@@ -529,7 +529,7 @@
         "isMonsterPresent",
         "isPlayerPresent"
       ],
-      "lastModified": "2026-08-26T04:31:28Z"
+      "lastModified": "2026-09-03T08:12:37Z"
     },
     {
       "filePath": "src/core/TraceLogger.js",
@@ -1531,7 +1531,7 @@
       "filePath": "src/systems/TomeLootGenerator.js",
       "moduleName": "TomeLootGenerator",
       "category": "systems",
-      "lines": 373,
+      "lines": 395,
       "responsibility": "ToME 2.3.5 정통 알고리즘 기반 던전 깊이(Depth)별 아이템 롤링, 에고(Ego) 접사 합성 및 전설 유물(Artifact) 드랍 파이프라인 엔진",
       "purity": "Pure Loot Factory",
       "dependencies": [
@@ -1549,7 +1549,7 @@
         "TomeLootGenerator"
       ],
       "functions": [],
-      "lastModified": "2026-09-03T00:35:27Z"
+      "lastModified": "2026-09-03T08:15:45Z"
     },
     {
       "filePath": "src/systems/TomeSpellEngine.js",
@@ -1619,7 +1619,7 @@
       "filePath": "src/systems/UniqueMonsterManager.js",
       "moduleName": "UniqueMonsterManager",
       "category": "systems",
-      "lines": 572,
+      "lines": 630,
       "responsibility": "ToME 2.3.5 정통 168종 유니크 몬스터 1회성 스폰 생태계 제어, 전설 유물 및 특급 에고 확정 드랍 파이프라인 엔진",
       "purity": "State Store / Logic System",
       "dependencies": [
@@ -1632,19 +1632,22 @@
         "EventBus.js",
         "DungeonValueBudgetEngine.js",
         "GameBalanceConfig.js",
-        "GameEvents.js"
+        "GameEvents.js",
+        "TomeLootGenerator.js"
       ],
       "exports": [
         "UniqueMonsterManager",
-        "uniqueMonsterManager"
+        "uniqueMonsterManager",
+        "LEGACY_DUMMY_ITEMS"
       ],
       "classes": [
         "UniqueMonsterManager"
       ],
       "functions": [
+        "getDropPos",
         "isWalkable"
       ],
-      "lastModified": "2026-08-26T13:16:39Z"
+      "lastModified": "2026-09-03T08:15:57Z"
     },
     {
       "filePath": "src/systems/VisionLightingEngine.js",

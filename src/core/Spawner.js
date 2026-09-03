@@ -358,8 +358,8 @@ export class Spawner {
         const bossItem = TomeLootGenerator.generateFloorItem(center.x + 1, center.y, game.floor, true);
         game.items.push(bossItem);
 
-        // 보스 격파 보상 무기 강화 주문서 확정 배치
-        game.items.push(new Item(center.x - 1, center.y, 'SCROLL', '?', '#fb7185', '무기 강화 주문서', 0, null, {}, null, null, [], [], [], "무기에 마법의 예리함을 각인하는 강화 주문서입니다."));
+        // 보스 격파 보상 특급 전리품 절차적 생성 배치
+        game.items.push(TomeLootGenerator.generateFloorItem(center.x - 1, center.y, game.floor + 1, true));
 
       // ----------------------------------------------------
       // B. 비밀 보물 금고 룸 (TREASURE_VAULT) 스폰
@@ -377,12 +377,8 @@ export class Spawner {
           game.items.push(vaultItem2);
         }
 
-        // 강화 주문서 또는 성장 영약 추가 배치
-        game.items.push(new Item(
-          center.x, center.y - 1,
-          'SCROLL', '?', '#fb7185', '방어구 강화 주문서', 0, null, {}, null, null, [], [], [],
-          "방어구의 내구력과 마법 저항을 강화하는 마법 주문서입니다."
-        ));
+        // 보물 금고 추가 마법 전리품 절차적 생성 배치
+        game.items.push(TomeLootGenerator.generateFloorItem(center.x, center.y - 1, game.floor + 2, true));
 
         // 2) 금고 수호자 스폰 (35% 확률로 유니크 수호자, 아니면 BudgetEngine 정예)
         let guardMonster = null;
