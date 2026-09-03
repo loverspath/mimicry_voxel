@@ -1,11 +1,11 @@
-# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.30.0)
+# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.31.0)
 
-> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 16 집대성)**
+> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 17 집대성)**
 
-[![Version](https://img.shields.io/badge/version-0.30.0-emerald.svg)](package.json)
-[![Tests](https://img.shields.io/badge/test%20suites-60%2F60%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
-[![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(109%2C240%20LOC)-indigo.svg)](CODE_META_INDEX.md)
-[![Engines](https://img.shields.io/badge/stateless%20engines-15%20engines%20(AutoCast%20Toggle%20%26%20Shield%20Bash)-blue.svg)](src/systems/)
+[![Version](https://img.shields.io/badge/version-0.31.0-emerald.svg)](package.json)
+[![Tests](https://img.shields.io/badge/test%20suites-61%2F61%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
+[![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(109%2C316%20LOC)-indigo.svg)](CODE_META_INDEX.md)
+[![Engines](https://img.shields.io/badge/stateless%20engines-15%20engines%20(ToME%20Procedural%20Drop%20Engine)-blue.svg)](src/systems/)
 [![Renderers](https://img.shields.io/badge/tri--mode%20renderers-Voxel%20|%203D%20|%20ASCII-teal.svg)](src/renderer/)
 [![Entities](https://img.shields.io/badge/canonical%20entities-1%2C636-purple.svg)](src/entities/)
 [![Architecture](https://img.shields.io/badge/architecture-5--layer%20Clean%20DOD-orange.svg)](src/meta/code_meta_index.json)
@@ -15,11 +15,11 @@
 ## 🧭 프로젝트 개요 및 엔진 진화 여정
 
 **미미크리 복셀(Mimicry Voxel)**은 플레이어가 쓰러뜨린 몬스터의 정수 코어(Core)를 흡수하여 그 신체 능력과 고유 마법을 의태(Mimicry)하는 전술적 복셀 로그라이크 엔진입니다. 
-초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook)**, **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템**, **물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 VFX 엔진**, **5대 던전 테마 맞춤형 바닥 & 천장 실사 텍스처 10종 탑재 및 플로어캐스팅 렌더러**, **1인칭 3D 공간 일체화**, **바닥-천장($z=0.0 \sim 1.0$) 관통형 3D 복셀 계단 구조체 및 5대 던전 테마 10종 실사 계단 텍스처**, 그리고 **3D 복셀 사다리(Ladder) 시스템, 전사 SHIELD_BASH(방패 강타) 완비 및 액티브 스킬 오토캐스트 On/Off 토글 시스템**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
+초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook)**, **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템**, **물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 VFX 엔진**, **5대 던전 테마 맞춤형 바닥 & 천장 실사 텍스처 10종 탑재 및 플로어캐스팅 렌더러**, **1인칭 3D 공간 일체화**, **바닥-천장 관통형 3D 복셀 계단 구조체 및 3D 복셀 사다리 시스템**, **전사 SHIELD_BASH(방패 강타) 및 오토캐스트 On/Off 토글**, 그리고 **ToME/TomeNET 정통 드랍 플래그 엔진, 유니크 하드코딩 드랍 제거 및 절차적 전리품 생성 연동**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
 
 ```mermaid
 timeline
-    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 16)
+    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 17)
     Phase 1 : 3대 원소 상호작용 프로토타입 (v0.1.0 ~ v0.6.0)
             : 의태 코어 흡수 및 기초 복셀 렌더러 구축
     Phase 2 : 5대 갓오브젝트 해체 및 5대 계층 클린 아키텍처 확립 (v0.7.0 ~ v0.12.0)
@@ -52,6 +52,8 @@ timeline
             : z=0~1.0 관통 기둥/보, 천장 스카이라이트 개구부, 5대 테마 10종 실사 계단
     Phase 16: 3D 복셀 사다리 & 전사 방패 강타 & 오토캐스트 토글 완비 (v0.30.0)
             : 3종 사다리 텍스처, SHIELD_BASH(스턴), Shift+1~8 오토캐스트 토글
+    Phase 17: ToME 정통 드랍 플래그 엔진 & 유니크 절차적 전리품 연동 (v0.31.0)
+            : 하드코딩 드랍 전면 제거, DROP_1D2~4D2/GREAT/GOOD/ONLY 플래그
 ```
 
 ---
@@ -85,6 +87,31 @@ timeline
 │    (TomeMonstersData, TomeArtifactsData, GameBalanceConfig) │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 🏛️ Phase 17: ToME/TomeNET 정통 드랍 플래그 엔진, 유니크 하드코딩 드랍 제거 및 절차적 전리품 생성 연동 (v0.31.0)
+
+### 🏛️ v0.31.0 — ToME/TomeNET 정통 드랍 플래그 엔진, 유니크 하드코딩 드랍 제거 및 절차적 전리품 생성 연동
+- **배포일**: 2026-09-03 | **버전**: `v0.31.0` | **모듈 현황**: 75개 모듈 (109,316 LOC) | **테스트 통과**: 61/61 Suites (100% ALL PASS)
+- **개요 및 설계 배경**:
+  - 기존 유니크 몬스터 처치 시 사전에 하드코딩된 특정 아티팩트/장비 목록만을 확정 지급하던 정적 전리품 방식에서 벗어나, 정통 로그라이크 **ToME 2.3.5 / TomeNET C-소프트웨어의 원작 전리품 공식(r_info.txt Monster Drop Flags)**을 완벽히 복원한 **절차적 드랍 플래그 엔진(Procedural Drop Flags Engine)**을 탑재하였습니다.
+  - 몬스터 고유의 `DROP_1D2`, `DROP_2D2`, `DROP_3D2`, `DROP_4D2`, `DROP_60`, `DROP_90`, `ONLY_ITEM`, `ONLY_GOLD`, `DROP_GOOD`, `DROP_GREAT` 플래그를 정밀하게 파싱하여 던전 심도(Dungeon Level) 및 몬스터 기본 레벨에 동적으로 스케일링되는 절차적 전리품 생성 파이프라인을 구축하였습니다.
+  - 심층 보스 모르고스(Morgoth)를 비롯한 주요 유니크 몬스터들은 자신의 심도와 위상에 걸맞은 다수의 고가치/GREAT 아티팩트 및 아이템을 절차적 예산 내에서 풍성하고 공정하게 드랍하도록 개편되었습니다.
+
+- **주요 변경 사항**:
+  1. **유니크 몬스터 하드코딩 드랍 전면 제거 및 ToME 드랍 플래그 연동 ([`src/systems/UniqueMonsterManager.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/UniqueMonsterManager.js))**:
+     - `UniqueMonsterManager` 내에 존재하던 각 유니크별 고정 드랍 맵(Fixed Drop Maps) 및 정적 아이템 객체 생성 코드를 전면 철거.
+     - `TomeMonstersData`에 명시된 원작 ToME 드랍 플래그(`flags.DROP_*`, `flags.ONLY_*`)를 기반으로 정밀 주사위 굴림(Dice Rolling) 및 수량 산출 파이프라인 확립.
+  2. **TomeLootGenerator 드랍 엔진 고도화 ([`src/systems/TomeLootGenerator.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeLootGenerator.js))**:
+     - `generateMonsterDrops(monster, dungeonLevel)`: 몬스터의 플래그에 따라 `DROP_GOOD`(고품질 보정) 및 `DROP_GREAT`(최상급 에고/아티팩트 확률 대폭 상승)을 엄격하게 적용하여 아이템/골드를 절차적으로 생성.
+     - `ONLY_ITEM` 설정 시 순수 장비/소모품만, `ONLY_GOLD` 설정 시 보석/화폐만 선택적으로 생성되도록 필터링 무결성 보장.
+  3. **Spawner 및 유니크 사망 이벤트 파이프라인 동기화 ([`src/core/Spawner.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Spawner.js))**:
+     - 유니크 몬스터 스폰 시 드랍 플래그 메타데이터를 유지하고, 사망 이벤트(`MONSTER_DIED`) 발생 시 `ProceduralSafeDropEngine`과 완벽히 연계하여 드랍 아이템이 벽면에 끼이지 않고 몬스터 주변 3x3 안전 반경에 절차적으로 안착되도록 보장.
+  4. **신규 단위/통합 테스트 스위트 추가 및 무결성 검증**:
+     - [`scripts/test_tomenet_monster_drops.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/scripts/test_tomenet_monster_drops.js) 신설 (총 164 라인): 원작 드랍 플래그 파싱, 하드코딩 부재 검증, 주사위 기반 수량 산출, GREAT/GOOD 보정 전리품 생성 무결성 검증.
+     - **61개 전체 테스트 스위트 100% ALL PASS 달성 (61/61 PASSED, 0 FAILED)**.
+     - **메타 인덱서 갱신**: `meta_indexer.py --update-wiki` 실행으로 75개 모듈(109,316 LOC) 메타 인덱스 및 위키 문서 최신화 완료.
 
 ---
 
