@@ -13,6 +13,7 @@ import { TOME_MONSTERS_DATA } from '../entities/TomeMonstersData.js';
 import { UnifiedTraitEngine } from './UnifiedTraitEngine.js';
 import { TomeFlagResolver } from './TomeFlagResolver.js';
 import { Spawner } from '../core/Spawner.js';
+import { combatVFXEngine } from './CombatVFXEngine.js';
 
 export const TOME_ATTACK_METHODS = Object.freeze([
   'HIT', 'TOUCH', 'PUNCH', 'KICK', 'CLAW', 'BITE', 'STING', 'BUTT',
@@ -503,6 +504,7 @@ export class TomeSpellEngine {
         const oldHp = caster.stats.hp;
         caster.stats.hp = Math.min(caster.stats.maxHp || 9999, caster.stats.hp + healAmount);
         const actual = caster.stats.hp - oldHp;
+        if (combatVFXEngine) combatVFXEngine.triggerSpellAction('HEAL', caster, caster, null, -actual);
         const msg = `💚 ${casterName}이(가) ${spec.name} 시전! +${actual} HP 회복 (HP: ${caster.stats.hp}/${caster.stats.maxHp})`;
         if (game && game.addLogEntry) game.addLogEntry(msg, 'loot');
         return { success: true, spellName: spec.name, damage: -actual, message: msg };
@@ -557,6 +559,7 @@ export class TomeSpellEngine {
         caster.x = dest.x;
         caster.y = dest.y;
       }
+      if (combatVFXEngine) combatVFXEngine.triggerSpellAction('TELEPORT', caster, caster);
       const msg = `💨 ${casterName}이(가) ${spec.name}으로 순간이동했습니다! (${caster.x}, ${caster.y})`;
       if (game && game.addLogEntry) game.addLogEntry(msg, 'combat');
       return { success: true, spellName: spec.name, damage: 0, message: msg };
@@ -589,6 +592,7 @@ export class TomeSpellEngine {
         target.x = dest.x;
         target.y = dest.y;
       }
+      if (combatVFXEngine) combatVFXEngine.triggerSpellAction('TELEPORT', caster, target);
       const targetName = target.displayName || target.name || '대상';
       const msg = `🧲 ${casterName}이(가) ${spec.name} 발동! ${targetName}을(를) 눈앞으로 강제 소환했습니다!`;
       if (game && game.addLogEntry) game.addLogEntry(msg, 'combat');
@@ -620,6 +624,7 @@ export class TomeSpellEngine {
         target.x = dest.x;
         target.y = dest.y;
       }
+      if (combatVFXEngine) combatVFXEngine.triggerSpellAction('TELEPORT', caster, target);
       const targetName = target.displayName || target.name || '대상';
       const msg = `💨 ${casterName}이(가) ${spec.name} 발동! ${targetName}을(를) 저 멀리 강제 추방했습니다!`;
       if (game && game.addLogEntry) game.addLogEntry(msg, 'combat');
@@ -693,6 +698,13 @@ export class TomeSpellEngine {
           break;
       }
 
+      if (combatVFXEngine) {
+        if (spec.effect === 'CONFUSION') combatVFXEngine.triggerSpellAction('CONFUSION', caster, target);
+        else if (spec.effect === 'BLIND') combatVFXEngine.triggerSpellAction('BLIND', caster, target);
+        else if (spec.effect === 'FEAR') combatVFXEngine.triggerSpellAction('FEAR', caster, target);
+        else if (spec.effect === 'PARALYZE') combatVFXEngine.triggerSpellAction('PARALYZE', caster, target);
+      }
+
       const msg = `✨ ${casterName}의 ${spec.name}! ${appliedMsg}`;
       if (game && game.addLogEntry) game.addLogEntry(msg, 'combat');
       return { success: true, spellName: spec.name, damage: 0, message: msg };
@@ -733,6 +745,24 @@ export class TomeSpellEngine {
         target.stats.hp = Math.max(0, target.stats.hp - finalDmg);
       }
 
+      if (combatVFXEngine) {
+        let vfxId = 'MISSILE';
+        if (spellKey === 'ARROW' || (spec.name && spec.name.includes('화살'))) vfxId = 'ARROW';
+        else if (spec.element) {
+          const el = spec.element.toUpperCase();
+          if (el === 'FIRE') vfxId = 'BO_FIRE';
+          else if (el === 'COLD' || el === 'ICE') vfxId = 'BO_COLD';
+          else if (el === 'ELEC' || el === 'LIGHTNING') vfxId = 'BO_ELEC';
+          else if (el === 'ACID') vfxId = 'BO_ACID';
+          else if (el === 'POIS' || el === 'POISON') vfxId = 'BO_POIS';
+          else if (el === 'NETHER' || el === 'NETH') vfxId = 'BO_NETH';
+          else if (el === 'LIGHT' || el === 'LITE') vfxId = 'BO_LITE';
+          else if (el === 'DARK') vfxId = 'BO_DARK';
+          else if (el === 'WATER' || el === 'WATE') vfxId = 'BO_WATE';
+        }
+        combatVFXEngine.triggerSpellAction(vfxId, caster, target, spec.element, finalDmg);
+      }
+
       const targetName = target.displayName || target.name || '대상';
       const msg = `🔮 ${casterName}이(가) ${targetName}에게 ${spec.name} 발사! 💥 ${finalDmg} 피해 (원소: ${spec.element || 'MANA'})`;
       if (game && game.addLogEntry) game.addLogEntry(msg, 'combat');
@@ -755,6 +785,22 @@ export class TomeSpellEngine {
           t.stats.hp = Math.max(0, t.stats.hp - finalDmg);
           targetCount++;
         }
+      }
+
+      if (combatVFXEngine) {
+        let aoeId = 'BA_MANA';
+        if (spec.type === 'BREATH') {
+          aoeId = 'BREATH';
+        } else if (spec.element) {
+          const el = spec.element.toUpperCase();
+          if (el === 'FIRE') aoeId = 'BA_FIRE';
+          else if (el === 'COLD' || el === 'ICE') aoeId = 'BA_COLD';
+          else if (el === 'ELEC' || el === 'LIGHTNING') aoeId = 'BA_ELEC';
+          else if (el === 'ACID') aoeId = 'BA_ACID';
+          else if (el === 'POIS' || el === 'POISON') aoeId = 'BA_POIS';
+          else if (el === 'NETHER' || el === 'NETH') aoeId = 'BA_NETH';
+        }
+        combatVFXEngine.triggerSpellAction(aoeId, caster, target, spec.element, dmg);
       }
 
       const msg = `🐉 ${casterName}이(가) ${spec.name} 발동! ${targetCount}개 대상에게 ${dmg}의 광역 폭풍 피해`;

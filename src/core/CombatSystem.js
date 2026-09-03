@@ -171,7 +171,16 @@ export class CombatSystem {
                 let attackEl = CombatSystem.resolvePlayerAttackElement(player);
                 game.effects.push(new MeleeSlashEffect(monster.x, monster.y, attackEl));
                 game.effects.push(new FloatingTextEffect(monster.x, monster.y, `-${totalDmg}`, genericResult.isStrong ? "#ffd700" : "#f43f5e", genericResult.isStrong, h * 0.08));
-                combatVFXEngine.triggerAttackFX(attackEl ? `${attackEl}_BURST` : VFX_TYPES.SLASH, player, monster, genericResult.isStrong, game?.renderer, h, blows.length, totalDmg);
+
+                let methodKey = currentBlow.method || 'SLASH';
+                if (methodKey === 'HIT') methodKey = 'SLASH';
+                else if (methodKey === 'CLAW') methodKey = 'CLAW';
+                else if (methodKey === 'BITE') methodKey = 'BITE';
+                else if (methodKey === 'STING' || methodKey === 'PIERCE') methodKey = 'PIERCE';
+                else if (methodKey === 'CRUSH' || methodKey === 'BASH') methodKey = 'CRUSH';
+
+                const vfxType = attackEl ? `${attackEl}_BURST` : methodKey;
+                combatVFXEngine.triggerAttackFX(vfxType, player, monster, genericResult.isStrong, game?.renderer, h, blows.length, totalDmg, methodKey);
                 let d = monster.takeDamage(totalDmg);
 
                 // Print Unified Combat Log with Blow method name
@@ -249,6 +258,9 @@ export class CombatSystem {
             }
 
             game.effects.push(new FloatingTextEffect(monster.x, monster.y, `-${res.damage}`, res.isCrit ? "#ffd700" : "#38bdf8", res.isCrit));
+            if (combatVFXEngine) {
+                combatVFXEngine.triggerSpellAction('ARROW', player, monster, 'PHYSICAL', res.damage);
+            }
             const isDead = monster.takeDamage(res.damage);
             const weaponName = bow ? bow.name : '단궁';
             const critLabel = res.isCrit ? ' 💥 치명타!' : '';
@@ -436,7 +448,16 @@ export class CombatSystem {
                     game.effects.push(new MeleeSlashEffect(player.x, player.y, attackEl));
                     game.effects.push(new FloatingTextEffect(player.x, player.y, `-${finalDmg}`, "#ef4444", false, _a * 0.08));
                 }
-                combatVFXEngine.triggerAttackFX(attackEl !== 'PHYSICAL' ? `${attackEl}_BURST` : VFX_TYPES.BASH, monster, player, false, game?.renderer, _a, activeAttacks.length, finalDmg);
+
+                let methodKey = currentAtk.method || 'BASH';
+                if (methodKey === 'HIT') methodKey = 'BASH';
+                else if (methodKey === 'CLAW') methodKey = 'CLAW';
+                else if (methodKey === 'BITE') methodKey = 'BITE';
+                else if (methodKey === 'STING' || methodKey === 'PIERCE') methodKey = 'PIERCE';
+                else if (methodKey === 'CRUSH' || methodKey === 'BASH') methodKey = 'CRUSH';
+
+                const vfxType = (attackEl !== 'PHYSICAL') ? `${attackEl}_BURST` : methodKey;
+                combatVFXEngine.triggerAttackFX(vfxType, monster, player, false, game?.renderer, _a, activeAttacks.length, finalDmg, methodKey);
 
                 if (player.stats.hp <= 0) {
                     player.lastDamageSource = monster.displayName || monster.name;

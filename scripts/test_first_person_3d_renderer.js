@@ -533,6 +533,57 @@ assert(vfxEngine.bloodVignetteAlpha > 0.3, '몬스터 피격 시 핏빛 비네�
 assert(vfxEngine.activeVFX.length === 2, '몬스터 2연타 정상 등록 확인');
 
 console.log('='.repeat(80));
+console.log('🧪 [TEST SUITE 10] Phase 2 물리 5대 메소드 및 마법 4대 범주 아스키 그래픽 검증');
+console.log('='.repeat(80));
+
+// 10-1. 물리 5대 메소드 스타일 및 글리프 카탈로그 검증
+const { ASCII_VFX_CATALOG, VFX_METHODS, VFX_SPELLS } = await import('../src/systems/CombatVFXEngine.js');
+
+assert(ASCII_VFX_CATALOG.CLAW.style === 'TRIPLE_SCRATCH', 'CLAW 스타일: TRIPLE_SCRATCH 확인');
+assert(ASCII_VFX_CATALOG.BITE.style === 'CLAMP', 'BITE 스타일: CLAMP 확인');
+assert(ASCII_VFX_CATALOG.PIERCE.style === 'THRUST', 'PIERCE 스타일: THRUST 확인');
+assert(ASCII_VFX_CATALOG.CRUSH.style === 'SMASH', 'CRUSH 스타일: SMASH 확인');
+assert(ASCII_VFX_CATALOG.SLASH.style === 'ARC', 'SLASH 스타일: ARC 확인');
+
+// 10-2. 물리 메소드별 스크린/빌보드 렌더링 호출 안전성 검증
+vfxEngine.activeVFX = [];
+vfxEngine.triggerAttackFX('CLAW', mockPlayer, mockEnemy, false, fpRenderer, 0, 1, 30, 'CLAW');
+vfxEngine.triggerAttackFX('BITE', mockPlayer, mockEnemy, false, fpRenderer, 0, 1, 35, 'BITE');
+vfxEngine.triggerAttackFX('PIERCE', mockPlayer, mockEnemy, false, fpRenderer, 0, 1, 40, 'PIERCE');
+vfxEngine.triggerAttackFX('CRUSH', mockPlayer, mockEnemy, false, fpRenderer, 0, 1, 45, 'CRUSH');
+
+assert(vfxEngine.activeVFX.length === 4, '물리 4대 신규 메소드 4종 VFX 동시 등록 확인');
+vfxEngine.renderFirstPersonVFX(fpRenderer);
+assert(true, '1인칭 3D 뷰에서 CLAW, BITE, PIERCE, CRUSH 스크린 특화 렌더러 예외 없이 구동 완료');
+
+// 10-3. 마법 투사체 볼트 & 광역 볼 & 브레스 액션 검증
+vfxEngine.activeVFX = [];
+vfxEngine.triggerSpellAction('ARROW', mockPlayer, mockEnemy, 'PHYSICAL', 25);
+vfxEngine.triggerSpellAction('BO_FIRE', mockPlayer, mockEnemy, 'FIRE', 60);
+vfxEngine.triggerSpellAction('BA_FIRE', mockPlayer, mockEnemy, 'FIRE', 100);
+vfxEngine.triggerSpellAction('BREATH', mockEnemy, mockPlayer, 'FIRE', 120);
+
+assert(vfxEngine.activeVFX.length === 4, '주문 4종(ARROW, BO_FIRE, BA_FIRE, BREATH) 정상 등록 확인');
+assert(vfxEngine.activeVFX[0].def.style === 'BOLT', 'ARROW는 BOLT 스타일 적용 확인');
+assert(vfxEngine.activeVFX[2].def.style === 'AOE_BALL', 'BA_FIRE는 AOE_BALL 스타일 적용 확인');
+assert(vfxEngine.activeVFX[3].def.style === 'CONE_STREAM', 'BREATH는 CONE_STREAM 스타일 적용 확인');
+
+// 10-4. 상태이상 및 유틸리티 주문 검증
+vfxEngine.activeVFX = [];
+vfxEngine.triggerSpellAction('HEAL', mockPlayer, mockPlayer, null, -50);
+vfxEngine.triggerSpellAction('CONFUSION', mockEnemy, mockPlayer, null, 0);
+vfxEngine.triggerSpellAction('TELEPORT', mockPlayer, mockPlayer, null, 0);
+
+assert(vfxEngine.activeVFX.length === 3, '유틸 3종(HEAL, CONFUSION, TELEPORT) 정상 등록 확인');
+assert(vfxEngine.activeVFX[0].def.style === 'FOUNTAIN', 'HEAL은 FOUNTAIN 스타일 적용 확인');
+assert(vfxEngine.activeVFX[1].def.style === 'AURA_RING', 'CONFUSION은 AURA_RING 스타일 적용 확인');
+assert(vfxEngine.activeVFX[2].def.style === 'WARP', 'TELEPORT는 WARP 스타일 적용 확인');
+
+vfxEngine.renderFirstPersonVFX(fpRenderer);
+vfxEngine.renderAsciiVFX(mockAsciiRenderer, 0, 0);
+assert(true, '1인칭 3D 및 2D 아스키 렌더러에서 전수 마법 카탈로그 무결 렌더링 검증 완료');
+
+console.log('='.repeat(80));
 console.log(`🎉 [TEST SUMMARY] 총 ${passed + failed}개 검증 중 ${passed}개 통과 (${((passed / (passed + failed)) * 100).toFixed(1)}%)`);
 console.log('='.repeat(80));
 

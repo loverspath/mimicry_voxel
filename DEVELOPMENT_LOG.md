@@ -1,10 +1,10 @@
-# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.23.0)
+# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.24.0)
 
-> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 9 집대성)**
+> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 10 집대성)**
 
-[![Version](https://img.shields.io/badge/version-0.23.0-emerald.svg)](package.json)
+[![Version](https://img.shields.io/badge/version-0.24.0-emerald.svg)](package.json)
 [![Tests](https://img.shields.io/badge/test%20suites-59%2F59%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
-[![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(107%2C351%20LOC)-indigo.svg)](CODE_META_INDEX.md)
+[![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(107%2C801%20LOC)-indigo.svg)](CODE_META_INDEX.md)
 [![Engines](https://img.shields.io/badge/stateless%20engines-15%20engines%20(Pure%20ASCII%20VFX)-blue.svg)](src/systems/)
 [![Renderers](https://img.shields.io/badge/tri--mode%20renderers-Voxel%20|%203D%20|%20ASCII-teal.svg)](src/renderer/)
 [![Entities](https://img.shields.io/badge/canonical%20entities-1%2C636-purple.svg)](src/entities/)
@@ -15,11 +15,11 @@
 ## 🧭 프로젝트 개요 및 엔진 진화 여정
 
 **미미크리 복셀(Mimicry Voxel)**은 플레이어가 쓰러뜨린 몬스터의 정수 코어(Core)를 흡수하여 그 신체 능력과 고유 마법을 의태(Mimicry)하는 전술적 복셀 로그라이크 엔진입니다. 
-초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **순수 절차적 아스키 그래픽(ASCII as Graphics) 전투 VFX 엔진**, 그리고 **1인칭 3D 수직 시선(Pitch / Freelook) 제어 시스템 & 천장-바닥 전면 관통형 초고시인성 네온 비콘 및 실시간 거리 홀로그램 계단 배너**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
+초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook) & 전면 관통 계단 비콘**, 그리고 **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템 & 3대 렌더러 전역 아스키 네온 블룸 연동**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
 
 ```mermaid
 timeline
-    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 9)
+    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 10)
     Phase 1 : 3대 원소 상호작용 프로토타입 (v0.1.0 ~ v0.6.0)
             : 의태 코어 흡수 및 기초 복셀 렌더러 구축
     Phase 2 : 5대 갓오브젝트 해체 및 5대 계층 클린 아키텍처 확립 (v0.7.0 ~ v0.12.0)
@@ -38,6 +38,8 @@ timeline
             : 외부 비트맵 0%, 8대 공격 아스키 글리프 매트릭스, 네온 블룸 글로우
     Phase 9 : 1인칭 3D 수직 시점(Pitch) 및 전면 관통 비콘 & 계단 포탈 (v0.23.0)
             : R/F/휠 수직 시선 제어, 천장-바닥 전면 관통 빔, 펄스 거리 홀로그램
+    Phase 10: 순차적 다단 히트 콤보 & 3대 렌더러 아스키 블룸 연동 (v0.24.0)
+            : 80ms 시차 큐잉, 타격별 각도/글리프 변이, 2.5D/3D/아스키 전역 블룸
 ```
 
 ---
@@ -71,6 +73,34 @@ timeline
 │    (TomeMonstersData, TomeArtifactsData, GameBalanceConfig) │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## ⚡ Phase 10: 순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템, 시차 발동 VFX 및 3대 렌더러 전역 아스키 블룸 연동 (v0.24.0)
+
+### ⚡ v0.24.0 — 순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템, 시차 발동 VFX 및 3대 렌더러 전역 아스키 블룸 연동
+- **배포일**: 2026-09-03 | **버전**: `v0.24.0` | **모듈 현황**: 75개 모듈 (107,351 LOC) | **테스트 통과**: 59/59 Suites (100% ALL PASS)
+- **개요 및 설계 배경**:
+  - 기존 단일 타격 판정 방식에서 벗어나, ToME 2.3.5의 정통 다단 공격 메커니즘(고속 연속 검격, 쌍수 무기 연타, 질풍의 연격 스킬)을 시각적/청각적으로 극대화하기 위해 **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 큐잉 파이프라인**을 정립하였습니다.
+  - 다단 타격 시 모든 이펙트가 동일 프레임에 겹쳐서 폭발하던 부자연스러움을 해소하고, $70\text{ms} \sim 90\text{ms}$ (기본 $80\text{ms}$) 시차(Staggered Delay)를 두고 연속 격발되도록 시간차 큐(`comboQueue`)를 탑재하였으며, 타격마다 참격 궤적의 각도($\pm 25^\circ$)와 회전 방향(좌상단 ➔ 우하단, 우상단 ➔ 좌하단 교차), 중심 글리프(`⚔`, `†`, `‡`, `▓`) 및 사운드를 다이나믹하게 변이시켰습니다.
+  - 아울러, 1인칭 3D 시점뿐만 아니라 2.5D 복셀 뷰(`VOXEL_25D`) 및 2D 클래식 아스키 뷰(`CLASSIC_ASCII`) 전반에 걸쳐 캔버스 2D 가산 혼합(`globalCompositeOperation = 'lighter'`) 기반 아스키 네온 블룸 글로우를 전역 연동하였습니다.
+
+- **주요 변경 사항**:
+  1. **순차적 다단 히트 콤보 큐잉 엔진 (`src/systems/CombatVFXEngine.js`)**:
+     - `triggerHitEffect({ comboCount, hitIndex, intervalMs, ... })` 및 내부 `comboQueue` 시간차 스케줄러 구축.
+     - 1타 ➔ 2타 ➔ 3타로 이어지는 연속 타격 시 $80\text{ms}$ 간격으로 이펙트 순차 방출.
+     - 콤보 카운트 증가에 따라 타격 각도 교차($\theta_{\text{slash}} = \text{baseAngle} + (-1)^i \cdot 25^\circ$), 스케일 가산($1.0 \times \rightarrow 1.15 \times \rightarrow 1.3 \times$), 감쇄 진동 화면 셰이크 누적 및 콤보 텍스트(`"2x COMBO!"`, `"3x FINISHER!"`) 네온 팝인 배너 연동.
+  2. **전투 시스템 및 게임 루프 오케스트레이션 연동 (`src/core/CombatSystem.js`, `src/core/Game.js`)**:
+     - 플레이어의 연속 공격 및 스킬 시전 시 다단 판정 결과를 `CombatVFXEngine`의 콤보 파이프라인에 1:1 바인딩.
+     - 사운드 이펙트([`src/core/Effects.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Effects.js)) 역시 타격 시차에 맞추어 피치(Pitch) 상승 효과와 함께 연속 격발되도록 연동.
+  3. **3대 렌더러 전역 아스키 네온 블룸 글로우 동기화**:
+     - 1인칭 3D: 교차 베지어 검기 아크 및 Z-버퍼 소팅 아스키 빌보드 폭발.
+     - 2.5D 복셀: 타겟 중심 아스키 충격파 링 확산 및 3D 마이크로 복셀 파편 물리 가산 혼합.
+     - 2D 아스키: 터미널 14x23 글리프 플래시 동시 트리거로 시점 전환 간 시각적 피드백 완벽 일치.
+  4. **단위/통합 테스트 확장 및 무결성 검증**:
+     - [`scripts/test_first_person_3d_renderer.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/scripts/test_first_person_3d_renderer.js)에 순차적 콤보 큐잉, 시차 타이밍, 각도 변이 및 3대 렌더러 블룸 무결성 테스트 추가.
+     - **59개 전체 테스트 스위트 100% ALL PASS 달성 (59/59 PASSED, 0 FAILED)**.
+     - **메타 인덱서 갱신**: `meta_indexer.py --update-wiki` 실행으로 75개 모듈(107,351 LOC) 메타 인덱스 및 위키 문서 최신화 완료.
 
 ---
 
@@ -462,7 +492,7 @@ timeline
 | 분류 | 수치 및 상태 | 비고 |
 | :--- | :--- | :--- |
 | **전체 테스트 스위트** | **59 / 59 ALL PASSED (100%)** | 1,850개 이상 단언문 회귀 결함 0건 완벽 방어 |
-| **스캔된 아키텍처 모듈** | **75개 모듈 (107,351 라인)** | `meta_indexer.py` 정밀 검증 및 위키 동기화 |
+| **스캔된 아키텍처 모듈** | **75개 모듈 (107,801 라인)** | `meta_indexer.py` 정밀 검증 및 위키 동기화 |
 | **정통 ToME 엔티티** | **1,636종 정규 엔티티** | 몬스터, 아티팩트, 에고, 아이템 카탈로그 |
 | **시스템 전담 엔진** | **15대 전담 엔진** | CombatVFX, Loot, Spawner, Budget, Status, AI, Spells, Tags 등 |
 | **배포 버전** | **v0.21.0 (Next-Gen 3D & VFX Release)** | 독립 포크(`fork_experimental/`) 패키징 완료 |
