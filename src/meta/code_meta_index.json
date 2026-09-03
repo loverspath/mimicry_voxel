@@ -1,22 +1,41 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-08-26T13:19:38Z",
+  "generatedAt": "2026-09-03T01:46:00Z",
   "summary": {
-    "totalModules": 65,
-    "totalLines": 103568,
+    "totalModules": 75,
+    "totalLines": 106699,
     "categories": {
-      "configs": 4,
+      "configs": 5,
       "core": 14,
       "root": 2,
       "entities": 13,
       "events": 2,
       "map": 2,
-      "renderer": 3,
-      "systems": 18,
-      "ui": 7
+      "renderer": 5,
+      "systems": 22,
+      "ui": 10
     }
   },
   "modules": [
+    {
+      "filePath": "src/configs/BalancePresets.js",
+      "moduleName": "BalancePresets",
+      "category": "configs",
+      "lines": 147,
+      "responsibility": "미미크리 복셀 4대 밸런스 프리셋 및 사용자 정의 모디파이어 레지스트리",
+      "purity": "Pure Constants",
+      "dependencies": [],
+      "exports": [
+        "BALANCE_PRESET_TYPES",
+        "BALANCE_PRESETS",
+        "getPresetConfig"
+      ],
+      "classes": [],
+      "functions": [
+        "getPresetConfig"
+      ],
+      "lastModified": "2026-09-03T00:20:30Z"
+    },
     {
       "filePath": "src/configs/DungeonThemeConfig.js",
       "moduleName": "DungeonThemeConfig",
@@ -52,7 +71,7 @@
       "filePath": "src/configs/GameBalanceConfig.js",
       "moduleName": "GameBalanceConfig",
       "category": "configs",
-      "lines": 417,
+      "lines": 421,
       "responsibility": "게임 밸런스 공식, 레벨업 성장 곡선, 무게/속도 제약, 무기 숙련도, 전투 주사위 공식, 속성 저항 계수 및 드랍 확률 중앙화 설정",
       "purity": "Pure Function",
       "dependencies": [],
@@ -95,7 +114,7 @@
         "calculateXpNeeded",
         "isJokeMonster"
       ],
-      "lastModified": "2026-08-26T04:29:23Z"
+      "lastModified": "2026-09-03T00:22:21Z"
     },
     {
       "filePath": "src/configs/RenderConfig.js",
@@ -199,7 +218,7 @@
       "filePath": "src/core/CombatSystem.js",
       "moduleName": "CombatSystem",
       "category": "core",
-      "lines": 541,
+      "lines": 544,
       "responsibility": "전투 판정 및 격발 오케스트레이션을 일괄 처리하는 중앙 조율 시스템 모듈. 세부적인 수학 연산, 원소 결합 레지스트리, 전리품 루팅 및 50F 보스 페이즈 전환 제어를 슬림하게 조율합니다.",
       "purity": "Stateless System / Orchestrator",
       "dependencies": [
@@ -212,6 +231,7 @@
         "Skills.js",
         "Perks.js",
         "BossPhaseEngine.js",
+        "CombatVFXEngine.js",
         "GameBalanceConfig.js",
         "MimicBody.js",
         "TomeSpellEngine.js"
@@ -223,7 +243,7 @@
         "CombatSystem"
       ],
       "functions": [],
-      "lastModified": "2026-08-26T12:58:33Z"
+      "lastModified": "2026-09-03T01:41:38Z"
     },
     {
       "filePath": "src/core/Effects.js",
@@ -264,7 +284,7 @@
       "filePath": "src/core/Game.js",
       "moduleName": "Game",
       "category": "core",
-      "lines": 2068,
+      "lines": 2225,
       "responsibility": "미미크리 로그라이크 핵심 게임 루프, 턴 스케줄링, 엔티티 상호작용 및 UI 모달 이벤트 통합 조율 오케스트레이터",
       "purity": "State Store",
       "dependencies": [
@@ -274,6 +294,7 @@
         "Renderer.js",
         "Voxel3DRenderer.js",
         "Classic2DAsciiRenderer.js",
+        "FirstPerson3DRenderer.js",
         "Item.js",
         "Monster.js",
         "Tags.js",
@@ -284,6 +305,9 @@
         "CombatSystem.js",
         "Effects.js",
         "VirtualController.js",
+        "TomeIdentificationEngine.js",
+        "TomeTagSystem.js",
+        "CombatVFXEngine.js",
         "AscensionModalView.js",
         "BossPhaseEngine.js",
         "DungeonValueBudgetEngine.js",
@@ -304,11 +328,12 @@
         "getConfigByName",
         "i",
         "onPointerDown",
+        "onPointerMove",
         "onPointerUp",
         "setClick",
         "updateSlotLabels"
       ],
-      "lastModified": "2026-08-26T12:20:57Z"
+      "lastModified": "2026-09-03T01:42:09Z"
     },
     {
       "filePath": "src/core/GameEngine.js",
@@ -335,7 +360,7 @@
       "filePath": "src/core/Input.js",
       "moduleName": "Input",
       "category": "core",
-      "lines": 111,
+      "lines": 116,
       "responsibility": "키보드(화살표, WASD, 넘패드), 마우스 및 가상 패드 입력을 추상화된 게임 액션으로 매핑하고 발송하는 입력 제어 모듈",
       "purity": "DOM Event Handler",
       "dependencies": [],
@@ -346,7 +371,7 @@
         "Input"
       ],
       "functions": [],
-      "lastModified": "2026-08-26T12:07:12Z"
+      "lastModified": "2026-09-03T01:18:05Z"
     },
     {
       "filePath": "src/core/LootSystem.js",
@@ -415,7 +440,7 @@
       "filePath": "src/core/SaveSystem.js",
       "moduleName": "SaveSystem",
       "category": "core",
-      "lines": 527,
+      "lines": 535,
       "responsibility": "로컬스토리지 기반 다중 슬롯 게임 상태(맵, 플레이어, 인벤토리, 몬스터, 유니크 몬스터 생태계) 직렬화 및 역직렬화 세이브/로드 엔진",
       "purity": "State Store",
       "dependencies": [
@@ -425,6 +450,7 @@
         "Monster.js",
         "MonsterRegistry.js",
         "UniqueMonsterManager.js",
+        "BalanceModifierManager.js",
         "MonsterSpellFactory.js"
       ],
       "exports": [
@@ -439,7 +465,7 @@
         "serializeItem",
         "serializeMonster"
       ],
-      "lastModified": "2026-08-26T12:48:24Z"
+      "lastModified": "2026-09-03T00:24:00Z"
     },
     {
       "filePath": "src/core/Skills.js",
@@ -577,7 +603,7 @@
       "filePath": "src/entities/Item.js",
       "moduleName": "Item",
       "category": "entities",
-      "lines": 284,
+      "lines": 338,
       "responsibility": "던전 바닥 및 인벤토리 내의 장비, 소모품, 마법 디바이스, 정수 코어 아이템 데이터 컨테이너 모델",
       "purity": "Zero-Logic Data Container",
       "dependencies": [
@@ -593,7 +619,7 @@
         "Item"
       ],
       "functions": [],
-      "lastModified": "2026-08-26T01:43:13Z"
+      "lastModified": "2026-09-03T00:38:21Z"
     },
     {
       "filePath": "src/entities/ItemRegistry.js",
@@ -733,7 +759,7 @@
       "filePath": "src/entities/Player.js",
       "moduleName": "Player",
       "category": "entities",
-      "lines": 1108,
+      "lines": 1121,
       "responsibility": "플레이어 엔티티 모델 (Zero-Logic 순수 데이터 컴포넌트). 스탯/저항/광원 계산은 UnifiedTraitEngine 및 PlayerStatCalculator에, 의태 스킬 관리는 MonsterSpellFactory 및 TomeSpellEngine에 100% 위임합니다.",
       "purity": "Data Model / State Store",
       "dependencies": [
@@ -749,7 +775,8 @@
         "VisionLightingEngine.js",
         "MonsterSpellFactory.js",
         "TomeFlagResolver.js",
-        "StatusEffectEngine.js"
+        "StatusEffectEngine.js",
+        "TomeTagSystem.js"
       ],
       "exports": [
         "Player"
@@ -761,7 +788,7 @@
         "getGrowth",
         "getGrowthDelta"
       ],
-      "lastModified": "2026-08-26T12:58:24Z"
+      "lastModified": "2026-09-03T00:31:09Z"
     },
     {
       "filePath": "src/entities/Tags.js",
@@ -898,7 +925,7 @@
       "filePath": "src/events/GameEvents.js",
       "moduleName": "GameEvents",
       "category": "events",
-      "lines": 58,
+      "lines": 61,
       "responsibility": "미미크리 게임 엔진과 UI/시스템 간의 결합도를 낮추기 위한 중앙 이벤트 식별자 열거형 상수",
       "purity": "Pure Constants",
       "dependencies": [],
@@ -907,7 +934,7 @@
       ],
       "classes": [],
       "functions": [],
-      "lastModified": "2026-08-25T22:26:32Z"
+      "lastModified": "2026-09-03T00:20:35Z"
     },
     {
       "filePath": "src/main.js",
@@ -999,6 +1026,47 @@
       "lastModified": "2026-08-26T00:39:36Z"
     },
     {
+      "filePath": "src/renderer/FirstPerson3DRenderer.js",
+      "moduleName": "FirstPerson3DRenderer",
+      "category": "renderer",
+      "lines": 455,
+      "responsibility": "초기 둠 / 위저드리 시점 DDA 레이캐스팅 1인칭 3D 텍스처 어드벤처 렌더러. 나노바나나 생성 텍스처 매핑, 거리 감쇄 안개(Depth Fog), 빌보드 스프라이트 및 미니맵 레이더 제공",
+      "purity": "DOM / Canvas Renderer",
+      "dependencies": [
+        "DungeonThemeConfig.js",
+        "TextureManager.js"
+      ],
+      "exports": [
+        "FirstPerson3DRenderer"
+      ],
+      "classes": [
+        "FirstPerson3DRenderer"
+      ],
+      "functions": [],
+      "lastModified": "2026-09-03T01:41:06Z"
+    },
+    {
+      "filePath": "src/renderer/TextureManager.js",
+      "moduleName": "TextureManager",
+      "category": "renderer",
+      "lines": 127,
+      "responsibility": "나노바나나(Imagen) 생성 5대 던전 테마 텍스처 및 바닥재 비동기 로딩, 캐싱 및 절차적 캔버스 패턴 폴백 가드 매니저",
+      "purity": "State Store / Pure Loader",
+      "dependencies": [
+        "DungeonThemeConfig.js"
+      ],
+      "exports": [
+        "TextureManager",
+        "textureManager",
+        "TEXTURE_PATHS"
+      ],
+      "classes": [
+        "TextureManager"
+      ],
+      "functions": [],
+      "lastModified": "2026-09-03T01:14:45Z"
+    },
+    {
       "filePath": "src/renderer/Voxel3DRenderer.js",
       "moduleName": "Voxel3DRenderer",
       "category": "renderer",
@@ -1063,6 +1131,28 @@
       "lastModified": "2026-08-25T23:55:07Z"
     },
     {
+      "filePath": "src/systems/BalanceModifierManager.js",
+      "moduleName": "BalanceModifierManager",
+      "category": "systems",
+      "lines": 142,
+      "responsibility": "게임 시작 옵션 및 런타임 밸런싱 모디파이어를 병합/평가하고 변경 이벤트를 발행하는 중앙 관리자",
+      "purity": "State Store / Logic System",
+      "dependencies": [
+        "EventBus.js",
+        "GameEvents.js",
+        "BalancePresets.js"
+      ],
+      "exports": [
+        "BalanceModifierManager",
+        "balanceModifierManager"
+      ],
+      "classes": [
+        "BalanceModifierManager"
+      ],
+      "functions": [],
+      "lastModified": "2026-09-03T00:22:17Z"
+    },
+    {
       "filePath": "src/systems/BossPhaseEngine.js",
       "moduleName": "BossPhaseEngine",
       "category": "systems",
@@ -1094,6 +1184,29 @@
         "checkItem"
       ],
       "lastModified": "2026-08-26T13:16:58Z"
+    },
+    {
+      "filePath": "src/systems/CombatVFXEngine.js",
+      "moduleName": "CombatVFXEngine",
+      "category": "systems",
+      "lines": 346,
+      "responsibility": "3대 렌더러(1인칭 3D, 2.5D 복셀, 2D 아스키)를 아우르는 통합 전투 시각 효과 엔진. 나노바나나 에셋 기반 화면 슬래시, 원소 폭발, 화면 흔들림(Screen Shake), 피격 비네팅 및 가산 혼합 파티클 제어",
+      "purity": "State Store",
+      "dependencies": [
+        "EventBus.js",
+        "GameEvents.js"
+      ],
+      "exports": [
+        "CombatVFXEngine",
+        "combatVFXEngine",
+        "VFX_TYPES",
+        "VFX_PALETTES"
+      ],
+      "classes": [
+        "CombatVFXEngine"
+      ],
+      "functions": [],
+      "lastModified": "2026-09-03T01:40:10Z"
     },
     {
       "filePath": "src/systems/ConsumableEffectEngine.js",
@@ -1266,12 +1379,14 @@
       "filePath": "src/systems/TomeConsumableEngine.js",
       "moduleName": "TomeConsumableEngine",
       "category": "systems",
-      "lines": 673,
+      "lines": 784,
       "responsibility": "ToME 2.3.5 정통 (tval, sval) 기반 포션 45+종, 주문서 42+종, 기름 플라스크, 음식 및 코어 소비 무상태 엔진",
       "purity": "Stateless Engine (State Mutation with Log Feedback)",
       "dependencies": [
         "TomeEquipmentEngine.js",
-        "TomeKindsData.js"
+        "TomeKindsData.js",
+        "TomeIdentificationEngine.js",
+        "TomeTagSystem.js"
       ],
       "exports": [
         "TomeConsumableEngine"
@@ -1284,7 +1399,7 @@
         "healHp",
         "log"
       ],
-      "lastModified": "2026-08-26T00:22:22Z"
+      "lastModified": "2026-09-03T00:33:33Z"
     },
     {
       "filePath": "src/systems/TomeDeviceEngine.js",
@@ -1368,10 +1483,31 @@
       "lastModified": "2026-08-26T04:03:53Z"
     },
     {
+      "filePath": "src/systems/TomeIdentificationEngine.js",
+      "moduleName": "TomeIdentificationEngine",
+      "category": "systems",
+      "lines": 264,
+      "responsibility": "ToME 2.3.5 / TomeNET 정통 4단계 의사 감정(Pseudo-ID) 및 점진적 정보 개방 무상태 엔진",
+      "purity": "Stateless System",
+      "dependencies": [
+        "TomeFlagResolver.js"
+      ],
+      "exports": [
+        "TomeIdentificationEngine",
+        "ID_STATES",
+        "PSEUDO_SENSES"
+      ],
+      "classes": [
+        "TomeIdentificationEngine"
+      ],
+      "functions": [],
+      "lastModified": "2026-09-03T00:27:04Z"
+    },
+    {
       "filePath": "src/systems/TomeLootGenerator.js",
       "moduleName": "TomeLootGenerator",
       "category": "systems",
-      "lines": 298,
+      "lines": 373,
       "responsibility": "ToME 2.3.5 정통 알고리즘 기반 던전 깊이(Depth)별 아이템 롤링, 에고(Ego) 접사 합성 및 전설 유물(Artifact) 드랍 파이프라인 엔진",
       "purity": "Pure Loot Factory",
       "dependencies": [
@@ -1389,7 +1525,7 @@
         "TomeLootGenerator"
       ],
       "functions": [],
-      "lastModified": "2026-08-26T13:18:16Z"
+      "lastModified": "2026-09-03T00:35:27Z"
     },
     {
       "filePath": "src/systems/TomeSpellEngine.js",
@@ -1415,6 +1551,25 @@
       ],
       "functions": [],
       "lastModified": "2026-08-26T04:10:27Z"
+    },
+    {
+      "filePath": "src/systems/TomeTagSystem.js",
+      "moduleName": "TomeTagSystem",
+      "category": "systems",
+      "lines": 349,
+      "responsibility": "데이터 지향 3대 극성(Positive, Neutral, Detrimental) 태그 정의, 저주 장착 결속 제약, 턴 라이프사이클 훅 및 정화 엔진",
+      "purity": "Stateless System",
+      "dependencies": [],
+      "exports": [
+        "TomeTagSystem",
+        "POLARITY",
+        "DETRIMENTAL_TAGS"
+      ],
+      "classes": [
+        "TomeTagSystem"
+      ],
+      "functions": [],
+      "lastModified": "2026-09-03T00:36:06Z"
     },
     {
       "filePath": "src/systems/UnifiedTraitEngine.js",
@@ -1549,6 +1704,32 @@
       "lastModified": "2026-08-26T03:27:32Z"
     },
     {
+      "filePath": "src/ui/GameStartPresetModalView.js",
+      "moduleName": "GameStartPresetModalView",
+      "category": "ui",
+      "lines": 352,
+      "responsibility": "게임 시작 시 4대 난이도 프리셋 선택 및 세부 모디파이어(드랍률, 몬스터 밀도, 사망 모드 등) 커스터마이징 대화상자 렌더러",
+      "purity": "DOM Renderer",
+      "dependencies": [
+        "BalancePresets.js",
+        "BalanceModifierManager.js",
+        "EventBus.js",
+        "GameEvents.js"
+      ],
+      "exports": [
+        "GameStartPresetModalView",
+        "renderPresetModalHTML"
+      ],
+      "classes": [
+        "GameStartPresetModalView"
+      ],
+      "functions": [
+        "closeHandler",
+        "renderPresetModalHTML"
+      ],
+      "lastModified": "2026-09-03T00:21:08Z"
+    },
+    {
       "filePath": "src/ui/HUDView.js",
       "moduleName": "HUDView",
       "category": "ui",
@@ -1675,6 +1856,55 @@
         "renderUniqueChecklistHTML"
       ],
       "lastModified": "2026-08-26T12:46:40Z"
+    },
+    {
+      "filePath": "src/ui/PlayerIdentityModalView.js",
+      "moduleName": "PlayerIdentityModalView",
+      "category": "ui",
+      "lines": 306,
+      "responsibility": "모바일 화면에 최적화된 플레이어 아이덴티티, 6대 스탯 보정치, 14대 원소 저항 매트릭스 및 슬레이/패시브 뷰",
+      "purity": "DOM Renderer",
+      "dependencies": [
+        "UnifiedTraitEngine.js",
+        "ThemeColors.js"
+      ],
+      "exports": [
+        "PlayerIdentityModalView",
+        "renderPlayerIdentityModalHTML"
+      ],
+      "classes": [
+        "PlayerIdentityModalView"
+      ],
+      "functions": [
+        "renderPlayerIdentityModalHTML",
+        "renderResistTab",
+        "renderStatsTab",
+        "renderTraitsTab"
+      ],
+      "lastModified": "2026-09-03T00:27:42Z"
+    },
+    {
+      "filePath": "src/ui/SkillHotbarView.js",
+      "moduleName": "SkillHotbarView",
+      "category": "ui",
+      "lines": 210,
+      "responsibility": "화면 하단 상시 노출 4대 의태 액티브 스킬 핫바 및 실시간 쿨다운 방사형 애니메이션/원터치 격발 렌더러",
+      "purity": "DOM Renderer",
+      "dependencies": [
+        "EventBus.js",
+        "GameEvents.js"
+      ],
+      "exports": [
+        "SkillHotbarView",
+        "renderSkillHotbarHTML"
+      ],
+      "classes": [
+        "SkillHotbarView"
+      ],
+      "functions": [
+        "renderSkillHotbarHTML"
+      ],
+      "lastModified": "2026-09-03T00:20:53Z"
     },
     {
       "filePath": "src/ui/UIManager.js",

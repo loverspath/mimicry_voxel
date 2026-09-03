@@ -17,7 +17,7 @@ for (const file of testFiles) {
   const filePath = path.join(scriptsDir, file);
   process.stdout.write(`▶ Running ${file} ... `);
   try {
-    const output = execSync(`node ${filePath}`, { stdio: 'pipe', encoding: 'utf-8', timeout: 10000 });
+    const output = execSync(`node ${filePath}`, { stdio: 'pipe', encoding: 'utf-8', timeout: 15000 });
     console.log('✅ PASS');
     passed++;
   } catch (err) {

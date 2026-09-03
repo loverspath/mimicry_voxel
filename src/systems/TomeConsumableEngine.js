@@ -3,11 +3,14 @@
  * @category systems
  * @description ToME 2.3.5 정통 (tval, sval) 기반 포션 45+종, 주문서 42+종, 기름 플라스크, 음식 및 코어 소비 무상태 엔진
  * @purity Stateless Engine (State Mutation with Log Feedback)
+ * @dependencies TomeEquipmentEngine.js, TomeKindsData.js, TomeIdentificationEngine.js, TomeTagSystem.js
  * @exports TomeConsumableEngine
  */
 
 import { TVAL } from './TomeEquipmentEngine.js';
 import { TOME_KINDS_DATA } from '../entities/TomeKindsData.js';
+import { TomeIdentificationEngine } from './TomeIdentificationEngine.js';
+import { TomeTagSystem } from './TomeTagSystem.js';
 
 // 고속 베이스명 정확 일치 색인 맵
 const KINDS_BY_NAME = {};
@@ -45,7 +48,14 @@ const KOREAN_KIND_ALIASES = Object.freeze({
   '순간이동 주문서': { tval: TVAL.SCROLL, sval: 10 },
   '텔레포트 주문서': { tval: TVAL.SCROLL, sval: 10 },
   '축복 주문서': { tval: TVAL.SCROLL, sval: 33 },
+  '감정 주문서': { tval: TVAL.SCROLL, sval: 13 },
+  '진실의 감정 주문서': { tval: TVAL.SCROLL, sval: 14 },
   '저주 해제 주문서': { tval: TVAL.SCROLL, sval: 15 },
+  '강력한 저주 해제 주문서': { tval: TVAL.SCROLL, sval: 16 },
+  'Scroll of Identify': { tval: TVAL.SCROLL, sval: 13 },
+  'Scroll of *Identify*': { tval: TVAL.SCROLL, sval: 14 },
+  'Scroll of Remove Curse': { tval: TVAL.SCROLL, sval: 15 },
+  'Scroll of *Remove Curse*': { tval: TVAL.SCROLL, sval: 16 },
   '대파괴 주문서': { tval: TVAL.SCROLL, sval: 41 }
 });
 
@@ -58,7 +68,7 @@ export class TomeConsumableEngine {
    * @param {Function} addLogEntry - 로그 출력 함수
    * @returns {boolean} 사용 성공 여부
    */
-  static useConsumable(item, player, game = null, addLogEntry = null) {
+  static useConsumable(item, player, game = null, addLogEntry = null, targetItem = null) {
     if (!item || !player) return false;
 
     const log = (msg, type = 'loot') => {
@@ -105,7 +115,7 @@ export class TomeConsumableEngine {
     if (tval === TVAL.POTION || item.type === 'POTION') {
       return this.usePotion(item, player, game, log, sval);
     } else if (tval === TVAL.SCROLL || item.type === 'SCROLL') {
-      return this.useScroll(item, player, game, log, sval);
+      return this.useScroll(item, player, game, log, sval, targetItem);
     } else if (tval === TVAL.FLASK || item.type === 'FLASK') {
       return this.useFlask(item, player, game, log, sval);
     } else if (tval === TVAL.FOOD || item.type === 'FOOD') {
@@ -431,7 +441,7 @@ export class TomeConsumableEngine {
   /**
    * 주문서(TV_SCROLL: 70) 읽기 처리
    */
-  static useScroll(item, player, game, log, sval = null) {
+  static useScroll(item, player, game, log, sval = null, targetItem = null) {
     if (sval === null || sval === undefined) sval = item.sval;
     const map = game ? game.map : null;
     let used = false;
@@ -509,8 +519,109 @@ export class TomeConsumableEngine {
         }
         break;
 
-      // 6. 저주 해제 및 신성 축복
-      case 15: // *Remove Curse*
+      // 6. 감정의 주문서 (Scroll of Identify: sval 13)
+      case 13: {
+        let target = targetItem;
+        if (!target) {
+          const eq = player.equipment || {};
+          for (const k of Object.keys(eq)) {
+            if (eq[k] && (eq[k].idState === 'UNIDENTIFIED' || eq[k].idState === 'PSEUDO_IDENTIFIED')) {
+              target = eq[k];
+              break;
+            }
+          }
+          if (!target && Array.isArray(player.inventory)) {
+            target = player.inventory.find(i => i && (i.idState === 'UNIDENTIFIED' || i.idState === 'PSEUDO_IDENTIFIED'));
+          }
+        }
+        if (!target) {
+          log(`[System] ℹ️ 감정할 미식별 장비가 존재하지 않습니다!`, 'system');
+          return false;
+        }
+        TomeIdentificationEngine.identifyItem(target);
+        log(`[Identify] 🔍 고대의 식별 마력이 깃들어 [${target.displayName}]의 진정한 위력이 드러났습니다!`, 'loot');
+        used = true;
+        break;
+      }
+
+      // 7. 진실의 감정 주문서 (Scroll of *Identify*: sval 14)
+      case 14: {
+        let target = targetItem;
+        if (!target) {
+          const eq = player.equipment || {};
+          for (const k of Object.keys(eq)) {
+            if (eq[k] && eq[k].idState !== 'STAR_IDENTIFIED') {
+              target = eq[k];
+              break;
+            }
+          }
+          if (!target && Array.isArray(player.inventory)) {
+            target = player.inventory.find(i => i && i.idState !== 'STAR_IDENTIFIED');
+          }
+        }
+        if (!target) {
+          log(`[System] ℹ️ 진실의 감정을 적용할 대상 장비가 없습니다!`, 'system');
+          return false;
+        }
+        TomeIdentificationEngine.starIdentifyItem(target);
+        log(`[Identify] 🌟 진실의 빛이 비추어 [${target.displayName}]의 숨겨진 모든 권능과 서사가 밝혀졌습니다!`, 'loot');
+        used = true;
+        break;
+      }
+
+      // 8. 저주 해제의 주문서 (Scroll of Remove Curse: sval 15)
+      case 15: {
+        let target = targetItem;
+        if (!target) {
+          const eq = player.equipment || {};
+          for (const k of Object.keys(eq)) {
+            if (eq[k] && (eq[k].isCursed || !TomeTagSystem.canUnequip(eq[k]))) {
+              target = eq[k];
+              break;
+            }
+          }
+          if (!target && Array.isArray(player.inventory)) {
+            target = player.inventory.find(i => i && (i.isCursed || !TomeTagSystem.canUnequip(i)));
+          }
+        }
+        if (!target) {
+          log(`[System] 🕊️ 정화할 저주받은 장비가 존재하지 않습니다!`, 'system');
+          return false;
+        }
+        const res = TomeTagSystem.removeCurse(target, false);
+        log(res.message, res.success ? 'loot' : 'warning');
+        used = res.success;
+        break;
+      }
+
+      // 9. 강력한 저주 해제의 주문서 (Scroll of *Remove Curse*: sval 16)
+      case 16: {
+        const count = TomeTagSystem.removeAllCurses(player);
+        if (count > 0) {
+          log(`[Purify] ☀️ 찬란한 정화의 광휘가 전신을 감싸며 착용 중인 모든 장비의 흉악한 저주(${count}개)가 완전히 소멸했습니다!`, 'loot');
+          used = true;
+        } else {
+          let invCount = 0;
+          if (Array.isArray(player.inventory)) {
+            for (const item of player.inventory) {
+              if (item && (item.isCursed || !TomeTagSystem.canUnequip(item))) {
+                const res = TomeTagSystem.removeCurse(item, true);
+                if (res.success) invCount++;
+              }
+            }
+          }
+          if (invCount > 0) {
+            log(`[Purify] ☀️ 찬란한 정화의 광휘가 인벤토리 내의 저주 장비(${invCount}개)를 완전히 정화했습니다!`, 'loot');
+            used = true;
+          } else {
+            log(`[System] 🕊️ 정화할 저주받은 장비가 존재하지 않습니다!`, 'system');
+            return false;
+          }
+        }
+        break;
+      }
+
+      // 10. 신성 축복 (Blessing)
       case 33: // Blessing
       case 34: // Holy Chant
       case 35: // Holy Prayer

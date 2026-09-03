@@ -214,10 +214,14 @@ export const SPAWN_FEATURE_CONFIG = DUNGEON_CUSTOM_SETTINGS.spawn;
  * @param {Object} monsterData 
  * @returns {boolean}
  */
-export function isJokeMonster(monsterData) {
+export function isJokeMonster(monsterData, allowJokeOverride = null) {
   if (!monsterData) return false;
+  let allowJoke = allowJokeOverride;
+  if (allowJoke === null && typeof globalThis !== 'undefined' && globalThis.__activeBalanceConfig) {
+    allowJoke = globalThis.__activeBalanceConfig?.spawn?.allowJokeMonsters;
+  }
   const cfg = DUNGEON_CUSTOM_SETTINGS?.spawn || SPAWN_FEATURE_CONFIG;
-  if (cfg.allowJokeMonsters) return false;
+  if (allowJoke ?? cfg.allowJokeMonsters) return false;
   const flags = monsterData.flags || monsterData.perks || [];
   if (Array.isArray(flags)) {
     return flags.some(flag => cfg.flagBlacklist.includes(flag));

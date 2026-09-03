@@ -72,6 +72,12 @@ export class Item {
     this.charges = undefined;
     this.timeout = 0;
 
+    // 4단계 의사 감정(Pseudo-ID) 및 저주 상태 모델
+    this.idState = (type === 'POTION' || type === 'SCROLL' || type === 'CORE' || type === 'FOOD' || type === 'GOLD') ? 'IDENTIFIED' : 'UNIDENTIFIED';
+    this.pseudoSense = null;
+    this.wieldTurns = 0;
+    this.isCursed = this.specialTags.includes('CURSED') || this.specialTags.includes('HEAVY_CURSED') || this.specialTags.includes('PERMA_CURSED');
+
     // Default stat bonuses
     this.statBonuses = {
       str: statBonuses.str || 0,
@@ -164,15 +170,41 @@ export class Item {
   }
 
   get displayName() {
+    // 1. 소모품, 음식, 코어, 골드는 기본 이름 노출
+    if (this.type === 'POTION' || this.type === 'SCROLL' || this.type === 'CORE' || this.type === 'FOOD' || this.type === 'GOLD') {
+      let finalName = this._baseName;
+      if (this.type === 'CORE' && this.fusionLevel > 0) {
+        finalName += ` +${this.fusionLevel}`;
+      }
+      return finalName;
+    }
+
+    // 2. 전설 유물 (Artifact)은 고유 명칭 및 강화 수치 항상 보존
     const isArtifact = !!(this.artifactKey || (this.specialTags && this.specialTags.includes('ARTIFACT')));
     if (isArtifact) {
       let finalName = this._baseName;
       if (this.upgradeLevel && this.upgradeLevel > 0) {
         finalName += ` +${this.upgradeLevel}`;
       }
+      if (this.idState === 'STAR_IDENTIFIED') {
+        return `${finalName} *IDENTIFIED*`;
+      }
       return finalName;
     }
 
+    // 3. 미감정 (Tier 0: 외형 기본명만 노출)
+    if (this.idState === 'UNIDENTIFIED') {
+      return this._baseName;
+    }
+
+    // 4. 의사 감정 (Tier 1: {good}, {cursed} 등 육감 태그 부착)
+    if (this.idState === 'PSEUDO_IDENTIFIED') {
+      const sense = this.pseudoSense || 'average';
+      return `${this._baseName} {${sense}}`;
+    }
+
+    // 5. 정밀 감정 (Tier 2 & 3: IDENTIFIED & STAR_IDENTIFIED)
+    let finalName = this._baseName;
     let nameParts = [];
     for (const pKey of this.prefixes) {
       if (PREFIX_TAGS[pKey]) nameParts.push(PREFIX_TAGS[pKey].name);
@@ -181,14 +213,32 @@ export class Item {
     for (const sKey of this.suffixes) {
       if (SUFFIX_TAGS[sKey]) nameParts.push(SUFFIX_TAGS[sKey].name);
     }
-    let finalName = nameParts.join(' ');
-    if (this.type === 'CORE' && this.fusionLevel > 0) {
-      finalName += ` +${this.fusionLevel}`;
-    }
+    finalName = nameParts.join(' ');
     if (this.upgradeLevel && this.upgradeLevel > 0) {
       finalName += ` +${this.upgradeLevel}`;
     }
-    return finalName;
+
+    // 보정치 (+X,+Y) [+Z] 부착
+    let modTag = '';
+    const toHit = this.toHit !== undefined ? this.toHit : 0;
+    const toDmg = this.toDmg !== undefined ? this.toDmg : 0;
+    const baseAC = this.baseAC !== undefined ? this.baseAC : 0;
+
+    if (toHit !== 0 || toDmg !== 0) {
+      const hitSign = toHit >= 0 ? `+${toHit}` : `${toHit}`;
+      const dmgSign = toDmg >= 0 ? `+${toDmg}` : `${toDmg}`;
+      modTag += ` (${hitSign},${dmgSign})`;
+    }
+    if (baseAC !== 0) {
+      const acSign = baseAC >= 0 ? `+${baseAC}` : `${baseAC}`;
+      modTag += ` [${acSign}]`;
+    }
+
+    if (this.idState === 'STAR_IDENTIFIED') {
+      return `${finalName}${modTag} *IDENTIFIED*`;
+    }
+
+    return `${finalName}${modTag}`;
   }
 
   get name() {
@@ -269,8 +319,8 @@ export class Item {
    * @param {Object} game - Game 인스턴스
    * @returns {boolean}
    */
-  applyUseEffect(player, addLogEntry = null, game = null) {
-    // 디바이스 계열 (Wand, Staff, Rod)
+  use(player, game = null, addLogEntry = null, targetItem = null) {
+    // 마법 디바이스 계열 (Wand, Staff, Rod)
     if (
       this.tval === 65 || this.tval === 55 || this.tval === 66 || this.tval === 67 ||
       this.type === 'WAND' || this.type === 'STAFF' || this.type === 'ROD'
@@ -279,6 +329,10 @@ export class Item {
     }
 
     // 소모품 계열 (Potion, Scroll, Flask, Food, Core)
-    return TomeConsumableEngine.useConsumable(this, player, game, addLogEntry);
+    return TomeConsumableEngine.useConsumable(this, player, game, addLogEntry, targetItem);
+  }
+
+  applyUseEffect(player, addLogEntry = null, game = null, targetItem = null) {
+    return this.use(player, game, addLogEntry, targetItem);
   }
 }

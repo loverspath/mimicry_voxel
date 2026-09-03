@@ -63,6 +63,8 @@ export class Input {
       'H': 'MOVE_W',
       'y': 'MOVE_NW',
       'Y': 'MOVE_NW',
+      'q': 'MOVE_NW',
+      'Q': 'MOVE_NW',
       '.': 'WAIT',
 
       // Other actions
@@ -74,22 +76,25 @@ export class Input {
       'E': 'INTERACT',
       'Enter': 'INTERACT',
       't': 'AUTOFIRE',
-      'T': 'AUTOFIRE'
+      'T': 'AUTOFIRE',
+      'F8': 'TOGGLE_RENDER_MODE'
     };
 
-    window.addEventListener('keydown', (e) => {
-      const action = (e.code && this.codeMap[e.code]) || this.keyMap[e.key];
-      if (action) {
-        this.activeActions.add(action);
-      }
-    });
+    if (typeof window !== 'undefined') {
+      window.addEventListener('keydown', (e) => {
+        const action = (e.code && this.codeMap[e.code]) || this.keyMap[e.key];
+        if (action) {
+          this.activeActions.add(action);
+        }
+      });
 
-    window.addEventListener('keyup', (e) => {
-      const action = (e.code && this.codeMap[e.code]) || this.keyMap[e.key];
-      if (action) {
-        this.activeActions.delete(action);
-      }
-    });
+      window.addEventListener('keyup', (e) => {
+        const action = (e.code && this.codeMap[e.code]) || this.keyMap[e.key];
+        if (action) {
+          this.activeActions.delete(action);
+        }
+      });
+    }
   }
 
   // Called by VirtualController

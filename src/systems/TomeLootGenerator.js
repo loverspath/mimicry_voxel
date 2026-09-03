@@ -242,6 +242,81 @@ export class TomeLootGenerator {
     if (item.tval === 55 || item.type === 'STAFF') item.charges = 5;
     if (item.tval === 66 || item.type === 'ROD') item.timeout = 0;
 
+    // ToME 정통 역보정 & 저주 에고 출현 파이프라인
+    this.applyNegativeCalibration(item, danger);
+
+    return item;
+  }
+
+  /**
+   * 층수 심도(floor)에 따른 역보정 및 저주 에고 확률적 부여 훅
+   * @param {Item} item - 대상 아이템 인스턴스
+   * @param {number} floor - 현재 던전 층수
+   * @returns {Item}
+   */
+  static applyNegativeCalibration(item, floor = 1) {
+    if (!item) return item;
+    const isEquip = ['WEAPON', 'SHIELD', 'BOW', 'ARMOR', 'HELMET', 'GLOVES', 'BOOTS', 'CLOAK', 'RING', 'AMULET'].includes(item.type) ||
+                    ['WEAPON', 'SHIELD', 'BOW', 'ARMOR', 'HELMET', 'GLOVES', 'BOOTS', 'CLOAK', 'RING', 'AMULET'].includes(item.slotType);
+    if (!isEquip) return item;
+
+    // 장비 기본 감정 상태는 미감정(UNIDENTIFIED)으로 마스킹
+    item.idState = 'UNIDENTIFIED';
+
+    // P_neg = max(0.08, 0.16 - (floor * 0.0016))
+    const pNeg = Math.max(0.08, 0.16 - (floor * 0.0016));
+    if (Math.random() < pNeg) {
+      const isCurse = Math.random() < 0.65;
+      if (isCurse) {
+        item.isCursed = true;
+        if (!item.specialTags.includes('CURSED')) {
+          item.specialTags.push('CURSED');
+        }
+
+        let isHeavy = false;
+        let isPerma = false;
+        if (floor >= 25) {
+          const roll = Math.random();
+          if (roll < 0.10) {
+            isPerma = true;
+            item.specialTags.push('PERMA_CURSED');
+          } else if (roll < 0.35) {
+            isHeavy = true;
+            item.specialTags.push('HEAVY_CURSED');
+          }
+        }
+
+        // 디트리멘탈 서브 태그 풀
+        const detrimentalPool = [
+          'TELEPORT_RANDOM', 'DRAIN_EXP', 'AGGRAVATE',
+          'VULN_FIRE', 'VULN_COLD', 'VULN_ELEC', 'VULN_ACID',
+          'PENALTY_STR', 'PENALTY_DEX', 'PENALTY_CON', 'PENALTY_INT'
+        ];
+        const subTag = detrimentalPool[Math.floor(Math.random() * detrimentalPool.length)];
+        if (!item.specialTags.includes(subTag)) {
+          item.specialTags.push(subTag);
+        }
+
+        // 마이너스 역보정 수치 반영
+        if (isHeavy) {
+          item.toHit = -1 * (5 + Math.floor(Math.random() * 8));
+          item.toDmg = -1 * (5 + Math.floor(Math.random() * 8));
+        } else {
+          item.toHit = -1 * (1 + Math.floor(Math.random() * 6));
+          item.toDmg = -1 * (1 + Math.floor(Math.random() * 6));
+        }
+        if (['ARMOR', 'HELMET', 'SHIELD', 'GLOVES', 'BOOTS', 'CLOAK'].includes(item.type) || ['ARMOR', 'HELMET', 'SHIELD', 'GLOVES', 'BOOTS', 'CLOAK'].includes(item.slotType)) {
+          item.baseAC = -1 * (1 + Math.floor(Math.random() * 5));
+        }
+      } else {
+        // 단순 불량품 (Worthless)
+        item.toHit = -1 * (1 + Math.floor(Math.random() * 6));
+        item.toDmg = -1 * (1 + Math.floor(Math.random() * 6));
+        if (['ARMOR', 'HELMET', 'SHIELD', 'GLOVES', 'BOOTS', 'CLOAK'].includes(item.type) || ['ARMOR', 'HELMET', 'SHIELD', 'GLOVES', 'BOOTS', 'CLOAK'].includes(item.slotType)) {
+          item.baseAC = -1 * (1 + Math.floor(Math.random() * 4));
+        }
+      }
+    }
     return item;
   }
 

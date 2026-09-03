@@ -5,7 +5,7 @@
  *              스탯/저항/광원 계산은 UnifiedTraitEngine 및 PlayerStatCalculator에,
  *              의태 스킬 관리는 MonsterSpellFactory 및 TomeSpellEngine에 100% 위임합니다.
  * @purity Data Model / State Store
- * @dependencies Tags.js, MonsterRegistry.js, Perks.js, Item.js, Skills.js, MimicBody.js, TraceLogger.js, PlayerStatCalculator.js, UnifiedTraitEngine.js, VisionLightingEngine.js, MonsterSpellFactory.js, TomeFlagResolver.js, StatusEffectEngine.js
+ * @dependencies Tags.js, MonsterRegistry.js, Perks.js, Item.js, Skills.js, MimicBody.js, TraceLogger.js, PlayerStatCalculator.js, UnifiedTraitEngine.js, VisionLightingEngine.js, MonsterSpellFactory.js, TomeFlagResolver.js, StatusEffectEngine.js, TomeTagSystem.js
  * @exports Player
  */
 
@@ -22,6 +22,7 @@ import { UnifiedTraitEngine } from '../systems/UnifiedTraitEngine.js';
 import { VisionLightingEngine } from '../systems/VisionLightingEngine.js';
 import { TomeFlagResolver } from '../systems/TomeFlagResolver.js';
 import { StatusEffectEngine } from '../systems/StatusEffectEngine.js';
+import { TomeTagSystem } from '../systems/TomeTagSystem.js';
 
 const DEFAULT_SPECIES = 'MON_NOVICE_WARRIOR';
 
@@ -365,7 +366,13 @@ export class Player {
   }
 
   equipItem(item) {
+    if (!item) return false;
     this.markDirty("장비 장착: " + item.name);
+    item.wieldTurns = 0;
+    const tags = Array.isArray(item.specialTags) ? item.specialTags : [];
+    if (item.isCursed || tags.includes('CURSED') || tags.includes('HEAVY_CURSED') || tags.includes('PERMA_CURSED')) {
+      item.isCursed = true;
+    }
     if (item.slotType === 'BOW' || item.char === '}' || item.type === 'BOW') {
       this.equipment.bow = item;
     } else if (item.slotType === 'QUIVER' || item.char === '{' || item.type === 'QUIVER') {
@@ -457,6 +464,11 @@ export class Player {
 
   unequipItem(item) {
     if (!this.isItemEquipped(item)) return false;
+    if (typeof TomeTagSystem !== 'undefined' && typeof TomeTagSystem.canUnequip === 'function') {
+      if (!TomeTagSystem.canUnequip(item)) {
+        return false;
+      }
+    }
     this.markDirty("장비 해제: " + (item ? item.name : "아이템"));
     if (this.equipment.bow === item) {
       this.equipment.bow = null;
@@ -499,6 +511,7 @@ export class Player {
     } else {
       this.stats.hp = this.stats.maxHp;
     }
+    return true;
   }
 
   getTotalAC() {

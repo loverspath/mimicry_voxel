@@ -4,7 +4,7 @@
  * @description 전투 판정 및 격발 오케스트레이션을 일괄 처리하는 중앙 조율 시스템 모듈.
  *              세부적인 수학 연산, 원소 결합 레지스트리, 전리품 루팅 및 50F 보스 페이즈 전환 제어를 슬림하게 조율합니다.
  * @purity Stateless System / Orchestrator
- * @dependencies ReactionRegistry.js, LootSystem.js, CombatCalculator.js, Tags.js, Effects.js, MonsterRegistry.js, Skills.js, Perks.js, BossPhaseEngine.js
+ * @dependencies ReactionRegistry.js, LootSystem.js, CombatCalculator.js, Tags.js, Effects.js, MonsterRegistry.js, Skills.js, Perks.js, BossPhaseEngine.js, CombatVFXEngine.js
  * @exports CombatSystem
  */
 
@@ -19,6 +19,7 @@ import { LootSystem } from './LootSystem.js';
 import { CombatCalculator, COMBAT_CONFIG } from './CombatCalculator.js';
 import { bossPhaseEngine } from '../systems/BossPhaseEngine.js';
 import { TomeSpellEngine } from '../systems/TomeSpellEngine.js';
+import { combatVFXEngine, VFX_TYPES } from '../systems/CombatVFXEngine.js';
 
 export class CombatSystem {
     /**
@@ -170,6 +171,7 @@ export class CombatSystem {
                 let attackEl = CombatSystem.resolvePlayerAttackElement(player);
                 game.effects.push(new MeleeSlashEffect(monster.x, monster.y, attackEl));
                 game.effects.push(new FloatingTextEffect(monster.x, monster.y, `-${totalDmg}`, genericResult.isStrong ? "#ffd700" : "#f43f5e", genericResult.isStrong));
+                combatVFXEngine.triggerAttackFX(attackEl ? `${attackEl}_BURST` : VFX_TYPES.SLASH, player, monster, genericResult.isStrong, game?.renderer);
                 let d = monster.takeDamage(totalDmg);
 
                 // Print Unified Combat Log with Blow method name
@@ -493,6 +495,7 @@ export class CombatSystem {
         const breathEffect = SkillVisualEffectFactory.createSkillEffect(breathConfig, monster, game.player);
         if (breathEffect) game.effects.push(breathEffect);
         game.effects.push(new FloatingTextEffect(game.player.x, game.player.y, `-${finalDmg}`, "#ef4444", true));
+        combatVFXEngine.triggerAttackFX(element ? `${element}_BURST` : VFX_TYPES.FIRE_BURST, monster, game.player, false, game?.renderer);
 
         const hasResist = CombatCalculator.getPlayerResistance(game.player, element);
         let resistMsg = hasResist ? ` <span style="color: #cbd5e1; font-weight: normal;">[${elemName} 저항 반감 50%]</span>` : "";

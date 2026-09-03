@@ -3,7 +3,7 @@
  * @category core
  * @description 로컬스토리지 기반 다중 슬롯 게임 상태(맵, 플레이어, 인벤토리, 몬스터, 유니크 몬스터 생태계) 직렬화 및 역직렬화 세이브/로드 엔진
  * @purity State Store
- * @dependencies Map.js, Player.js, Item.js, Monster.js, MonsterRegistry.js, UniqueMonsterManager.js
+ * @dependencies Map.js, Player.js, Item.js, Monster.js, MonsterRegistry.js, UniqueMonsterManager.js, BalanceModifierManager.js
  * @exports SAVE_SLOTS, SaveSystem
  */
 
@@ -14,6 +14,7 @@ import { Monster } from '../entities/Monster.js';
 import { getSpeciesConfig, LEGACY_TOME_ALIASES_MAP } from '../entities/MonsterRegistry.js';
 import { uniqueMonsterManager } from '../systems/UniqueMonsterManager.js';
 import { MonsterSpellFactory } from '../systems/MonsterSpellFactory.js';
+import { balanceModifierManager } from '../systems/BalanceModifierManager.js';
 
 /** 중앙화된 세이브 슬롯 목록 — 슬롯 수가 바뀌면 여기만 수정 */
 export const SAVE_SLOTS = ['slot1', 'slot2', 'slot3', 'slot4', 'slot5', 'slot6', 'slot7', 'slot8'];
@@ -98,6 +99,7 @@ export class SaveSystem {
         return JSON.stringify({
             floor: game.floor,
             floorDanger: game.floorDanger,
+            balance: (typeof balanceModifierManager !== 'undefined' && balanceModifierManager) ? balanceModifierManager.serialize() : null,
             uniqueMonsters: (game.uniqueMonsterManager || uniqueMonsterManager).serialize(),
             player: {
                 x: game.player.x,
@@ -429,8 +431,14 @@ export class SaveSystem {
         });
 
         // 5. Unique Monster Manager State Restore
-        if (data.uniqueMonsters) {
-            (game.uniqueMonsterManager || uniqueMonsterManager).deserialize(data.uniqueMonsters);
+        const umm = game.uniqueMonsterManager || uniqueMonsterManager;
+        if (data.uniqueMonsters && umm && typeof umm.deserialize === 'function') {
+            umm.deserialize(data.uniqueMonsters);
+        }
+
+        // 5.1 Balance Modifier Manager State Restore
+        if (data.balance && typeof balanceModifierManager !== 'undefined' && balanceModifierManager) {
+            balanceModifierManager.deserialize(data.balance);
         }
 
         // 6. Reset death / game over flags

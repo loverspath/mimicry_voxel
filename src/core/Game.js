@@ -3,7 +3,7 @@
  * @category core
  * @description 미미크리 로그라이크 핵심 게임 루프, 턴 스케줄링, 엔티티 상호작용 및 UI 모달 이벤트 통합 조율 오케스트레이터
  * @purity State Store
- * @dependencies Map.js, Player.js, Input.js, Renderer.js, Voxel3DRenderer.js, Classic2DAsciiRenderer.js, Item.js, Monster.js, Tags.js, Skills.js, UIHelper.js, Spawner.js, SaveSystem.js, CombatSystem.js, Effects.js, VirtualController.js
+ * @dependencies Map.js, Player.js, Input.js, Renderer.js, Voxel3DRenderer.js, Classic2DAsciiRenderer.js, FirstPerson3DRenderer.js, Item.js, Monster.js, Tags.js, Skills.js, UIHelper.js, Spawner.js, SaveSystem.js, CombatSystem.js, Effects.js, VirtualController.js, TomeIdentificationEngine.js, TomeTagSystem.js, CombatVFXEngine.js
  * @exports Game
  */
 
@@ -13,6 +13,7 @@ import { Input } from "./Input.js";
 import { Renderer } from "./Renderer.js";
 import { Voxel3DRenderer } from "../renderer/Voxel3DRenderer.js";
 import { Classic2DAsciiRenderer } from "../renderer/Classic2DAsciiRenderer.js";
+import { FirstPerson3DRenderer } from "../renderer/FirstPerson3DRenderer.js";
 import { Item } from "../entities/Item.js";
 import { Monster } from "../entities/Monster.js";
 import {
@@ -56,6 +57,9 @@ import { uniqueMonsterManager } from "../systems/UniqueMonsterManager.js";
 import { TomeDeviceEngine } from "../systems/TomeDeviceEngine.js";
 import { DungeonValueBudgetEngine } from "../systems/DungeonValueBudgetEngine.js";
 import { LootSystem } from "./LootSystem.js";
+import { TomeIdentificationEngine } from "../systems/TomeIdentificationEngine.js";
+import { TomeTagSystem } from "../systems/TomeTagSystem.js";
+import { combatVFXEngine } from "../systems/CombatVFXEngine.js";
 
 const getConfigByName = (name) =>
   Object.values(MONSTER_SPECIES).find((c) => c.name === name) ||
@@ -130,8 +134,28 @@ export class Game {
     const urlParams = typeof window !== "undefined" && window.location ? new URLSearchParams(window.location.search) : null;
     const modeParam = urlParams ? urlParams.get("mode") : null;
     const savedMode = typeof localStorage !== "undefined" ? localStorage.getItem("mimicry_render_mode") : null;
-    this.renderMode = modeParam === "ascii" ? "ascii" : (savedMode === "ascii" && modeParam !== "voxel" ? "ascii" : "voxel");
-    this.renderer = this.renderMode === "ascii" ? new Classic2DAsciiRenderer("game-canvas", this.tileSize) : new Voxel3DRenderer("game-canvas", this.tileSize);
+
+    let initialMode = "voxel";
+    if (modeParam === "dungeon3d" || modeParam === "3d") {
+      initialMode = "dungeon3d";
+    } else if (modeParam === "ascii") {
+      initialMode = "ascii";
+    } else if (savedMode === "dungeon3d" && modeParam !== "voxel") {
+      initialMode = "dungeon3d";
+    } else if (savedMode === "ascii" && modeParam !== "voxel") {
+      initialMode = "ascii";
+    }
+    this.renderMode = initialMode;
+    this.playerAngle = 3 * Math.PI / 2; // 북쪽 기본 시선 (270도)
+
+    if (this.renderMode === "ascii") {
+      this.renderer = new Classic2DAsciiRenderer("game-canvas", this.tileSize);
+    } else if (this.renderMode === "dungeon3d") {
+      this.renderer = new FirstPerson3DRenderer("game-canvas", this.tileSize);
+      this.renderer.playerAngle = this.playerAngle;
+    } else {
+      this.renderer = new Voxel3DRenderer("game-canvas", this.tileSize);
+    }
 
     this.uiHp = document.getElementById("ui-hp");
     this.uiFloor = document.getElementById("ui-floor");
@@ -162,29 +186,78 @@ export class Game {
     let pointerStartX = 0;
     let pointerStartY = 0;
     let pointerStartTime = 0;
+    let isDraggingLook = false;
+    let lastDragX = 0;
+    let hasDraggedSignificantly = false;
 
     const onPointerDown = (ev) => {
-      pointerStartX = ev.clientX || (ev.touches && ev.touches[0] ? ev.touches[0].clientX : 0);
-      pointerStartY = ev.clientY || (ev.touches && ev.touches[0] ? ev.touches[0].clientY : 0);
+      if (ev.target && ev.target.closest && ev.target.closest('#top-bar, #virtual-controller, .modal-content, #context-menu, #combat-log, .hotbar-slot')) return;
+      const clientX = ev.clientX ?? (ev.touches && ev.touches[0] ? ev.touches[0].clientX : 0);
+      const clientY = ev.clientY ?? (ev.touches && ev.touches[0] ? ev.touches[0].clientY : 0);
+      pointerStartX = clientX;
+      pointerStartY = clientY;
+      lastDragX = clientX;
       pointerStartTime = Date.now();
+      isDraggingLook = true;
+      hasDraggedSignificantly = false;
+    };
+
+    const onPointerMove = (ev) => {
+      if (!isDraggingLook) return;
+      const clientX = ev.clientX ?? (ev.touches && ev.touches[0] ? ev.touches[0].clientX : 0);
+      const clientY = ev.clientY ?? (ev.touches && ev.touches[0] ? ev.touches[0].clientY : 0);
+      const dx = clientX - lastDragX;
+      lastDragX = clientX;
+
+      if (Math.hypot(clientX - pointerStartX, clientY - pointerStartY) > 8) {
+        hasDraggedSignificantly = true;
+      }
+
+      if (this.renderMode === 'dungeon3d' && Math.abs(dx) > 0) {
+        // 1인칭 3D 모드: 화면 터치 슬라이스 / 마우스 드래그 실시간 360도 시선 회전
+        const sensitivity = 0.007;
+        this.playerAngle = (this.playerAngle + dx * sensitivity + 2 * Math.PI) % (2 * Math.PI);
+        if (this.renderer && this.renderer.playerAngle !== undefined) {
+          this.renderer.playerAngle = this.playerAngle;
+        }
+        this.render();
+      }
     };
 
     const onPointerUp = (ev) => {
-      if (ev.target && ev.target.closest && ev.target.closest('#top-bar, #virtual-controller, .modal-content, #context-menu, #combat-log')) return;
-      const endX = ev.clientX || (ev.changedTouches && ev.changedTouches[0] ? ev.changedTouches[0].clientX : 0);
-      const endY = ev.clientY || (ev.changedTouches && ev.changedTouches[0] ? ev.changedTouches[0].clientY : 0);
+      if (!isDraggingLook) return;
+      isDraggingLook = false;
+      if (ev.target && ev.target.closest && ev.target.closest('#top-bar, #virtual-controller, .modal-content, #context-menu, #combat-log, .hotbar-slot')) return;
+
+      const endX = ev.clientX ?? (ev.changedTouches && ev.changedTouches[0] ? ev.changedTouches[0].clientX : pointerStartX);
+      const endY = ev.clientY ?? (ev.changedTouches && ev.changedTouches[0] ? ev.changedTouches[0].clientY : pointerStartY);
       const dist = Math.hypot(endX - pointerStartX, endY - pointerStartY);
       const dt = Date.now() - pointerStartTime;
 
-      if (dist < 14 && dt < 450) {
+      if (!hasDraggedSignificantly && dist < 14 && dt < 450) {
         this.handleCanvasClick({ clientX: endX, clientY: endY });
       }
     };
 
-    const containerEl = document.getElementById("game-container") || this.renderer.canvas;
-    containerEl.addEventListener("pointerdown", onPointerDown);
-    containerEl.addEventListener("pointerup", onPointerUp);
-    this.renderer.canvas.addEventListener("click", (e) => this.handleCanvasClick(e));
+    const containerEl = (typeof document !== "undefined" && (document.getElementById("game-container") || (this.renderer && this.renderer.canvas))) || null;
+    if (containerEl && containerEl.addEventListener) {
+      containerEl.addEventListener("pointerdown", onPointerDown);
+      containerEl.addEventListener("pointermove", onPointerMove);
+      containerEl.addEventListener("pointerup", onPointerUp);
+      containerEl.addEventListener("pointercancel", onPointerUp);
+
+      // 모바일 멀티터치 및 스와이프 호환 리스너
+      containerEl.addEventListener("touchstart", onPointerDown, { passive: true });
+      containerEl.addEventListener("touchmove", onPointerMove, { passive: true });
+      containerEl.addEventListener("touchend", onPointerUp, { passive: true });
+    }
+    if (this.renderer && this.renderer.canvas && this.renderer.canvas.addEventListener) {
+      this.renderer.canvas.addEventListener("click", (e) => {
+        if (!hasDraggedSignificantly) {
+          this.handleCanvasClick(e);
+        }
+      });
+    }
 
     // Keyboard ESC to close inspect modal
     window.addEventListener("keydown", (e) => {
@@ -286,6 +359,9 @@ export class Game {
     if (!this.isMainMenuOpen) {
       this.player.update(e);
       for (let t of this.monsters) t.update && t.update(e);
+      if (combatVFXEngine) {
+        combatVFXEngine.update(e / 1000);
+      }
       if (
         ((this.effects = this.effects.filter((t) => t.update(e))),
         this.transitionAlpha > 0 &&
@@ -316,17 +392,56 @@ export class Game {
       let e = 0,
         t = 0,
         n = !1;
-      if (
-        (this.input.isActionActive(`MOVE_N`) && (t = -1),
-        this.input.isActionActive(`MOVE_NE`) && ((e = 1), (t = -1)),
-        this.input.isActionActive(`MOVE_E`) && (e = 1),
-        this.input.isActionActive(`MOVE_SE`) && ((e = 1), (t = 1)),
-        this.input.isActionActive(`MOVE_S`) && (t = 1),
-        this.input.isActionActive(`MOVE_SW`) && ((e = -1), (t = 1)),
-        this.input.isActionActive(`MOVE_W`) && (e = -1),
-        this.input.isActionActive(`MOVE_NW`) && ((e = -1), (t = -1)),
-        e !== 0 || t !== 0)
-      ) {
+      if (this.renderMode === 'dungeon3d') {
+        // 1인칭 3D 모드: 플레이어가 바라보는 시선 방향 기준 8방향 상대 이동 체계
+        const snappedAngle = Math.round(this.playerAngle / (Math.PI / 2)) * (Math.PI / 2);
+        const fwdX = Math.round(Math.cos(snappedAngle));
+        const fwdY = Math.round(Math.sin(snappedAngle));
+        const rightX = -fwdY;
+        const rightY = fwdX;
+        const leftX = fwdY;
+        const leftY = -fwdX;
+        const backX = -fwdX;
+        const backY = -fwdY;
+
+        if (this.input.isActionActive(`MOVE_N`)) {
+          // 시선 방향으로 전진
+          e += fwdX; t += fwdY;
+        } else if (this.input.isActionActive(`MOVE_S`)) {
+          // 시선 반대 방향으로 후진
+          e += backX; t += backY;
+        } else if (this.input.isActionActive(`MOVE_W`)) {
+          // 시선 기준 좌측 사이드스텝 (스트레이프)
+          e += leftX; t += leftY;
+        } else if (this.input.isActionActive(`MOVE_E`)) {
+          // 시선 기준 우측 사이드스텝 (스트레이프)
+          e += rightX; t += rightY;
+        } else if (this.input.isActionActive(`MOVE_NW`)) {
+          // 대각선 전진-좌측
+          e += fwdX + leftX; t += fwdY + leftY;
+        } else if (this.input.isActionActive(`MOVE_NE`)) {
+          // 대각선 전진-우측
+          e += fwdX + rightX; t += fwdY + rightY;
+        } else if (this.input.isActionActive(`MOVE_SW`)) {
+          // 대각선 후진-좌측
+          e += backX + leftX; t += backY + leftY;
+        } else if (this.input.isActionActive(`MOVE_SE`)) {
+          // 대각선 후진-우측
+          e += backX + rightX; t += backY + rightY;
+        }
+        e = Math.max(-1, Math.min(1, e));
+        t = Math.max(-1, Math.min(1, t));
+      } else {
+        this.input.isActionActive(`MOVE_N`) && (t = -1);
+        this.input.isActionActive(`MOVE_NE`) && ((e = 1), (t = -1));
+        this.input.isActionActive(`MOVE_E`) && (e = 1);
+        this.input.isActionActive(`MOVE_SE`) && ((e = 1), (t = 1));
+        this.input.isActionActive(`MOVE_S`) && (t = 1);
+        this.input.isActionActive(`MOVE_SW`) && ((e = -1), (t = 1));
+        this.input.isActionActive(`MOVE_W`) && (e = -1);
+        this.input.isActionActive(`MOVE_NW`) && ((e = -1), (t = -1));
+      }
+      if (e !== 0 || t !== 0) {
         let r = this.player.x + e,
           i = this.player.y + t,
           a = this.monsters.find((e) => e.x === r && e.y === i);
@@ -385,6 +500,10 @@ export class Game {
           this.standingStairs
             ? (this.nextFloor(), (n = !0))
             : this.standingUpStairs && (this.prevFloor(), (n = !0));
+      else if (this.input.isActionActive(`TOGGLE_RENDER_MODE`)) {
+        this.toggleRenderMode();
+        this.input.clear();
+      }
       if (n) {
         // REGEN_UNIT (턴당 자연 재생)
         const activeTags = this.player.compileActiveTags();
@@ -406,6 +525,12 @@ export class Game {
           (this.playerTurn = !1),
           (this.moveCooldown = 150),
           TomeDeviceEngine.tickTimeouts(this.player.inventory),
+          TomeIdentificationEngine.processTurnSense(this.player, (item, slot) => {
+            this.addLogEntry(`[Sense] 👁️ 장착 중인 [${item.displayName}]의 숨겨진 기운이 감지되었습니다!`, 'loot');
+          }),
+          TomeTagSystem.processTurnTicks(this.player, this, (msg, type) => {
+            this.addLogEntry(msg, type);
+          }),
           this.player.tickOverload((e, t) => this.addLogEntry(e, t)))
         ) {
           this.handlePlayerDeath();
@@ -1271,12 +1396,21 @@ export class Game {
     this.resizeGame();
   }
   switchRenderer(mode) {
-    this.renderMode = mode === "ascii" ? "ascii" : "voxel";
+    if (mode === "ascii") {
+      this.renderMode = "ascii";
+    } else if (mode === "dungeon3d" || mode === "3d") {
+      this.renderMode = "dungeon3d";
+    } else {
+      this.renderMode = "voxel";
+    }
     if (typeof localStorage !== "undefined") {
       localStorage.setItem("mimicry_render_mode", this.renderMode);
     }
     if (this.renderMode === "ascii") {
       this.renderer = new Classic2DAsciiRenderer("game-canvas", this.tileSize);
+    } else if (this.renderMode === "dungeon3d") {
+      this.renderer = new FirstPerson3DRenderer("game-canvas", this.tileSize);
+      this.renderer.playerAngle = this.playerAngle !== undefined ? this.playerAngle : (3 * Math.PI / 2);
     } else {
       this.renderer = new Voxel3DRenderer("game-canvas", this.tileSize);
     }
@@ -1288,16 +1422,43 @@ export class Game {
     this.render();
   }
   toggleRenderMode() {
-    const nextMode = this.renderMode === "voxel" ? "ascii" : "voxel";
+    let nextMode = "dungeon3d";
+    if (this.renderMode === "voxel") {
+      nextMode = "dungeon3d";
+    } else if (this.renderMode === "dungeon3d") {
+      nextMode = "ascii";
+    } else {
+      nextMode = "voxel";
+    }
     this.switchRenderer(nextMode);
-    this.addLogEntry(`🎨 렌더링 모드가 [${this.renderMode === "voxel" ? "🧊 3D 복셀 모드" : "📜 2D 클래식 아스키 모드"}]로 전환되었습니다.`, "loot");
+    const modeLabels = {
+      voxel: "🧊 2.5D 복셀 쿼터뷰",
+      dungeon3d: "🏰 1인칭 3D 텍스처 어드벤처",
+      ascii: "📜 2D 클래식 아스키 모드"
+    };
+    this.addLogEntry(`🎨 렌더링 모드가 [${modeLabels[this.renderMode] || this.renderMode}]로 전환되었습니다.`, "loot");
   }
   updateRenderModeButton() {
     const btn = document.getElementById("btn-toggle-render-mode");
     if (btn) {
-      btn.innerHTML = this.renderMode === "voxel" ? "🧊 3D 복셀" : "📜 2D 아스키";
-      btn.title = `클릭하여 ${this.renderMode === "voxel" ? "2D 클래식 아스키" : "3D 복셀"} 모드로 전환`;
+      if (this.renderMode === "dungeon3d") {
+        btn.innerHTML = "🏰 1인칭 3D";
+        btn.title = "클릭하여 2D 클래식 아스키 모드로 전환";
+      } else if (this.renderMode === "ascii") {
+        btn.innerHTML = "📜 2D 아스키";
+        btn.title = "클릭하여 2.5D 복셀 모드로 전환";
+      } else {
+        btn.innerHTML = "🧊 2.5D 복셀";
+        btn.title = "클릭하여 1인칭 3D 모드로 전환";
+      }
     }
+  }
+  rotateFirstPerson(deltaAngle = Math.PI / 2) {
+    this.playerAngle = (this.playerAngle + deltaAngle + 2 * Math.PI) % (2 * Math.PI);
+    if (this.renderer && this.renderer.playerAngle !== undefined) {
+      this.renderer.playerAngle = this.playerAngle;
+    }
+    this.render();
   }
   cycleZoom() {
     const presets = [0.6, 0.85, 1.0, 1.35, 1.7];
@@ -1558,29 +1719,14 @@ export class Game {
       this.toggleSubCore1(e);
       return;
     }
-    if (this.player.isItemEquipped ? this.player.isItemEquipped(e) : (
-      this.player.equipment.weapon === e ||
-      this.player.equipment.shield === e ||
-      this.player.equipment.bow === e ||
-      this.player.equipment.quiver === e ||
-      this.player.equipment.armor === e ||
-      this.player.equipment.helmet === e ||
-      this.player.equipment.gloves === e ||
-      this.player.equipment.boots === e ||
-      this.player.equipment.cloak === e ||
-      this.player.equipment.ring1 === e ||
-      this.player.equipment.ring2 === e ||
-      this.player.equipment.amulet === e ||
-      this.player.equippedLamp === e ||
-      this.player.equipment.subCore1 === e ||
-      this.player.equipment.subCore2 === e
-    ))
-      (this.player.unequipItem(e),
-        this.addLogEntry(
-          `[Equipment] ${e.name}의 장착을 해제했습니다.`,
-          `system`,
-        ));
-    else {
+    if (this.player.isItemEquipped(e)) {
+      const unequipSuccess = this.player.unequipItem(e);
+      if (unequipSuccess) {
+        this.addLogEntry(`[Equipment] ${e.name}의 장착을 해제했습니다.`, `system`);
+      } else {
+        this.addLogEntry(`[Curse] ❌ ${e.displayName}에는 사악한 저주가 깃들어 있어 손에서 벗겨지지 않습니다!`, `danger`);
+      }
+    } else {
       let t = null;
       if (e.slotType === `BOW` || e.char === `}` || e.type === `BOW`) {
         t = this.player.equipment.bow;
@@ -1605,7 +1751,15 @@ export class Game {
       } else if ((e.slotType === `RING` || e.type === `RING`) && this.player.equipment.ring1 && this.player.equipment.ring2) {
         t = this.player.equipment.ring1;
       }
-      t && this.player.unequipItem(t);
+      if (t) {
+        const unequipSuccess = this.player.unequipItem(t);
+        if (!unequipSuccess) {
+          this.addLogEntry(`[Curse] ❌ 기존 장비 [${t.displayName}]이(가) 저주로 결속되어 교체할 수 없습니다!`, `danger`);
+          this.closeContextMenu();
+          this.renderInventoryList();
+          return;
+        }
+      }
       this.player.equipItem(e);
       let n = ``;
       (e.lightBonus > 0
@@ -1809,6 +1963,9 @@ export class Game {
       for (let n of this.effects) n.draw(this.renderer, e, t);
       if (this.renderer.updateParticles) {
         this.renderer.updateParticles(0.016);
+      }
+      if (this.renderMode === 'dungeon3d' && combatVFXEngine) {
+        combatVFXEngine.renderFirstPersonVFX(this.renderer);
       }
       if (this.transitionAlpha > 0.001) {
         this.renderer.ctx.fillStyle = `rgba(0, 0, 0, ${Math.min(1, Math.max(0, this.transitionAlpha))})`;

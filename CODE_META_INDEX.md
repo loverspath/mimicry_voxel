@@ -1,156 +1,105 @@
-# 📑 Mimicry Voxel Engine Code Meta Index (`v0.18.0`)
+# 📑 미미크리 Voxel 엔진 코드 메타 인덱스 (Code Meta Index)
 
-> **미미크리 Voxel 로그라이크 엔진 65개 전 모듈(102,800+ 라인)의 아키텍처 역할, 설계 순수성, 책임 및 의존성 관계망 총람**
-
-[![Version](https://img.shields.io/badge/version-0.18.0-emerald.svg)](package.json)
-[![Modules](https://img.shields.io/badge/modules-65%20files-blue.svg)](src/)
-[![Lines of Code](https://img.shields.io/badge/total%20lines-102%2C804%20LOC-purple.svg)](src/)
-[![Status](https://img.shields.io/badge/architecture-verified%20%26%20operational-brightgreen.svg)](scripts/meta_indexer.py)
-
----
-
-## 📊 1. 카테고리별 모듈 분포 및 아키텍처 개요
-
-미미크리 Voxel 엔진은 역할과 책임이 명확히 분리된 **5대 계층 클린 아키텍처(Configs, Core, Entities, Map/Renderer, Systems, UI)**로 구성되어 있습니다.
-
-```mermaid
-flowchart LR
-    Configs["1. Configs (4개)<br>중앙 격리 설정 / 테마"] --> Systems["2. Systems (18개)<br>10대 무상태 시스템 엔진"]
-    Entities["3. Entities (13개)<br>Zero-Logic DTO / ToME DB"] --> Systems
-    Systems --> Core["4. Core & Events (16개)<br>전투 / 스포너 / 세이브 / 루프"]
-    Core --> MapRender["5. Map & Renderer (5개)<br>동적 맵 / 3D 복셀 & 아스키"]
-    Core --> UI["6. UI & Root (9개)<br>모던 인스펙터 / HUD / 모달"]
-```
-
-| 카테고리 (Category) | 모듈 수 | 총 라인 수 | 핵심 아키텍처 역할 및 책임 |
-| :--- | :---: | :---: | :--- |
-| **`configs/`** | 4개 | 1,291줄 | 게임 밸런스 공식, BTH 명중률, 3D 복셀 렌더러 지오메트리, ANSI 16색 및 5대 던전 테마 중앙 격리 설정 |
-| **`core/`** | 14개 | 6,569줄 | 전투 조율(CombatSystem), 대미지 계산(CombatCalculator), 전리품(LootSystem), 스포너(Spawner), 세이브/로드(SaveSystem), 게임 루프(Game/GameEngine) |
-| **`entities/`** | 13개 | 77,294줄 | Zero-Logic 데이터 컨테이너(Player, Monster, Item, MimicBody) 및 ToME 2.3.5 정통 4대 마스터 데이터셋(몬스터 851종, 아이템 560종, 에고 101종, 유물 190종) |
-| **`events/`** | 2개 | 139줄 | 싱글톤 EventBus 메시지 브로커 및 GameEvents 표준 이벤트 식별자 열거형 |
-| **`map/`** | 2개 | 957줄 | 동적 맵 절차적 생성기(Map.js) 및 2D 타일 ➔ 3D 다층 복셀 높이맵 브릿지(Voxel3DMapBridge.js) |
-| **`renderer/`** | 3개 | 1,215줄 | 정석 2.5D 아이소메트릭 복셀 렌더러(Voxel3DRenderer), TomeNET 14x23 아스키 렌더러(Classic2DAsciiRenderer), 마이크로 복셀 파티클 물리(VoxelParticleSystem) |
-| **`systems/`** | 18개 | 8,767줄 | ToME 10대 무상태 시스템 엔진(StatusEffect, Spell, ValueBudget, FlagResolver, Trait, Vision, Activation, Consumable, Device, Equipment), 5단계 AI, 3단 보스전, 유니크 생태계 |
-| **`ui/`** | 7개 | 4,304줄 | 모던 인벤토리/코어 인스펙터(InventoryView), 실시간 HUD(HUDView), 승천/명예의전당(AscensionModalView), 몬스터 로어 도감(MonsterLoreView), UI 중앙 관리자(UIManager) |
-| **`root`** | 2개 | 68줄 | 웹 브라우저 진입점 및 부트스트랩 (main.js, counter.js) |
-| **합계 (Total)** | **65개** | **102,804줄** | **ToME 2.3.5 / TomeNET 기반 데이터 지향 100% ESM 클린 아키텍처** |
+> **자동 생성 메타데이터**
+> - **엔진 버전**: `v1.2.0`
+> - **생성 일시**: `2026-09-03T01:43:32Z`
+> - **총 모듈 수**: `75개`
+> - **총 코드 라인 수**: `106,699줄`
 
 ---
 
-## 📑 2. 전체 65개 모듈 상세 메타 인덱스 명세
+## 1. 카테고리별 모듈 분포
 
-### 1) 설정 계층 (`src/configs/`, 4개 모듈)
-
-| 파일 경로 | 모듈명 | 라인 | 책임 (Responsibility) | 순수성 (Purity) | 핵심 공개 심볼 (Exports) |
-| :--- | :--- | :---: | :--- | :--- | :--- |
-| [`src/configs/DungeonThemeConfig.js`](src/configs/DungeonThemeConfig.js) | **DungeonThemeConfig** | 428 | 1~50층 5대 테마 던전 층계 명세, 테마별 타일 색상/복셀 팔레트, Vault 및 Monster Pit 스폰 확률 및 몬스터 계열 가중치 설정 | Pure Constants | `DUNGEON_THEMES`, `DUNGEON_THEME_KEYS`, `getThemeForFloor`, `getThemeConfig`, `getThemeColors`, `getSpecialRoomChancesForFloor` |
-| [`src/configs/GameBalanceConfig.js`](src/configs/GameBalanceConfig.js) | **GameBalanceConfig** | 417 | 게임 밸런스 공식, 레벨업 성장 곡선, 무게/속도 제약, 무기 숙련도, 전투 주사위 공식, 속성 저항 계수 및 드랍 확률 중앙화 설정 | Pure Function | `COMBAT_CONFIG`, `LEVEL_CONFIG`, `WEIGHT_CONFIG`, `WEAPON_MASTERY_CONFIG`, `DUNGEON_CONFIG`, `BASE_RESISTANCES` |
-| [`src/configs/RenderConfig.js`](src/configs/RenderConfig.js) | **RenderConfig** | 121 | 3D 복셀 렌더러 지오메트리 규격, 카메라/뷰포트 배율, 조명 및 앰비언트 오클루전, 파티클 물리 및 탄도학 통합 설정 | Pure Constants | `BASE_TILE_WIDTH`, `BASE_TILE_HEIGHT`, `BASE_BLOCK_HEIGHT`, `CAMERA_CONFIG`, `LIGHTING_CONFIG` |
-| [`src/configs/ThemeColors.js`](src/configs/ThemeColors.js) | **ThemeColors** | 325 | ToME 2.3.5 정통 16색 ANSI 터미널 팔레트(TERM_COLORS), 7대 원소 팔레트, 4대 아이템 등급 색상, 터미널 폰트 스택 통합 설정 | Pure Constants | `TERM_COLORS`, `ANSI_PALETTE_INDEX`, `TERMINAL_FONT_STACK`, `ELEMENT_PALETTES`, `RARITY_COLORS` |
-
----
-
-### 2) 코어 계층 (`src/core/`, 14개 모듈)
-
-| 파일 경로 | 모듈명 | 라인 | 책임 (Responsibility) | 순수성 (Purity) | 핵심 공개 심볼 (Exports) |
-| :--- | :--- | :---: | :--- | :--- | :--- |
-| [`src/core/CombatCalculator.js`](src/core/CombatCalculator.js) | **CombatCalculator** | 1,022 | 전투 주사위 롤링, ToME BTH 명중률 판정, 치명타, 방어력(AC) 물리 감쇄, 속성 시너지 연산 전담 수학 연산 엔진 | Stateless System | `CombatCalculator`, `COMBAT_CONFIG`, `SYNERGY_TRIGGERS`, `SPELL_SYNERGY_TRIGGERS` |
-| [`src/core/CombatSystem.js`](src/core/CombatSystem.js) | **CombatSystem** | 524 | 전투 판정 및 오토 스킬/원거리 자동사격 격발 오케스트레이션을 일괄 조율하는 중앙 전투 시스템 | Stateless System / Orchestrator | `CombatSystem` |
-| [`src/core/Effects.js`](src/core/Effects.js) | **Effects** | 745 | 2.5D 아이소메트릭 실시간 입자 스트림 브레스, 3D 포물선 투사체, 번개 빔, 아크 슬래시, 플로팅 텍스트 비주얼 이펙트 파이프라인 | Stateless System / Logic | `AoEExplosionEffect`, `ConeBreathEffect`, `SkillProjectileEffect`, `SkillBeamEffect`, `FloatingTextEffect` |
-| [`src/core/Game.js`](src/core/Game.js) | **Game** | 1,989 | 미미크리 로그라이크 핵심 게임 루프, 턴 스케줄링, 엔티티 상호작용, 트랜잭션 안전화 및 UI 모달 이벤트 통합 조율 | State Store | `Game` |
-| [`src/core/GameEngine.js`](src/core/GameEngine.js) | **GameEngine** | 88 | 순수 턴 스케줄링, 엔티티 라이프사이클 관리 및 EventBus 기반 메시지 디스패치 전담 슬림 엔진 코어 | State Store / Logic Engine | `GameEngine` |
-| [`src/core/Input.js`](src/core/Input.js) | **Input** | 90 | 키보드, 마우스 및 가상 컨트롤러 입력을 추상화된 게임 액션으로 매핑하고 발송하는 입력 제어 모듈 | DOM Event Handler | `Input` |
-| [`src/core/LootSystem.js`](src/core/LootSystem.js) | **LootSystem** | 146 | 몬스터 처치 시 전리품(코어, 유물, 에고 장비) 드롭 확률 연산, XP 가산, 로어 숙련도 계산 및 처치 보상 라이프사이클 제어 | Stateless Logic / System | `LootSystem` |
-| [`src/core/ReactionRegistry.js`](src/core/ReactionRegistry.js) | **ReactionRegistry** | 152 | 원소 간의 결합 반응 및 상태이상 디버프 전파 처리를 전담하는 격리형 레지스트리 모듈 | Stateless System / Logic | `ELEMENTAL_REACTIONS`, `applyMonsterDebuff` |
-| [`src/core/Renderer.js`](src/core/Renderer.js) | **Renderer** | 13 | 3D 복셀 렌더러(Voxel3DRenderer) 파이프라인을 바인딩하여 하위 호환성을 제공하는 파사드 모듈 | Stateless Facade | `Renderer` |
-| [`src/core/SaveSystem.js`](src/core/SaveSystem.js) | **SaveSystem** | 506 | 로컬스토리지 기반 다중 슬롯 게임 상태(맵, 플레이어, 인벤토리, 10대 슬롯, 유니크 몬스터 생태계) 직렬화 및 역직렬화 엔진 | State Store | `SAVE_SLOTS`, `SaveSystem` |
-| [`src/core/Skills.js`](src/core/Skills.js) | **Skills** | 788 | 동적 스킬 트리(CORE_SKILL_TREES) 및 플레이어 의태 액티브 스킬 정의 모듈 | Stateless System / Logic | `ACTIVE_SKILL_CONFIGS`, `BASE_SKILL_TREES`, `CORE_SKILL_TREES` |
-| [`src/core/Spawner.js`](src/core/Spawner.js) | **Spawner** | 799 | ToME 2.3.5 던전 깊이(Depth) 기반 동적 몬스터 및 아이템 스포너 엔진. 851종 몬스터 풀, 168종 유니크 스폰 생태계 제어 | Pure Factory / Spawner Logic | `Spawner`, `SPECIAL_MONSTER_PACKS`, `MONSTER_PIT_THEMES` |
-| [`src/core/TraceLogger.js`](src/core/TraceLogger.js) | **TraceLogger** | 64 | 스탯 재계산 격발 원인, 더티 플래그 만료 및 전투 대미지 감쇄 경로 역추적(Traceability) 중앙 디버그 로그 엔진 | Stateless System / Logic | `TraceLogger` |
-| [`src/core/UIHelper.js`](src/core/UIHelper.js) | **UIHelper** | 34 | UI 컴포넌트 3분할 통합 경량 파사드 모듈 | DOM Facade / Pure Export | `EQUIP_BADGE_STYLES`, `renderInventorySlotHTML`, `renderItemDetailHTML` |
+| 카테고리 | 모듈 수 | 주요 역할 |
+| :--- | :--- | :--- |
+| `configs` | 5개 | 게임 밸런스, 렌더러 지오메트리, 테마 색상 등 중앙 격리 설정 |
+| `core` | 14개 | 전투 연산, 전리품 시스템, 세이브/로드, 턴 스케줄링 핵심 엔진 |
+| `root` | 2개 | 애플리케이션 진입점 (main.js 등) |
+| `entities` | 13개 | 플레이어, 몬스터, 미믹 코어, 아이템, 태그 등 게임 엔티티 |
+| `events` | 2개 | 모듈 집합 |
+| `map` | 2개 | 2D 던전 맵 생성기 및 3D 다층 복셀 높이맵 브릿지 |
+| `renderer` | 5개 | 2.5D 아이소메트릭 3D 복셀 렌더러 및 파티클 물리 시스템 |
+| `systems` | 22개 | 모듈 집합 |
+| `ui` | 10개 | 가상 컨트롤러 및 뷰 컴포넌트 |
 
 ---
 
-### 3) 엔티티 계층 (`src/entities/`, 13개 모듈)
+## 2. 전체 모듈 상세 메타 인덱스 명세
 
-| 파일 경로 | 모듈명 | 라인 | 책임 (Responsibility) | 순수성 (Purity) | 핵심 공개 심볼 (Exports) |
-| :--- | :--- | :---: | :--- | :--- | :--- |
-| [`src/entities/Item.js`](src/entities/Item.js) | **Item** | 284 | 던전 바닥 및 인벤토리 내 장비, 소모품, 마법 디바이스, 코어 아이템 데이터 컨테이너 모델 | Zero-Logic Data Container | `Item` |
-| [`src/entities/ItemRegistry.js`](src/entities/ItemRegistry.js) | **ItemRegistry** | 803 | ToME 2.3.5 기반 560+종 기본 아이템 및 190+종 전설 유물(Artifacts) 중앙 레지스트리 | Pure Registry / Data Store | `TOME_BASE_ITEMS`, `TOME_ARTIFACTS`, `createTomeItem` |
-| [`src/entities/MimicBody.js`](src/entities/MimicBody.js) | **MimicBody** | 345 | 무정형 미믹의 영구 본체 컨테이너. 로어 숙련도, 킬 카운트, 돌연변이 태그 영구 보존 및 무게 한도 산출 | State Store / Logic Container | `WEAPON_MASTERY_CONFIG`, `WEAPON_REQUIREMENT_CONFIG`, `MimicBody` |
-| [`src/entities/Monster.js`](src/entities/Monster.js) | **Monster** | 543 | 몬스터 엔티티 모델 (Zero-Logic 순수 데이터 컴포넌트). 연산 로직은 시스템 엔진에 전면 위임 | Data Model / State Store | `MONSTER_ATTACK_SKILL_NAMES`, `Monster` |
-| [`src/entities/MonsterRegistry.js`](src/entities/MonsterRegistry.js) | **MonsterRegistry** | 216 | 몬스터 종족(Species) 및 ToME 오픈소스 몬스터 마스터 데이터셋(851종) 중앙 제어 레지스트리 | Pure Registry / Data Store | `MONSTER_GROWTH_PATTERNS`, `MONSTER_SPECIES`, `LEGACY_TOME_ALIASES_MAP` |
-| [`src/entities/Perks.js`](src/entities/Perks.js) | **Perks** | 281 | ToME 2.3.5 플래그 및 변이(Mutations/Perks) 시스템 정의. 스탯 가중치, 가속도, 상태이상 면역 관리 | Stateless / Pure Registry | `MONSTER_PERKS`, `getPerkDefinition` |
-| [`src/entities/Player.js`](src/entities/Player.js) | **Player** | 963 | 플레이어 엔티티 모델 (Zero-Logic 순수 데이터 컴포넌트). 10대 독립 슬롯 및 statuses 프록시 완비 | Data Model / State Store | `Player` |
-| [`src/entities/Tags.js`](src/entities/Tags.js) | **Tags** | 572 | 장비 및 몬스터 접두사/접미사 태그, 등급 색상, 크로매틱 애니메이션 연산 및 원소 메타데이터 관리 | Data Model / State Store | `ELEMENT_METADATA`, `PREFIX_TAGS`, `SUFFIX_TAGS` |
-| [`src/entities/TomeArtifactsData.js`](src/entities/TomeArtifactsData.js) | **TomeArtifactsData** | 5,944 | ToME 2.3.5 정통 190종 전설 유물(Artifacts) 정적 데이터셋 | Pure Data Module | `TOME_ARTIFACTS_DATA` |
-| [`src/entities/TomeEgosData.js`](src/entities/TomeEgosData.js) | **TomeEgosData** | 1,168 | ToME 2.3.5 정통 101종 에고(Egos) 접사 정적 데이터셋 | Pure Data Module | `TOME_EGOS_DATA` |
-| [`src/entities/TomeKindsData.js`](src/entities/TomeKindsData.js) | **TomeKindsData** | 9,988 | ToME 2.3.5 정통 560종 베이스 아이템(Kinds) 정적 데이터셋 | Pure Data Module | `TOME_KINDS_DATA` |
-| [`src/entities/TomeMonstersData.js`](src/entities/TomeMonstersData.js) | **TomeMonstersData** | 57,880 | ToME 2.3.5 정통 851종 몬스터 마스터 정적 데이터셋 | Pure Data Module | `TOME_MONSTERS_DATA` |
-| [`src/entities/VoxelMimicBridge.js`](src/entities/VoxelMimicBridge.js) | **VoxelMimicBridge** | 97 | 미믹의 코어 융합, 변신(위장), 포식, 3D 크로매틱 셰이딩 및 복셀 모핑 이펙트 연동 브릿지 | Data Model / State Store | `VoxelMimicBridge` |
-
----
-
-### 4) 이벤트 계층 (`src/events/`, 2개 모듈)
-
-| 파일 경로 | 모듈명 | 라인 | 책임 (Responsibility) | 순수성 (Purity) | 핵심 공개 심볼 (Exports) |
-| :--- | :--- | :---: | :--- | :--- | :--- |
-| [`src/events/EventBus.js`](src/events/EventBus.js) | **EventBus** | 81 | 게임 엔진과 UI 컴포넌트 간 결합도를 완전히 분리하는 싱글톤 Pub/Sub 중앙 메시지 브로커 | State Store / Event Broker | `EventBus`, `eventBus` |
-| [`src/events/GameEvents.js`](src/events/GameEvents.js) | **GameEvents** | 58 | 미미크리 게임 엔진과 UI/시스템 간 결합도를 낮추기 위한 중앙 이벤트 식별자 열거형 상수 | Pure Constants | `GameEvents` |
-
----
-
-### 5) 맵 & 렌더러 계층 (`src/map/`, `src/renderer/`, 5개 모듈)
-
-| 파일 경로 | 모듈명 | 라인 | 책임 (Responsibility) | 순수성 (Purity) | 핵심 공개 심볼 (Exports) |
-| :--- | :--- | :---: | :--- | :--- | :--- |
-| [`src/map/Map.js`](src/map/Map.js) | **Map** | 757 | 1~50층 5대 테마 던전 절차적 생성기, 동적 맵 규격, 다중 상/하행 계단 최대거리 분산, 4대 Vault 및 10대 Pit 지형 배치 | Data Model / State Store | `RectRoom`, `Map` |
-| [`src/map/Voxel3DMapBridge.js`](src/map/Voxel3DMapBridge.js) | **Voxel3DMapBridge** | 200 | 2D 던전 맵 타일 데이터를 차세대 3D 다층 높이맵(Z=0~3) 복셀 블록 스택으로 변환 및 동기화 | Data Model / State Store | `VOXEL_THEMES`, `Voxel3DMapBridge` |
-| [`src/renderer/Classic2DAsciiRenderer.js`](src/renderer/Classic2DAsciiRenderer.js) | **Classic2DAsciiRenderer** | 443 | TomeNET 14x23 터미널 비율 정통 2D 아스키 렌더러. Fira Code 폰트 스택 및 가시성 가드 보장 | DOM / Canvas Renderer | `Classic2DAsciiRenderer` |
-| [`src/renderer/Voxel3DRenderer.js`](src/renderer/Voxel3DRenderer.js) | **Voxel3DRenderer** | 647 | 정석 2.5D 아이소메트릭 중앙 정렬 좌표계, FOV 시야, 실시간 포인트 라이트 및 3D 복셀 렌더러 | DOM / Canvas Renderer | `Voxel3DRenderer` |
-| [`src/renderer/VoxelParticleSystem.js`](src/renderer/VoxelParticleSystem.js) | **VoxelParticleSystem** | 125 | 3D 마이크로 복셀 큐브 물리 파편 및 바닥 튕김(Bounce) 파티클 물리 연산 시스템 | DOM / Canvas Renderer | `VoxelParticleSystem` |
-
----
-
-### 6) 시스템 계층 (`src/systems/`, 18개 모듈)
-
-| 파일 경로 | 모듈명 | 라인 | 책임 (Responsibility) | 순수성 (Purity) | 핵심 공개 심볼 (Exports) |
-| :--- | :--- | :---: | :--- | :--- | :--- |
-| [`src/systems/ArtifactActivationEngine.js`](src/systems/ArtifactActivationEngine.js) | **ArtifactActivationEngine** | 346 | 183종 전설 유물의 고유 발동(Activation) 식별, 쿨다운 관리 및 특수 주문 효과 무상태 발동 엔진 | Stateless System | `ArtifactActivationEngine`, `TOME_ARTIFACT_ACTIVATIONS` |
-| [`src/systems/BossPhaseEngine.js`](src/systems/BossPhaseEngine.js) | **BossPhaseEngine** | 673 | 50F 모르고스의 옥좌 최종 보스전 3단계 페이즈 전환, 암흑 장막/지진/소환 및 승천 파이프라인 | State Store / Logic System | `BossPhaseEngine`, `bossPhaseEngine`, `BOSS_PHASES` |
-| [`src/systems/ConsumableEffectEngine.js`](src/systems/ConsumableEffectEngine.js) | **ConsumableEffectEngine** | 37 | ToME 2.3.5 소비성 아이템 효과 실행기 (TomeConsumableEngine 연동 호환 래퍼) | Stateless Facade | `ConsumableEffectEngine` |
-| [`src/systems/DungeonValueBudgetEngine.js`](src/systems/DungeonValueBudgetEngine.js) | **DungeonValueBudgetEngine** | 603 | 1~50F 4단계 티어 게이팅, 가우시안 OOD 10% 캡, 동적 맵 규격/계단 수식 산출, 저층 보호 및 가치 예산 통제 | Pure Budget Engine | `DungeonValueBudgetEngine`, `DUNGEON_TIER_CONFIGS` |
-| [`src/systems/MonsterAISystem.js`](src/systems/MonsterAISystem.js) | **MonsterAISystem** | 487 | TomeNET 5단계 AI 의사결정 트리(생존 ➔ 가속 ➔ 원거리포격 ➔ 소환 ➔ 디버프 ➔ 근접추적) 전담 엔진 | Stateless System | `MonsterAISystem` |
-| [`src/systems/MonsterSpellFactory.js`](src/systems/MonsterSpellFactory.js) | **MonsterSpellFactory** | 1,023 | 몬스터 코어 장착 시 플레이어 스킬바(1~4 슬롯)에 1:1 정확하게 바인딩하는 순수 의태 스펠 팩토리 | Stateless System / Logic | `ActiveSkill`, `MonsterSpellFactory`, `TOME_ATTACK_DEFINITIONS` |
-| [`src/systems/PlayerStatCalculator.js`](src/systems/PlayerStatCalculator.js) | **PlayerStatCalculator** | 344 | 10대 슬롯 장비, 코어, 버프에 따른 플레이어 실시간 스탯, 저항, 대미지 감쇄 및 속도 산출 | Stateless System | `PlayerStatCalculator` |
-| [`src/systems/StatusEffectEngine.js`](src/systems/StatusEffectEngine.js) | **StatusEffectEngine** | 840 | ToME 14대 상태이상/버프 카탈로그, O(1) 면역/저항 판정, DoT 틱 처리 및 실시간 스탯 보정치 산출 무상태 엔진 | Stateless System | `STATUS_DEFINITIONS`, `StatusEffectEngine` |
-| [`src/systems/TomeConsumableEngine.js`](src/systems/TomeConsumableEngine.js) | **TomeConsumableEngine** | 673 | ToME 포션 45+종, 주문서 42+종, 등불 기름(7,500턴), 음식 및 코어 소비 무상태 엔진 | Stateless Engine | `TomeConsumableEngine` |
-| [`src/systems/TomeDeviceEngine.js`](src/systems/TomeDeviceEngine.js) | **TomeDeviceEngine** | 397 | ToME 마법 완드(30종), 스태프(20종), 로드(28종) 발동 및 충전량/쿨다운 제어 엔진 | Stateless Engine | `TomeDeviceEngine` |
-| [`src/systems/TomeEgoEngine.js`](src/systems/TomeEgoEngine.js) | **TomeEgoEngine** | 227 | 101종 에고 및 183종 유물의 슬레이(Slay), 속성 브랜드, 저항, Free Action 등 판정 엔진 | Stateless System | `TomeEgoEngine` |
-| [`src/systems/TomeEquipmentEngine.js`](src/systems/TomeEquipmentEngine.js) | **TomeEquipmentEngine** | 340 | ToME tval 기반 18대 슬롯 매핑, 아스키 심볼, 무게, 방어력(AC) 무상태 연산 엔진 | Pure Stateless Engine | `TomeEquipmentEngine`, `TVAL` |
-| [`src/systems/TomeFlagResolver.js`](src/systems/TomeFlagResolver.js) | **TomeFlagResolver** | 386 | ToME 비트 플래그/속성/저항/슬레이/면역을 O(1) Set으로 일괄 추출 및 병합하는 무상태 엔진 | Stateless System | `TomeFlagResolver` |
-| [`src/systems/TomeLootGenerator.js`](src/systems/TomeLootGenerator.js) | **TomeLootGenerator** | 276 | 던전 깊이(Depth)별 아이템 롤링, 에고 접사 합성 및 전설 유물 드랍 파이프라인 엔진 | Pure Loot Factory | `TomeLootGenerator` |
-| [`src/systems/TomeSpellEngine.js`](src/systems/TomeSpellEngine.js) | **TomeSpellEngine** | 893 | 91종 주문/브레스/7대 공격 체계 및 20 Methods x 27 Effects On-Hit 총괄 주문/전투 엔진 | Stateless System | `TomeSpellEngine`, `TOME_CANONICAL_SPELLS`, `TOME_ATTACK_METHODS` |
-| [`src/systems/UnifiedTraitEngine.js`](src/systems/UnifiedTraitEngine.js) | **UnifiedTraitEngine** | 442 | 플래그 정밀 해석을 통한 6대 스탯, 21종 저항률(%), 광원 반경, 속도, 면역 일괄 산출 엔진 | Stateless System | `UnifiedTraitEngine` |
-| [`src/systems/UniqueMonsterManager.js`](src/systems/UniqueMonsterManager.js) | **UniqueMonsterManager** | 561 | 168종 유니크 몬스터 1회성 스폰 생태계 제어, 전설 유물 확정 드랍 파이프라인 엔진 | State Store / Logic System | `UniqueMonsterManager`, `uniqueMonsterManager` |
-| [`src/systems/VisionLightingEngine.js`](src/systems/VisionLightingEngine.js) | **VisionLightingEngine** | 246 | ToME 광원 반경, 9종 ESP 텔레파시, 적외선 시야, 투명 감지 종합 연산 시야/조명 엔진 | Stateless System | `VisionLightingEngine` |
-
----
-
-### 7) UI 및 엔트리 계층 (`src/ui/`, `src/`, 9개 모듈)
-
-| 파일 경로 | 모듈명 | 라인 | 책임 (Responsibility) | 순수성 (Purity) | 핵심 공개 심볼 (Exports) |
-| :--- | :--- | :---: | :--- | :--- | :--- |
-| [`src/ui/AscensionModalView.js`](src/ui/AscensionModalView.js) | **AscensionModalView** | 1,351 | 50F 승천 엔딩 컷씬, 발리노르의 빛 연출, 영구 명예의 전당/사망 묘비명 3단 탭 상세 인스펙터 | DOM Manager / State Store | `saveAscensionRecord`, `getHallOfFameRecords`, `saveGraveyardRecord` |
-| [`src/ui/HUDView.js`](src/ui/HUDView.js) | **HUDView** | 813 | 상단 상태바(SPD, HP, Floor), 플레이어 상세 스테이터스창, 마스터리 도감 뷰 렌더러 | DOM Renderer | `renderPlayerStatusPanelHTML`, `renderPlayerDetailsHTML`, `renderSkillTreeHTML` |
-| [`src/ui/InspectModalView.js`](src/ui/InspectModalView.js) | **InspectModalView** | 373 | 몬스터 48px 피킹 팝업 및 스탯 기여도(Breakdown), 시너지, 상태이상 분석 뷰 | DOM Renderer | `renderMonsterInspectHTML` |
-| [`src/ui/InventoryView.js`](src/ui/InventoryView.js) | **InventoryView** | 839 | 모던 인벤토리 그리드, 4대 의태 스킬 프리뷰 카드, 장비 인스펙터 및 코어 장착/포식 뷰 | DOM Renderer | `EQUIP_BADGE_STYLES`, `TOME_FLAG_TRANSLATIONS`, `renderInventorySlotHTML` |
-| [`src/ui/MonsterLoreView.js`](src/ui/MonsterLoreView.js) | **MonsterLoreView** | 620 | TomeNET 스타일 851종 몬스터 도감, 168종 유니크 처치 체크리스트 및 로어 뷰 렌더러 | DOM Renderer | `renderMonsterLoreModalHTML`, `renderMonsterBestiaryHTML`, `renderUniqueChecklistHTML` |
-| [`src/ui/UIManager.js`](src/ui/UIManager.js) | **UIManager** | 257 | 클라이언트 DOM 모달, HUD 상태바, 전투 로그 및 사용자 인터랙션 뷰 라우팅 중앙 관리자 | DOM Manager / State Store | `UIManager` |
-| [`src/ui/VirtualController.js`](src/ui/VirtualController.js) | **VirtualController** | 42 | 모바일 터치 환경을 위한 온스크린 가상 D-패드 및 액션 버튼 이벤트 컨트롤러 | DOM Event Handler | `VirtualController` |
-| [`src/main.js`](src/main.js) | **main** | 60 | 엔진 부트스트랩 및 모듈 초기화 진입점 | Entrypoint | - |
-| [`src/counter.js`](src/counter.js) | **counter** | 9 | 경량 카운터 유틸리티 | Pure Function | `setupCounter` |
-
----
-
-**© 2026 OpenDCMart Engine Team.** All rights reserved.
+| 파일 경로 | 모듈명 | 카테고리 | 라인 | 책임 (Responsibility) | 순수성 (Purity) | 공개 심볼 (Exports) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| [`src/configs/BalancePresets.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/configs/BalancePresets.js) | **BalancePresets** | `configs` | 147 | 미미크리 복셀 4대 밸런스 프리셋 및 사용자 정의 모디파이어 레지스트리 | Pure Constants | `BALANCE_PRESET_TYPES, BALANCE_PRESETS, getPresetConfig` |
+| [`src/configs/DungeonThemeConfig.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/configs/DungeonThemeConfig.js) | **DungeonThemeConfig** | `configs` | 428 | 1~50층 5대 테마 던전 층계 명세, 테마별 타일 색상/복셀 팔레트, Vault 및 Monster Pit 스폰 확률 및 몬스터 계열 가중치 설정 | Pure Constants | `DUNGEON_THEMES, DUNGEON_THEME_KEYS, getThemeForFloor 외 5개` |
+| [`src/configs/GameBalanceConfig.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/configs/GameBalanceConfig.js) | **GameBalanceConfig** | `configs` | 421 | 게임 밸런스 공식, 레벨업 성장 곡선, 무게/속도 제약, 무기 숙련도, 전투 주사위 공식, 속성 저항 계수 및 드랍 확률 중앙화 설정 | Pure Function | `COMBAT_CONFIG, LEVEL_CONFIG, WEIGHT_CONFIG 외 23개` |
+| [`src/configs/RenderConfig.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/configs/RenderConfig.js) | **RenderConfig** | `configs` | 121 | 3D 복셀 렌더러 지오메트리 규격, 카메라/뷰포트 배율, 조명 및 앰비언트 오클루전, 파티클 물리 및 탄도학 통합 설정 | Pure Constants | `BASE_TILE_WIDTH, BASE_TILE_HEIGHT, BASE_BLOCK_HEIGHT 외 12개` |
+| [`src/configs/ThemeColors.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/configs/ThemeColors.js) | **ThemeColors** | `configs` | 325 | ToME 2.3.5 정통 16색 ANSI 터미널 팔레트(TERM_COLORS), 7대 원소 팔레트, 4대 아이템 등급 색상, 터미널 폰트 스택 및 레트로 크로매틱 글로우 스타일 통합 설정 | Pure Constants | `TERM_COLORS, ANSI_PALETTE_INDEX, TERMINAL_FONT_STACK 외 13개` |
+| [`src/core/CombatCalculator.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/CombatCalculator.js) | **CombatCalculator** | `core` | 1022 | 전투 주사위 롤링, 대미지 계산, 치명타 판정, 방어력 감쇄 및 시너지 효과 연산 전담 수학 연산 엔진 | Stateless System | `COMBAT_CONFIG, SYNERGY_TRIGGERS, SPELL_SYNERGY_TRIGGERS 외 1개` |
+| [`src/core/CombatSystem.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/CombatSystem.js) | **CombatSystem** | `core` | 544 | 전투 판정 및 격발 오케스트레이션을 일괄 처리하는 중앙 조율 시스템 모듈. 세부적인 수학 연산, 원소 결합 레지스트리, 전리품 루팅 및 50F 보스 페이즈 전환 제어를 슬림하게 조율합니다. | Stateless System / Orchestrator | `CombatSystem` |
+| [`src/core/Effects.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Effects.js) | **Effects** | `core` | 745 | 게임 내 2.5D 아이소메트릭 기반 실시간 데이터 지향 스킬 비주얼 이펙트 파이프라인 엔진 모듈. Skills.js 및 CombatSystem.js의 스킬 엔티티 메타데이터(원소, 사거리, 각도, 글리프, 투사체 형태, 결합 반응)를 주입받아 3D 고밀도 미니 복셀 입자 스트림 브레스(SkillConeBreathEffect), 3D 포물선 탄도학 & 공전 에너지 링 마법 투사체(SkillProjectileEffect), 연속 전도 레이저/낙뢰 빔(SkillBeamEffect), 2.5D 등각타원 슬래시 아크(SkillMeleeSlashEffect), 3D 앵커링 플로팅 텍스트(FloatingTextEffect), 광역 폭발(AoEExplosionEffect)을 정석 아이소메트릭 좌표계(toScreen)로 통합 렌더링합니다. | Stateless System / Logic | `AoEExplosionEffect, ConeBreathEffect, ELEMENT_THEMES 외 7개` |
+| [`src/core/Game.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Game.js) | **Game** | `core` | 2225 | 미미크리 로그라이크 핵심 게임 루프, 턴 스케줄링, 엔티티 상호작용 및 UI 모달 이벤트 통합 조율 오케스트레이터 | State Store | `Game` |
+| [`src/core/GameEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/GameEngine.js) | **GameEngine** | `core` | 88 | 순수 턴 스케줄링, 엔티티 라이프사이클 관리 및 EventBus 기반 메시지 디스패치를 전담하는 슬림 엔진 코어 | State Store / Logic Engine | `GameEngine` |
+| [`src/core/Input.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Input.js) | **Input** | `core` | 116 | 키보드(화살표, WASD, 넘패드), 마우스 및 가상 패드 입력을 추상화된 게임 액션으로 매핑하고 발송하는 입력 제어 모듈 | DOM Event Handler | `Input` |
+| [`src/core/LootSystem.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/LootSystem.js) | **LootSystem** | `core` | 308 | 몬스터 처치 시 전리품(정수 코어, 유니크 전설 유물, 에고 장비) 드롭 확률 연산, 경험치(XP) 가산 공식, 로어 숙련도 계산 및 처치 로그 취합 등 몬스터 사망에 수반되는 모든 후처리 보상 라이프사이클을 제어하는 전담 모듈 | Stateless Logic / System | `LootSystem` |
+| [`src/core/ReactionRegistry.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/ReactionRegistry.js) | **ReactionRegistry** | `core` | 152 | 원소 간의 결합 반응 및 상태이상 디버프 전파 처리를 전담하는 격리형 레지스트리 모듈. 모든 원소 반응 공식, 추가 데미지 다이스 및 상태이상 턴 수 계산 등을 전투 본체와 디커플링합니다. | Stateless System / Logic | `ELEMENTAL_REACTIONS, applyMonsterDebuff` |
+| [`src/core/Renderer.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Renderer.js) | **Renderer** | `core` | 13 | Mimicry Roguelike 핵심 렌더러 모듈. 차세대 3D 다층 복셀(Voxel3DRenderer) 파이프라인을 온전히 상속 및 바인딩하여 100% 호환성을 제공합니다. | Stateless System / Logic | `Renderer` |
+| [`src/core/SaveSystem.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/SaveSystem.js) | **SaveSystem** | `core` | 535 | 로컬스토리지 기반 다중 슬롯 게임 상태(맵, 플레이어, 인벤토리, 몬스터, 유니크 몬스터 생태계) 직렬화 및 역직렬화 세이브/로드 엔진 | State Store | `SAVE_SLOTS, SaveSystem` |
+| [`src/core/Skills.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Skills.js) | **Skills** | `core` | 788 | 플레이어 및 몬스터 스킬 시스템 설정 모듈. ToME 2.3.5 정통 851종 스펠/타격(TomeSpellEngine)과 100% 직결되어 동적 스킬 트리(CORE_SKILL_TREES) 및 액티브 스킬 설정을 제공합니다. | Stateless System / Logic | `ACTIVE_SKILL_CONFIGS, BASE_SKILL_TREES, CORE_SKILL_TREES 외 4개` |
+| [`src/core/Spawner.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Spawner.js) | **Spawner** | `core` | 799 | ToME 2.3.5 정통 던전 깊이(Depth) 기반 동적 몬스터 및 아이템 스포너 엔진. 851종 몬스터 풀, 유니크 몬스터 1회성 스폰 생태계, Vault 및 Monster Pit 전용 군집 스폰, 테마별 절차적 배치 지원. | Pure Factory / Spawner Logic | `Spawner, SPECIAL_MONSTER_PACKS, MONSTER_PIT_THEMES 외 1개` |
+| [`src/core/TraceLogger.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/TraceLogger.js) | **TraceLogger** | `core` | 64 | 게임의 복잡한 스탯 재계산 격발 원인, 더티 플래그 만료 시점 및 전투 대미지 감쇄 계산 경로 등 모든 중요 상태 변화 시점을 정밀하게 기록하고 역추적(Traceability)할 수 있도록 전담하는 중앙 집중형 디버그 로그 엔진. | Stateless System / Logic | `TraceLogger` |
+| [`src/core/UIHelper.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/UIHelper.js) | **UIHelper** | `core` | 34 | UI 컴포넌트 3분할(InventoryView, InspectModalView, HUDView, UIManager) 통합 경량 파사드 모듈 | DOM Facade / Pure Export | `EQUIP_BADGE_STYLES, renderInventorySlotHTML, renderItemDetailHTML 외 11개` |
+| [`src/counter.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/counter.js) | **counter** | `root` | 9 | counter module | Unspecified | `setupCounter` |
+| [`src/entities/Item.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/Item.js) | **Item** | `entities` | 338 | 던전 바닥 및 인벤토리 내의 장비, 소모품, 마법 디바이스, 정수 코어 아이템 데이터 컨테이너 모델 | Zero-Logic Data Container | `Item` |
+| [`src/entities/ItemRegistry.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/ItemRegistry.js) | **ItemRegistry** | `entities` | 824 | ToME 2.3.5 기반 560+종 기본 아이템 및 190+종 전설 유물(Artifacts) 중앙 레지스트리 | Pure Registry / Data Store | `TOME_BASE_ITEMS, TOME_ARTIFACTS, createTomeItem 외 2개` |
+| [`src/entities/MimicBody.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/MimicBody.js) | **MimicBody** | `entities` | 457 | 무정형 미믹의 영구 본체 컨테이너 클래스. 메인 코어의 탈착과 상관없이 스탯, 로어 숙련도, 몬스터 킬 카운트, 돌연변이 태그를 영구 보존하며 무게 한도 및 감속 배율을 수학적으로 도출합니다. | State Store / Logic Container | `WEAPON_MASTERY_CONFIG, WEAPON_REQUIREMENT_CONFIG, MimicBody` |
+| [`src/entities/Monster.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/Monster.js) | **Monster** | `entities` | 543 | 몬스터 엔티티 모델 (Zero-Logic 순수 데이터 컴포넌트). 스펠/공격 연산은 TomeSpellEngine에, 스탯/저항/플래그 판정은 TomeFlagResolver 및 UnifiedTraitEngine에 위임합니다. | Data Model / State Store | `MONSTER_ATTACK_SKILL_NAMES, Monster` |
+| [`src/entities/MonsterRegistry.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/MonsterRegistry.js) | **MonsterRegistry** | `entities` | 216 | 몬스터 종족(Species) 및 ToME 오픈소스 몬스터 마스터 데이터셋(851종) 중앙 제어 레지스트리 | Pure Registry / Data Store | `MONSTER_GROWTH_PATTERNS, MONSTER_SPECIES, LEGACY_TOME_ALIASES_MAP 외 4개` |
+| [`src/entities/Perks.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/Perks.js) | **Perks** | `entities` | 281 | ToME 2.3.5 정통 플래그 및 변이(Mutations/Perks) 시스템 통합 정의 모듈. TomeFlagResolver 및 UnifiedTraitEngine과 직결되어 스탯 가중치, 행동 가속도, 상태이상 면역을 관리합니다. | Stateless / Pure Registry | `MONSTER_PERKS, getPerkDefinition` |
+| [`src/entities/Player.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/Player.js) | **Player** | `entities` | 1121 | 플레이어 엔티티 모델 (Zero-Logic 순수 데이터 컴포넌트). 스탯/저항/광원 계산은 UnifiedTraitEngine 및 PlayerStatCalculator에, 의태 스킬 관리는 MonsterSpellFactory 및 TomeSpellEngine에 100% 위임합니다. | Data Model / State Store | `Player` |
+| [`src/entities/Tags.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/Tags.js) | **Tags** | `entities` | 572 | 장비 및 몬스터에 적용되는 접두사(Prefix)와 접미사(Suffix) 태그 시스템 정의 모듈. 등급 색상, 크로매틱 애니메이션 연산, 무작위 롤링 함수 및 원소 메타데이터(ELEMENT_METADATA)를 통합 관리합니다. | Data Model / State Store | `ELEMENT_METADATA, PREFIX_TAGS, SUFFIX_TAGS 외 6개` |
+| [`src/entities/TomeArtifactsData.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/TomeArtifactsData.js) | **TomeArtifactsData** | `entities` | 5944 | ToME 2.3.5 정통 190종 전설 유물(Artifacts) 정적 데이터셋. | Data Model / State Store | `TOME_ARTIFACTS_DATA` |
+| [`src/entities/TomeEgosData.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/TomeEgosData.js) | **TomeEgosData.js** | `entities` | 1168 | ToME 2.3.5 Pure ESM Data Module (101 entries) | Data Model / State Store | `TOME_EGOS_DATA` |
+| [`src/entities/TomeKindsData.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/TomeKindsData.js) | **TomeKindsData** | `entities` | 9988 | ToME 2.3.5 정통 560종 베이스 아이템(Kinds) 정적 데이터셋. | Data Model / State Store | `TOME_KINDS_DATA` |
+| [`src/entities/TomeMonstersData.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/TomeMonstersData.js) | **TomeMonstersData.js** | `entities` | 57880 | ToME 2.3.5 Pure ESM Data Module (851 entries) | Data Model / State Store | `TOME_MONSTERS_DATA` |
+| [`src/entities/VoxelMimicBridge.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/VoxelMimicBridge.js) | **VoxelMimicBridge** | `entities` | 97 | 미믹(Mimic)의 코어 융합, 변신(위장), 포식, 몬스터별 3D 크로매틱 셰이딩 및 복셀 모핑 이펙트 연동 브릿지. | Data Model / State Store | `VoxelMimicBridge` |
+| [`src/events/EventBus.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/events/EventBus.js) | **EventBus** | `events` | 81 | 게임 엔진과 UI 컴포넌트 간의 결합도를 완전히 분리하는 싱글톤 Pub/Sub 중앙 메시지 브로커 | State Store / Event Broker | `EventBus, eventBus` |
+| [`src/events/GameEvents.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/events/GameEvents.js) | **GameEvents** | `events` | 61 | 미미크리 게임 엔진과 UI/시스템 간의 결합도를 낮추기 위한 중앙 이벤트 식별자 열거형 상수 | Pure Constants | `GameEvents` |
+| [`src/main.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/main.js) | **main** | `root` | 60 | main module | Unspecified | `-` |
+| [`src/map/Map.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/map/Map.js) | **Map** | `map` | 757 | 1~50층 5대 테마 던전 절차적 생성기, 타일 충돌/투명도 FOV 판정, 보스룸 및 특수 지형(보물 금고 Vault & 몬스터 피트 Monster Pit) 배치 시스템 | Data Model / State Store | `RectRoom, Map` |
+| [`src/map/Voxel3DMapBridge.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/map/Voxel3DMapBridge.js) | **Voxel3DMapBridge** | `map` | 200 | 2D 던전 맵 타일 데이터를 차세대 3D 다층 높이맵(Z=0~3) 복셀 블록 스택으로 변환 및 동기화하는 브릿지 시스템 | Data Model / State Store | `VOXEL_THEMES, Voxel3DMapBridge` |
+| [`src/renderer/Classic2DAsciiRenderer.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/Classic2DAsciiRenderer.js) | **Classic2DAsciiRenderer** | `renderer` | 443 | 원본 Mimicry 정통 2D 탑다운 격자(ASCII Grid) 렌더러. 클래식 로그라이크 스타일의 2D 타일 폰트 렌더링, 시야/안개 시스템, 엔티티 및 아이템 심볼 표시를 지원하며, Game.js 및 Effects.js와의 100% 드롭인(Drop-in) 호환성을 보장합니다. | DOM / Canvas Renderer | `Classic2DAsciiRenderer` |
+| [`src/renderer/FirstPerson3DRenderer.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/FirstPerson3DRenderer.js) | **FirstPerson3DRenderer** | `renderer` | 455 | 초기 둠 / 위저드리 시점 DDA 레이캐스팅 1인칭 3D 텍스처 어드벤처 렌더러. 나노바나나 생성 텍스처 매핑, 거리 감쇄 안개(Depth Fog), 빌보드 스프라이트 및 미니맵 레이더 제공 | DOM / Canvas Renderer | `FirstPerson3DRenderer` |
+| [`src/renderer/TextureManager.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/TextureManager.js) | **TextureManager** | `renderer` | 127 | 나노바나나(Imagen) 생성 5대 던전 테마 텍스처 및 바닥재 비동기 로딩, 캐싱 및 절차적 캔버스 패턴 폴백 가드 매니저 | State Store / Pure Loader | `TextureManager, textureManager, TEXTURE_PATHS` |
+| [`src/renderer/Voxel3DRenderer.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/Voxel3DRenderer.js) | **Voxel3DRenderer** | `renderer` | 647 | Mimicry Roguelike 차세대 3D 다층 복셀(Voxel) 렌더러. 정석 2.5D 아이소메트릭 중앙 정렬 좌표계, 반응형 화면비(Galaxy Fold 등) 실시간 적응, 표준 로그라이크 FOV 시스템, 실시간 포인트 라이트 및 3D 마이크로 복셀 파편 물리 통합 렌더링. | DOM / Canvas Renderer | `Voxel3DRenderer` |
+| [`src/renderer/VoxelParticleSystem.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/VoxelParticleSystem.js) | **VoxelParticleSystem** | `renderer` | 125 | 3D 마이크로 복셀 큐브 물리 파편 및 파티클 연산 시스템. 피격, 처치, 걷기, 포식, 레벨업 시 3D 회전과 바닥 튕김(Bounce) 물리 연산을 지원합니다. | DOM / Canvas Renderer | `VoxelParticleSystem` |
+| [`src/systems/ArtifactActivationEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/ArtifactActivationEngine.js) | **ArtifactActivationEngine** | `systems` | 346 | ToME 2.3.5 정통 183종 전설 유물의 고유 발동(Activation: ACT_SUNLIGHT, ACT_BO_ACID_1, ACT_BA_COLD_1, ACT_HEAL_1, ACT_RESTORE_STAT, ACT_WORD_OF_RECALL, ACT_GROND, ACT_THRAIN 등)을 식별하고 쿨다운(Cooldown) 관리 및 특수 주문 효과를 발동하는 순수 무상태 유물 발동 엔진. | Stateless System | `ArtifactActivationEngine, TOME_ARTIFACT_ACTIVATIONS, ARTIFACT_KEY_TO_ACTIVATION` |
+| [`src/systems/BalanceModifierManager.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/BalanceModifierManager.js) | **BalanceModifierManager** | `systems` | 142 | 게임 시작 옵션 및 런타임 밸런싱 모디파이어를 병합/평가하고 변경 이벤트를 발행하는 중앙 관리자 | State Store / Logic System | `BalanceModifierManager, balanceModifierManager` |
+| [`src/systems/BossPhaseEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/BossPhaseEngine.js) | **BossPhaseEngine** | `systems` | 673 | 50F 모르고스의 옥좌 최종 보스전(Morgoth Encounter) 3단계 페이즈 전환 엔진, 암흑 장막/지진/소환/영혼 드레인 스킬 제어 및 승천 보상 파이프라인 | State Store / Logic System | `BossPhaseEngine, bossPhaseEngine, BOSS_PHASES 외 1개` |
+| [`src/systems/CombatVFXEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/CombatVFXEngine.js) | **CombatVFXEngine** | `systems` | 346 | 3대 렌더러(1인칭 3D, 2.5D 복셀, 2D 아스키)를 아우르는 통합 전투 시각 효과 엔진. 나노바나나 에셋 기반 화면 슬래시, 원소 폭발, 화면 흔들림(Screen Shake), 피격 비네팅 및 가산 혼합 파티클 제어 | State Store | `CombatVFXEngine, combatVFXEngine, VFX_TYPES 외 1개` |
+| [`src/systems/ConsumableEffectEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/ConsumableEffectEngine.js) | **ConsumableEffectEngine** | `systems` | 37 | ToME 2.3.5 소비성 아이템 효과 실행기 (TomeConsumableEngine 연동 호환 래퍼) | Stateless Facade | `ConsumableEffectEngine` |
+| [`src/systems/DungeonValueBudgetEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/DungeonValueBudgetEngine.js) | **DungeonValueBudgetEngine** | `systems` | 603 | ToME/TomeNET 정통 층 깊이(Depth 1~50F) 기반 통합 밸류 예산 시스템. 4단계 티어 게이팅(Tier Gating), 가우시안/시그모이드 OOD 스케일링, 동적 맵 크기(Dynamic Map Dimensions) 및 다중 계단(Multiple Staircases) 분산 수식 산출, 장비 인챈트(+to_h, +to_d, +to_a, pval) 및 몬스터 접사/직업/특수방 예산 통제 엔진. | Pure Logic / Budget Calculation Engine | `DungeonValueBudgetEngine, dungeonValueBudgetEngine, DUNGEON_TIER_CONFIGS 외 13개` |
+| [`src/systems/MonsterAISystem.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/MonsterAISystem.js) | **MonsterAISystem** | `systems` | 487 | 몬스터 A* 패스파인딩, 행동 결정(Act), Bat 도주 AI, 브레스/스킬 쿨다운 및 버프/힐 틱 전담 시스템 | Stateless System | `MonsterAISystem` |
+| [`src/systems/MonsterSpellFactory.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/MonsterSpellFactory.js) | **MonsterSpellFactory** | `systems` | 1063 | ToME 2.3.5 정통 몬스터 DB(TomeMonstersData.js)의 106종 spells 플래그 및 attacks 데이터를 100% 기반으로 몬스터 코어 변신 시 플레이어 스킬바(1, 2, 3, 4번 슬롯)에 1:1 정확하게 바인딩하는 순수 의태 스펠 엔진. | Stateless System / Logic | `ActiveSkill, MonsterSpellFactory, TOME_ATTACK_DEFINITIONS 외 1개` |
+| [`src/systems/PlayerStatCalculator.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/PlayerStatCalculator.js) | **PlayerStatCalculator** | `systems` | 344 | 플레이어 동적 스탯 연산, 스탯 Breakdown 기여도 분석, 속성 저항, 대미지 감쇄 및 속도 산출 전담 시스템 | Stateless System | `PlayerStatCalculator` |
+| [`src/systems/StatusEffectEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/StatusEffectEngine.js) | **StatusEffectEngine** | `systems` | 840 | ToME 2.3.5 정통 14대 상태이상/버프 카탈로그 관리, 동적 플래그 저항/면역 판정, 턴별 지속시간 차감 및 DoT 피해(독/출혈/마나고갈) 처리, 스탯 및 속도 보정치를 일괄 산출하는 순수 무상태 엔진. | Stateless System | `STATUS_DEFINITIONS, StatusEffectEngine` |
+| [`src/systems/TomeConsumableEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeConsumableEngine.js) | **TomeConsumableEngine** | `systems` | 784 | ToME 2.3.5 정통 (tval, sval) 기반 포션 45+종, 주문서 42+종, 기름 플라스크, 음식 및 코어 소비 무상태 엔진 | Stateless Engine (State Mutation with Log Feedback) | `TomeConsumableEngine` |
+| [`src/systems/TomeDeviceEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeDeviceEngine.js) | **TomeDeviceEngine** | `systems` | 397 | ToME 2.3.5 정통 마법 디바이스(완드 30종, 스태프 20종, 로드 28종) 발동 및 충전량/쿨다운 무상태 제어 엔진 | Stateless Engine (State Mutation with Log Feedback) | `TomeDeviceEngine` |
+| [`src/systems/TomeEgoEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeEgoEngine.js) | **TomeEgoEngine** | `systems` | 227 | ToME 2.3.5 정통 101종 에고 및 183종 유물의 슬레이(Slay), 속성 브랜드(Brand), 저항(Resist), 상태이상 면역(Free Action), 투시(See Invisible), 초재생(Regen) 등 전투/생존 플래그 판정 엔진 | Stateless System | `TomeEgoEngine` |
+| [`src/systems/TomeEquipmentEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeEquipmentEngine.js) | **TomeEquipmentEngine** | `systems` | 359 | ToME 2.3.5 정통 tval 기반 슬롯(slotType), 아스키 심볼, 무게, 방어력(AC), 무기 카테고리 무상태 연산 엔진 | Pure Stateless Engine | `TomeEquipmentEngine, TVAL` |
+| [`src/systems/TomeFlagResolver.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeFlagResolver.js) | **TomeFlagResolver** | `systems` | 386 | ToME 2.3.5 몬스터 종족(tomeKey), 장비(베이스+에고+유물), 의태 변이(mutations/perks), 소모품 및 임시 상태로부터 모든 ToME 플래그(RES_*, IM_*, LITE*, SUST_*, SLAY_*, ESP_*, FREE_ACT, NO_*, CAN_FLY, PASS_WALL, REFLECT 등)를 O(1) 단일 Set으로 일괄 추출 및 병합하는 순수 무상태 엔진. | Stateless System | `TomeFlagResolver` |
+| [`src/systems/TomeIdentificationEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeIdentificationEngine.js) | **TomeIdentificationEngine** | `systems` | 264 | ToME 2.3.5 / TomeNET 정통 4단계 의사 감정(Pseudo-ID) 및 점진적 정보 개방 무상태 엔진 | Stateless System | `TomeIdentificationEngine, ID_STATES, PSEUDO_SENSES` |
+| [`src/systems/TomeLootGenerator.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeLootGenerator.js) | **TomeLootGenerator** | `systems` | 373 | ToME 2.3.5 정통 알고리즘 기반 던전 깊이(Depth)별 아이템 롤링, 에고(Ego) 접사 합성 및 전설 유물(Artifact) 드랍 파이프라인 엔진 | Pure Loot Factory | `TomeLootGenerator` |
+| [`src/systems/TomeSpellEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeSpellEngine.js) | **TomeSpellEngine** | `systems` | 893 | ToME 2.3.5 정통 몬스터 851종의 106종 C 원작 spells (볼트 14종, 볼 13종, 브레스 21종, 상태이상 23종, 소환 17종, 유틸 18종) 및 20종 attacks 메소드 / 27종 effects를 1:1 정확하게 해석 및 실행하는 통합 주문/전투 엔진. 플레이어 의태 스킬(1~4 슬롯) 및 몬스터 AI 공통 사용. | Stateless System | `TomeSpellEngine, TOME_CANONICAL_SPELLS, TOME_ATTACK_METHODS 외 1개` |
+| [`src/systems/TomeTagSystem.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeTagSystem.js) | **TomeTagSystem** | `systems` | 349 | 데이터 지향 3대 극성(Positive, Neutral, Detrimental) 태그 정의, 저주 장착 결속 제약, 턴 라이프사이클 훅 및 정화 엔진 | Stateless System | `TomeTagSystem, POLARITY, DETRIMENTAL_TAGS` |
+| [`src/systems/UnifiedTraitEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/UnifiedTraitEngine.js) | **UnifiedTraitEngine** | `systems` | 442 | TomeFlagResolver가 취합한 ToME 2.3.5 정통 플래그를 정밀 해석하여 6대 스탯 보너스(str, int, wis, dex, con, chr), 21종 원소 저항률(%) 및 면역(Immunity), 광원 반경(Lite Radius), 속도 보정(Speed), 슬레이(Slay) 및 브랜드(Brand) 공격 배율, 상태이상 면역을 일괄 산출하는 순수 무상태 특성 판정 엔진. | Stateless System | `UnifiedTraitEngine` |
+| [`src/systems/UniqueMonsterManager.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/UniqueMonsterManager.js) | **UniqueMonsterManager** | `systems` | 572 | ToME 2.3.5 정통 168종 유니크 몬스터 1회성 스폰 생태계 제어, 전설 유물 및 특급 에고 확정 드랍 파이프라인 엔진 | State Store / Logic System | `UniqueMonsterManager, uniqueMonsterManager` |
+| [`src/systems/VisionLightingEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/VisionLightingEngine.js) | **VisionLightingEngine** | `systems` | 246 | ToME 2.3.5 정통 광원 반경(Lite Radius), 9종 ESP(초감각 텔레파시: ESP_ORC, ESP_DRAGON, ESP_UNDEAD, ESP_DEMON, ESP_GIANT, ESP_TROLL, ESP_ANIMAL, ESP_HUMAN, ESP_EVIL, TELEPATHY), 적외선 시야(Infravision), 투명 감지(See Invisible)를 종합 연산하는 순수 무상태 시야/조명 엔진. | Stateless System | `VisionLightingEngine` |
+| [`src/ui/AscensionModalView.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/AscensionModalView.js) | **AscensionModalView** | `ui` | 1351 | 50F 모르고스 토벌 승천(Ascension) 엔딩 컷씬, 발리노르의 빛 연출, 영구 명예의 전당(Hall of Fame) 및 사망 묘비명(Graveyard) 저장/렌더링 및 상세 스펙/인벤토리/전투로그 인스펙터 시스템 | DOM Manager / State Store | `saveAscensionRecord, getHallOfFameRecords, saveGraveyardRecord 외 16개` |
+| [`src/ui/GameStartPresetModalView.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/GameStartPresetModalView.js) | **GameStartPresetModalView** | `ui` | 352 | 게임 시작 시 4대 난이도 프리셋 선택 및 세부 모디파이어(드랍률, 몬스터 밀도, 사망 모드 등) 커스터마이징 대화상자 렌더러 | DOM Renderer | `GameStartPresetModalView, renderPresetModalHTML` |
+| [`src/ui/HUDView.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/HUDView.js) | **HUDView** | `ui` | 814 | 상단 상태바(SPD, HP, Floor), 플레이어 상세 스테이터스창, 스킬 수련 트리, 무기/로어 마스터리 도감 뷰 | DOM Renderer | `renderPlayerStatusPanelHTML, renderPlayerDetailsHTML, renderSkillTreeHTML 외 4개` |
+| [`src/ui/InspectModalView.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/InspectModalView.js) | **InspectModalView** | `ui` | 373 | 몬스터 48px 여유 히트박스 피킹 관찰 팝업 및 4대 스탯 기여도(Breakdown), 시너지, 상태이상 분석 뷰 | DOM Renderer | `renderMonsterInspectHTML` |
+| [`src/ui/InventoryView.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/InventoryView.js) | **InventoryView** | `ui` | 854 | 인벤토리 그리드, 아이템 슬롯, 장착/해제/포식 모달 및 코어 수치 계승 뷰 렌더러 | DOM Renderer | `EQUIP_BADGE_STYLES, TOME_FLAG_TRANSLATIONS, renderInventorySlotHTML 외 3개` |
+| [`src/ui/MonsterLoreView.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/MonsterLoreView.js) | **MonsterLoreView** | `ui` | 698 | TomeNET 스타일 851종 ToME 몬스터 도감, 검색/필터링, 168종 유니크 처치 체크리스트 및 로어/의태 마스터리 뷰 렌더러 | DOM Renderer | `renderMonsterLoreModalHTML, renderMonsterBestiaryHTML, renderUniqueChecklistHTML 외 3개` |
+| [`src/ui/PlayerIdentityModalView.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/PlayerIdentityModalView.js) | **PlayerIdentityModalView** | `ui` | 306 | 모바일 화면에 최적화된 플레이어 아이덴티티, 6대 스탯 보정치, 14대 원소 저항 매트릭스 및 슬레이/패시브 뷰 | DOM Renderer | `PlayerIdentityModalView, renderPlayerIdentityModalHTML` |
+| [`src/ui/SkillHotbarView.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/SkillHotbarView.js) | **SkillHotbarView** | `ui` | 210 | 화면 하단 상시 노출 4대 의태 액티브 스킬 핫바 및 실시간 쿨다운 방사형 애니메이션/원터치 격발 렌더러 | DOM Renderer | `SkillHotbarView, renderSkillHotbarHTML` |
+| [`src/ui/UIManager.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/UIManager.js) | **UIManager** | `ui` | 257 | 게임 클라이언트 DOM 모달, HUD 상태바, 전투 로그 및 사용자 인터랙션 뷰 라우팅 중앙 관리자 | DOM Manager / State Store | `UIManager` |
+| [`src/ui/VirtualController.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/VirtualController.js) | **VirtualController** | `ui` | 42 | 모바일/터치 환경을 위한 온스크린 가상 D-패드 및 액션 버튼 이벤트 바인딩 컨트롤러 | DOM Event Handler | `VirtualController` |
