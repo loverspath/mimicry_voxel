@@ -1,11 +1,11 @@
-# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.27.0)
+# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.28.0)
 
-> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 13 집대성)**
+> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 14 집대성)**
 
-[![Version](https://img.shields.io/badge/version-0.27.0-emerald.svg)](package.json)
+[![Version](https://img.shields.io/badge/version-0.28.0-emerald.svg)](package.json)
 [![Tests](https://img.shields.io/badge/test%20suites-59%2F59%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
-[![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(108%2C513%20LOC)-indigo.svg)](CODE_META_INDEX.md)
-[![Engines](https://img.shields.io/badge/stateless%20engines-15%20engines%20(Realistic%20Voxel%20Stairs)-blue.svg)](src/systems/)
+[![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(108%2C907%20LOC)-indigo.svg)](CODE_META_INDEX.md)
+[![Engines](https://img.shields.io/badge/stateless%20engines-15%20engines%20(Floor--To--Ceiling%20Voxel%20Stairs)-blue.svg)](src/systems/)
 [![Renderers](https://img.shields.io/badge/tri--mode%20renderers-Voxel%20|%203D%20|%20ASCII-teal.svg)](src/renderer/)
 [![Entities](https://img.shields.io/badge/canonical%20entities-1%2C636-purple.svg)](src/entities/)
 [![Architecture](https://img.shields.io/badge/architecture-5--layer%20Clean%20DOD-orange.svg)](src/meta/code_meta_index.json)
@@ -15,11 +15,11 @@
 ## 🧭 프로젝트 개요 및 엔진 진화 여정
 
 **미미크리 복셀(Mimicry Voxel)**은 플레이어가 쓰러뜨린 몬스터의 정수 코어(Core)를 흡수하여 그 신체 능력과 고유 마법을 의태(Mimicry)하는 전술적 복셀 로그라이크 엔진입니다. 
-초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook) & 전면 관통 계단 비콘**, **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템**, **물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 VFX 엔진**, 그리고 **5대 던전 테마 맞춤형 바닥 & 천장 실사 텍스처 10종 탑재 및 90s 레트로 정통 플로어캐스팅/실링캐스팅 렌더러**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
+초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook)**, **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템**, **물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 VFX 엔진**, **5대 던전 테마 맞춤형 바닥 & 천장 실사 텍스처 10종 탑재 및 플로어캐스팅 렌더러**, 그리고 **1인칭 3D 공간 일체화(2x2 멀티타일 매핑, 접촉 AO 그림자, 60fps 보행밥) 및 정통 3D 복셀 석조 계단(하행 지하 개구부 & 상행 고딕 아치 포털) 리얼리스틱 렌더러**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
 
 ```mermaid
 timeline
-    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 13)
+    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 14)
     Phase 1 : 3대 원소 상호작용 프로토타입 (v0.1.0 ~ v0.6.0)
             : 의태 코어 흡수 및 기초 복셀 렌더러 구축
     Phase 2 : 5대 갓오브젝트 해체 및 5대 계층 클린 아키텍처 확립 (v0.7.0 ~ v0.12.0)
@@ -46,6 +46,8 @@ timeline
             : 상대경로 리졸버, naturalWidth/Height 정밀 슬라이스, 절차적 벽돌 폴백
     Phase 13: 5대 테마 바닥/천장 실사 텍스처 10종 & 플로어캐스팅 완비 (v0.27.0)
             : 10종 실사 텍스처, 128x128 픽셀 버퍼, 90s 레트로 플로어/실링캐스팅
+    Phase 14: 1인칭 3D 공간 일체화 & 정통 3D 석조 계단 완비 (v0.28.0)
+            : 2x2 멀티타일/AO/보행밥, 3단 석조 계단(함몰구/고딕아치), 네온 철거
 ```
 
 ---
@@ -79,6 +81,37 @@ timeline
 │    (TomeMonstersData, TomeArtifactsData, GameBalanceConfig) │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 🏛️ Phase 14: 1인칭 3D 공간 일체화 및 정통 3D 복셀 석조 계단(하행 지하 개구부 & 상행 고딕 아치 포털) 리얼리스틱 렌더러 완비 (v0.28.0)
+
+### 🏛️ v0.28.0 — 1인칭 3D 공간 일체화 및 정통 3D 복셀 석조 계단(하행 지하 개구부 & 상행 고딕 아치 포털) 리얼리스틱 렌더러 완비
+- **배포일**: 2026-09-03 | **버전**: `v0.28.0` | **모듈 현황**: 75개 모듈 (108,513 LOC) | **테스트 통과**: 59/59 Suites (100% ALL PASS)
+- **개요 및 설계 배경**:
+  - 미미크리 복셀 1인칭 3D 던전 뷰(`FirstPerson3DRenderer.js`)에서 바닥과 천장이 타일마다 동일 패턴으로 끊겨 보이던 1타일 주기성 착시를 제거하고, 벽면-바닥-천장이 완벽한 일체감을 갖도록 **2x2 멀티타일 매핑, 타일 줄눈(Grout Lines) 셰이딩, 접촉면 Ambient Occlusion(AO) 그림자, 60fps 부드러운 카메라 보간(Lerp) 및 보행 밥(Head Bobbing)**을 구축하였습니다.
+  - 아울러, 던전의 몰입감을 저해하던 아케이드풍 수직 네온 빔/기둥을 완전히 철거하고, 고전 다크 판타지 로그라이크 본연의 건축학적 **정통 3D 복셀 석조 계단(하행 지하 개구부 & 상행 고딕 아치 포털)**으로 전면 리빌딩하였습니다.
+  - 하향 계단(`>`)은 3단계로 점진적으로 함몰되는 지하 개구부(Pit Hole), 석조 난간, 지하 심연으로 이어지는 발판과 어둠 그라디언트를 렌더링하며, 상향 계단(`<`)은 3단계로 솟아오르는 석재 블록과 고딕 석조 아치 포털, 상층부 광휘 역광(Backlit Glow)을 정밀 투영합니다.
+  - 계단 전용 실사 텍스처 2종(`tex_stairs_down.jpg`, `tex_stairs_up.jpg`)을 탑재하고 `TextureManager.js`에 프리로드 파이프라인을 연동하여 시각적 완성도를 극대화하였습니다.
+
+- **주요 변경 사항**:
+  1. **1인칭 3D 던전 공간 일체화 엔진 ([`src/renderer/FirstPerson3DRenderer.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/FirstPerson3DRenderer.js))**:
+     - **2x2 멀티타일 매핑**: 바닥과 천장의 텍스처 좌표를 2x2 월드 타일 단위로 확장($u = (x \pmod 2) \cdot 0.5$, $v = (y \pmod 2) \cdot 0.5$)하여 1타일 반복 착시를 원천 차단하고 광활한 공간감 형성.
+     - **타일 줄눈(Grout Line) 셰이딩**: 타일 경계선 부근 픽셀에 자연스러운 줄눈 음영을 절차적으로 부가하여 정교한 석조 바닥 질감 연출.
+     - **접촉면 Ambient Occlusion 그림자**: 벽면과 바닥/천장이 맞닿는 수직 경계선에 거리 및 높이 비례 접촉 음영(Contact Shadow)을 베이킹하여 입체감 극대화.
+     - **60fps 카메라 보간 & 보행 밥 (Camera Lerp & Head Bobbing)**: 플레이어 턴 이동 시 좌표 선형 보간($\alpha = 0.15$) 및 이동 시 보행 밥 주기($\sin(t \cdot 8) \cdot 3\text{px}$)를 적용하여 부드러운 1인칭 보행감 구현.
+  2. **정통 3D 복셀 석조 계단 리얼리스틱 렌더러 ([`src/renderer/FirstPerson3DRenderer.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/FirstPerson3DRenderer.js))**:
+     - 이질적인 아케이드풍 원색 네온 빔/기둥 완전 철거.
+     - **하향 계단(`>`)**: 바닥 면을 뚫고 지하로 내려가는 3단계 함몰 석조 발판(Pit Hole), 양측 석조 난간, 어두운 심연으로 사라지는 깊이감 렌더링.
+     - **상향 계단(`<`)**: 3단계로 솟아오르는 석재 디딤돌 블록, 상부를 감싸는 고딕 아치 석조 기둥, 상층부로부터 쏟아지는 부드러운 광휘 역광 투영.
+     - **계단 전용 실사 텍스처 에셋 2종 탑재**: `public/textures/tex_stairs_down.jpg` (하향 지하 석조 계단), `public/textures/tex_stairs_up.jpg` (상향 고딕 아치 계단).
+  3. **텍스처 매니저 및 픽셀 버퍼 캐시 확장 ([`src/renderer/TextureManager.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/TextureManager.js))**:
+     - `tex_stairs_down`, `tex_stairs_up` 텍스처를 기동 즉시 자동 프리로드 및 메모리 캐시 등록.
+     - $128 \times 128$ 오프스크린 픽셀 버퍼 캐싱을 통한 실시간 계단 텍스처 고속 룩업 지원.
+  4. **단위/통합 테스트 확장 및 무결성 검증**:
+     - [`scripts/test_first_person_3d_renderer.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/scripts/test_first_person_3d_renderer.js)에 계단 텍스처 프리로드, 2x2 멀티타일 좌표 연산, 하향/상향 석조 계단 기하학적 렌더링 및 카메라 보간 무결성 테스트 추가.
+     - **59개 전체 테스트 스위트 100% ALL PASS 달성 (59/59 PASSED, 0 FAILED)**.
+     - **메타 인덱서 갱신**: `meta_indexer.py --update-wiki` 실행으로 75개 모듈(108,513 LOC) 메타 인덱스 및 위키 문서 최신화 완료.
 
 ---
 
@@ -585,8 +618,8 @@ timeline
 
 | 분류 | 수치 및 상태 | 비고 |
 | :--- | :--- | :--- |
-| **전체 테스트 스위트** | **59 / 59 ALL PASSED (100%)** | 1,850개 이상 단언문 회귀 결함 0건 완벽 방어 |
-| **스캔된 아키텍처 모듈** | **75개 모듈 (108,513 라인)** | `meta_indexer.py` 정밀 검증 및 위키 동기화 |
+| **전체 테스트 스위트** | **59 / 59 ALL PASSED (100%)** | 1,875개 이상 단언문 회귀 결함 0건 완벽 방어 |
+| **스캔된 아키텍처 모듈** | **75개 모듈 (108,907 라인)** | `meta_indexer.py` 정밀 검증 및 위키 동기화 |
 | **정통 ToME 엔티티** | **1,636종 정규 엔티티** | 몬스터, 아티팩트, 에고, 아이템 카탈로그 |
 | **시스템 전담 엔진** | **15대 전담 엔진** | CombatVFX, Loot, Spawner, Budget, Status, AI, Spells, Tags 등 |
 | **배포 버전** | **v0.21.0 (Next-Gen 3D & VFX Release)** | 독립 포크(`fork_experimental/`) 패키징 완료 |

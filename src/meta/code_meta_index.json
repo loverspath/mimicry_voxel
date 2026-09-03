@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-09-03T04:41:33Z",
+  "generatedAt": "2026-09-03T05:17:05Z",
   "summary": {
     "totalModules": 75,
-    "totalLines": 108513,
+    "totalLines": 108907,
     "categories": {
       "configs": 5,
       "core": 14,
@@ -1029,7 +1029,7 @@
       "filePath": "src/renderer/FirstPerson3DRenderer.js",
       "moduleName": "FirstPerson3DRenderer",
       "category": "renderer",
-      "lines": 1252,
+      "lines": 1600,
       "responsibility": "초기 둠 / 위저드리 시점 DDA 레이캐스팅 1인칭 3D 텍스처 어드벤처 렌더러. 나노바나나 생성 텍스처 매핑, 거리 감쇄 안개(Depth Fog), 빌보드 스프라이트 및 미니맵 레이더 제공",
       "purity": "DOM / Canvas Renderer",
       "dependencies": [
@@ -1043,15 +1043,16 @@
         "FirstPerson3DRenderer"
       ],
       "functions": [
-        "drawBalustrade"
+        "drawBalustrade",
+        "q"
       ],
-      "lastModified": "2026-09-03T04:40:12Z"
+      "lastModified": "2026-09-03T05:16:06Z"
     },
     {
       "filePath": "src/renderer/TextureManager.js",
       "moduleName": "TextureManager",
       "category": "renderer",
-      "lines": 418,
+      "lines": 464,
       "responsibility": "나노바나나(Imagen) 생성 5대 던전 테마 벽면, 바닥재 및 천장 텍스처 비동기 로딩, 동적 온디맨드 로딩, 픽셀 버퍼 캐싱 및 90s 레트로 플로어캐스팅 지원 매니저",
       "purity": "State Store / Pure Loader",
       "dependencies": [
@@ -1071,6 +1072,8 @@
         "STAIR_TEXTURE_FILENAMES",
         "STAIR_TEXTURE_PATHS",
         "TEXTURE_FILENAMES",
+        "THEMED_STAIR_DOWN_PATHS",
+        "THEMED_STAIR_UP_PATHS",
         "WALL_TEXTURE_FILENAMES"
       ],
       "classes": [
@@ -1079,7 +1082,7 @@
       "functions": [
         "resolveTexturePath"
       ],
-      "lastModified": "2026-09-03T04:38:57Z"
+      "lastModified": "2026-09-03T05:13:37Z"
     },
     {
       "filePath": "src/renderer/Voxel3DRenderer.js",

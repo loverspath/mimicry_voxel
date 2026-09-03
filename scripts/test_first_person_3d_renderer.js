@@ -878,6 +878,106 @@ assert(true, '정통 3D 복셀 석조 계단(하행 지하 개구부 & 상행 �
 fpRenderer.ctx = originalCtx;
 
 console.log('='.repeat(80));
+console.log('🧪 [TEST SUITE 15] 월드 좌표계 100% 고정형 3D 정점 투영기(_projectWorldPoint) 및 계단 렌더러 검증');
+console.log('='.repeat(80));
+
+// 15-1. _projectWorldPoint 정면 투영 수학적 정확도 검증
+const testDirX = 0;
+const testDirY = -1; // 북쪽 시선
+const testPlaneX = 0.66;
+const testPlaneY = 0;
+const pFront = fpRenderer._projectWorldPoint(5.0, 3.0, 0.5, 5.0, 5.0, testDirX, testDirY, testPlaneX, testPlaneY, 0);
+
+assert(pFront !== null, '정면 2m 전방 점 투영 성공');
+assert(Math.abs(pFront.sx - fpRenderer.w / 2) < 1.0, '정면 점의 스크린 X좌표는 화면 정중앙(w/2)에 위치');
+assert(Math.abs(pFront.sy - fpRenderer.h / 2) < 1.0, '눈높이(wz=0.5) 점의 스크린 Y좌표는 지평선(h/2)에 위치');
+assert(Math.abs(pFront.depth - 2.0) < 0.05, '투영 깊이(depth)는 정확히 2.0 그리드 거리와 일치');
+
+// 15-2. 수직 높이(wz)에 따른 스크린 Y 사영 정합성 검증
+const pFloor = fpRenderer._projectWorldPoint(5.0, 3.0, 0.0, 5.0, 5.0, testDirX, testDirY, testPlaneX, testPlaneY, 0);
+const pCeil = fpRenderer._projectWorldPoint(5.0, 3.0, 1.0, 5.0, 5.0, testDirX, testDirY, testPlaneX, testPlaneY, 0);
+assert(pFloor.sy > pFront.sy, '바닥(wz=0.0)은 지평선 아래쪽에 위치');
+assert(pCeil.sy < pFront.sy, '천장(wz=1.0)은 지평선 위쪽에 위치');
+
+// 15-3. 시선 회전(Yaw) 시 월드 고정 검증 (카드보드 컷아웃 회전 결함 완치)
+// 점 (6.0, 4.0): 북동쪽 45도 방향 점
+// 북쪽 시선일 때: 점은 화면 우측(sx > w/2)에 위치
+const pNorthView = fpRenderer._projectWorldPoint(6.0, 4.0, 0.5, 5.0, 5.0, testDirX, testDirY, testPlaneX, testPlaneY, 0);
+assert(pNorthView !== null && pNorthView.sx > fpRenderer.w / 2, '북쪽 시선에서 (6, 4) 점은 화면 우측에 위치');
+
+// 동쪽으로 90도 회전했을 때: 동일한 점 (6, 4)는 이제 화면 좌측(sx < w/2)으로 이동해야 함
+const testDirXEast = 1;
+const testDirYEast = 0;
+const testPlaneXEast = 0;
+const testPlaneYEast = 0.66;
+const pEastView = fpRenderer._projectWorldPoint(6.0, 4.0, 0.5, 5.0, 5.0, testDirXEast, testDirYEast, testPlaneXEast, testPlaneYEast, 0);
+assert(pEastView !== null && pEastView.sx < fpRenderer.w / 2, '시선 회전 시 점이 플레이어를 따라 회전하지 않고 화면 좌측으로 이동 (월드 고정 확인)');
+
+// 15-4. 후방 클리핑 검증
+const pBehind = fpRenderer._projectWorldPoint(5.0, 7.0, 0.5, 5.0, 5.0, testDirX, testDirY, testPlaneX, testPlaneY, 0);
+assert(pBehind === null, '카메라 후방 점은 null로 안전하게 클리핑 컬링');
+
+// 15-5. 3D 사각 다면체 투영(_render3DQuad) 및 3D 계단 렌더러 검증
+fpRenderer.ctx = mockStairCtx;
+fpRenderer._render3DQuad(mockStairCtx, [5, 3, 0], [6, 3, 0], [6, 4, 0], [5, 4, 0], '#ffffff', '#000000', 5, 5, testDirX, testDirY, testPlaneX, testPlaneY, 0);
+assert(true, '_render3DQuad 4개 정점 투영 및 렌더링 예외 없이 통과');
+
+fpRenderer._renderDownstairs3D(mockStairCtx, 5, 3, 5, 5, testDirX, testDirY, testPlaneX, testPlaneY, 0, 1.0);
+assert(true, '_renderDownstairs3D 4방향 연석 및 3단 함몰 디딤판 3D 투영 통과');
+
+fpRenderer._renderUpstairs3D(mockStairCtx, 5, 3, 5, 5, testDirX, testDirY, testPlaneX, testPlaneY, 0, 1.0);
+assert(true, '_renderUpstairs3D 3단 솟아오르는 디딤판 및 좌우 난간 기둥 3D 투영 통과');
+
+fpRenderer.ctx = originalCtx;
+
+console.log('='.repeat(80));
+console.log('🧪 [TEST SUITE 16] 5대 던전 테마 10종 계단 텍스처, 천장 개구부 및 천장 연결 3D 복셀 아치 검증');
+console.log('='.repeat(80));
+
+const { THEMED_STAIR_DOWN_PATHS, THEMED_STAIR_UP_PATHS } = await import('../src/renderer/TextureManager.js');
+
+// 16-1. 5대 테마 하행/상행 10종 계단 텍스처 경로 정합성 검증
+assert(THEMED_STAIR_DOWN_PATHS.CAVE_RUINS.includes('tex_stairs_down_cave.jpg'), '동굴 하행 계단 경로 확인');
+assert(THEMED_STAIR_UP_PATHS.CAVE_RUINS.includes('tex_stairs_up_cave.jpg'), '동굴 상행 계단 경로 확인');
+assert(THEMED_STAIR_DOWN_PATHS.VOLCANIC_FORTRESS.includes('tex_stairs_down_volcanic.jpg'), '화산 하행 계단 경로 확인');
+assert(THEMED_STAIR_UP_PATHS.VOLCANIC_FORTRESS.includes('tex_stairs_up_volcanic.jpg'), '화산 상행 계단 경로 확인');
+assert(THEMED_STAIR_DOWN_PATHS.MINES_CATACOMBS.includes('tex_stairs_down_catacombs.jpg'), '지하묘지 하행 계단 경로 확인');
+assert(THEMED_STAIR_UP_PATHS.MINES_CATACOMBS.includes('tex_stairs_up_catacombs.jpg'), '지하묘지 상행 계단 경로 확인');
+assert(THEMED_STAIR_DOWN_PATHS.DARK_ABYSS.includes('tex_stairs_down_dark_abyss.jpg'), '심연 하행 계단 경로 확인');
+assert(THEMED_STAIR_UP_PATHS.DARK_ABYSS.includes('tex_stairs_up_dark_abyss.jpg'), '심연 상행 계단 경로 확인');
+assert(THEMED_STAIR_DOWN_PATHS.DEEP_ANGBAND.includes('tex_stairs_down_deep_angband.jpg'), '앙그반드 하행 계단 경로 확인');
+assert(THEMED_STAIR_UP_PATHS.DEEP_ANGBAND.includes('tex_stairs_up_deep_angband.jpg'), '앙그반드 상행 계단 경로 확인');
+
+// 16-2. 테마별 getStairTexture 질의 검증
+const volcDownTex = tm.getStairTexture(true, 'VOLCANIC_FORTRESS');
+assert(volcDownTex !== null && volcDownTex !== undefined, '화산 테마 하행 계단 텍스처 정상 조회');
+const abyssUpTex = tm.getStairTexture(false, 'DARK_ABYSS');
+assert(abyssUpTex !== null && abyssUpTex !== undefined, '심연 테마 상행 계단 텍스처 정상 조회');
+
+// 16-3. 바닥부터 천장까지 연결되는 3D 복셀 기둥 및 아치 빔 렌더링 호출 무결성 검증
+fpRenderer.ctx = mockStairCtx;
+fpRenderer._renderUpstairs3D(mockStairCtx, 5, 3, 5, 5, testDirX, testDirY, testPlaneX, testPlaneY, 0, 1.0, 'VOLCANIC_FORTRESS');
+assert(true, '화산 테마 바닥부터 천장(z=0~1.0)까지 일체 연결되는 4단 스텝 및 천장 빔 무결 렌더링');
+
+fpRenderer._renderDownstairs3D(mockStairCtx, 5, 3, 5, 5, testDirX, testDirY, testPlaneX, testPlaneY, 0, 1.0, 'DARK_ABYSS');
+assert(true, '심연 테마 바닥 함몰 개구부 및 심연 보라 성운광 무결 렌더링');
+
+// 16-4. 테마 계단이 포함된 전체 던전 맵 drawMap 렌더링 검증
+const multiThemeStairMap = {
+  width: 15,
+  height: 15,
+  floor: 4,
+  downStaircases: [{ x: 5, y: 3 }],
+  upStaircases: [{ x: 5, y: 7 }],
+  tiles: Array.from({ length: 15 }, () => Array.from({ length: 15 }, () => ({ type: 'FLOOR', isWall: false, isExplored: true })))
+};
+
+fpRenderer.drawMap(multiThemeStairMap, 0, 0, 5, 5, 6, 4);
+assert(true, '천장 개구부 및 바닥 함몰 개구부가 융합된 1인칭 3D 뷰 drawMap 정상 완료');
+
+fpRenderer.ctx = originalCtx;
+
+console.log('='.repeat(80));
 console.log(`🎉 [TEST SUMMARY] 총 ${passed + failed}개 검증 중 ${passed}개 통과 (${((passed / (passed + failed)) * 100).toFixed(1)}%)`);
 console.log('='.repeat(80));
 

@@ -102,6 +102,22 @@ export const STAIR_TEXTURE_PATHS = Object.freeze({
   UP: '/public/textures/tex_stairs_up.jpg'
 });
 
+export const THEMED_STAIR_DOWN_PATHS = Object.freeze({
+  CAVE_RUINS: '/public/textures/tex_stairs_down_cave.jpg',
+  MINES_CATACOMBS: '/public/textures/tex_stairs_down_catacombs.jpg',
+  VOLCANIC_FORTRESS: '/public/textures/tex_stairs_down_volcanic.jpg',
+  DARK_ABYSS: '/public/textures/tex_stairs_down_dark_abyss.jpg',
+  DEEP_ANGBAND: '/public/textures/tex_stairs_down_deep_angband.jpg'
+});
+
+export const THEMED_STAIR_UP_PATHS = Object.freeze({
+  CAVE_RUINS: '/public/textures/tex_stairs_up_cave.jpg',
+  MINES_CATACOMBS: '/public/textures/tex_stairs_up_catacombs.jpg',
+  VOLCANIC_FORTRESS: '/public/textures/tex_stairs_up_volcanic.jpg',
+  DARK_ABYSS: '/public/textures/tex_stairs_up_dark_abyss.jpg',
+  DEEP_ANGBAND: '/public/textures/tex_stairs_up_deep_angband.jpg'
+});
+
 export const ALL_TEXTURE_REGISTRY = Object.freeze({
   // 벽면 5종
   CAVE_RUINS: 'tex_cave_ruins.jpg',
@@ -125,9 +141,23 @@ export const ALL_TEXTURE_REGISTRY = Object.freeze({
   CEIL_DARK_ABYSS: 'tex_ceil_dark_abyss.jpg',
   CEIL_DEEP_ANGBAND: 'tex_ceil_deep_angband.jpg',
 
-  // 계단 2종
+  // 기본 계단 2종
   STAIRS_DOWN: 'tex_stairs_down.jpg',
-  STAIRS_UP: 'tex_stairs_up.jpg'
+  STAIRS_UP: 'tex_stairs_up.jpg',
+
+  // 5대 던전 테마별 전용 하행 계단 5종
+  STAIRS_DOWN_CAVE_RUINS: 'tex_stairs_down_cave.jpg',
+  STAIRS_DOWN_MINES_CATACOMBS: 'tex_stairs_down_catacombs.jpg',
+  STAIRS_DOWN_VOLCANIC_FORTRESS: 'tex_stairs_down_volcanic.jpg',
+  STAIRS_DOWN_DARK_ABYSS: 'tex_stairs_down_dark_abyss.jpg',
+  STAIRS_DOWN_DEEP_ANGBAND: 'tex_stairs_down_deep_angband.jpg',
+
+  // 5대 던전 테마별 전용 상행 계단 5종
+  STAIRS_UP_CAVE_RUINS: 'tex_stairs_up_cave.jpg',
+  STAIRS_UP_MINES_CATACOMBS: 'tex_stairs_up_catacombs.jpg',
+  STAIRS_UP_VOLCANIC_FORTRESS: 'tex_stairs_up_volcanic.jpg',
+  STAIRS_UP_DARK_ABYSS: 'tex_stairs_up_dark_abyss.jpg',
+  STAIRS_UP_DEEP_ANGBAND: 'tex_stairs_up_deep_angband.jpg'
 });
 
 export class TextureManager {
@@ -360,18 +390,34 @@ export class TextureManager {
   }
 
   /**
-   * 계단 실사 텍스처를 반환합니다. (DOWN 또는 UP)
+   * 계단 실사 텍스처를 반환합니다. 5대 던전 테마별 전용 텍스처를 우선 조회합니다.
    * @param {boolean|string} isDown - true/'DOWN'이면 하행, false/'UP'이면 상행
+   * @param {string} [themeKey] - 던전 테마 키 (예: 'CAVE_RUINS', 'VOLCANIC_FORTRESS' 등)
    * @returns {HTMLImageElement|HTMLCanvasElement|Object}
    */
-  getStairTexture(isDown = true) {
+  getStairTexture(isDown = true, themeKey = null) {
     const isD = (isDown === true || isDown === 'DOWN' || isDown === 'STAIRS_DOWN');
-    const key = isD ? 'STAIRS_DOWN' : 'STAIRS_UP';
-    if (!this.textures.has(key)) {
-      this._loadSingleTexture(key);
-      return this.fallbackTextures.get(key);
+    const prefix = isD ? 'STAIRS_DOWN' : 'STAIRS_UP';
+
+    if (themeKey) {
+      const themedKey = `${prefix}_${themeKey}`;
+      if (this.textures.has(themedKey)) {
+        return this.textures.get(themedKey);
+      }
+      if (ALL_TEXTURE_REGISTRY[themedKey]) {
+        this._loadSingleTexture(themedKey);
+        if (this.fallbackTextures.has(themedKey)) {
+          return this.fallbackTextures.get(themedKey);
+        }
+      }
     }
-    return this.textures.get(key);
+
+    const defaultKey = isD ? 'STAIRS_DOWN' : 'STAIRS_UP';
+    if (!this.textures.has(defaultKey)) {
+      this._loadSingleTexture(defaultKey);
+      return this.fallbackTextures.get(defaultKey);
+    }
+    return this.textures.get(defaultKey);
   }
 
   /**
