@@ -1,22 +1,43 @@
 /**
  * @module TextureManager
  * @category renderer
- * @description 나노바나나(Imagen) 생성 5대 던전 테마 텍스처 및 바닥재 비동기 로딩,
- *              동적 온디맨드 로딩, 캐싱 및 절차적 캔버스 패턴 폴백 가드 매니저
+ * @description 나노바나나(Imagen) 생성 5대 던전 테마 벽면, 바닥재 및 천장 텍스처 비동기 로딩,
+ *              동적 온디맨드 로딩, 픽셀 버퍼 캐싱 및 90s 레트로 플로어캐스팅 지원 매니저
  * @purity State Store / Pure Loader
  * @dependencies DungeonThemeConfig.js, EventBus.js
- * @exports TextureManager, textureManager, TEXTURE_PATHS, resolveTexturePath
+ * @exports TextureManager, textureManager, TEXTURE_PATHS, FLOOR_TEXTURE_PATHS, CEILING_TEXTURE_PATHS, resolveTexturePath
  */
 
 import { DUNGEON_THEMES, DUNGEON_THEME_KEYS } from '../configs/DungeonThemeConfig.js';
 import { eventBus } from '../events/EventBus.js';
 
-export const TEXTURE_FILENAMES = Object.freeze({
+export const WALL_TEXTURE_FILENAMES = Object.freeze({
   CAVE_RUINS: 'tex_cave_ruins.jpg',
   MINES_CATACOMBS: 'tex_catacombs.jpg',
   VOLCANIC_FORTRESS: 'tex_volcanic.jpg',
   DARK_ABYSS: 'tex_dark_abyss.jpg',
-  DEEP_ANGBAND: 'tex_deep_angband.jpg',
+  DEEP_ANGBAND: 'tex_deep_angband.jpg'
+});
+
+export const FLOOR_TEXTURE_FILENAMES = Object.freeze({
+  CAVE_RUINS: 'tex_floor_cave_ruins.jpg',
+  MINES_CATACOMBS: 'tex_floor_catacombs.jpg',
+  VOLCANIC_FORTRESS: 'tex_floor_volcanic.jpg',
+  DARK_ABYSS: 'tex_floor_dark_abyss.jpg',
+  DEEP_ANGBAND: 'tex_floor_deep_angband.jpg',
+  COMMON_FLOOR: 'tex_dungeon_floor.jpg'
+});
+
+export const CEILING_TEXTURE_FILENAMES = Object.freeze({
+  CAVE_RUINS: 'tex_ceil_cave_ruins.jpg',
+  MINES_CATACOMBS: 'tex_ceil_catacombs.jpg',
+  VOLCANIC_FORTRESS: 'tex_ceil_volcanic.jpg',
+  DARK_ABYSS: 'tex_ceil_dark_abyss.jpg',
+  DEEP_ANGBAND: 'tex_ceil_deep_angband.jpg'
+});
+
+export const TEXTURE_FILENAMES = Object.freeze({
+  ...WALL_TEXTURE_FILENAMES,
   COMMON_FLOOR: 'tex_dungeon_floor.jpg'
 });
 
@@ -54,11 +75,53 @@ export const TEXTURE_PATHS = Object.freeze({
   COMMON_FLOOR: '/public/textures/tex_dungeon_floor.jpg'
 });
 
+export const FLOOR_TEXTURE_PATHS = Object.freeze({
+  CAVE_RUINS: '/public/textures/tex_floor_cave_ruins.jpg',
+  MINES_CATACOMBS: '/public/textures/tex_floor_catacombs.jpg',
+  VOLCANIC_FORTRESS: '/public/textures/tex_floor_volcanic.jpg',
+  DARK_ABYSS: '/public/textures/tex_floor_dark_abyss.jpg',
+  DEEP_ANGBAND: '/public/textures/tex_floor_deep_angband.jpg',
+  COMMON_FLOOR: '/public/textures/tex_dungeon_floor.jpg'
+});
+
+export const CEILING_TEXTURE_PATHS = Object.freeze({
+  CAVE_RUINS: '/public/textures/tex_ceil_cave_ruins.jpg',
+  MINES_CATACOMBS: '/public/textures/tex_ceil_catacombs.jpg',
+  VOLCANIC_FORTRESS: '/public/textures/tex_ceil_volcanic.jpg',
+  DARK_ABYSS: '/public/textures/tex_ceil_dark_abyss.jpg',
+  DEEP_ANGBAND: '/public/textures/tex_ceil_deep_angband.jpg'
+});
+
+export const ALL_TEXTURE_REGISTRY = Object.freeze({
+  // 벽면 5종
+  CAVE_RUINS: 'tex_cave_ruins.jpg',
+  MINES_CATACOMBS: 'tex_catacombs.jpg',
+  VOLCANIC_FORTRESS: 'tex_volcanic.jpg',
+  DARK_ABYSS: 'tex_dark_abyss.jpg',
+  DEEP_ANGBAND: 'tex_deep_angband.jpg',
+
+  // 바닥 5종 + 공통 1종
+  FLOOR_CAVE_RUINS: 'tex_floor_cave_ruins.jpg',
+  FLOOR_MINES_CATACOMBS: 'tex_floor_catacombs.jpg',
+  FLOOR_VOLCANIC_FORTRESS: 'tex_floor_volcanic.jpg',
+  FLOOR_DARK_ABYSS: 'tex_floor_dark_abyss.jpg',
+  FLOOR_DEEP_ANGBAND: 'tex_floor_deep_angband.jpg',
+  COMMON_FLOOR: 'tex_dungeon_floor.jpg',
+
+  // 천장 5종
+  CEIL_CAVE_RUINS: 'tex_ceil_cave_ruins.jpg',
+  CEIL_MINES_CATACOMBS: 'tex_ceil_catacombs.jpg',
+  CEIL_VOLCANIC_FORTRESS: 'tex_ceil_volcanic.jpg',
+  CEIL_DARK_ABYSS: 'tex_ceil_dark_abyss.jpg',
+  CEIL_DEEP_ANGBAND: 'tex_ceil_deep_angband.jpg'
+});
+
 export class TextureManager {
   constructor() {
     this.textures = new Map();
     this.loadingPromises = new Map();
     this.fallbackTextures = new Map();
+    this.pixelBuffers = new Map();
     this.isLoaded = false;
     this._initFallbacks();
 
@@ -76,7 +139,7 @@ export class TextureManager {
    * 고품질 절차적 64x64 캔버스 폴백 텍스처 초기화 (네트워크 로드 전 또는 오류/오프라인 시 즉각 방어)
    */
   _initFallbacks() {
-    for (const key of Object.keys(TEXTURE_FILENAMES)) {
+    for (const key of Object.keys(ALL_TEXTURE_REGISTRY)) {
       if (typeof document !== 'undefined' && typeof document.createElement === 'function') {
         const canvas = document.createElement('canvas');
         canvas.width = 64;
@@ -84,44 +147,54 @@ export class TextureManager {
         const ctx = canvas.getContext('2d');
 
         if (ctx) {
-          if (key === 'CAVE_RUINS') {
-            ctx.fillStyle = '#475569'; ctx.fillRect(0, 0, 64, 64);
-            ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 2;
-            // 벽돌 석조 패턴
-            ctx.strokeRect(0, 0, 64, 32);
-            ctx.strokeRect(0, 32, 64, 32);
-            ctx.strokeRect(32, 0, 32, 32);
-            ctx.fillStyle = '#64748b'; ctx.fillRect(4, 4, 24, 8);
-          } else if (key === 'MINES_CATACOMBS') {
-            ctx.fillStyle = '#3f3f46'; ctx.fillRect(0, 0, 64, 64);
-            ctx.strokeStyle = '#18181b'; ctx.lineWidth = 2;
-            ctx.strokeRect(2, 2, 60, 60);
-            ctx.strokeRect(16, 16, 32, 32);
-            ctx.fillStyle = '#a1a1aa'; ctx.font = '16px monospace'; ctx.fillText('💀', 22, 38);
-          } else if (key === 'VOLCANIC_FORTRESS') {
-            ctx.fillStyle = '#1c1917'; ctx.fillRect(0, 0, 64, 64);
-            ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2;
-            ctx.strokeRect(2, 2, 60, 60);
-            ctx.fillStyle = '#b91c1c'; ctx.fillRect(12, 12, 40, 40);
-            ctx.fillStyle = '#f97316'; ctx.fillRect(20, 20, 24, 24);
-          } else if (key === 'DARK_ABYSS') {
-            ctx.fillStyle = '#09090b'; ctx.fillRect(0, 0, 64, 64);
-            ctx.strokeStyle = '#a855f7'; ctx.lineWidth = 2;
-            ctx.strokeRect(4, 4, 56, 56);
-            ctx.fillStyle = '#581c87'; ctx.fillRect(18, 18, 28, 28);
-          } else if (key === 'DEEP_ANGBAND') {
-            ctx.fillStyle = '#450a0a'; ctx.fillRect(0, 0, 64, 64);
-            ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 3;
-            ctx.strokeRect(2, 2, 60, 60);
-            ctx.fillStyle = '#7f1d1d'; ctx.fillRect(14, 14, 36, 36);
-          } else {
-            // COMMON_FLOOR
+          if (key.startsWith('FLOOR_') || key === 'COMMON_FLOOR') {
+            // 바닥재 폴백 패턴
             ctx.fillStyle = '#1e293b'; ctx.fillRect(0, 0, 64, 64);
             ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2;
             ctx.strokeRect(0, 0, 32, 32);
             ctx.strokeRect(32, 0, 32, 32);
             ctx.strokeRect(0, 32, 32, 32);
             ctx.strokeRect(32, 32, 32, 32);
+            if (key.includes('VOLCANIC')) {
+              ctx.fillStyle = '#7c2d12'; ctx.fillRect(8, 8, 16, 16);
+            } else if (key.includes('DARK')) {
+              ctx.fillStyle = '#3b0764'; ctx.fillRect(8, 8, 16, 16);
+            }
+          } else if (key.startsWith('CEIL_')) {
+            // 천장 폴백 아치 패턴
+            ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, 64, 64);
+            ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 2;
+            ctx.strokeRect(4, 4, 56, 56);
+            ctx.beginPath();
+            ctx.arc(32, 64, 28, Math.PI, 0);
+            ctx.stroke();
+          } else {
+            // 벽면 폴백 패턴
+            if (key === 'CAVE_RUINS') {
+              ctx.fillStyle = '#475569'; ctx.fillRect(0, 0, 64, 64);
+              ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 2;
+              ctx.strokeRect(0, 0, 64, 32); ctx.strokeRect(0, 32, 64, 32); ctx.strokeRect(32, 0, 32, 32);
+              ctx.fillStyle = '#64748b'; ctx.fillRect(4, 4, 24, 8);
+            } else if (key === 'MINES_CATACOMBS') {
+              ctx.fillStyle = '#3f3f46'; ctx.fillRect(0, 0, 64, 64);
+              ctx.strokeStyle = '#18181b'; ctx.lineWidth = 2;
+              ctx.strokeRect(2, 2, 60, 60); ctx.strokeRect(16, 16, 32, 32);
+              ctx.fillStyle = '#a1a1aa'; ctx.font = '16px monospace'; ctx.fillText('💀', 22, 38);
+            } else if (key === 'VOLCANIC_FORTRESS') {
+              ctx.fillStyle = '#1c1917'; ctx.fillRect(0, 0, 64, 64);
+              ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2;
+              ctx.strokeRect(2, 2, 60, 60); ctx.fillStyle = '#b91c1c'; ctx.fillRect(12, 12, 40, 40);
+              ctx.fillStyle = '#f97316'; ctx.fillRect(20, 20, 24, 24);
+            } else if (key === 'DARK_ABYSS') {
+              ctx.fillStyle = '#09090b'; ctx.fillRect(0, 0, 64, 64);
+              ctx.strokeStyle = '#a855f7'; ctx.lineWidth = 2;
+              ctx.strokeRect(4, 4, 56, 56); ctx.fillStyle = '#581c87'; ctx.fillRect(18, 18, 28, 28);
+            } else {
+              // DEEP_ANGBAND
+              ctx.fillStyle = '#450a0a'; ctx.fillRect(0, 0, 64, 64);
+              ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 3;
+              ctx.strokeRect(2, 2, 60, 60); ctx.fillStyle = '#7f1d1d'; ctx.fillRect(14, 14, 36, 36);
+            }
           }
         }
         this.fallbackTextures.set(key, canvas);
@@ -143,7 +216,9 @@ export class TextureManager {
       return this.loadingPromises.get(key);
     }
 
-    const url = customUrl || TEXTURE_PATHS[key] || resolveTexturePath(TEXTURE_FILENAMES[key] || `${key.toLowerCase()}.jpg`);
+    const filename = ALL_TEXTURE_REGISTRY[key] || `${key.toLowerCase()}.jpg`;
+    const url = customUrl || resolveTexturePath(filename);
+
     const promise = new Promise((resolve) => {
       if (typeof Image === 'undefined') {
         const fallback = this.fallbackTextures.get(key) || this.fallbackTextures.get('CAVE_RUINS');
@@ -195,7 +270,7 @@ export class TextureManager {
   }
 
   /**
-   * 모든 테마 텍스처를 비동기 프리로드합니다.
+   * 벽면, 바닥, 천장 전수 16종 테마 텍스처를 비동기 프리로드합니다.
    * @returns {Promise<void>}
    */
   async loadAll() {
@@ -204,7 +279,7 @@ export class TextureManager {
       return;
     }
 
-    const loadPromises = Object.keys(TEXTURE_FILENAMES).map((key) => {
+    const loadPromises = Object.keys(ALL_TEXTURE_REGISTRY).map((key) => {
       return this._loadSingleTexture(key);
     });
 
@@ -214,7 +289,6 @@ export class TextureManager {
 
   /**
    * 특정 던전 테마의 벽면 텍스처 이미지를 반환합니다.
-   * 캐시 미적중 시 즉각적인 백그라운드 로드를 발동하고 폴백을 반환합니다.
    * @param {string} themeKey 
    * @returns {HTMLImageElement|HTMLCanvasElement|Object}
    */
@@ -228,16 +302,71 @@ export class TextureManager {
   }
 
   /**
-   * 공통 바닥재 텍스처를 반환합니다.
+   * 특정 던전 테마의 바닥재 텍스처 이미지를 반환합니다.
+   * @param {string} [themeKey] 
    * @returns {HTMLImageElement|HTMLCanvasElement|Object}
    */
-  getFloorTexture() {
-    const key = 'COMMON_FLOOR';
+  getFloorTexture(themeKey = null) {
+    const key = themeKey ? `FLOOR_${themeKey}` : 'COMMON_FLOOR';
     if (!this.textures.has(key)) {
       this._loadSingleTexture(key);
-      return this.fallbackTextures.get(key);
+      return this.textures.get('COMMON_FLOOR') || this.fallbackTextures.get(key) || this.fallbackTextures.get('COMMON_FLOOR');
     }
     return this.textures.get(key);
+  }
+
+  /**
+   * 특정 던전 테마의 천장 텍스처 이미지를 반환합니다.
+   * @param {string} [themeKey] 
+   * @returns {HTMLImageElement|HTMLCanvasElement|Object}
+   */
+  getCeilingTexture(themeKey = null) {
+    const key = themeKey ? `CEIL_${themeKey}` : 'CEIL_CAVE_RUINS';
+    if (!this.textures.has(key)) {
+      this._loadSingleTexture(key);
+      return this.fallbackTextures.get(key) || this.fallbackTextures.get('CEIL_CAVE_RUINS');
+    }
+    return this.textures.get(key);
+  }
+
+  /**
+   * 플로어캐스팅/실링캐스팅 초고속 샘플링용 128x128 32비트 픽셀 버퍼를 추출하고 캐싱합니다.
+   * @param {HTMLImageElement|HTMLCanvasElement|Object} tex
+   * @param {number} [size=128]
+   * @returns {Uint32Array|null}
+   */
+  getTexturePixelBuffer(tex, size = 128) {
+    if (!tex) return null;
+    if (this.pixelBuffers.has(tex)) {
+      return this.pixelBuffers.get(tex);
+    }
+
+    if (typeof document === 'undefined' || typeof document.createElement !== 'function') {
+      return null;
+    }
+
+    try {
+      const isImage = (typeof HTMLImageElement !== 'undefined' && tex instanceof HTMLImageElement) ||
+                      (typeof Image !== 'undefined' && tex instanceof Image) ||
+                      tex.complete !== undefined;
+      const isReady = !isImage || (tex.complete && tex.naturalWidth > 0);
+      if (!isReady) return null;
+
+      const sampleCanvas = document.createElement('canvas');
+      sampleCanvas.width = size;
+      sampleCanvas.height = size;
+      const sampleCtx = sampleCanvas.getContext('2d', { willReadFrequently: true });
+      if (!sampleCtx) return null;
+
+      sampleCtx.drawImage(tex, 0, 0, size, size);
+      const imgData = sampleCtx.getImageData(0, 0, size, size);
+      const uint32Buffer = new Uint32Array(imgData.data.buffer);
+
+      this.pixelBuffers.set(tex, uint32Buffer);
+      return uint32Buffer;
+    } catch (_) {
+      return null;
+    }
   }
 }
 

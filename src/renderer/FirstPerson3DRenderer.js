@@ -55,6 +55,18 @@ export class FirstPerson3DRenderer {
       this.h = this.canvas.height || 600;
     }
     this.depthBuffer = new Float32Array(Math.max(1, this.w));
+
+    // 플로어캐스팅 저해상도 오프스크린 버퍼 동기화
+    if (this.floorCanvas) {
+      const bufW = 240;
+      const bufH = Math.max(60, Math.floor(bufW * ((this.h || 600) / (this.w || 800))));
+      this.floorCanvas.width = bufW;
+      this.floorCanvas.height = bufH;
+      if (this.floorCtx && typeof this.floorCtx.createImageData === 'function') {
+        this.floorImageData = this.floorCtx.createImageData(bufW, bufH);
+        this.floorBuffer = new Uint32Array(this.floorImageData.data.buffer);
+      }
+    }
   }
 
   adjustPitch(deltaPitch) {
@@ -98,7 +110,8 @@ export class FirstPerson3DRenderer {
     const currentFloor = floor || map?.floor || 1;
     const theme = getThemeForFloor(currentFloor);
     const wallTex = textureManager.getWallTexture(theme.id);
-    const floorTex = textureManager.getFloorTexture();
+    const floorTex = textureManager.getFloorTexture(theme.id);
+    const ceilTex = textureManager.getCeilingTexture(theme.id);
     const userLightRange = typeof lightRange === 'number' ? Math.max(1.0, lightRange) : 4.0;
     this.currentLightRange = userLightRange;
 
@@ -115,8 +128,8 @@ export class FirstPerson3DRenderer {
     const planeX = -dirY * planeScale;
     const planeY = dirX * planeScale;
 
-    // 1. 천장 및 바닥 배경 그라디언트 렌더링
-    this._renderCeilingAndFloor(floorTex, theme);
+    // 1. 천장 및 바닥 실사 텍스처 플로어캐스팅 렌더링 (미완료 시 그라디언트 폴백)
+    this._renderCeilingAndFloor(floorTex, ceilTex, theme, posX, posY, dirX, dirY, planeX, planeY, userLightRange, clearDist, maxLightDist);
 
     // 2. 플레이어 주변 광원 반경 내 타일 탐험 완료 동기화 (아스키/복셀 전환 시 전장의 안개 해제)
     const revealR = Math.max(2, Math.floor(userLightRange || 4));
@@ -322,9 +335,145 @@ export class FirstPerson3DRenderer {
     this.ctx.restore();
   }
 
-  _renderCeilingAndFloor(floorTex, theme) {
+  _renderCeilingAndFloor(floorTex, ceilTex, theme, posX = 0, posY = 0, dirX = 0, dirY = -1, planeX = 0.66, planeY = 0, userLightRange = 4.0, clearDist = 2.0, maxLightDist = 8.0) {
     if (!this.ctx) return;
     const horizonY = Math.floor(this.h / 2 + (this.pitch || 0));
+
+    // 오프스크린 플로어캐스팅 버퍼 (폭 240px 저해상도 스케일)
+    const bufW = 240;
+    const bufH = Math.max(60, Math.floor(bufW * ((this.h || 600) / (this.w || 800))));
+
+    if (!this.floorCanvas && typeof document !== 'undefined' && typeof document.createElement === 'function') {
+      this.floorCanvas = document.createElement('canvas');
+      this.floorCanvas.width = bufW;
+      this.floorCanvas.height = bufH;
+      this.floorCtx = this.floorCanvas.getContext('2d', { willReadFrequently: true });
+      this.floorImageData = this.floorCtx && typeof this.floorCtx.createImageData === 'function' 
+        ? this.floorCtx.createImageData(bufW, bufH) 
+        : null;
+      this.floorBuffer = this.floorImageData ? new Uint32Array(this.floorImageData.data.buffer) : null;
+    }
+
+    const floorPixels = floorTex && typeof textureManager.getTexturePixelBuffer === 'function' 
+      ? textureManager.getTexturePixelBuffer(floorTex, 128) 
+      : null;
+    const ceilPixels = ceilTex && typeof textureManager.getTexturePixelBuffer === 'function' 
+      ? textureManager.getTexturePixelBuffer(ceilTex, 128) 
+      : null;
+
+    if (this.floorBuffer && this.floorCtx && (floorPixels || ceilPixels)) {
+      this._renderFloorAndCeilCasting(floorPixels, ceilPixels, theme, bufW, bufH, posX, posY, dirX, dirY, planeX, planeY, clearDist, maxLightDist);
+    } else {
+      this._renderProceduralCeilingAndFloorGradients(horizonY, theme);
+    }
+  }
+
+  /**
+   * 90s 레트로 정통 수평 스캔라인 원근 투시 (Floorcasting & Ceilingcasting)
+   */
+  _renderFloorAndCeilCasting(floorPixels, ceilPixels, theme, bufW, bufH, posX, posY, dirX, dirY, planeX, planeY, clearDist, maxLightDist) {
+    const bufHorizonY = Math.floor(bufH / 2 + (this.pitch || 0) * (bufH / (this.h || 600)));
+    const posZ = 0.5 * bufH;
+    const scaleToWorld = (this.h || 600) / bufH;
+
+    // 1. 천장 스캔라인 캐스팅 (y = 0 ~ bufHorizonY - 1)
+    for (let y = 0; y < bufHorizonY; y++) {
+      const p = bufHorizonY - y;
+      if (p <= 0) continue;
+      const rowDistance = posZ / p;
+      const worldDist = rowDistance * scaleToWorld;
+
+      let fog = 0;
+      if (worldDist > clearDist) {
+        const normDist = Math.min(1.0, Math.max(0, (worldDist - clearDist) / (maxLightDist - clearDist)));
+        fog = Math.min(0.85, Math.pow(normDist, 1.25));
+      }
+      const fogMul = 1.0 - fog;
+
+      const floorStepX = rowDistance * (2 * planeX) / bufW;
+      const floorStepY = rowDistance * (2 * planeY) / bufW;
+
+      let mapX = posX + rowDistance * (dirX - planeX);
+      let mapY = posY + rowDistance * (dirY - planeY);
+
+      const rowOffset = y * bufW;
+
+      if (ceilPixels) {
+        for (let x = 0; x < bufW; x++) {
+          const tx = (Math.floor(mapX * 128) & 127);
+          const ty = (Math.floor(mapY * 128) & 127);
+          const pixel = ceilPixels[(ty << 7) + tx];
+
+          const r = ((pixel & 0xFF) * fogMul) | 0;
+          const g = (((pixel >> 8) & 0xFF) * fogMul) | 0;
+          const b = (((pixel >> 16) & 0xFF) * fogMul) | 0;
+          this.floorBuffer[rowOffset + x] = 0xFF000000 | (b << 16) | (g << 8) | r;
+
+          mapX += floorStepX;
+          mapY += floorStepY;
+        }
+      } else {
+        const shade = Math.max(10, Math.floor(35 * fogMul));
+        const color = 0xFF000000 | (shade << 16) | (shade << 8) | shade;
+        for (let x = 0; x < bufW; x++) {
+          this.floorBuffer[rowOffset + x] = color;
+        }
+      }
+    }
+
+    // 2. 바닥 스캔라인 캐스팅 (y = bufHorizonY ~ bufH - 1)
+    for (let y = Math.max(0, bufHorizonY); y < bufH; y++) {
+      const p = y - bufHorizonY;
+      if (p <= 0) continue;
+      const rowDistance = posZ / p;
+      const worldDist = rowDistance * scaleToWorld;
+
+      let fog = 0;
+      if (worldDist > clearDist) {
+        const normDist = Math.min(1.0, Math.max(0, (worldDist - clearDist) / (maxLightDist - clearDist)));
+        fog = Math.min(0.85, Math.pow(normDist, 1.25));
+      }
+      const fogMul = 1.0 - fog;
+
+      const floorStepX = rowDistance * (2 * planeX) / bufW;
+      const floorStepY = rowDistance * (2 * planeY) / bufW;
+
+      let mapX = posX + rowDistance * (dirX - planeX);
+      let mapY = posY + rowDistance * (dirY - planeY);
+
+      const rowOffset = y * bufW;
+
+      if (floorPixels) {
+        for (let x = 0; x < bufW; x++) {
+          const tx = (Math.floor(mapX * 128) & 127);
+          const ty = (Math.floor(mapY * 128) & 127);
+          const pixel = floorPixels[(ty << 7) + tx];
+
+          const r = ((pixel & 0xFF) * fogMul) | 0;
+          const g = (((pixel >> 8) & 0xFF) * fogMul) | 0;
+          const b = (((pixel >> 16) & 0xFF) * fogMul) | 0;
+          this.floorBuffer[rowOffset + x] = 0xFF000000 | (b << 16) | (g << 8) | r;
+
+          mapX += floorStepX;
+          mapY += floorStepY;
+        }
+      } else {
+        const shade = Math.max(14, Math.floor(42 * fogMul));
+        const color = 0xFF000000 | (shade << 16) | (shade << 8) | shade;
+        for (let x = 0; x < bufW; x++) {
+          this.floorBuffer[rowOffset + x] = color;
+        }
+      }
+    }
+
+    if (this.floorCtx && typeof this.floorCtx.putImageData === 'function') {
+      this.floorCtx.putImageData(this.floorImageData, 0, 0);
+      this.ctx.drawImage(this.floorCanvas, 0, 0, bufW, bufH, 0, 0, this.w, this.h);
+    }
+  }
+
+  _renderProceduralCeilingAndFloorGradients(horizonY, theme) {
+    if (!this.ctx) return;
 
     // 상단 천장 그라디언트 (웅장한 둥근 석조 아치 볼트 - 명도 상향)
     if (horizonY > 0) {

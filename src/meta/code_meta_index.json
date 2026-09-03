@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-09-03T04:06:46Z",
+  "generatedAt": "2026-09-03T04:22:06Z",
   "summary": {
     "totalModules": 75,
-    "totalLines": 107951,
+    "totalLines": 108229,
     "categories": {
       "configs": 5,
       "core": 14,
@@ -1029,7 +1029,7 @@
       "filePath": "src/renderer/FirstPerson3DRenderer.js",
       "moduleName": "FirstPerson3DRenderer",
       "category": "renderer",
-      "lines": 864,
+      "lines": 1013,
       "responsibility": "초기 둠 / 위저드리 시점 DDA 레이캐스팅 1인칭 3D 텍스처 어드벤처 렌더러. 나노바나나 생성 텍스처 매핑, 거리 감쇄 안개(Depth Fog), 빌보드 스프라이트 및 미니맵 레이더 제공",
       "purity": "DOM / Canvas Renderer",
       "dependencies": [
@@ -1043,14 +1043,14 @@
         "FirstPerson3DRenderer"
       ],
       "functions": [],
-      "lastModified": "2026-09-03T04:05:11Z"
+      "lastModified": "2026-09-03T04:20:39Z"
     },
     {
       "filePath": "src/renderer/TextureManager.js",
       "moduleName": "TextureManager",
       "category": "renderer",
-      "lines": 244,
-      "responsibility": "나노바나나(Imagen) 생성 5대 던전 테마 텍스처 및 바닥재 비동기 로딩, 동적 온디맨드 로딩, 캐싱 및 절차적 캔버스 패턴 폴백 가드 매니저",
+      "lines": 373,
+      "responsibility": "나노바나나(Imagen) 생성 5대 던전 테마 벽면, 바닥재 및 천장 텍스처 비동기 로딩, 동적 온디맨드 로딩, 픽셀 버퍼 캐싱 및 90s 레트로 플로어캐스팅 지원 매니저",
       "purity": "State Store / Pure Loader",
       "dependencies": [
         "DungeonThemeConfig.js",
@@ -1060,8 +1060,14 @@
         "TextureManager",
         "textureManager",
         "TEXTURE_PATHS",
+        "FLOOR_TEXTURE_PATHS",
+        "CEILING_TEXTURE_PATHS",
         "resolveTexturePath",
-        "TEXTURE_FILENAMES"
+        "ALL_TEXTURE_REGISTRY",
+        "CEILING_TEXTURE_FILENAMES",
+        "FLOOR_TEXTURE_FILENAMES",
+        "TEXTURE_FILENAMES",
+        "WALL_TEXTURE_FILENAMES"
       ],
       "classes": [
         "TextureManager"
@@ -1069,7 +1075,7 @@
       "functions": [
         "resolveTexturePath"
       ],
-      "lastModified": "2026-09-03T04:05:54Z"
+      "lastModified": "2026-09-03T04:19:34Z"
     },
     {
       "filePath": "src/renderer/Voxel3DRenderer.js",

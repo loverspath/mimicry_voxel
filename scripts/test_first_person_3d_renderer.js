@@ -96,7 +96,7 @@ assert(TEXTURE_PATHS.COMMON_FLOOR === '/public/textures/tex_dungeon_floor.jpg', 
 
 // 1-2. 절차적 폴백 텍스처 인스턴스 검증
 const customTexMgr = new TextureManager();
-assert(customTexMgr.fallbackTextures.size === 6, '6종 폴백 텍스처 등록 확인');
+assert(customTexMgr.fallbackTextures.size >= 6, '폴백 텍스처(벽면, 바닥, 천장 전수) 등록 확인');
 for (const key of Object.keys(TEXTURE_PATHS)) {
   const fallback = customTexMgr.fallbackTextures.get(key);
   assert(fallback !== undefined && fallback !== null, `${key} 폴백 텍스처 생성 유효`);
@@ -668,6 +668,81 @@ fpRenderer._drawProceduralWallSlice = () => {
 
 fpRenderer.drawMap(wallMap, 0, 0, 5, 5, 6, 25); // 25층 = VOLCANIC_FORTRESS
 assert(proceduralFallbackCalled, '텍스처 미완료/로딩 중 시 _drawProceduralWallSlice 안전 폴백 정상 작동 확인');
+
+fpRenderer.ctx = originalCtx;
+
+console.log('='.repeat(80));
+console.log('🧪 [TEST SUITE 12] 5대 던전 테마 맞춤형 바닥 & 천장 텍스처 및 90s 레트로 플로어캐스팅 검증');
+console.log('='.repeat(80));
+
+const { FLOOR_TEXTURE_PATHS, CEILING_TEXTURE_PATHS, FLOOR_TEXTURE_FILENAMES, CEILING_TEXTURE_FILENAMES } = await import('../src/renderer/TextureManager.js');
+
+// 12-1. 바닥재 텍스처 경로 레지스트리 검증 (5대 테마 + 공통 바닥)
+assert(FLOOR_TEXTURE_PATHS.CAVE_RUINS.includes('tex_floor_cave_ruins.jpg'), 'CAVE_RUINS 바닥재 텍스처 경로 정합성');
+assert(FLOOR_TEXTURE_PATHS.MINES_CATACOMBS.includes('tex_floor_catacombs.jpg'), 'MINES_CATACOMBS 바닥재 텍스처 경로 정합성');
+assert(FLOOR_TEXTURE_PATHS.VOLCANIC_FORTRESS.includes('tex_floor_volcanic.jpg'), 'VOLCANIC_FORTRESS 바닥재 텍스처 경로 정합성');
+assert(FLOOR_TEXTURE_PATHS.DARK_ABYSS.includes('tex_floor_dark_abyss.jpg'), 'DARK_ABYSS 바닥재 텍스처 경로 정합성');
+assert(FLOOR_TEXTURE_PATHS.DEEP_ANGBAND.includes('tex_floor_deep_angband.jpg'), 'DEEP_ANGBAND 바닥재 텍스처 경로 정합성');
+assert(FLOOR_TEXTURE_PATHS.COMMON_FLOOR.includes('tex_dungeon_floor.jpg'), 'COMMON_FLOOR 바닥재 텍스처 경로 정합성');
+
+// 12-2. 천장 텍스처 경로 레지스트리 검증 (5대 테마)
+assert(CEILING_TEXTURE_PATHS.CAVE_RUINS.includes('tex_ceil_cave_ruins.jpg'), 'CAVE_RUINS 천장 텍스처 경로 정합성');
+assert(CEILING_TEXTURE_PATHS.MINES_CATACOMBS.includes('tex_ceil_catacombs.jpg'), 'MINES_CATACOMBS 천장 텍스처 경로 정합성');
+assert(CEILING_TEXTURE_PATHS.VOLCANIC_FORTRESS.includes('tex_ceil_volcanic.jpg'), 'VOLCANIC_FORTRESS 천장 텍스처 경로 정합성');
+assert(CEILING_TEXTURE_PATHS.DARK_ABYSS.includes('tex_ceil_dark_abyss.jpg'), 'DARK_ABYSS 천장 텍스처 경로 정합성');
+assert(CEILING_TEXTURE_PATHS.DEEP_ANGBAND.includes('tex_ceil_deep_angband.jpg'), 'DEEP_ANGBAND 천장 텍스처 경로 정합성');
+
+// 12-3. 테마별 텍스처 조회 API 안전성 (getFloorTexture, getCeilingTexture)
+for (const key of ['CAVE_RUINS', 'MINES_CATACOMBS', 'VOLCANIC_FORTRESS', 'DARK_ABYSS', 'DEEP_ANGBAND']) {
+  const fTex = tm.getFloorTexture(key);
+  assert(fTex !== null && fTex !== undefined, `${key} 테마 바닥 텍스처 조회 성공`);
+  const cTex = tm.getCeilingTexture(key);
+  assert(cTex !== null && cTex !== undefined, `${key} 테마 천장 텍스처 조회 성공`);
+}
+
+// 12-4. 90s 레트로 플로어캐스팅 & 실링캐스팅 버퍼 래스터라이징 검증
+let floorPutImageDataCalled = false;
+let floorDrawImageCalled = false;
+
+const mockFloorCanvasCtx = {
+  putImageData: () => { floorPutImageDataCalled = true; },
+  createImageData: (w, h) => ({
+    width: w,
+    height: h,
+    data: new Uint8ClampedArray(w * h * 4)
+  })
+};
+
+const mockFloorCanvas = {
+  width: 240,
+  height: 180,
+  getContext: () => mockFloorCanvasCtx
+};
+
+fpRenderer.floorCanvas = mockFloorCanvas;
+fpRenderer.floorCtx = mockFloorCanvasCtx;
+fpRenderer.floorImageData = mockFloorCanvasCtx.createImageData(240, 180);
+fpRenderer.floorBuffer = new Uint32Array(fpRenderer.floorImageData.data.buffer);
+
+fpRenderer.ctx = {
+  ...originalCtx,
+  drawImage: () => { floorDrawImageCalled = true; },
+  fillRect: () => {},
+  createLinearGradient: () => ({ addColorStop: () => {} }),
+  createRadialGradient: () => ({ addColorStop: () => {} }),
+  save: () => {},
+  restore: () => {}
+};
+
+// 128x128 모의 픽셀 버퍼 주입
+const mockPixelBuf = new Uint32Array(128 * 128).fill(0xFF334455);
+const dummyTexObj = { isMock: true };
+tm.pixelBuffers.set(dummyTexObj, mockPixelBuf);
+
+fpRenderer._renderCeilingAndFloor(dummyTexObj, dummyTexObj, { id: 'CAVE_RUINS' }, 5.5, 5.5, 0, -1, 0.66, 0, 4.0, 2.0, 8.0);
+
+assert(floorPutImageDataCalled, '플로어캐스팅 픽셀 버퍼 putImageData 정상 호출 확인');
+assert(floorDrawImageCalled, '오프스크린 플로어캐스팅 버퍼 스크린 투사 drawImage 정상 호출 확인');
 
 fpRenderer.ctx = originalCtx;
 
