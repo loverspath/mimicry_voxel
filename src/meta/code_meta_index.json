@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-09-03T02:00:22Z",
+  "generatedAt": "2026-09-03T02:55:20Z",
   "summary": {
     "totalModules": 75,
-    "totalLines": 106972,
+    "totalLines": 107053,
     "categories": {
       "configs": 5,
       "core": 14,
@@ -1189,9 +1189,9 @@
       "filePath": "src/systems/CombatVFXEngine.js",
       "moduleName": "CombatVFXEngine",
       "category": "systems",
-      "lines": 346,
-      "responsibility": "3대 렌더러(1인칭 3D, 2.5D 복셀, 2D 아스키)를 아우르는 통합 전투 시각 효과 엔진. 나노바나나 에셋 기반 화면 슬래시, 원소 폭발, 화면 흔들림(Screen Shake), 피격 비네팅 및 가산 혼합 파티클 제어",
-      "purity": "State Store",
+      "lines": 427,
+      "responsibility": "레트로 사이버펑크 순수 아스키 그래픽(ASCII as Graphics) 기반 전투 시각 효과 엔진. 정적 비트맵 이미지 의존성 100% 제거. 8대 공격 유형 아스키 파티클, 1인칭 검기 아크, 3D 빌보드 룬 폭발, 네온 블룸 CRT 글로우 및 화면 흔들림 제어",
+      "purity": "State Store / High-Performance Canvas Renderer",
       "dependencies": [
         "EventBus.js",
         "GameEvents.js"
@@ -1200,13 +1200,15 @@
         "CombatVFXEngine",
         "combatVFXEngine",
         "VFX_TYPES",
+        "ASCII_GLYPH_POOLS",
+        "ASCII_PALETTES",
         "VFX_PALETTES"
       ],
       "classes": [
         "CombatVFXEngine"
       ],
       "functions": [],
-      "lastModified": "2026-09-03T01:40:10Z"
+      "lastModified": "2026-09-03T02:54:02Z"
     },
     {
       "filePath": "src/systems/ConsumableEffectEngine.js",

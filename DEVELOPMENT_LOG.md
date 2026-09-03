@@ -4,7 +4,7 @@
 
 [![Version](https://img.shields.io/badge/version-0.21.0-emerald.svg)](package.json)
 [![Tests](https://img.shields.io/badge/test%20suites-59%2F59%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
-[![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(106%2C972%20LOC)-indigo.svg)](CODE_META_INDEX.md)
+[![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(107%2C053%20LOC)-indigo.svg)](CODE_META_INDEX.md)
 [![Engines](https://img.shields.io/badge/stateless%20engines-15%20engines%20(CombatVFX)-blue.svg)](src/systems/)
 [![Renderers](https://img.shields.io/badge/tri--mode%20renderers-Voxel%20|%203D%20|%20ASCII-teal.svg)](src/renderer/)
 [![Entities](https://img.shields.io/badge/canonical%20entities-1%2C636-purple.svg)](src/entities/)
@@ -394,7 +394,7 @@ timeline
 | 분류 | 수치 및 상태 | 비고 |
 | :--- | :--- | :--- |
 | **전체 테스트 스위트** | **59 / 59 ALL PASSED (100%)** | 1,850개 이상 단언문 회귀 결함 0건 완벽 방어 |
-| **스캔된 아키텍처 모듈** | **75개 모듈 (106,972 라인)** | `meta_indexer.py` 정밀 검증 및 위키 동기화 |
+| **스캔된 아키텍처 모듈** | **75개 모듈 (107,053 라인)** | `meta_indexer.py` 정밀 검증 및 위키 동기화 |
 | **정통 ToME 엔티티** | **1,636종 정규 엔티티** | 몬스터, 아티팩트, 에고, 아이템 카탈로그 |
 | **시스템 전담 엔진** | **15대 전담 엔진** | CombatVFX, Loot, Spawner, Budget, Status, AI, Spells, Tags 등 |
 | **배포 버전** | **v0.21.0 (Next-Gen 3D & VFX Release)** | 독립 포크(`fork_experimental/`) 패키징 완료 |

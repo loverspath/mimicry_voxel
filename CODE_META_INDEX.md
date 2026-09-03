@@ -2,9 +2,9 @@
 
 > **자동 생성 메타데이터**
 > - **엔진 버전**: `v1.2.0`
-> - **생성 일시**: `2026-09-03T02:00:22Z`
+> - **생성 일시**: `2026-09-03T02:55:20Z`
 > - **총 모듈 수**: `75개`
-> - **총 코드 라인 수**: `106,972줄`
+> - **총 코드 라인 수**: `107,053줄`
 
 ---
 
@@ -74,7 +74,7 @@
 | [`src/systems/ArtifactActivationEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/ArtifactActivationEngine.js) | **ArtifactActivationEngine** | `systems` | 346 | ToME 2.3.5 정통 183종 전설 유물의 고유 발동(Activation: ACT_SUNLIGHT, ACT_BO_ACID_1, ACT_BA_COLD_1, ACT_HEAL_1, ACT_RESTORE_STAT, ACT_WORD_OF_RECALL, ACT_GROND, ACT_THRAIN 등)을 식별하고 쿨다운(Cooldown) 관리 및 특수 주문 효과를 발동하는 순수 무상태 유물 발동 엔진. | Stateless System | `ArtifactActivationEngine, TOME_ARTIFACT_ACTIVATIONS, ARTIFACT_KEY_TO_ACTIVATION` |
 | [`src/systems/BalanceModifierManager.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/BalanceModifierManager.js) | **BalanceModifierManager** | `systems` | 142 | 게임 시작 옵션 및 런타임 밸런싱 모디파이어를 병합/평가하고 변경 이벤트를 발행하는 중앙 관리자 | State Store / Logic System | `BalanceModifierManager, balanceModifierManager` |
 | [`src/systems/BossPhaseEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/BossPhaseEngine.js) | **BossPhaseEngine** | `systems` | 673 | 50F 모르고스의 옥좌 최종 보스전(Morgoth Encounter) 3단계 페이즈 전환 엔진, 암흑 장막/지진/소환/영혼 드레인 스킬 제어 및 승천 보상 파이프라인 | State Store / Logic System | `BossPhaseEngine, bossPhaseEngine, BOSS_PHASES 외 1개` |
-| [`src/systems/CombatVFXEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/CombatVFXEngine.js) | **CombatVFXEngine** | `systems` | 346 | 3대 렌더러(1인칭 3D, 2.5D 복셀, 2D 아스키)를 아우르는 통합 전투 시각 효과 엔진. 나노바나나 에셋 기반 화면 슬래시, 원소 폭발, 화면 흔들림(Screen Shake), 피격 비네팅 및 가산 혼합 파티클 제어 | State Store | `CombatVFXEngine, combatVFXEngine, VFX_TYPES 외 1개` |
+| [`src/systems/CombatVFXEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/CombatVFXEngine.js) | **CombatVFXEngine** | `systems` | 427 | 레트로 사이버펑크 순수 아스키 그래픽(ASCII as Graphics) 기반 전투 시각 효과 엔진. 정적 비트맵 이미지 의존성 100% 제거. 8대 공격 유형 아스키 파티클, 1인칭 검기 아크, 3D 빌보드 룬 폭발, 네온 블룸 CRT 글로우 및 화면 흔들림 제어 | State Store / High-Performance Canvas Renderer | `CombatVFXEngine, combatVFXEngine, VFX_TYPES 외 3개` |
 | [`src/systems/ConsumableEffectEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/ConsumableEffectEngine.js) | **ConsumableEffectEngine** | `systems` | 37 | ToME 2.3.5 소비성 아이템 효과 실행기 (TomeConsumableEngine 연동 호환 래퍼) | Stateless Facade | `ConsumableEffectEngine` |
 | [`src/systems/DungeonValueBudgetEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/DungeonValueBudgetEngine.js) | **DungeonValueBudgetEngine** | `systems` | 603 | ToME/TomeNET 정통 층 깊이(Depth 1~50F) 기반 통합 밸류 예산 시스템. 4단계 티어 게이팅(Tier Gating), 가우시안/시그모이드 OOD 스케일링, 동적 맵 크기(Dynamic Map Dimensions) 및 다중 계단(Multiple Staircases) 분산 수식 산출, 장비 인챈트(+to_h, +to_d, +to_a, pval) 및 몬스터 접사/직업/특수방 예산 통제 엔진. | Pure Logic / Budget Calculation Engine | `DungeonValueBudgetEngine, dungeonValueBudgetEngine, DUNGEON_TIER_CONFIGS 외 13개` |
 | [`src/systems/MonsterAISystem.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/MonsterAISystem.js) | **MonsterAISystem** | `systems` | 487 | 몬스터 A* 패스파인딩, 행동 결정(Act), Bat 도주 AI, 브레스/스킬 쿨다운 및 버프/힐 틱 전담 시스템 | Stateless System | `MonsterAISystem` |

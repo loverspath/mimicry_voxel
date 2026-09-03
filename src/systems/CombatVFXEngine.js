@@ -1,11 +1,12 @@
 /**
  * @module CombatVFXEngine
  * @category systems
- * @description 3대 렌더러(1인칭 3D, 2.5D 복셀, 2D 아스키)를 아우르는 통합 전투 시각 효과 엔진.
- *              나노바나나 에셋 기반 화면 슬래시, 원소 폭발, 화면 흔들림(Screen Shake), 피격 비네팅 및 가산 혼합 파티클 제어
- * @purity State Store
+ * @description 레트로 사이버펑크 순수 아스키 그래픽(ASCII as Graphics) 기반 전투 시각 효과 엔진.
+ *              정적 비트맵 이미지 의존성 100% 제거. 8대 공격 유형 아스키 파티클, 1인칭 검기 아크,
+ *              3D 빌보드 룬 폭발, 네온 블룸 CRT 글로우 및 화면 흔들림 제어
+ * @purity State Store / High-Performance Canvas Renderer
  * @dependencies EventBus.js, GameEvents.js
- * @exports CombatVFXEngine, combatVFXEngine, VFX_TYPES, VFX_PALETTES
+ * @exports CombatVFXEngine, combatVFXEngine, VFX_TYPES, ASCII_GLYPH_POOLS, ASCII_PALETTES, VFX_PALETTES
  */
 
 import { eventBus } from '../events/EventBus.js';
@@ -23,23 +24,33 @@ export const VFX_TYPES = Object.freeze({
   HOLY_SMITE: 'HOLY_SMITE'
 });
 
-export const VFX_PALETTES = Object.freeze({
-  SLASH: { primary: '#ffffff', secondary: '#38bdf8', glow: 'rgba(56, 189, 248, 0.85)', assetKey: 'slash' },
-  BASH: { primary: '#fbbf24', secondary: '#d97706', glow: 'rgba(251, 191, 36, 0.85)', assetKey: 'slash' },
-  PIERCE_CRIT: { primary: '#ffd700', secondary: '#ef4444', glow: 'rgba(239, 68, 68, 0.95)', assetKey: 'slash' },
-  FIRE_BURST: { primary: '#ffffff', secondary: '#f97316', glow: 'rgba(249, 115, 22, 0.95)', assetKey: 'fire' },
-  FROST_SHATTER: { primary: '#ffffff', secondary: '#38bdf8', glow: 'rgba(56, 189, 248, 0.95)', assetKey: 'frost' },
-  LIGHTNING_SPARK: { primary: '#ffffff', secondary: '#fde047', glow: 'rgba(234, 179, 8, 0.95)', assetKey: 'fire' },
-  ACID_POISON: { primary: '#d9f99d', secondary: '#22c55e', glow: 'rgba(34, 197, 94, 0.85)', assetKey: 'fire' },
-  ARCANE_NOVA: { primary: '#f5d0fe', secondary: '#c084fc', glow: 'rgba(192, 132, 252, 0.90)', assetKey: 'frost' },
-  HOLY_SMITE: { primary: '#ffffff', secondary: '#ffd700', glow: 'rgba(255, 215, 0, 0.95)', assetKey: 'slash' }
+export const ASCII_GLYPH_POOLS = Object.freeze({
+  SLASH: ['/', '\\', '|', '-', '⚔', '†', '‡', '░', '▒', '▓'],
+  SLASH_SPARKS: ['*', '+', '·', '✧', '.'],
+  BASH: ['(', ')', '[', ']', '{', '}', '#', '@', '%', '&', 'O'],
+  CRITICAL: ['💥', '★', '✦', '▲', '▼', '⚡', '!'],
+  FIRE_BURST: ['*', '%', '&', '#', '^', '~', '!', '@', '▲', '♨'],
+  FROST_SHATTER: ['❄', '*', '+', 'x', 'X', '†', '▲', '▼', '◆', '◇'],
+  LIGHTNING_SPARK: ['⚡', 'z', 'Z', '\\', '/', '~', '|', 'ϟ', '✦'],
+  ACID_POISON: ['o', 'O', '0', '°', '%', '~', '●', '≈', '§'],
+  ARCANE_NOVA: ['@', '§', '¤', 'Ω', 'Ψ', '★', '✧', '✦', '○', '◎'],
+  HOLY_SMITE: ['†', '‡', '✦', '★', '✧', '▲', '●']
 });
 
-const EFFECT_ASSET_PATHS = Object.freeze({
-  slash: '/public/textures/effects/fx_slash.jpg',
-  fire: '/public/textures/effects/fx_fire.jpg',
-  frost: '/public/textures/effects/fx_frost.jpg'
+export const ASCII_PALETTES = Object.freeze({
+  SLASH: { primary: '#ffffff', secondary: '#38bdf8', glow: 'rgba(56, 189, 248, 0.90)' },
+  BASH: { primary: '#fbbf24', secondary: '#d97706', glow: 'rgba(251, 191, 36, 0.90)' },
+  PIERCE_CRIT: { primary: '#ffd700', secondary: '#ef4444', glow: 'rgba(239, 68, 68, 0.95)' },
+  FIRE_BURST: { primary: '#ffffff', secondary: '#f97316', glow: 'rgba(249, 115, 22, 0.95)' },
+  FROST_SHATTER: { primary: '#ffffff', secondary: '#38bdf8', glow: 'rgba(56, 189, 248, 0.95)' },
+  LIGHTNING_SPARK: { primary: '#ffffff', secondary: '#fde047', glow: 'rgba(234, 179, 8, 0.95)' },
+  ACID_POISON: { primary: '#d9f99d', secondary: '#22c55e', glow: 'rgba(34, 197, 94, 0.90)' },
+  ARCANE_NOVA: { primary: '#f5d0fe', secondary: '#c084fc', glow: 'rgba(192, 132, 252, 0.95)' },
+  HOLY_SMITE: { primary: '#ffffff', secondary: '#ffd700', glow: 'rgba(255, 215, 0, 0.95)' }
 });
+
+// 하위 호환성 별칭
+export const VFX_PALETTES = ASCII_PALETTES;
 
 export class CombatVFXEngine {
   constructor() {
@@ -48,24 +59,7 @@ export class CombatVFXEngine {
     this.screenShakeIntensity = 0;
     this.bloodVignetteAlpha = 0;
 
-    // 텍스처 에셋 캐시 및 프리로드
-    this.textures = new Map();
-    this._loadTextures();
-
     this._bindEvents();
-  }
-
-  _loadTextures() {
-    if (typeof window === 'undefined' || typeof Image === 'undefined') return;
-    for (const [key, path] of Object.entries(EFFECT_ASSET_PATHS)) {
-      try {
-        const img = new Image();
-        img.src = path;
-        this.textures.set(key, img);
-      } catch (_) {
-        // Headless fallback
-      }
-    }
   }
 
   _bindEvents() {
@@ -77,7 +71,8 @@ export class CombatVFXEngine {
   }
 
   /**
-   * 전투 피격 이펙트 격발 (객체 인자 또는 함수형 인자 모두 지원)
+   * 전투 피격 이펙트 격발 (100% 순수 아스키 파티클 생성)
+   * @param {Object} params - { type, x, y, damage, isCrit, element, isPlayerAttacker }
    */
   triggerHitEffect(params) {
     if (!params) return;
@@ -98,8 +93,32 @@ export class CombatVFXEngine {
       else if (el === 'ACID' || el === 'POIS') type = VFX_TYPES.ACID_POISON;
     }
 
-    const resolvedType = VFX_TYPES[type] || VFX_TYPES.SLASH;
-    const palette = VFX_PALETTES[resolvedType] || VFX_PALETTES.SLASH;
+    const resolvedType = VFX_TYPES[type] || (isCrit ? VFX_TYPES.PIERCE_CRIT : VFX_TYPES.SLASH);
+    const palette = ASCII_PALETTES[resolvedType] || ASCII_PALETTES.SLASH;
+    const glyphPool = ASCII_GLYPH_POOLS[resolvedType] || ASCII_GLYPH_POOLS.SLASH;
+
+    // 파티클 글리프 14~24개 생성
+    const particleCount = isCrit ? 24 : 14;
+    const particles = [];
+
+    for (let i = 0; i < particleCount; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 4.5 + 2.0;
+      particles.push({
+        char: glyphPool[Math.floor(Math.random() * glyphPool.length)],
+        x: 0,
+        y: 0,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: Math.floor(Math.random() * 8 + 14),
+        color: Math.random() > 0.4 ? palette.primary : palette.secondary,
+        rot: Math.random() * Math.PI,
+        vrot: (Math.random() - 0.5) * 6
+      });
+    }
+
+    // 슬래시 궤적 전용 글리프 시퀀스
+    const slashSequence = ['⚔', '▓', '▒', '░', '/', '✦', '*'];
 
     const vfx = {
       id: Math.random().toString(36).substring(2, 9),
@@ -110,23 +129,17 @@ export class CombatVFXEngine {
       isCrit: isCrit,
       isPlayerAttacker: isPlayerAttacker,
       palette: palette,
-      assetKey: palette.assetKey || 'slash',
-      life: 0.28,
-      maxLife: 0.28,
+      particles: particles,
+      slashSequence: slashSequence,
+      life: 0.32,
+      maxLife: 0.32,
       progress: 0.0,
-      slashAngle: (Math.random() - 0.5) * 0.55,
-      sparks: Array.from({ length: isCrit ? 16 : 8 }).map(() => ({
-        vx: (Math.random() - 0.5) * 8,
-        vy: (Math.random() - 0.5) * 8,
-        x: 0,
-        y: 0,
-        size: Math.random() * 3.5 + 2
-      }))
+      slashAngle: (Math.random() - 0.5) * 0.45 // 미세 참격 각도 편차
     };
 
     this.activeVFX.push(vfx);
 
-    // 타격 시 화면 셰이크 및 피격 비네팅
+    // 물리 피드백 (셰이크 & 비네팅)
     if (isCrit) {
       this.addScreenShake(10.0, 0.25);
     } else if (isPlayerAttacker) {
@@ -135,7 +148,7 @@ export class CombatVFXEngine {
 
     if (!isPlayerAttacker) {
       this.addScreenShake(14.0, 0.35);
-      this.bloodVignetteAlpha = 0.85; // 피격 시 붉은 비네팅 점멸
+      this.bloodVignetteAlpha = 0.85;
     }
   }
 
@@ -146,6 +159,7 @@ export class CombatVFXEngine {
     const isPlayerAttacker = source && source.isPlayer;
     const targetX = target ? target.x : (source ? source.x : 0);
     const targetY = target ? target.y : (source ? source.y : 0);
+    const damage = (target && target.lastDamageTaken) || (source && source.lastDamageDealt) || 0;
 
     // 타겟 피격 플래시
     if (target && typeof target === 'object') {
@@ -156,26 +170,30 @@ export class CombatVFXEngine {
       type: type || (isCritical ? VFX_TYPES.PIERCE_CRIT : VFX_TYPES.SLASH),
       x: targetX,
       y: targetY,
+      damage: damage,
       isCrit: isCritical,
       isPlayerAttacker: isPlayerAttacker
     });
   }
 
-  addScreenShake(intensity = 8, duration = 0.25) {
+  addScreenShake(intensity = 10, duration = 0.3) {
     this.screenShakeIntensity = Math.max(this.screenShakeIntensity, intensity);
     this.screenShakeTime = Math.max(this.screenShakeTime, duration);
   }
 
   update(dt = 0.016) {
-    // 1. 활성 VFX 수명 업데이트
+    // 1. 활성 VFX 수명 및 물리 파티클 감쇄
     for (let i = this.activeVFX.length - 1; i >= 0; i--) {
       const v = this.activeVFX[i];
       v.life -= dt;
       v.progress = Math.min(1.0, 1.0 - (v.life / v.maxLife));
 
-      for (const sp of v.sparks) {
-        sp.x += sp.vx;
-        sp.y += sp.vy;
+      for (const p of v.particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vrot * dt;
+        p.vx *= 0.94; // 감속 저항
+        p.vy *= 0.94;
       }
 
       if (v.life <= 0) {
@@ -183,23 +201,21 @@ export class CombatVFXEngine {
       }
     }
 
-    // 2. 화면 셰이크 감쇠
+    // 2. 화면 셰이크 감쇄
     if (this.screenShakeTime > 0) {
       this.screenShakeTime -= dt;
-      this.screenShakeIntensity *= Math.max(0, 1.0 - dt * 7.0);
-      if (this.screenShakeTime <= 0) {
-        this.screenShakeIntensity = 0;
-      }
+      this.screenShakeIntensity *= Math.max(0, 1.0 - dt * 6.5);
+      if (this.screenShakeTime <= 0) this.screenShakeIntensity = 0;
     }
 
-    // 3. 핏빛 비네팅 감쇠
+    // 3. 핏빛 비네팅 감쇄
     if (this.bloodVignetteAlpha > 0) {
-      this.bloodVignetteAlpha = Math.max(0, this.bloodVignetteAlpha - dt * 3.8);
+      this.bloodVignetteAlpha = Math.max(0, this.bloodVignetteAlpha - dt * 3.6);
     }
   }
 
   /**
-   * 1인칭 3D 렌더러 전용 전투 이펙트 드로우 루프
+   * 1인칭 3D 렌더러 전용 아스키 그래픽 드로우 루프
    */
   renderFirstPersonVFX(renderer) {
     if (!renderer || !renderer.ctx) return;
@@ -220,7 +236,7 @@ export class CombatVFXEngine {
       ctx.translate(offsetX, offsetY);
     }
 
-    // 2. 가산 혼합 설정
+    // 2. 가산 혼합 및 네온 글로우 활성화
     ctx.globalCompositeOperation = 'lighter';
 
     for (const v of this.activeVFX) {
@@ -228,23 +244,65 @@ export class CombatVFXEngine {
       ctx.globalAlpha = alpha;
 
       if (v.isPlayerAttacker) {
-        // [1인칭 스크린 슬래시 아크 & 텍스처 오버레이]
-        this._drawScreenSlash(ctx, w, h, v);
+        // [1인칭 스크린 아스키 검기 아크]
+        this._drawScreenAsciiSlash(ctx, w, h, v);
       } else {
-        // [타겟 월드 빌보드 원소 폭발]
-        this._drawBillboardBurst(ctx, renderer, v);
+        // [타겟 3D 빌보드 아스키 룬 폭발]
+        this._drawBillboardAsciiBurst(ctx, renderer, v);
+      }
+
+      // 치명타 시 상단 네온 배너
+      if (v.isCrit) {
+        this._drawCriticalBanner(ctx, w, h, v);
       }
     }
 
     ctx.restore();
 
-    // 3. 핏빛 비네팅 렌더링
+    // 3. 피격 핏빛 비네팅
     if (this.bloodVignetteAlpha > 0.02) {
       this._drawBloodVignette(ctx, w, h, this.bloodVignetteAlpha);
     }
   }
 
-  _drawScreenSlash(ctx, w, h, v) {
+  /**
+   * 2.5D 복셀 렌더러 전용 아스키 그래픽 드로우 루프
+   */
+  renderVoxelVFX(renderer) {
+    if (!renderer || !renderer.ctx) return;
+    const ctx = renderer.ctx;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+
+    for (const v of this.activeVFX) {
+      const alpha = Math.max(0, v.life / v.maxLife);
+      ctx.globalAlpha = alpha;
+      ctx.shadowColor = v.palette.glow;
+      ctx.shadowBlur = 10;
+
+      let screenX = v.x * 24;
+      let screenY = v.y * 24;
+      if (typeof renderer.toScreen === 'function') {
+        const pt = renderer.toScreen(v.x, v.y);
+        screenX = pt.x;
+        screenY = pt.y;
+      }
+
+      for (const pt of v.particles) {
+        ctx.font = `bold ${pt.size}px monospace`;
+        ctx.fillStyle = pt.color;
+        ctx.fillText(pt.char, screenX + pt.x, screenY + pt.y);
+      }
+    }
+
+    ctx.restore();
+  }
+
+  /**
+   * 스크린 공간 아스키 참격 궤적 렌더링
+   */
+  _drawScreenAsciiSlash(ctx, w, h, v) {
     const cx = w / 2;
     const cy = h / 2;
     const p = v.progress;
@@ -253,41 +311,41 @@ export class CombatVFXEngine {
     ctx.translate(cx, cy);
     ctx.rotate(v.slashAngle);
 
-    // 슬래시 텍스처 에셋 오버레이 지원
-    const tex = this.textures.get(v.assetKey || 'slash');
-    if (tex && tex.complete && tex.naturalWidth > 0) {
-      try {
-        const texSize = Math.min(w, h) * (0.65 + p * 0.25);
-        ctx.drawImage(tex, -texSize / 2, -texSize / 2, texSize, texSize);
-      } catch (_) {}
+    // 베지어 곡선상의 글리프 배치
+    const steps = v.slashSequence.length;
+    const arcSpan = w * 0.52;
+
+    ctx.shadowColor = v.palette.glow;
+    ctx.shadowBlur = 14;
+
+    for (let i = 0; i < steps; i++) {
+      const t = i / (steps - 1);
+      if (t > p * 1.35) continue;
+
+      const gx = -arcSpan / 2 + t * arcSpan;
+      const gy = Math.sin(t * Math.PI) * 45 - 20;
+
+      ctx.font = `bold ${Math.floor(28 + (1 - t) * 16)}px 'Fira Code', monospace`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = i < 2 ? v.palette.primary : v.palette.secondary;
+      ctx.fillText(v.slashSequence[i], gx, gy);
     }
 
-    // 절삭 빛 원호 궤적 (베지어 곡선)
-    const arcLen = w * 0.50;
-    const startX = -arcLen * (1.0 - p * 0.5);
-    const endX = arcLen * (p * 1.3);
-
-    ctx.beginPath();
-    ctx.moveTo(startX, -50);
-    ctx.quadraticCurveTo(0, 70, endX, -30);
-    ctx.strokeStyle = v.palette.primary;
-    ctx.lineWidth = v.isCrit ? 12 : 6;
-    ctx.shadowColor = v.palette.glow;
-    ctx.shadowBlur = 18;
-    ctx.stroke();
-
-    // 절단 스파크 방사
-    for (const sp of v.sparks) {
-      ctx.fillStyle = v.palette.secondary;
-      ctx.beginPath();
-      ctx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2);
-      ctx.fill();
+    // 후방 방사 파티클
+    for (const pt of v.particles) {
+      ctx.font = `bold ${pt.size}px 'Fira Code', monospace`;
+      ctx.fillStyle = pt.color;
+      ctx.fillText(pt.char, pt.x, pt.y);
     }
 
     ctx.restore();
   }
 
-  _drawBillboardBurst(ctx, renderer, v) {
+  /**
+   * 타겟 월드 좌표에 원근 투영되는 3D 아스키 빌보드 룬 폭발
+   */
+  _drawBillboardAsciiBurst(ctx, renderer, v) {
     const posX = (renderer.playerX !== undefined ? renderer.playerX : 0) + 0.5;
     const posY = (renderer.playerY !== undefined ? renderer.playerY : 0) + 0.5;
     const spriteX = (v.x + 0.5) - posX;
@@ -303,39 +361,62 @@ export class CombatVFXEngine {
     const transformX = invDet * (dirY * spriteX - dirX * spriteY);
     const transformY = invDet * (-planeY * spriteX + planeX * spriteY);
 
-    if (transformY <= 0.2) return;
+    if (transformY <= 0.2) return; // 카메라 후방 컬링
 
     const screenX = Math.floor((renderer.w / 2) * (1 + transformX / transformY));
-    const size = Math.abs(Math.floor(renderer.h / transformY)) * (1.1 + v.progress * 0.9);
+    const screenY = renderer.h / 2;
 
     if (screenX < 0 || screenX >= renderer.w) return;
     if (renderer.depthBuffer && transformY >= renderer.depthBuffer[screenX]) return; // Z-Culling
 
-    // 원소 텍스처 에셋 오버레이 지원
-    const tex = this.textures.get(v.assetKey || 'fire');
-    if (tex && tex.complete && tex.naturalWidth > 0) {
-      try {
-        ctx.drawImage(tex, screenX - size / 2, renderer.h / 2 - size / 2, size, size);
-      } catch (_) {}
+    const baseSize = Math.max(14, Math.floor((renderer.h / transformY) * 0.32));
+
+    ctx.save();
+    ctx.shadowColor = v.palette.glow;
+    ctx.shadowBlur = 12;
+
+    // 중심 마법진 아스키 심볼
+    ctx.font = `bold ${Math.floor(baseSize * 1.5)}px 'Fira Code', monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = v.palette.primary;
+    ctx.fillText('✸', screenX, screenY);
+
+    // 방사형 아스키 파티클 비산
+    for (const pt of v.particles) {
+      const px = screenX + pt.x * (baseSize / 16);
+      const py = screenY + pt.y * (baseSize / 16);
+      ctx.font = `bold ${Math.floor(baseSize * (pt.size / 16))}px 'Fira Code', monospace`;
+      ctx.fillStyle = pt.color;
+      ctx.fillText(pt.char, px, py);
     }
 
-    const grad = ctx.createRadialGradient(screenX, renderer.h / 2, 0, screenX, renderer.h / 2, size * 0.65);
-    grad.addColorStop(0, v.palette.primary);
-    grad.addColorStop(0.5, v.palette.secondary);
-    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.restore();
+  }
 
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(screenX, renderer.h / 2, size * 0.65, 0, Math.PI * 2);
-    ctx.fill();
+  _drawCriticalBanner(ctx, w, h, v) {
+    const p = v.progress;
+    const scale = 1.0 + (1.0 - p) * 0.4;
+    ctx.save();
+    ctx.translate(w / 2, h * 0.28);
+    ctx.scale(scale, scale);
+    ctx.font = "900 24px 'Fira Code', monospace";
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#ffd700';
+    ctx.shadowColor = '#ef4444';
+    ctx.shadowBlur = 16;
+    const dmgText = v.damage > 0 ? ` -${v.damage}` : '';
+    ctx.fillText(`💥 CRITICAL!${dmgText} 💥`, 0, 0);
+    ctx.restore();
   }
 
   _drawBloodVignette(ctx, w, h, alpha) {
     ctx.save();
     const grad = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.35, w / 2, h / 2, Math.max(w, h) * 0.75);
     grad.addColorStop(0, 'rgba(0,0,0,0)');
-    grad.addColorStop(0.7, `rgba(185, 28, 28, ${alpha * 0.55})`);
-    grad.addColorStop(1, `rgba(127, 29, 29, ${alpha * 0.92})`);
+    grad.addColorStop(0.7, `rgba(185, 28, 28, ${alpha * 0.50})`);
+    grad.addColorStop(1, `rgba(127, 29, 29, ${alpha * 0.90})`);
 
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);

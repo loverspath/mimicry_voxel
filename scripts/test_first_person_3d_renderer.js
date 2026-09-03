@@ -67,7 +67,7 @@ import { TextureManager, TEXTURE_PATHS, textureManager } from '../src/renderer/T
 import { FirstPerson3DRenderer } from '../src/renderer/FirstPerson3DRenderer.js';
 import { Game } from '../src/core/Game.js';
 import { DUNGEON_THEMES } from '../src/configs/DungeonThemeConfig.js';
-import { CombatVFXEngine, combatVFXEngine, VFX_TYPES } from '../src/systems/CombatVFXEngine.js';
+import { CombatVFXEngine, combatVFXEngine, VFX_TYPES, ASCII_GLYPH_POOLS, ASCII_PALETTES } from '../src/systems/CombatVFXEngine.js';
 
 let passed = 0;
 let failed = 0;
@@ -371,9 +371,16 @@ vfxEngine.triggerAttackFX('FROST_SHATTER', mockPlayerSource, mockMonsterTarget, 
 assert(vfxEngine.activeVFX.length === 3, 'triggerAttackFX 호출 시 활성 VFX 등록 확인');
 assert(mockMonsterTarget.hitFlash > 0, '타겟 몬스터 hitFlash 피격 점멸 설정 확인');
 
-// 6-4. 1인칭 3D 뷰 VFX 렌더링 호출 안전성 검증
+// 6-4. 1인칭 3D 뷰 및 2.5D 복셀 뷰 순수 아스키 렌더링 호출 안전성 검증
+assert(vfxEngine.activeVFX[0].particles.length >= 14, '아스키 파티클 14개 이상 생성 확인');
+assert(typeof vfxEngine.activeVFX[0].particles[0].char === 'string', '파티클이 순수 텍스트 글리프로 구성됨을 확인');
+assert(ASCII_GLYPH_POOLS.SLASH.includes(vfxEngine.activeVFX[0].slashSequence[0]), '슬래시 궤적 글리프 정합성 확인');
+
 vfxEngine.renderFirstPersonVFX(fpRenderer);
-assert(true, '1인칭 3D 뷰 전투 VFX 렌더링 예외 없이 완벽 실행');
+assert(true, '1인칭 3D 뷰 아스키 그래픽 VFX 렌더링 예외 없이 완벽 실행');
+
+vfxEngine.renderVoxelVFX(game.renderer);
+assert(true, '2.5D 복셀 뷰 아스키 그래픽 VFX 렌더링 예외 없이 완벽 실행');
 
 // 6-5. 시간 경과에 따른 수명 감쇄 및 소멸 검증
 vfxEngine.update(0.15);
