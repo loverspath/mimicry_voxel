@@ -92,6 +92,16 @@ export const CEILING_TEXTURE_PATHS = Object.freeze({
   DEEP_ANGBAND: '/public/textures/tex_ceil_deep_angband.jpg'
 });
 
+export const STAIR_TEXTURE_FILENAMES = Object.freeze({
+  DOWN: 'tex_stairs_down.jpg',
+  UP: 'tex_stairs_up.jpg'
+});
+
+export const STAIR_TEXTURE_PATHS = Object.freeze({
+  DOWN: '/public/textures/tex_stairs_down.jpg',
+  UP: '/public/textures/tex_stairs_up.jpg'
+});
+
 export const ALL_TEXTURE_REGISTRY = Object.freeze({
   // 벽면 5종
   CAVE_RUINS: 'tex_cave_ruins.jpg',
@@ -113,7 +123,11 @@ export const ALL_TEXTURE_REGISTRY = Object.freeze({
   CEIL_MINES_CATACOMBS: 'tex_ceil_catacombs.jpg',
   CEIL_VOLCANIC_FORTRESS: 'tex_ceil_volcanic.jpg',
   CEIL_DARK_ABYSS: 'tex_ceil_dark_abyss.jpg',
-  CEIL_DEEP_ANGBAND: 'tex_ceil_deep_angband.jpg'
+  CEIL_DEEP_ANGBAND: 'tex_ceil_deep_angband.jpg',
+
+  // 계단 2종
+  STAIRS_DOWN: 'tex_stairs_down.jpg',
+  STAIRS_UP: 'tex_stairs_up.jpg'
 });
 
 export class TextureManager {
@@ -168,6 +182,22 @@ export class TextureManager {
             ctx.beginPath();
             ctx.arc(32, 64, 28, Math.PI, 0);
             ctx.stroke();
+          } else if (key === 'STAIRS_DOWN') {
+            // 하행 계단 지하 개구부 폴백
+            ctx.fillStyle = '#090d16'; ctx.fillRect(0, 0, 64, 64);
+            ctx.strokeStyle = '#334155'; ctx.lineWidth = 3;
+            ctx.strokeRect(4, 4, 56, 56);
+            ctx.fillStyle = '#1e293b'; ctx.fillRect(8, 8, 48, 14);
+            ctx.fillStyle = '#0f172a'; ctx.fillRect(12, 22, 40, 14);
+            ctx.fillStyle = '#020617'; ctx.fillRect(16, 36, 32, 20);
+          } else if (key === 'STAIRS_UP') {
+            // 상행 계단 아치 폴백
+            ctx.fillStyle = '#1e293b'; ctx.fillRect(0, 0, 64, 64);
+            ctx.strokeStyle = '#64748b'; ctx.lineWidth = 2;
+            ctx.strokeRect(6, 6, 52, 52);
+            ctx.fillStyle = '#334155'; ctx.fillRect(10, 38, 44, 18);
+            ctx.fillStyle = '#475569'; ctx.fillRect(14, 22, 36, 16);
+            ctx.fillStyle = '#cbd5e1'; ctx.fillRect(18, 8, 28, 14);
           } else {
             // 벽면 폴백 패턴
             if (key === 'CAVE_RUINS') {
@@ -325,6 +355,21 @@ export class TextureManager {
     if (!this.textures.has(key)) {
       this._loadSingleTexture(key);
       return this.fallbackTextures.get(key) || this.fallbackTextures.get('CEIL_CAVE_RUINS');
+    }
+    return this.textures.get(key);
+  }
+
+  /**
+   * 계단 실사 텍스처를 반환합니다. (DOWN 또는 UP)
+   * @param {boolean|string} isDown - true/'DOWN'이면 하행, false/'UP'이면 상행
+   * @returns {HTMLImageElement|HTMLCanvasElement|Object}
+   */
+  getStairTexture(isDown = true) {
+    const isD = (isDown === true || isDown === 'DOWN' || isDown === 'STAIRS_DOWN');
+    const key = isD ? 'STAIRS_DOWN' : 'STAIRS_UP';
+    if (!this.textures.has(key)) {
+      this._loadSingleTexture(key);
+      return this.fallbackTextures.get(key);
     }
     return this.textures.get(key);
   }

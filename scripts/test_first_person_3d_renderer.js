@@ -816,6 +816,68 @@ assert(shadowFillRectCount > 0, `벽면 상단 및 하단 접촉 앰비언트 �
 fpRenderer.ctx = originalCtx;
 
 console.log('='.repeat(80));
+console.log('🧪 [TEST SUITE 14] 실사 계단 텍스처 및 정통 3D 복셀 석조 계단 렌더러 검증');
+console.log('='.repeat(80));
+
+const { STAIR_TEXTURE_PATHS, STAIR_TEXTURE_FILENAMES } = await import('../src/renderer/TextureManager.js');
+
+// 14-1. 계단 텍스처 경로 정합성 검증
+assert(STAIR_TEXTURE_PATHS.DOWN.includes('tex_stairs_down.jpg'), '하행 계단(tex_stairs_down.jpg) 경로 정합성 확인');
+assert(STAIR_TEXTURE_PATHS.UP.includes('tex_stairs_up.jpg'), '상행 계단(tex_stairs_up.jpg) 경로 정합성 확인');
+
+// 14-2. 계단 텍스처 조회 API (getStairTexture) 검증
+const downTex = tm.getStairTexture(true);
+assert(downTex !== null && downTex !== undefined, 'getStairTexture(true) 하행 계단 텍스처/폴백 조회 성공');
+const upTex = tm.getStairTexture(false);
+assert(upTex !== null && upTex !== undefined, 'getStairTexture(false) 상행 계단 텍스처/폴백 조회 성공');
+
+// 14-3. 하행 계단 지하 개구부 및 상행 계단 고딕 아치 렌더러 호출 무결성 검증
+const mockStairCtx = {
+  ...originalCtx,
+  save: () => {},
+  restore: () => {},
+  beginPath: () => {},
+  closePath: () => {},
+  moveTo: () => {},
+  lineTo: () => {},
+  arcTo: () => {},
+  rect: () => {},
+  fill: () => {},
+  stroke: () => {},
+  strokeRect: () => {},
+  fillRect: () => {},
+  clip: () => {},
+  drawImage: () => {},
+  createLinearGradient: () => ({ addColorStop: () => {} }),
+  createRadialGradient: () => ({ addColorStop: () => {} })
+};
+
+fpRenderer.ctx = mockStairCtx;
+
+// 하행 계단 지하 통로 렌더링 호출
+fpRenderer._renderDownstairsSubterranean(mockStairCtx, 400, 350, 120, 80, downTex, true, 1.0);
+assert(true, '_renderDownstairsSubterranean 지하 석조 통로 및 3단 디딤판 예외 없이 렌더링');
+
+// 상행 계단 고딕 아치 렌더링 호출
+fpRenderer._renderUpstairsGothicArch(mockStairCtx, 400, 350, 120, 80, upTex, true, 1.0);
+assert(true, '_renderUpstairsGothicArch 고딕 아치 포털 및 솟아오르는 계단 예외 없이 렌더링');
+
+// 계단 복합 맵 전체 렌더링 (하행 1개, 상행 1개)
+const fullStairMap = {
+  width: 15,
+  height: 15,
+  floor: 3,
+  downStaircases: [{ x: 5, y: 3 }],
+  upStaircases: [{ x: 5, y: 7 }],
+  tiles: Array.from({ length: 15 }, () => Array.from({ length: 15 }, () => ({ type: 'FLOOR', isWall: false, isExplored: true })))
+};
+
+fpRenderer.drawMap(fullStairMap, 0, 0, 5, 5, 6, 3);
+assert(true, '정통 3D 복셀 석조 계단(하행 지하 개구부 & 상행 고딕 아치) drawMap 렌더링 무결 통과');
+
+fpRenderer.ctx = originalCtx;
+
+console.log('='.repeat(80));
 console.log(`🎉 [TEST SUMMARY] 총 ${passed + failed}개 검증 중 ${passed}개 통과 (${((passed / (passed + failed)) * 100).toFixed(1)}%)`);
 console.log('='.repeat(80));
 

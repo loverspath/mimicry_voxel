@@ -853,6 +853,15 @@ export class FirstPerson3DRenderer {
     }
   }
 
+  _isReadyTexture(tex) {
+    if (!tex) return false;
+    if (typeof HTMLCanvasElement !== 'undefined' && tex instanceof HTMLCanvasElement) return true;
+    const isImage = (typeof HTMLImageElement !== 'undefined' && tex instanceof HTMLImageElement) ||
+                    (typeof Image !== 'undefined' && tex instanceof Image) ||
+                    tex.complete !== undefined;
+    return isImage ? (tex.complete && (tex.naturalWidth > 0 || tex.width > 0)) : true;
+  }
+
   _renderSingleVoxelStair(stair, currentFloor = 1) {
     const ctx = this.ctx;
     const isDown = stair.type === 'STAIRS_DOWN';
@@ -866,110 +875,280 @@ export class FirstPerson3DRenderer {
     let fog = 0;
     if (transformY > clearDist) {
       const normDist = Math.min(1.0, Math.max(0, (transformY - clearDist) / (maxLightDist - clearDist)));
-      fog = Math.min(0.65, Math.pow(normDist, 1.25));
+      fog = Math.min(0.75, Math.pow(normDist, 1.25));
     }
-    const alpha = Math.max(0.35, 1.0 - fog);
+    const fogMul = 1.0 - fog;
 
-    // 실시간 유클리드 거리 및 고대비 네온 복셀 팔레트
-    const distM = Math.hypot(stair.stairX || 0, stair.stairY || 0).toFixed(1);
-    const palette = isDown
-      ? {
-          top: '#f43f5e',       // 네온 로즈/마젠타
-          front: '#be123c',     // 짙은 로즈
-          side: '#881337',      // 섀도우 마젠타
-          rim: '#fda4af',       // 테두리 네온 림 글로우
-          beam: 'rgba(244, 63, 94, ',
-          badgeText: `[ 🔻 하행 계단 • ${distM}m > ]`,
-          badgeBg: 'rgba(136, 19, 55, 0.90)',
-          badgeBorder: '#f43f5e'
-        }
-      : {
-          top: '#38bdf8',       // 일렉트릭 시안/스카이블루
-          front: '#0284c7',     // 짙은 블루
-          side: '#0369a1',      // 섀도우 블루
-          rim: '#bae6fd',       // 테두리 네온 림 글로우
-          beam: 'rgba(56, 189, 248, ',
-          badgeText: `[ 🔺 상행 계단 • ${distM}m < ]`,
-          badgeBg: 'rgba(3, 105, 161, 0.90)',
-          badgeBorder: '#38bdf8'
-        };
+    // 투영 지평선 및 타일 스케일
+    const totalPitch = (this.pitch || 0) + (this.walkBob || 0);
+    const horizonY = Math.floor(this.h / 2 + totalPitch);
+    const scaleH = this.h / transformY;
+    const baseW = Math.max(20, Math.min(this.w * 0.95, scaleH * 0.90));
+    const baseH = Math.max(16, Math.min(this.h * 0.70, scaleH * 0.48));
+    const groundY = Math.min(this.h - 10, Math.floor(horizonY + scaleH * 0.50));
 
-    const horizonY = Math.floor(this.h / 2 + (this.pitch || 0) + (this.walkBob || 0));
-    const baseW = Math.max(24, Math.min(this.w * 0.90, Math.abs(Math.floor(this.h / transformY)) * 0.88));
-    const baseH = Math.max(16, Math.min(this.h * 0.48, Math.abs(Math.floor(this.h / transformY)) * 0.46));
-    const groundY = Math.min(this.h - 15, Math.floor(horizonY + Math.min(this.h * 0.40, (this.h / transformY) * 0.38)));
+    // 실사 계단 텍스처 추출
+    const stairTex = textureManager.getStairTexture(isDown);
+    const canDrawTex = this._isReadyTexture(stairTex);
 
     ctx.save();
-    ctx.globalAlpha = alpha;
+    ctx.globalAlpha = Math.max(0.20, fogMul);
 
-    // 1. 천장-바닥 전면 관통 수직 네온 비콘 광선 (Full-Height Beacon Pillar) - 가산 혼합
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const beamW = Math.max(24, Math.floor(baseW * 0.52));
-    const beamGrad = ctx.createLinearGradient(screenX, groundY, screenX, 0);
-    beamGrad.addColorStop(0, `${palette.beam}0.58)`);
-    beamGrad.addColorStop(0.3, `${palette.beam}0.38)`);
-    beamGrad.addColorStop(0.7, `${palette.beam}0.18)`);
-    beamGrad.addColorStop(1.0, `${palette.beam}0.02)`);
-
-    ctx.fillStyle = beamGrad;
-    ctx.fillRect(screenX - beamW / 2, 0, beamW, this.h);
-    ctx.restore();
-
-    // 2. 3단 복셀 계단 단차 (3-Tier Perspective Voxel Steps)
-    // Tier 1 (하단 기단부)
-    const t1W = baseW;
-    const t1H = baseH * 0.35;
-    const t1Y = groundY - t1H;
-    this._drawPerspectiveVoxelBlock(ctx, screenX, t1Y, t1W, t1H, palette);
-
-    // Tier 2 (중단 스텝)
-    const t2W = baseW * 0.72;
-    const t2H = baseH * 0.32;
-    const t2Y = t1Y - t2H;
-    this._drawPerspectiveVoxelBlock(ctx, screenX, t2Y, t2W, t2H, palette);
-
-    // Tier 3 (상단 스텝)
-    const t3W = baseW * 0.46;
-    const t3H = baseH * 0.28;
-    const t3Y = t2Y - t3H;
-    this._drawPerspectiveVoxelBlock(ctx, screenX, t3Y, t3W, t3H, palette);
-
-    // 3. 3D 홀로그램 거리 웨이포인트 배너 (Floating Waypoint Hologram Badge)
-    const badgeFontSize = Math.max(12, Math.min(22, Math.floor(baseW * 0.15)));
-    ctx.font = `bold ${badgeFontSize}px 'Fira Code', monospace`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    const textWidth = ctx.measureText ? ctx.measureText(palette.badgeText).width : badgeFontSize * 16;
-    const badgePadX = 10;
-    const badgePadY = 5;
-    const badgeW = textWidth + badgePadX * 2;
-    const badgeH = badgeFontSize + badgePadY * 2;
-    const badgeY = t3Y - badgeH - Math.max(10, baseH * 0.16);
-
-    // 배지 배경 및 고휘도 네온 글로우
-    ctx.fillStyle = palette.badgeBg;
-    ctx.strokeStyle = palette.badgeBorder;
-    ctx.lineWidth = 2.0;
-    ctx.shadowColor = palette.rim;
-    ctx.shadowBlur = 12;
-
-    if (ctx.roundRect) {
-      ctx.beginPath();
-      ctx.roundRect(screenX - badgeW / 2, badgeY, badgeW, badgeH, 6);
-      ctx.fill();
-      ctx.stroke();
+    if (isDown) {
+      this._renderDownstairsSubterranean(ctx, screenX, groundY, baseW, baseH, stairTex, canDrawTex, fogMul);
     } else {
-      ctx.fillRect(screenX - badgeW / 2, badgeY, badgeW, badgeH);
-      ctx.strokeRect(screenX - badgeW / 2, badgeY, badgeW, badgeH);
+      this._renderUpstairsGothicArch(ctx, screenX, groundY, baseW, baseH, stairTex, canDrawTex, fogMul);
     }
 
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText(palette.badgeText, screenX, badgeY + badgeH / 2);
-
     ctx.restore();
+  }
+
+  /**
+   * 하행 계단: 바닥 타일 안쪽으로 음푹 파고들어가는 3단 석조 지하 통로 (Subterranean Stairwell)
+   */
+  _renderDownstairsSubterranean(ctx, cx, groundY, w, h, tex, canDrawTex, fogMul) {
+    const halfW = w / 2;
+    const rimH = Math.max(8, h * 0.32);
+    const wellTopY = groundY - rimH * 0.25;
+    const wellBottomY = groundY + rimH * 0.75;
+    const wellH = wellBottomY - wellTopY;
+
+    // 1. 바닥면 수평 사각 석조 테두리 림 (Stone Rim Curb / Border Blocks)
+    const rimGrad = ctx.createLinearGradient(0, wellTopY, 0, wellBottomY);
+    rimGrad.addColorStop(0, '#334155');
+    rimGrad.addColorStop(0.5, '#1e293b');
+    rimGrad.addColorStop(1, '#0f172a');
+    ctx.fillStyle = rimGrad;
+    if (typeof ctx.roundRect === 'function') {
+      ctx.beginPath();
+      ctx.roundRect(cx - halfW, wellTopY, w, wellH, 4);
+      ctx.fill();
+    } else {
+      ctx.fillRect(cx - halfW, wellTopY, w, wellH);
+    }
+    ctx.strokeStyle = '#475569';
+    ctx.lineWidth = Math.max(1.5, w * 0.015);
+    ctx.strokeRect(cx - halfW, wellTopY, w, wellH);
+
+    // 2. 내부 지하 개구부 공동 (Inner Subterranean Pit Cavity)
+    const cavityW = w * 0.82;
+    const cavityH = wellH * 0.75;
+    const cavityX = cx - cavityW / 2;
+    const cavityY = wellTopY + (wellH - cavityH) / 2;
+
+    // 심연 배경 (깊은 지하의 칠흑 같은 어둠)
+    const pitGrad = ctx.createLinearGradient(0, cavityY, 0, cavityY + cavityH);
+    pitGrad.addColorStop(0, '#090d16');
+    pitGrad.addColorStop(0.6, '#020408');
+    pitGrad.addColorStop(1, '#000000');
+    ctx.fillStyle = pitGrad;
+    ctx.fillRect(cavityX, cavityY, cavityW, cavityH);
+
+    // 3. 실사 텍스처 (tex_stairs_down) 지하 계단면 투영
+    if (canDrawTex) {
+      try {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(cavityX, cavityY, cavityW, cavityH);
+        ctx.clip();
+        ctx.drawImage(tex, cavityX, cavityY, cavityW, cavityH);
+
+        // 지하 깊이감 심연 오버레이 (아래로 갈수록 칠흑으로 페이드)
+        const depthShade = ctx.createLinearGradient(0, cavityY, 0, cavityY + cavityH);
+        depthShade.addColorStop(0, 'rgba(15, 23, 42, 0.25)');
+        depthShade.addColorStop(0.5, 'rgba(2, 6, 23, 0.55)');
+        depthShade.addColorStop(1, 'rgba(0, 0, 0, 0.88)');
+        ctx.fillStyle = depthShade;
+        ctx.fillRect(cavityX, cavityY, cavityW, cavityH);
+        ctx.restore();
+      } catch (_) {}
+    }
+
+    // 4. 아래로 내려앉는 3단계 석조 디딤판 (Descending Steps & Risers)
+    const stepConfigs = [
+      { wFrac: 0.76, yFrac: 0.08, hFrac: 0.22, treadColor: '#334155', riserColor: '#1e293b' },
+      { wFrac: 0.60, yFrac: 0.34, hFrac: 0.22, treadColor: '#1e293b', riserColor: '#0f172a' },
+      { wFrac: 0.44, yFrac: 0.60, hFrac: 0.24, treadColor: '#0f172a', riserColor: '#020617' }
+    ];
+
+    for (let i = 0; i < stepConfigs.length; i++) {
+      const cfg = stepConfigs[i];
+      const sW = cavityW * cfg.wFrac;
+      const sX = cx - sW / 2;
+      const sY = cavityY + cavityH * cfg.yFrac;
+      const sH = cavityH * cfg.hFrac;
+      const treadH = Math.max(2, sH * 0.45);
+      const riserH = sH - treadH;
+
+      // Tread (디딤판 상면)
+      ctx.fillStyle = cfg.treadColor;
+      ctx.fillRect(sX, sY, sW, treadH);
+
+      // Tread Bevel Highlight
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.fillRect(sX, sY, sW, 1);
+
+      // Riser (챌면 수직면)
+      ctx.fillStyle = cfg.riserColor;
+      ctx.fillRect(sX, sY + treadH, sW, riserH);
+
+      // Riser Shadow Edge
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.50)';
+      ctx.fillRect(sX, sY + sH - 1, sW, 1);
+    }
+
+    // 5. 지하 깊은 곳에서 새어 나오는 은은한 호박색 등불 앰비언트 글로우
+    const glowY = cavityY + cavityH * 0.85;
+    const glowR = Math.max(12, cavityW * 0.42);
+    const glowGrad = ctx.createRadialGradient(cx, glowY, 2, cx, glowY, glowR);
+    glowGrad.addColorStop(0, 'rgba(245, 158, 11, 0.35)');
+    glowGrad.addColorStop(0.4, 'rgba(217, 119, 6, 0.18)');
+    glowGrad.addColorStop(0.8, 'rgba(180, 83, 9, 0.05)');
+    glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.save();
+    ctx.fillStyle = glowGrad;
+    ctx.fillRect(cx - glowR, glowY - glowR, glowR * 2, glowR * 2);
+    ctx.restore();
+  }
+
+  /**
+   * 상행 계단: 바닥에서 상공으로 솟아오르는 3단 대형 석조 블록 디딤판 & 고딕 아치 포털
+   */
+  _renderUpstairsGothicArch(ctx, cx, groundY, w, h, tex, canDrawTex, fogMul) {
+    const halfW = w / 2;
+    const archH = Math.max(28, h * 1.25);
+    const archTopY = groundY - archH;
+    const portalW = w * 0.68;
+    const portalX = cx - portalW / 2;
+
+    // 1. 상단 천장 개구부를 통해 쏟아져 내리는 역광 (Volumetric Pale Daylight)
+    const lightW = portalW * 1.15;
+    const lightGrad = ctx.createLinearGradient(cx, archTopY, cx, groundY);
+    lightGrad.addColorStop(0, 'rgba(224, 242, 254, 0.28)');
+    lightGrad.addColorStop(0.4, 'rgba(186, 230, 253, 0.14)');
+    lightGrad.addColorStop(0.8, 'rgba(147, 197, 253, 0.04)');
+    lightGrad.addColorStop(1.0, 'rgba(0, 0, 0, 0)');
+    ctx.save();
+    ctx.fillStyle = lightGrad;
+    ctx.fillRect(cx - lightW / 2, archTopY, lightW, archH);
+    ctx.restore();
+
+    // 2. 고딕 석조 아치 포털 프레임 (Gothic Arch Masonry Frame)
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(portalX, groundY);
+    ctx.lineTo(portalX, archTopY + portalW * 0.45);
+    ctx.arcTo(portalX, archTopY, cx, archTopY, portalW * 0.45);
+    ctx.arcTo(portalX + portalW, archTopY, portalX + portalW, archTopY + portalW * 0.45, portalW * 0.45);
+    ctx.lineTo(portalX + portalW, groundY);
+    ctx.closePath();
+
+    // 포털 내부 상층 배경 (위층 복도 빛)
+    const portalInner = ctx.createLinearGradient(0, archTopY, 0, groundY);
+    portalInner.addColorStop(0, '#cbd5e1');
+    portalInner.addColorStop(0.3, '#94a3b8');
+    portalInner.addColorStop(0.7, '#334155');
+    portalInner.addColorStop(1, '#0f172a');
+    ctx.fillStyle = portalInner;
+    ctx.fill();
+
+    // 실사 텍스처 (tex_stairs_up) 아치 포털 내부 투영
+    if (canDrawTex) {
+      try {
+        ctx.save();
+        ctx.clip();
+        ctx.drawImage(tex, portalX, archTopY, portalW, archH);
+        // 부드러운 상층 빛 오버레이
+        const archShade = ctx.createLinearGradient(0, archTopY, 0, groundY);
+        archShade.addColorStop(0, 'rgba(255, 255, 255, 0.20)');
+        archShade.addColorStop(0.5, 'rgba(15, 23, 42, 0.35)');
+        archShade.addColorStop(1, 'rgba(2, 6, 23, 0.70)');
+        ctx.fillStyle = archShade;
+        ctx.fillRect(portalX, archTopY, portalW, archH);
+        ctx.restore();
+      } catch (_) {}
+    }
+
+    // 아치 석재 외곽 테두리 (Keystone Arch Trim)
+    ctx.strokeStyle = '#475569';
+    ctx.lineWidth = Math.max(2, w * 0.02);
+    ctx.stroke();
+    ctx.restore();
+
+    // 3. 차례대로 솟아오르는 3단 대형 석조 블록 디딤판 (Ascending Voxel Steps)
+    const stepTiers = [
+      { wFrac: 0.86, hFrac: 0.20, stepY: groundY - h * 0.20, topCol: '#475569', frontCol: '#334155' },
+      { wFrac: 0.68, hFrac: 0.22, stepY: groundY - h * 0.42, topCol: '#64748b', frontCol: '#475569' },
+      { wFrac: 0.50, hFrac: 0.24, stepY: groundY - h * 0.66, topCol: '#94a3b8', frontCol: '#64748b' }
+    ];
+
+    for (let i = 0; i < stepTiers.length; i++) {
+      const tier = stepTiers[i];
+      const sW = w * tier.wFrac;
+      const sH = Math.max(6, h * tier.hFrac);
+      const sX = cx - sW / 2;
+      const sY = tier.stepY;
+      const treadH = Math.max(3, sH * 0.42);
+      const riserH = sH - treadH;
+
+      // Tread (디딤판 상면 - 원근 사다리꼴)
+      ctx.fillStyle = tier.topCol;
+      ctx.beginPath();
+      ctx.moveTo(sX, sY + treadH);
+      ctx.lineTo(sX + sW * 0.08, sY);
+      ctx.lineTo(sX + sW * 0.92, sY);
+      ctx.lineTo(sX + sW, sY + treadH);
+      ctx.closePath();
+      ctx.fill();
+
+      // Tread Edge Highlight
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
+      ctx.fillRect(sX, sY + treadH - 1, sW, 1);
+
+      // Riser (챌면 정면 석조)
+      ctx.fillStyle = tier.frontCol;
+      ctx.fillRect(sX, sY + treadH, sW, riserH);
+
+      // Riser Bottom Shadow
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+      ctx.fillRect(sX, sY + sH - 1, sW, 1);
+
+      // 석재 윤곽선
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(sX, sY + treadH, sW, riserH);
+    }
+
+    // 4. 좌우 측면을 받쳐주는 석조 난간 기둥 (Stone Balustrades)
+    const pillarW = Math.max(4, w * 0.075);
+    const pillarH = h * 0.70;
+    const pillarY = groundY - pillarH;
+    const leftPillarX = cx - w * 0.44;
+    const rightPillarX = cx + w * 0.44 - pillarW;
+
+    const drawBalustrade = (pX) => {
+      // 기둥 몸체
+      const pilGrad = ctx.createLinearGradient(pX, pillarY, pX + pillarW, pillarY);
+      pilGrad.addColorStop(0, '#64748b');
+      pilGrad.addColorStop(0.4, '#475569');
+      pilGrad.addColorStop(1, '#1e293b');
+      ctx.fillStyle = pilGrad;
+      ctx.fillRect(pX, pillarY, pillarW, pillarH);
+
+      // 기둥 상단 석조 캡
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(pX - 2, pillarY - 4, pillarW + 4, 5);
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(pX - 2, pillarY + 1, pillarW + 4, 1);
+
+      // 외곽선
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(pX, pillarY, pillarW, pillarH);
+    };
+
+    drawBalustrade(leftPillarX);
+    drawBalustrade(rightPillarX);
   }
 
   /**
