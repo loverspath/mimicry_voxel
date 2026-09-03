@@ -640,7 +640,13 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
       <button class="modal-btn primary" id="detail-equip-btn" style="${isEquipped ? (isCursedItem ? 'background: rgba(127,29,29,0.3); border-color: rgba(239,68,68,0.5); color: #fca5a5; cursor: not-allowed;' : 'background: rgba(244,63,94,0.15); border-color: rgba(244,63,94,0.3); color: #f43f5e;') : 'background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.3); color: #10b981;'} font-weight: bold;">
         ${isEquipped ? (isCursedItem ? `🔒 [ ☠️ 저주 결속 (해제 불가) ]` : `장착 해제 (${slotNameKor})`) : `${slotNameKor} 장착하기`}
       </button>
-      <button class="modal-btn danger" id="detail-drop-btn">버리기</button>
+      ${isEquipped && isCursedItem ? `
+        <button class="modal-btn danger" id="detail-drop-btn" style="background: rgba(127,29,29,0.25); border-color: rgba(239,68,68,0.35); color: #fca5a5; cursor: not-allowed;" disabled title="저주받은 장비는 몸에서 떼어낼 수 없습니다.">
+          🔒 [ ☠️ 저주 결속 (버리기 불가) ]
+        </button>
+      ` : `
+        <button class="modal-btn danger" id="detail-drop-btn">버리기</button>
+      `}
     </div>
   `;
 }

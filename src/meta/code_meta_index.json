@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-09-03T12:09:24Z",
+  "generatedAt": "2026-09-03T12:18:19Z",
   "summary": {
     "totalModules": 75,
-    "totalLines": 109438,
+    "totalLines": 109527,
     "categories": {
       "configs": 5,
       "core": 14,
@@ -285,7 +285,7 @@
       "filePath": "src/core/Game.js",
       "moduleName": "Game",
       "category": "core",
-      "lines": 2286,
+      "lines": 2314,
       "responsibility": "미미크리 로그라이크 핵심 게임 루프, 턴 스케줄링, 엔티티 상호작용 및 UI 모달 이벤트 통합 조율 오케스트레이터",
       "purity": "State Store",
       "dependencies": [
@@ -334,7 +334,7 @@
         "setClick",
         "updateSlotLabels"
       ],
-      "lastModified": "2026-09-03T12:04:29Z"
+      "lastModified": "2026-09-03T12:11:50Z"
     },
     {
       "filePath": "src/core/GameEngine.js",
@@ -500,7 +500,7 @@
       "filePath": "src/core/Spawner.js",
       "moduleName": "Spawner",
       "category": "core",
-      "lines": 795,
+      "lines": 818,
       "responsibility": "ToME 2.3.5 정통 던전 깊이(Depth) 기반 동적 몬스터 및 아이템 스포너 엔진. 851종 몬스터 풀, 유니크 몬스터 1회성 스폰 생태계, Vault 및 Monster Pit 전용 군집 스폰, 테마별 절차적 배치 지원.",
       "purity": "Pure Factory / Spawner Logic",
       "dependencies": [
@@ -530,7 +530,7 @@
         "isMonsterPresent",
         "isPlayerPresent"
       ],
-      "lastModified": "2026-09-03T12:04:02Z"
+      "lastModified": "2026-09-03T12:15:07Z"
     },
     {
       "filePath": "src/core/TraceLogger.js",
@@ -760,7 +760,7 @@
       "filePath": "src/entities/Player.js",
       "moduleName": "Player",
       "category": "entities",
-      "lines": 1152,
+      "lines": 1162,
       "responsibility": "플레이어 엔티티 모델 (Zero-Logic 순수 데이터 컴포넌트). 스탯/저항/광원 계산은 UnifiedTraitEngine 및 PlayerStatCalculator에, 의태 스킬 관리는 MonsterSpellFactory 및 TomeSpellEngine에 100% 위임합니다.",
       "purity": "Data Model / State Store",
       "dependencies": [
@@ -789,7 +789,7 @@
         "getGrowth",
         "getGrowthDelta"
       ],
-      "lastModified": "2026-09-03T05:48:16Z"
+      "lastModified": "2026-09-03T12:11:23Z"
     },
     {
       "filePath": "src/entities/Tags.js",
@@ -1532,7 +1532,7 @@
       "filePath": "src/systems/TomeLootGenerator.js",
       "moduleName": "TomeLootGenerator",
       "category": "systems",
-      "lines": 397,
+      "lines": 399,
       "responsibility": "ToME 2.3.5 정통 알고리즘 기반 던전 깊이(Depth)별 아이템 롤링, 에고(Ego) 접사 합성 및 전설 유물(Artifact) 드랍 파이프라인 엔진",
       "purity": "Pure Loot Factory",
       "dependencies": [
@@ -1550,7 +1550,7 @@
         "TomeLootGenerator"
       ],
       "functions": [],
-      "lastModified": "2026-09-03T12:03:33Z"
+      "lastModified": "2026-09-03T12:16:59Z"
     },
     {
       "filePath": "src/systems/TomeSpellEngine.js",
@@ -1582,7 +1582,7 @@
       "filePath": "src/systems/TomeTagSystem.js",
       "moduleName": "TomeTagSystem",
       "category": "systems",
-      "lines": 349,
+      "lines": 369,
       "responsibility": "데이터 지향 3대 극성(Positive, Neutral, Detrimental) 태그 정의, 저주 장착 결속 제약, 턴 라이프사이클 훅 및 정화 엔진",
       "purity": "Stateless System",
       "dependencies": [],
@@ -1595,7 +1595,7 @@
         "TomeTagSystem"
       ],
       "functions": [],
-      "lastModified": "2026-09-03T00:36:06Z"
+      "lastModified": "2026-09-03T12:11:12Z"
     },
     {
       "filePath": "src/systems/UnifiedTraitEngine.js",
@@ -1823,7 +1823,7 @@
       "filePath": "src/ui/InventoryView.js",
       "moduleName": "InventoryView",
       "category": "ui",
-      "lines": 865,
+      "lines": 871,
       "responsibility": "인벤토리 그리드, 아이템 슬롯, 장착/해제/포식 모달 및 코어 수치 계승 뷰 렌더러",
       "purity": "DOM Renderer",
       "dependencies": [
@@ -1848,7 +1848,7 @@
         "renderItemDetailHTML",
         "renderTransferMaterialHTML"
       ],
-      "lastModified": "2026-09-03T12:05:05Z"
+      "lastModified": "2026-09-03T12:12:00Z"
     },
     {
       "filePath": "src/ui/MonsterLoreView.js",

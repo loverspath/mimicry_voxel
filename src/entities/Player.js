@@ -590,11 +590,21 @@ export class Player {
   }
 
   removeItem(item) {
-    this.unequipItem(item);
+    if (!item) return false;
+    if (this.isItemEquipped(item)) {
+      const unequipSuccess = this.unequipItem(item);
+      if (!unequipSuccess) {
+        // 저주 등으로 인해 탈의 불가능한 경우 삭제 거부 (영구 슬롯 먹통 결함 원천 차단)
+        return false;
+      }
+    }
     const index = this.inventory.indexOf(item);
     if (index !== -1) {
       this.inventory.splice(index, 1);
+      this.markDirty("아이템 제거: " + (item.name || "아이템"));
+      return true;
     }
+    return false;
   }
 
   update(deltaTime) {

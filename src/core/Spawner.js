@@ -632,13 +632,21 @@ export class Spawner {
   /**
    * 소환 타입(summonType) 및 던전 층수에 맞춰 적합한 ToME 851종 몬스터 종족 키를 반환합니다.
    * @param {string} summonType
-   * @param {number} [floor=1]
-   * @returns {string}
-   */
-  static resolveSummonSpecies(summonType = 'MONSTER', floor = 1) {
-    const sType = String(summonType || 'MONSTER').toUpperCase();
-    const allM = this._cachedMonsters || Object.values(TOME_MONSTERS_DATA || {});
+  static _summonPools = null;
 
+  /**
+   * 소환 타입별 적격 몬스터 후보 풀을 캐싱하여 반환합니다.
+   * @private
+   */
+  static _getSummonPool(sType) {
+    if (!this._summonPools) {
+      this._summonPools = {};
+    }
+    if (this._summonPools[sType]) {
+      return this._summonPools[sType];
+    }
+
+    const allM = this._cachedMonsters || Object.values(TOME_MONSTERS_DATA || {});
     const isEligible = (m) => {
       if (!m) return false;
       if (isJokeMonster(m)) return false;
@@ -647,7 +655,6 @@ export class Spawner {
     };
 
     let candidates = [];
-
     switch (sType) {
       case 'ANIMAL':
       case 'ANIMALS':
@@ -698,13 +705,29 @@ export class Spawner {
       case 'BUG':
         candidates = allM.filter(m => isEligible(m) && /\b(?:bug|beetle|flea|centipede|insect)\b/i.test(m.name || ''));
         break;
-      case 'MONSTER':
-      case 'MONSTERS':
       default:
-        return Spawner.rollMonsterSpecies(floor, false);
+        candidates = null;
+        break;
     }
 
-    if (candidates.length > 0) {
+    this._summonPools[sType] = candidates;
+    return candidates;
+  }
+
+  /**
+   * 소환 타입(summonType)에 맞는 몬스터 종족 키를 롤링합니다.
+   * @param {string} [summonType='MONSTER'] - 소환 분류 (ANIMAL, DEMON, UNDEAD, DRAGON, CYBERDEMON 등)
+   * @param {number} [floor=1]
+   * @returns {string}
+   */
+  static resolveSummonSpecies(summonType = 'MONSTER', floor = 1) {
+    const sType = String(summonType || 'MONSTER').toUpperCase();
+    if (sType === 'MONSTER' || sType === 'MONSTERS') {
+      return Spawner.rollMonsterSpecies(floor, false);
+    }
+
+    const candidates = this._getSummonPool(sType);
+    if (candidates && candidates.length > 0) {
       const levelMatched = candidates.filter(c => Math.abs((c.level || 1) - floor) <= 6);
       const pool = levelMatched.length > 0 ? levelMatched : candidates;
       return pool[Math.floor(Math.random() * pool.length)].key;

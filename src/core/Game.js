@@ -1878,15 +1878,28 @@ export class Game {
       this.updateUI());
   }
   dropItem(e) {
-    (this.player.removeItem(e),
-      this.addLogEntry(
-        `[System] ${e.name}을(를) 소지품에서 꺼내 버렸습니다(파괴됨).`,
-        `system`,
-      ),
-      (this.selectedItem = null),
-      this.closeContextMenu(),
-      this.renderInventoryList(),
-      this.updateUI());
+    if (!e) return false;
+    const dropCheck = TomeTagSystem.canDrop(e, this.player);
+    if (!dropCheck.canDrop) {
+      this.addLogEntry(`[Curse] ❌ ${dropCheck.reason}`, `danger`);
+      this.closeContextMenu();
+      return false;
+    }
+    const removeSuccess = this.player.removeItem(e);
+    if (!removeSuccess) {
+      this.addLogEntry(`[Curse] ❌ ${e.displayName || e.name}을(를) 버릴 수 없습니다.`, `danger`);
+      this.closeContextMenu();
+      return false;
+    }
+    this.addLogEntry(
+      `[System] ${e.name}을(를) 소지품에서 꺼내 버렸습니다(파괴됨).`,
+      `system`,
+    );
+    this.selectedItem = null;
+    this.closeContextMenu();
+    this.renderInventoryList();
+    this.updateUI();
+    return true;
   }
   setBreathElement(e) {
     this.player.selectedBreathElement = e;
@@ -1948,6 +1961,21 @@ export class Game {
       (t.type === `CORE`
         ? s.classList.remove(`hidden`)
         : s.classList.add(`hidden`));
+    let dropBtn = document.getElementById(`context-drop`);
+    if (dropBtn) {
+      const dropCheck = TomeTagSystem.canDrop(t, this.player);
+      if (!dropCheck.canDrop) {
+        dropBtn.disabled = true;
+        dropBtn.innerText = `🔒 저주 결속 (버리기 불가)`;
+        dropBtn.style.opacity = '0.5';
+        dropBtn.style.cursor = 'not-allowed';
+      } else {
+        dropBtn.disabled = false;
+        dropBtn.innerText = `버리기 (파괴)`;
+        dropBtn.style.opacity = '1.0';
+        dropBtn.style.cursor = 'pointer';
+      }
+    }
   }
   eatCore(e) {
     !e ||

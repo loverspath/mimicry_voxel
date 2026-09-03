@@ -101,7 +101,7 @@ const lowUnique = manager.createUniqueMonsterInstance(5, 5, 'MON_FARMER_MAGGOT',
 const lowDrops = manager.generateUniqueMonsterDrops(lowUnique, 3);
 
 assert(lowDrops.length >= 2, '저층 유니크 처치 시 2개 이상의 전리품 생성');
-const egoEquip = lowDrops.find(d => d.type === 'WEAPON' || d.type === 'ARMOR' || d.type === 'HELMET' || d.type === 'SHIELD');
+const egoEquip = lowDrops.find(d => ['WEAPON', 'ARMOR', 'HELMET', 'SHIELD', 'BOOTS', 'GLOVES', 'CLOAK', 'BOW'].includes(d.type));
 assert(egoEquip !== undefined, '정규 에고 장비가 생성됨');
 assert(egoEquip.prefixes.includes('HOLY'), '에고 장비에 고결한 HOLY 접두사가 안착됨');
 assert(egoEquip.suffixes.length > 0, `에고 장비에 접미사(${egoEquip.suffixes.join('/')}) 안착 확인`);

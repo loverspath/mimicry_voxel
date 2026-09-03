@@ -217,6 +217,26 @@ export class TomeTagSystem {
   }
 
   /**
+   * 아이템을 버릴 수 있는지 여부를 판정합니다.
+   * 장착 중인 상태에서 저주로 인해 탈의가 불가능한 경우 버리기를 엄격히 차단합니다.
+   * @param {Object} item 
+   * @param {Object} [player=null] 
+   * @returns {{ canDrop: boolean, reason?: string }}
+   */
+  static canDrop(item, player = null) {
+    if (!item) return { canDrop: true };
+    const isEquipped = player && typeof player.isItemEquipped === 'function' && player.isItemEquipped(item);
+    if (isEquipped && (!this.canUnequip(item) || item.isCursed)) {
+      const name = item.displayName || item.name || '아이템';
+      return {
+        canDrop: false,
+        reason: `[${name}]에는 사악한 저주가 깃들어 몸에 결속되어 있으므로 버릴 수 없습니다! '저주 해제 주문서'로 먼저 정화하세요!`
+      };
+    }
+    return { canDrop: true };
+  }
+
+  /**
    * 장비로부터 저주를 정화합니다 (저주 해제 주문서 연동).
    * @param {Object} item 
    * @param {boolean} [isHeavyScroll=false] - 강력한 저주 해제(*Remove Curse*) 여부

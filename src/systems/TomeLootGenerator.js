@@ -376,9 +376,11 @@ export class TomeLootGenerator {
    * @param {boolean} isSpecialRoom 
    * @returns {Item}
    */
-  static generateEquipmentItem(x, y, floor = 1, isSpecialRoom = false) {
-    const validEquipTypes = ['WEAPON', 'ARMOR', 'HELMET', 'SHIELD', 'BOOTS', 'GLOVES', 'CLOAK', 'BOW'];
-    for (let i = 0; i < 15; i++) {
+  static generateEquipmentItem(x, y, floor = 1, isSpecialRoom = false, allowedTypes = ['WEAPON', 'ARMOR', 'HELMET', 'SHIELD']) {
+    const validEquipTypes = Array.isArray(allowedTypes) && allowedTypes.length > 0
+      ? allowedTypes
+      : ['WEAPON', 'ARMOR', 'HELMET', 'SHIELD', 'BOOTS', 'GLOVES', 'CLOAK', 'BOW'];
+    for (let i = 0; i < 20; i++) {
       const item = this.generateFloorItem(x, y, floor, isSpecialRoom);
       if (item && validEquipTypes.includes(item.type)) {
         return item;
