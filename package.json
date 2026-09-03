@@ -1,6 +1,6 @@
 {
   "name": "mimicry-voxel",
-  "version": "0.26.0",
+  "version": "0.27.0",
   "description": "2.5D Voxel & Classic ASCII Data-Oriented Roguelike Game (ToME 2.3.5 Ecosystem)",
   "type": "module",
   "main": "main.js",

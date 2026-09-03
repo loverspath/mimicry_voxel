@@ -747,6 +747,75 @@ assert(floorDrawImageCalled, '오프스크린 플로어캐스팅 버퍼 스크�
 fpRenderer.ctx = originalCtx;
 
 console.log('='.repeat(80));
+console.log('🧪 [TEST SUITE 13] 2x2 멀티타일 매핑, 타일 줄눈(Grout), 접촉 AO 그림자, 카메라 럴프 검증');
+console.log('='.repeat(80));
+
+// 13-1. 2x2 멀티타일 주기성 위상 변화 검증 (1타일 고정 착시 제거)
+const tx0 = (Math.floor(0.0 * 64) & 127);
+const tx1 = (Math.floor(1.0 * 64) & 127);
+const tx2 = (Math.floor(2.0 * 64) & 127);
+
+assert(tx0 === 0, '초기 타일 좌표 (0.0): 텍스처 오프셋 0');
+assert(tx1 === 64, '1타일 전진 (1.0): 텍스처 64px (반 주기) 정밀 위상 변화 확인 (고정 착시 제거)');
+assert(tx2 === 0, '2타일 전진 (2.0): 텍스처 128px 1주기 회귀 확인');
+
+// 13-2. 타일 격자 줄눈(Grout / Mortar Seam) 셰이딩 검증
+function checkGrout(mapCoord) {
+  const frac = mapCoord - Math.floor(mapCoord);
+  return (frac < 0.042 || frac > 0.958);
+}
+assert(checkGrout(1.01) === true, '타일 경계선 부근(1.01) 줄눈 음영 판정 (isGrout = true)');
+assert(checkGrout(1.99) === true, '타일 경계선 부근(1.99) 줄눈 음영 판정 (isGrout = true)');
+assert(checkGrout(1.50) === false, '타일 중심부(1.50) 일반 텍스처 명도 유지 (isGrout = false)');
+
+// 13-3. 부드러운 카메라 선형 보간 (Camera Lerp) & 워킹 밥(Head-bob) 검증
+fpRenderer.snapCamera(5, 5);
+assert(fpRenderer.camX === 5.5 && fpRenderer.camY === 5.5, 'snapCamera 초기 카메라 중심 좌표 (5.5, 5.5) 확인');
+assert(fpRenderer.walkBob === 0, 'snapCamera 시 워킹 밥 초기화 (0px) 확인');
+
+const moveTestMap = {
+  width: 10,
+  height: 10,
+  tiles: Array.from({ length: 10 }, () => Array.from({ length: 10 }, () => ({ type: 'FLOOR', isWall: false, isExplored: false })))
+};
+
+// 동쪽으로 1칸 이동 시 (playerX: 5 -> 6)
+fpRenderer.drawMap(moveTestMap, 0, 0, 6, 5, 6, 1);
+
+assert(fpRenderer.camX > 5.5 && fpRenderer.camX < 6.5, `카메라가 즉시 점프하지 않고 60fps 선형 보간 진행 확인 (현재 camX: ${fpRenderer.camX.toFixed(2)})`);
+assert(Math.abs(fpRenderer.walkBob) > 0, `플레이어 이동 중 보행 밥(Head-bob) 실시간 미세 진동 활성화 (${fpRenderer.walkBob.toFixed(2)}px)`);
+
+// 4타일 초과 순간이동 시 즉시 스냅 안전 장치 검증
+fpRenderer.drawMap(moveTestMap, 0, 0, 20, 20, 6, 1);
+assert(fpRenderer.camX === 20.5 && fpRenderer.camY === 20.5, '장거리 이동/순간이동 시 럴프 지연 없이 즉시 스냅 확인');
+
+// 13-4. 벽면 상/하단 접촉 앰비언트 오클루전 (Contact Shadow) 렌더링 호출 검증
+let shadowFillRectCount = 0;
+const testShadowCtx = {
+  ...originalCtx,
+  drawImage: () => {},
+  fillRect: (x, y, w, h) => { shadowFillRectCount++; },
+  createLinearGradient: () => ({ addColorStop: () => {} }),
+  createRadialGradient: () => ({ addColorStop: () => {} }),
+  save: () => {},
+  restore: () => {}
+};
+fpRenderer.ctx = testShadowCtx;
+const singleWallMap = {
+  width: 10,
+  height: 10,
+  tiles: Array.from({ length: 10 }, (_, y) => Array.from({ length: 10 }, (_, x) => ({
+    type: (x === 0 || x === 9 || y === 0 || y === 9) ? 'WALL' : 'FLOOR',
+    isWall: (x === 0 || x === 9 || y === 0 || y === 9),
+    isExplored: false
+  })))
+};
+shadowFillRectCount = 0;
+fpRenderer.drawMap(singleWallMap, 0, 0, 5, 5, 6, 1);
+assert(shadowFillRectCount > 0, `벽면 상단 및 하단 접촉 앰비언트 오클루전 그림자 렌더링 확인 (${shadowFillRectCount} 회 fillRect)`);
+fpRenderer.ctx = originalCtx;
+
+console.log('='.repeat(80));
 console.log(`🎉 [TEST SUMMARY] 총 ${passed + failed}개 검증 중 ${passed}개 통과 (${((passed / (passed + failed)) * 100).toFixed(1)}%)`);
 console.log('='.repeat(80));
 

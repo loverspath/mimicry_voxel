@@ -79,7 +79,10 @@ export class FirstPerson3DRenderer {
   }
 
   snapCamera(x, y, z = 0) {
-    // 1인칭 시점에서는 카메라가 항상 플레이어 좌표에 직접 고정됩니다.
+    this.camX = x + 0.5;
+    this.camY = y + 0.5;
+    this.walkBob = 0;
+    this.walkCycle = 0;
   }
 
   setZoom(zoom) {
@@ -118,8 +121,39 @@ export class FirstPerson3DRenderer {
     const clearDist = Math.max(1.2, userLightRange * 1.5);
     const maxLightDist = Math.max(4.0, userLightRange * 3.5);
 
-    const posX = playerX + 0.5;
-    const posY = playerY + 0.5;
+    // 카메라 위치 선형 보간 (Smooth Camera Lerp, factor = 0.28) & 워킹 밥
+    const targetX = playerX + 0.5;
+    const targetY = playerY + 0.5;
+
+    if (this.camX === undefined || this.camY === undefined) {
+      this.camX = targetX;
+      this.camY = targetY;
+      this.walkBob = 0;
+      this.walkCycle = 0;
+    } else {
+      const distSq = (targetX - this.camX) ** 2 + (targetY - this.camY) ** 2;
+      if (distSq > 4.0) {
+        this.camX = targetX;
+        this.camY = targetY;
+        this.walkBob = 0;
+      } else {
+        const lerpFactor = 0.28;
+        this.camX += (targetX - this.camX) * lerpFactor;
+        this.camY += (targetY - this.camY) * lerpFactor;
+
+        // 보행 밥(Head-bob) 미세 진동 (±2.2px)
+        if (distSq > 0.0005) {
+          this.walkCycle = (this.walkCycle || 0) + 0.35;
+          this.walkBob = Math.sin(this.walkCycle) * 2.2;
+        } else {
+          this.walkBob = (this.walkBob || 0) * 0.75;
+        }
+      }
+    }
+
+    const posX = this.camX;
+    const posY = this.camY;
+    const totalPitch = (this.pitch || 0) + (this.walkBob || 0);
 
     // 시선 벡터 및 카메라 평면 벡터 연산 (FOV 66도)
     const dirX = Math.cos(this.playerAngle);
@@ -129,7 +163,7 @@ export class FirstPerson3DRenderer {
     const planeY = dirX * planeScale;
 
     // 1. 천장 및 바닥 실사 텍스처 플로어캐스팅 렌더링 (미완료 시 그라디언트 폴백)
-    this._renderCeilingAndFloor(floorTex, ceilTex, theme, posX, posY, dirX, dirY, planeX, planeY, userLightRange, clearDist, maxLightDist);
+    this._renderCeilingAndFloor(floorTex, ceilTex, theme, posX, posY, dirX, dirY, planeX, planeY, userLightRange, clearDist, maxLightDist, totalPitch);
 
     // 2. 플레이어 주변 광원 반경 내 타일 탐험 완료 동기화 (아스키/복셀 전환 시 전장의 안개 해제)
     const revealR = Math.max(2, Math.floor(userLightRange || 4));
@@ -238,8 +272,8 @@ export class FirstPerson3DRenderer {
       // Z-Buffer 저장
       this.depthBuffer[x] = perpWallDist;
 
-      // 스크린 투사 벽 높이 및 수직 범위 연산 (Y-Shearing Pitch 수직 시점 적용)
-      const horizonY = Math.floor(this.h / 2 + (this.pitch || 0));
+      // 스크린 투사 벽 높이 및 수직 범위 연산 (Y-Shearing Pitch 수직 시점 및 워킹 밥 적용)
+      const horizonY = Math.floor(this.h / 2 + totalPitch);
       const lineHeight = Math.floor(this.h / perpWallDist);
       const drawStart = Math.max(0, -lineHeight / 2 + horizonY);
       const drawEnd = Math.min(this.h - 1, lineHeight / 2 + horizonY);
@@ -269,6 +303,17 @@ export class FirstPerson3DRenderer {
         this._drawProceduralWallSlice(x, drawStart, sliceH, side, theme, texX, texWidth);
       }
 
+      // 벽면 상/하단 접촉 앰비언트 오클루전 (Wall-Floor-Ceiling Contact Shadow)
+      const aoHeight = Math.min(Math.floor(sliceH * 0.15), 5);
+      if (aoHeight >= 1) {
+        // 천장 접촉부 어두운 음영
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+        this.ctx.fillRect(x, drawStart, 1, aoHeight);
+        // 바닥 접촉부 짙은 접촉 그림자 (벽이 바닥에 견고히 밀착)
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.60)';
+        this.ctx.fillRect(x, drawEnd - aoHeight, 1, aoHeight);
+      }
+
       // 거리 감쇄 안개(Depth Fog) 및 측면 음영 (유저 광원량 lightRange 비례 연동)
       let fog = 0;
       if (perpWallDist > clearDist) {
@@ -285,7 +330,7 @@ export class FirstPerson3DRenderer {
     }
 
     // 3. 횃불 앰비언트 글로우(Radial Torchlight Glow) 래스터라이징 (광원량 비례)
-    this._renderTorchlightGlow(userLightRange);
+    this._renderTorchlightGlow(userLightRange, totalPitch);
 
     // 4. 다층 3D 복셀 계단 렌더링 (하행/상행 3단 스텝, 비콘 광선, 거리 홀로그램 배지)
     this._drawVoxelStairs(map, playerX, playerY);
@@ -312,9 +357,10 @@ export class FirstPerson3DRenderer {
     }
   }
 
-  _renderTorchlightGlow(lightRange = 4.0) {
+  _renderTorchlightGlow(lightRange = 4.0, totalPitch = null) {
     if (!this.ctx) return;
-    const horizonY = Math.floor(this.h / 2 + (this.pitch || 0));
+    const effPitch = totalPitch !== null ? totalPitch : ((this.pitch || 0) + (this.walkBob || 0));
+    const horizonY = Math.floor(this.h / 2 + effPitch);
     const cx = this.w / 2;
     const cy = horizonY;
     const rangeScale = Math.max(0.6, Math.min(2.5, (lightRange || 4.0) / 4.0));
@@ -335,9 +381,9 @@ export class FirstPerson3DRenderer {
     this.ctx.restore();
   }
 
-  _renderCeilingAndFloor(floorTex, ceilTex, theme, posX = 0, posY = 0, dirX = 0, dirY = -1, planeX = 0.66, planeY = 0, userLightRange = 4.0, clearDist = 2.0, maxLightDist = 8.0) {
+  _renderCeilingAndFloor(floorTex, ceilTex, theme, posX = 0, posY = 0, dirX = 0, dirY = -1, planeX = 0.66, planeY = 0, userLightRange = 4.0, clearDist = 2.0, maxLightDist = 8.0, totalPitch = 0) {
     if (!this.ctx) return;
-    const horizonY = Math.floor(this.h / 2 + (this.pitch || 0));
+    const horizonY = Math.floor(this.h / 2 + totalPitch);
 
     // 오프스크린 플로어캐스팅 버퍼 (폭 240px 저해상도 스케일)
     const bufW = 240;
@@ -362,7 +408,7 @@ export class FirstPerson3DRenderer {
       : null;
 
     if (this.floorBuffer && this.floorCtx && (floorPixels || ceilPixels)) {
-      this._renderFloorAndCeilCasting(floorPixels, ceilPixels, theme, bufW, bufH, posX, posY, dirX, dirY, planeX, planeY, clearDist, maxLightDist);
+      this._renderFloorAndCeilCasting(floorPixels, ceilPixels, theme, bufW, bufH, posX, posY, dirX, dirY, planeX, planeY, clearDist, maxLightDist, totalPitch);
     } else {
       this._renderProceduralCeilingAndFloorGradients(horizonY, theme);
     }
@@ -371,8 +417,8 @@ export class FirstPerson3DRenderer {
   /**
    * 90s 레트로 정통 수평 스캔라인 원근 투시 (Floorcasting & Ceilingcasting)
    */
-  _renderFloorAndCeilCasting(floorPixels, ceilPixels, theme, bufW, bufH, posX, posY, dirX, dirY, planeX, planeY, clearDist, maxLightDist) {
-    const bufHorizonY = Math.floor(bufH / 2 + (this.pitch || 0) * (bufH / (this.h || 600)));
+  _renderFloorAndCeilCasting(floorPixels, ceilPixels, theme, bufW, bufH, posX, posY, dirX, dirY, planeX, planeY, clearDist, maxLightDist, totalPitch = 0) {
+    const bufHorizonY = Math.floor(bufH / 2 + totalPitch * (bufH / (this.h || 600)));
     const posZ = 0.5 * bufH;
     const scaleToWorld = (this.h || 600) / bufH;
 
@@ -400,13 +446,20 @@ export class FirstPerson3DRenderer {
 
       if (ceilPixels) {
         for (let x = 0; x < bufW; x++) {
-          const tx = (Math.floor(mapX * 128) & 127);
-          const ty = (Math.floor(mapY * 128) & 127);
+          // 2x2 멀티타일 스케일링 (128px 텍스처가 2x2 타일에 걸쳐 반복되도록 mapX * 64)
+          const tx = (Math.floor(mapX * 64) & 127);
+          const ty = (Math.floor(mapY * 64) & 127);
           const pixel = ceilPixels[(ty << 7) + tx];
 
-          const r = ((pixel & 0xFF) * fogMul) | 0;
-          const g = (((pixel >> 8) & 0xFF) * fogMul) | 0;
-          const b = (((pixel >> 16) & 0xFF) * fogMul) | 0;
+          // 타일 격자 줄눈 (Grout seam) 셰이딩 (정수 경계 0.042 반경)
+          const fracX = mapX - Math.floor(mapX);
+          const fracY = mapY - Math.floor(mapY);
+          const isGrout = (fracX < 0.042 || fracX > 0.958 || fracY < 0.042 || fracY > 0.958);
+          const finalFog = isGrout ? fogMul * 0.48 : fogMul;
+
+          const r = ((pixel & 0xFF) * finalFog) | 0;
+          const g = (((pixel >> 8) & 0xFF) * finalFog) | 0;
+          const b = (((pixel >> 16) & 0xFF) * finalFog) | 0;
           this.floorBuffer[rowOffset + x] = 0xFF000000 | (b << 16) | (g << 8) | r;
 
           mapX += floorStepX;
@@ -445,13 +498,20 @@ export class FirstPerson3DRenderer {
 
       if (floorPixels) {
         for (let x = 0; x < bufW; x++) {
-          const tx = (Math.floor(mapX * 128) & 127);
-          const ty = (Math.floor(mapY * 128) & 127);
+          // 2x2 멀티타일 스케일링
+          const tx = (Math.floor(mapX * 64) & 127);
+          const ty = (Math.floor(mapY * 64) & 127);
           const pixel = floorPixels[(ty << 7) + tx];
 
-          const r = ((pixel & 0xFF) * fogMul) | 0;
-          const g = (((pixel >> 8) & 0xFF) * fogMul) | 0;
-          const b = (((pixel >> 16) & 0xFF) * fogMul) | 0;
+          // 타일 격자 줄눈 (Grout seam) 셰이딩
+          const fracX = mapX - Math.floor(mapX);
+          const fracY = mapY - Math.floor(mapY);
+          const isGrout = (fracX < 0.042 || fracX > 0.958 || fracY < 0.042 || fracY > 0.958);
+          const finalFog = isGrout ? fogMul * 0.48 : fogMul;
+
+          const r = ((pixel & 0xFF) * finalFog) | 0;
+          const g = (((pixel >> 8) & 0xFF) * finalFog) | 0;
+          const b = (((pixel >> 16) & 0xFF) * finalFog) | 0;
           this.floorBuffer[rowOffset + x] = 0xFF000000 | (b << 16) | (g << 8) | r;
 
           mapX += floorStepX;
@@ -554,7 +614,7 @@ export class FirstPerson3DRenderer {
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
 
-    const horizonY = Math.floor(this.h / 2 + (this.pitch || 0));
+    const horizonY = Math.floor(this.h / 2 + (this.pitch || 0) + (this.walkBob || 0));
     const drawY = horizonY + (isItem ? spriteSize * 0.22 : 0);
     
     // 심연/원거리 안개 감쇄 (유저 광원량 currentLightRange 비례 연동)
@@ -834,7 +894,7 @@ export class FirstPerson3DRenderer {
           badgeBorder: '#38bdf8'
         };
 
-    const horizonY = Math.floor(this.h / 2 + (this.pitch || 0));
+    const horizonY = Math.floor(this.h / 2 + (this.pitch || 0) + (this.walkBob || 0));
     const baseW = Math.max(24, Math.min(this.w * 0.90, Math.abs(Math.floor(this.h / transformY)) * 0.88));
     const baseH = Math.max(16, Math.min(this.h * 0.48, Math.abs(Math.floor(this.h / transformY)) * 0.46));
     const groundY = Math.min(this.h - 15, Math.floor(horizonY + Math.min(this.h * 0.40, (this.h / transformY) * 0.38)));

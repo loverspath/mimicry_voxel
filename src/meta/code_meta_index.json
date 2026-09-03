@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-09-03T04:22:06Z",
+  "generatedAt": "2026-09-03T04:35:59Z",
   "summary": {
     "totalModules": 75,
-    "totalLines": 108229,
+    "totalLines": 108289,
     "categories": {
       "configs": 5,
       "core": 14,
@@ -1029,7 +1029,7 @@
       "filePath": "src/renderer/FirstPerson3DRenderer.js",
       "moduleName": "FirstPerson3DRenderer",
       "category": "renderer",
-      "lines": 1013,
+      "lines": 1073,
       "responsibility": "초기 둠 / 위저드리 시점 DDA 레이캐스팅 1인칭 3D 텍스처 어드벤처 렌더러. 나노바나나 생성 텍스처 매핑, 거리 감쇄 안개(Depth Fog), 빌보드 스프라이트 및 미니맵 레이더 제공",
       "purity": "DOM / Canvas Renderer",
       "dependencies": [
@@ -1043,7 +1043,7 @@
         "FirstPerson3DRenderer"
       ],
       "functions": [],
-      "lastModified": "2026-09-03T04:20:39Z"
+      "lastModified": "2026-09-03T04:34:43Z"
     },
     {
       "filePath": "src/renderer/TextureManager.js",
