@@ -5,6 +5,8 @@
  */
 import { Game } from './src/core/Game.js';
 import { VirtualController } from './src/ui/VirtualController.js';
+import { GameStartPresetModalView } from './src/ui/GameStartPresetModalView.js';
+import { balanceModifierManager } from './src/systems/BalanceModifierManager.js';
 
 // 전역 에러 핸들러 및 화면 상단 크래시 배너 장착
 function showCrashBanner(errorMsg, source, lineno, colno, error) {
@@ -75,6 +77,24 @@ window.addEventListener('load', () => {
     const game = new Game();
     const virtualController = new VirtualController(game.input);
     window.__game = game; // Expose for inline HTML button handlers (breath element selector)
+
+    // 동적 밸런스 프리셋 모달 연동
+    const presetModal = new GameStartPresetModalView('game-start-preset-modal-root');
+    presetModal.init();
+    presetModal.onConfirm((presetId, overrides) => {
+      balanceModifierManager.applyPreset(presetId, overrides);
+      if (game.addLogEntry) {
+        game.addLogEntry(`⚖️ [밸런스 변경] ${balanceModifierManager.getPresetName()} 프리셋 적용 완료`, 'system');
+      }
+    });
+
+    const balanceBtn = document.getElementById('btn-balance-preset-quick');
+    if (balanceBtn) {
+      balanceBtn.addEventListener('click', () => {
+        presetModal.open(balanceModifierManager.currentPresetId, balanceModifierManager.customOverrides);
+      });
+    }
+
     game.start();
   } catch (err) {
     showCrashBanner(err.message, err.fileName || 'Game.js', err.lineNumber || 0, 0, err);

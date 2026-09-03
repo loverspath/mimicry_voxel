@@ -25,6 +25,7 @@
               <div class="stat"><span class="stat-label">Floor:</span> <span id="ui-floor">1</span></div>
             </div>
             <div class="system-save-load" style="display: flex; gap: 0.4rem; align-items: center;">
+              <button id="btn-balance-preset-quick" class="sys-btn" title="동적 난이도 및 밸런스 프리셋 선택" style="display: flex; align-items: center; gap: 0.25rem; background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.4); color: #fbbf24; font-weight: bold;">⚖️ 밸런스</button>
               <button id="btn-toggle-render-mode" class="sys-btn" title="3D 복셀 / 2D 아스키 렌더러 전환" style="display: flex; align-items: center; gap: 0.25rem; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: bold;">🧊 3D 복셀</button>
               <button id="btn-cycle-zoom" class="sys-btn" title="화면 확대/축소 배율 전환" style="display: flex; align-items: center; gap: 0.25rem;">🔍 1.0x</button>
               <button id="btn-options" class="sys-btn" title="게임 옵션 설정" style="display: flex; align-items: center; gap: 0.25rem;">⚙️ 설정</button>
@@ -263,6 +264,9 @@
           <button class="sys-btn" id="menu-core-back-btn" style="padding: 0.5rem; font-size: 0.8rem; text-align: center; border-radius: 6px; width: 100%; justify-content: center; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 0.4rem; display: flex; align-items: center; gap: 0.25rem;">돌아가기</button>
         </div>
       </div>
+
+      <!-- Balance Preset Modal Mount Root -->
+      <div id="game-start-preset-modal-root" class="preset-modal-mount hidden"></div>
 
     </div>
     <script type="module" src="./main.js?v=0.30.0"></script>
