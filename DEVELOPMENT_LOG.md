@@ -1,11 +1,11 @@
-# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.35.0)
+# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.36.0)
 
-> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 21 집대성)**
+> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 22 집대성)**
 
-[![Version](https://img.shields.io/badge/version-0.35.0-emerald.svg)](package.json)
-[![Tests](https://img.shields.io/badge/test%20suites-65%2F65%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
-[![Modules](https://img.shields.io/badge/code%20modules-76%20modules%20(109%2C945%20LOC)-indigo.svg)](CODE_META_INDEX.md)
-[![Engines](https://img.shields.io/badge/stateless%20engines-16%20engines%20(Cloak%20Sanitization%20Pipeline)-blue.svg)](src/systems/)
+[![Version](https://img.shields.io/badge/version-0.36.0-emerald.svg)](package.json)
+[![Tests](https://img.shields.io/badge/test%20suites-66%2F66%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
+[![Modules](https://img.shields.io/badge/code%20modules-76%20modules%20(109%2C989%20LOC)-indigo.svg)](CODE_META_INDEX.md)
+[![Engines](https://img.shields.io/badge/stateless%20engines-16%20engines%20(Quiver%20%26%20Ammo%20Sanctuary)-blue.svg)](src/systems/)
 [![Renderers](https://img.shields.io/badge/tri--mode%20renderers-Voxel%20|%203D%20|%20ASCII-teal.svg)](src/renderer/)
 [![Entities](https://img.shields.io/badge/canonical%20entities-1%2C636-purple.svg)](src/entities/)
 [![Architecture](https://img.shields.io/badge/architecture-5--layer%20Clean%20DOD-orange.svg)](src/meta/code_meta_index.json)
@@ -15,11 +15,11 @@
 ## 🧭 프로젝트 개요 및 엔진 진화 여정
 
 **미미크리 복셀(Mimicry Voxel)**은 플레이어가 쓰러뜨린 몬스터의 정수 코어(Core)를 흡수하여 그 신체 능력과 고유 마법을 의태(Mimicry)하는 전술적 복셀 로그라이크 엔진입니다. 
-초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook)**, **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템**, **물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 VFX 엔진**, **5대 던전 테마 맞춤형 바닥 & 천장 실사 텍스처 10종 탑재 및 플로어캐스팅 렌더러**, **1인칭 3D 공간 일체화**, **바닥-천장 관통형 3D 복셀 계단 구조체 및 3D 복셀 사다리 시스템**, **전사 SHIELD_BASH(방패 강타) 및 오토캐스트 On/Off 토글**, **ToME/TomeNET 정통 드랍 플래그 엔진**, **차세대 UI/UX 포크 공식 메인 승격**, **감정/저주해제 주문서 및 저주 버리기 차단**, **TomeNET 정통 에고/아티팩트 & 절차적 란다트 엔진**, 그리고 **의태의 망토(Cloak of Mimicry) 복원 및 Angband 원시 포맷 기호(&, ~, #) 3중 살균 정제 파이프라인**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
+초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook)**, **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템**, **물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 VFX 엔진**, **5대 던전 테마 맞춤형 바닥 & 천장 실사 텍스처 10종 탑재 및 플로어캐스팅 렌더러**, **1인칭 3D 공간 일체화**, **바닥-천장 관통형 3D 복셀 계단 구조체 및 3D 복셀 사다리 시스템**, **전사 SHIELD_BASH(방패 강타) 및 오토캐스트 On/Off 토글**, **ToME/TomeNET 정통 드랍 플래그 엔진**, **차세대 UI/UX 포크 공식 메인 승격**, **감정/저주해제 주문서 및 저주 버리기 차단**, **TomeNET 정통 에고/아티팩트 & 절차적 란다트 엔진**, **의태의 망토 복원 및 Angband 원시 기호 3중 살균 정제**, 그리고 **라운드 페블 및 탄약류 10종 규격 정상화, 화살통(Quiver) 슬롯 장착 판정 분리 및 발사체 호환 UI 고도화**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
 
 ```mermaid
 timeline
-    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 21)
+    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 22)
     Phase 1 : 3대 원소 상호작용 프로토타입 (v0.1.0 ~ v0.6.0)
             : 의태 코어 흡수 및 기초 복셀 렌더러 구축
     Phase 2 : 5대 갓오브젝트 해체 및 5대 계층 클린 아키텍처 확립 (v0.7.0 ~ v0.12.0)
@@ -62,6 +62,8 @@ timeline
             : 101종 에고 풀, 네이밍 규칙 복원, RES_RANDOM 실체화, 절차적 란다트
     Phase 21: 의태의 망토 복원 & Angband 원시 기호 3중 살균 정제 (v0.35.0)
             : Cloak of Mimicry 정규화, &, ~, # 토큰 3중 박멸, cleanItemName/displayName 방어망
+    Phase 22: 탄약류 10종 규격화 & 화살통(Quiver) 분리 & UI 고도화 (v0.36.0)
+            : Pebble 등 10종 탄약 AMMO/{ 규격화, quiver 슬롯 독립 장착, 발사체 호환 뱃지
 ```
 
 ---
@@ -95,6 +97,31 @@ timeline
 │    (TomeMonstersData, TomeArtifactsData, GameBalanceConfig) │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 🏛️ Phase 22: 라운드 페블 및 탄약류 10종 규격 정상화, 화살통(Quiver) 슬롯 장착 판정 분리 및 발사체 호환 UI 고도화 (v0.36.0)
+
+### 🏛️ v0.36.0 — 라운드 페블 및 탄약류 10종 규격 정상화, 화살통(Quiver) 슬롯 장착 판정 분리 및 발사체 호환 UI 고도화
+- **배포일**: 2026-09-03 | **버전**: `v0.36.0` | **모듈 현황**: 76개 모듈 (109,989 LOC) | **테스트 통과**: 66/66 Suites (100% ALL PASS)
+- **개요 및 설계 배경**:
+  - 기존 인벤토리 및 장비 시스템에서 슬링(Sling)의 탄약인 **라운드 페블(Rounded Pebble, kind id: 114)**을 비롯한 투사체 탄약들이 잡동사니/무기 카테고리로 오분류되거나 주무기/원거리 무기 슬롯 장착 판정과 충돌하던 아키텍처 결함을 발본색원하였습니다.
+  - ToME 2.3.5 / TomeNET의 정통 탄약 규칙에 입각하여 던전 내 10종 탄약류 전체를 정규 탄약(`type: 'AMMO'`, `slotType: 'QUIVER'`, 글리프 `{`)으로 통일하고, 화살통(Quiver) 슬롯에만 독립적으로 장착되도록 장비 판정 및 인벤토리 뷰 UI를 전면 개편하였습니다.
+
+- **주요 변경 사항**:
+  1. **라운드 페블 및 탄약류 10종 규격 정상화 ([`src/entities/TomeKindsData.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/TomeKindsData.js), [`src/entities/tome_kinds.json`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/tome_kinds.json))**:
+     - 라운드 페블(Rounded Pebble, kind 114)을 비롯하여 화살(Arrow), 흑요석 화살, 볼트(Bolt), 강철 볼트, 투석용 돌 등 던전 내 10종 탄약 데이터셋의 분류를 `type: 'AMMO'`, `slotType: 'QUIVER'`, 정통 아스키 글리프 `char: '{'`로 전수 교정.
+     - 발사체 종류(`missileType: 'SHOT'`, `'ARROW'`, `'BOLT'`)를 명확히 정의하여 슬링, 활, 석궁과의 호환성 확립.
+  2. **화살통(Quiver) 슬롯 장착 판정 분리 및 장착 우선순위 최적화 ([`src/systems/TomeEquipmentEngine.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeEquipmentEngine.js), [`src/entities/Player.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/Player.js), [`src/core/Game.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Game.js))**:
+     - `TomeEquipmentEngine`: 탄약 아이템 장착 시도시 무기 슬롯 대신 전용 `quiver` 슬롯으로 최우선 자동 배정되도록 라우팅 로직 정밀화.
+     - 주무기(`weapon`) 및 원거리 발사기(`bow`) 착용 상태에 영향을 주지 않고 안전하게 탈착/교체되도록 보장.
+  3. **인벤토리 뷰 발사체 호환 UI 고도화 ([`src/ui/InventoryView.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/InventoryView.js))**:
+     - 인벤토리 목록 및 상세 툴팁에 `[화살통/QUIVER]` 전용 뱃지 부여.
+     - 해당 탄약이 소모되는 원거리 발사기(`Sling`, `Bow`, `Crossbow`)의 호환 여부를 시각적으로 안내하여 사용자 경험 대폭 개선.
+  4. **신규 단위/통합 테스트 스위트 추가 및 무결성 검증**:
+     - [`scripts/test_ammo_and_quiver_classification.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/scripts/test_ammo_and_quiver_classification.js) 신설 (총 201 라인): 10종 탄약 규격 정합성, 화살통 단독 장착, 발사기 슬롯 비간섭, UI 메타데이터 무결성 전수 검증.
+     - **66개 전체 테스트 스위트 100% ALL PASS 달성 (66/66 PASSED, 0 FAILED)**.
+     - **메타 인덱서 갱신**: `meta_indexer.py --update-wiki` 실행으로 76개 모듈(109,989 LOC) 메타 인덱스 및 위키 문서 최신화 완료.
 
 ---
 
