@@ -243,7 +243,10 @@ export class FirstPerson3DRenderer {
     // 3. 횃불 앰비언트 글로우(Radial Torchlight Glow) 래스터라이징 (광원량 비례)
     this._renderTorchlightGlow(userLightRange);
 
-    // 4. 미니맵 나침반 레이더 오버레이 렌더링
+    // 4. 다층 3D 복셀 계단 렌더링 (하행/상행 3단 스텝, 비콘 광선, 플로팅 네온 배지)
+    this._drawVoxelStairs(map, playerX, playerY);
+
+    // 5. 미니맵 나침반 레이더 오버레이 렌더링
     this._drawCompassRadar(map, playerX, playerY);
   }
 
@@ -416,6 +419,29 @@ export class FirstPerson3DRenderer {
       }
     }
 
+    // 2-1. 반경 내 계단 인디케이터 (◆ 하행: #f43f5e, 상행: #38bdf8)
+    const { downStairs, upStairs } = this._getStairLocations(map);
+    for (const s of downStairs) {
+      const dx = s.x - playerX;
+      const dy = s.y - playerY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist <= 5.5) {
+        const px = cx + dx * radarScale;
+        const py = cy + dy * radarScale;
+        this._drawRadarStairDiamond(px, py, '#f43f5e', '#fda4af');
+      }
+    }
+    for (const s of upStairs) {
+      const dx = s.x - playerX;
+      const dy = s.y - playerY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist <= 5.5) {
+        const px = cx + dx * radarScale;
+        const py = cy + dy * radarScale;
+        this._drawRadarStairDiamond(px, py, '#38bdf8', '#bae6fd');
+      }
+    }
+
     // 3. 부채꼴 시야각(FOV 66도) 콘 렌더링
     this.ctx.beginPath();
     this.ctx.moveTo(cx, cy);
@@ -443,6 +469,253 @@ export class FirstPerson3DRenderer {
     this.ctx.fill();
 
     this.ctx.restore();
+  }
+
+  _drawRadarStairDiamond(px, py, fill, glow) {
+    const d = 3.5;
+    this.ctx.save();
+    this.ctx.shadowColor = glow;
+    this.ctx.shadowBlur = 6;
+    this.ctx.fillStyle = fill;
+    this.ctx.beginPath();
+    this.ctx.moveTo(px, py - d);
+    this.ctx.lineTo(px + d, py);
+    this.ctx.lineTo(px, py + d);
+    this.ctx.lineTo(px - d, py);
+    this.ctx.closePath();
+    this.ctx.fill();
+    this.ctx.restore();
+  }
+
+  _getStairLocations(map) {
+    const downStairs = [];
+    const upStairs = [];
+
+    if (!map) return { downStairs, upStairs };
+
+    if (map.downStaircases && Array.isArray(map.downStaircases)) {
+      for (const s of map.downStaircases) {
+        downStairs.push({ x: s.x, y: s.y, type: 'STAIRS_DOWN' });
+      }
+    }
+    if (map.upStaircases && Array.isArray(map.upStaircases)) {
+      for (const s of map.upStaircases) {
+        upStairs.push({ x: s.x, y: s.y, type: 'STAIRS_UP', isSealed: !!s.isSealed });
+      }
+    }
+
+    if (downStairs.length === 0 && upStairs.length === 0 && map.tiles) {
+      for (let y = 0; y < (map.height || map.tiles.length); y++) {
+        const row = map.tiles[y];
+        if (!row) continue;
+        for (let x = 0; x < (map.width || row.length); x++) {
+          const tile = row[x];
+          if (!tile) continue;
+          if (tile.type === 'STAIRS_DOWN' || tile.char === '>' || tile.isStaircase) {
+            downStairs.push({ x, y, type: 'STAIRS_DOWN' });
+          } else if (tile.type === 'STAIRS_UP' || tile.char === '<' || tile.isUpStaircase) {
+            upStairs.push({ x, y, type: 'STAIRS_UP', isSealed: !!tile.isSealed });
+          }
+        }
+      }
+    }
+
+    return { downStairs, upStairs };
+  }
+
+  _drawVoxelStairs(map, playerX, playerY) {
+    if (!this.ctx || !map) return;
+
+    const { downStairs, upStairs } = this._getStairLocations(map);
+    const allStairs = [...downStairs, ...upStairs];
+    if (allStairs.length === 0) return;
+
+    const posX = playerX + 0.5;
+    const posY = playerY + 0.5;
+    const dirX = Math.cos(this.playerAngle);
+    const dirY = Math.sin(this.playerAngle);
+    const planeScale = Math.tan(this.fov / 2);
+    const planeX = -dirY * planeScale;
+    const planeY = dirX * planeScale;
+
+    const stairsWithDist = [];
+    for (const stair of allStairs) {
+      const stairX = (stair.x + 0.5) - posX;
+      const stairY = (stair.y + 0.5) - posY;
+
+      const invDet = 1.0 / (planeX * dirY - dirX * planeY || 0.0001);
+      const transformX = invDet * (dirY * stairX - dirX * stairY);
+      const transformY = invDet * (-planeY * stairX + planeX * stairY);
+
+      if (transformY <= 0.25) continue; // 카메라 후방 또는 근접 클리핑
+
+      const screenX = Math.floor((this.w / 2) * (1 + transformX / transformY));
+      if (screenX < -200 || screenX >= this.w + 200) continue;
+
+      // Z-Buffer 차폐 검사 (벽면 뒤에 가려져 있는지 확인)
+      if (this.depthBuffer) {
+        const checkCol = Math.max(0, Math.min(this.w - 1, screenX));
+        if (this.depthBuffer[checkCol] < transformY - 0.28) continue;
+      }
+
+      stairsWithDist.push({
+        ...stair,
+        transformX,
+        transformY,
+        screenX
+      });
+    }
+
+    // 원거리 계단부터 화가 알고리즘(Painter's Algorithm) 정렬
+    stairsWithDist.sort((a, b) => b.transformY - a.transformY);
+
+    for (const stair of stairsWithDist) {
+      this._renderSingleVoxelStair(stair, map.floor || 1);
+    }
+  }
+
+  _renderSingleVoxelStair(stair, currentFloor = 1) {
+    const ctx = this.ctx;
+    const isDown = stair.type === 'STAIRS_DOWN';
+    const transformY = stair.transformY;
+    const screenX = stair.screenX;
+
+    // 유저 광원량 기반 안개 감쇄 및 투명도 계산
+    const lr = this.currentLightRange || 4.0;
+    const clearDist = Math.max(1.2, lr * 1.5);
+    const maxLightDist = Math.max(4.0, lr * 3.5);
+    let fog = 0;
+    if (transformY > clearDist) {
+      const normDist = Math.min(1.0, Math.max(0, (transformY - clearDist) / (maxLightDist - clearDist)));
+      fog = Math.min(0.65, Math.pow(normDist, 1.25));
+    }
+    const alpha = Math.max(0.35, 1.0 - fog);
+
+    // 고대비 네온 복셀 팔레트
+    const palette = isDown
+      ? {
+          top: '#f43f5e',       // 네온 로즈/마젠타
+          front: '#be123c',     // 짙은 로즈
+          side: '#881337',      // 섀도우 마젠타
+          rim: '#fda4af',       // 테두리 네온 림 글로우
+          beam: 'rgba(244, 63, 94, ',
+          badgeText: `▼ [DOWN STAIRS >]`,
+          badgeBg: 'rgba(136, 19, 55, 0.88)',
+          badgeBorder: '#f43f5e'
+        }
+      : {
+          top: '#38bdf8',       // 일렉트릭 시안/스카이블루
+          front: '#0284c7',     // 짙은 블루
+          side: '#0369a1',      // 섀도우 블루
+          rim: '#bae6fd',       // 테두리 네온 림 글로우
+          beam: 'rgba(56, 189, 248, ',
+          badgeText: `▲ [UP STAIRS <]`,
+          badgeBg: 'rgba(3, 105, 161, 0.88)',
+          badgeBorder: '#38bdf8'
+        };
+
+    const baseW = Math.abs(Math.floor(this.h / transformY)) * 0.82;
+    const baseH = Math.abs(Math.floor(this.h / transformY)) * 0.44;
+    const groundY = this.h / 2 + Math.floor(this.h / transformY * 0.44);
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    // 1. 수직 비콘 광선 기둥 (Vertical Beacon Beam) - 가산 혼합
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const beamW = Math.max(16, Math.floor(baseW * 0.45));
+    const beamGrad = ctx.createLinearGradient(screenX, groundY, screenX, 0);
+    beamGrad.addColorStop(0, `${palette.beam}0.50)`);
+    beamGrad.addColorStop(0.3, `${palette.beam}0.28)`);
+    beamGrad.addColorStop(0.7, `${palette.beam}0.10)`);
+    beamGrad.addColorStop(1.0, `${palette.beam}0.00)`);
+
+    ctx.fillStyle = beamGrad;
+    ctx.fillRect(screenX - beamW / 2, 0, beamW, groundY);
+    ctx.restore();
+
+    // 2. 3단 복셀 계단 단차 (3-Tier Perspective Voxel Steps)
+    // Tier 1 (하단 기단부)
+    const t1W = baseW;
+    const t1H = baseH * 0.35;
+    const t1Y = groundY - t1H;
+    this._drawPerspectiveVoxelBlock(ctx, screenX, t1Y, t1W, t1H, palette);
+
+    // Tier 2 (중단 스텝)
+    const t2W = baseW * 0.72;
+    const t2H = baseH * 0.32;
+    const t2Y = t1Y - t2H;
+    this._drawPerspectiveVoxelBlock(ctx, screenX, t2Y, t2W, t2H, palette);
+
+    // Tier 3 (상단 스텝)
+    const t3W = baseW * 0.46;
+    const t3H = baseH * 0.28;
+    const t3Y = t2Y - t3H;
+    this._drawPerspectiveVoxelBlock(ctx, screenX, t3Y, t3W, t3H, palette);
+
+    // 3. 상단 플로팅 네온 배지 (Floating Neon Badge)
+    const badgeFontSize = Math.max(11, Math.min(20, Math.floor(baseW * 0.15)));
+    ctx.font = `bold ${badgeFontSize}px 'Fira Code', monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const textWidth = ctx.measureText ? ctx.measureText(palette.badgeText).width : badgeFontSize * 12;
+    const badgePadX = 8;
+    const badgePadY = 4;
+    const badgeW = textWidth + badgePadX * 2;
+    const badgeH = badgeFontSize + badgePadY * 2;
+    const badgeY = t3Y - badgeH - Math.max(8, baseH * 0.14);
+
+    // 배지 배경 및 네온 글로우
+    ctx.fillStyle = palette.badgeBg;
+    ctx.strokeStyle = palette.badgeBorder;
+    ctx.lineWidth = 1.8;
+    ctx.shadowColor = palette.rim;
+    ctx.shadowBlur = 10;
+
+    if (ctx.roundRect) {
+      ctx.beginPath();
+      ctx.roundRect(screenX - badgeW / 2, badgeY, badgeW, badgeH, 4);
+      ctx.fill();
+      ctx.stroke();
+    } else {
+      ctx.fillRect(screenX - badgeW / 2, badgeY, badgeW, badgeH);
+      ctx.strokeRect(screenX - badgeW / 2, badgeY, badgeW, badgeH);
+    }
+
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(palette.badgeText, screenX, badgeY + badgeH / 2);
+
+    ctx.restore();
+  }
+
+  _drawPerspectiveVoxelBlock(ctx, cx, y, w, h, palette) {
+    const halfW = w / 2;
+    const capH = Math.max(3, h * 0.42);
+
+    // 정면 면 (Front Face)
+    ctx.fillStyle = palette.front;
+    ctx.fillRect(cx - halfW, y, w, h);
+
+    // 상단 면 (Top Isometric Face)
+    ctx.fillStyle = palette.top;
+    ctx.beginPath();
+    ctx.moveTo(cx - halfW, y);
+    ctx.lineTo(cx - halfW * 0.72, y - capH);
+    ctx.lineTo(cx + halfW * 0.72, y - capH);
+    ctx.lineTo(cx + halfW, y);
+    ctx.closePath();
+    ctx.fill();
+
+    // 테두리 네온 림 글로우 (Rim Glow Stroke)
+    ctx.strokeStyle = palette.rim;
+    ctx.lineWidth = 1.2;
+    ctx.shadowColor = palette.rim;
+    ctx.shadowBlur = 6;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
   }
 
   updateParticles(dt) {

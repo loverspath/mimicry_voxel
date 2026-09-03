@@ -26,7 +26,10 @@ const mockCanvas = {
     translate: () => {},
     rotate: () => {},
     createLinearGradient: () => ({ addColorStop: () => {} }),
-    createRadialGradient: () => ({ addColorStop: () => {} })
+    createRadialGradient: () => ({ addColorStop: () => {} }),
+    strokeRect: () => {},
+    measureText: () => ({ width: 60 }),
+    roundRect: () => {}
   }),
   width: 800,
   height: 600,
@@ -379,6 +382,48 @@ assert(vfxEngine.activeVFX[0].progress > 0.4, 'dt 경과 시 이펙트 진행률
 vfxEngine.update(0.35); // 충분한 시간 경과 후
 assert(vfxEngine.activeVFX.length === 0, '수명 종료 시 모든 활성 VFX 자동 소멸 완료');
 assert(vfxEngine.screenShakeIntensity === 0, '화면 셰이크 완전히 감쇠 종료 확인');
+
+console.log('='.repeat(80));
+console.log('🧪 [TEST SUITE 7] 다층 3D 복셀 계단 렌더링 및 나침반 레이더 다이아몬드 인디케이터 검증');
+console.log('='.repeat(80));
+
+// 7-1. 계단 위치 추출 검증 (_getStairLocations)
+const stairTestMap = {
+  width: 20,
+  height: 20,
+  floor: 2,
+  downStaircases: [{ x: 10, y: 8, roomIndex: 0 }],
+  upStaircases: [{ x: 10, y: 12, isSealed: false, roomIndex: 1 }],
+  tiles: Array.from({ length: 20 }, () => Array.from({ length: 20 }, () => ({ type: 'FLOOR' })))
+};
+
+const locations = fpRenderer._getStairLocations(stairTestMap);
+assert(locations.downStairs.length === 1, '하행 계단 1개 정상 추출 확인');
+assert(locations.downStairs[0].x === 10 && locations.downStairs[0].y === 8, '하행 계단 좌표 일치 (10, 8)');
+assert(locations.upStairs.length === 1, '상행 계단 1개 정상 추출 확인');
+assert(locations.upStairs[0].x === 10 && locations.upStairs[0].y === 12, '상행 계단 좌표 일치 (10, 12)');
+
+// 7-2. 3D 복셀 계단 렌더링 파이프라인 검증 (_drawVoxelStairs)
+fpRenderer.drawMap(stairTestMap, 0, 0, 10, 10, 5, 2);
+assert(true, '하행/상행 계단 포함 맵 1인칭 3D 렌더링 예외 없이 정상 수행');
+
+{
+  // 7-3. 카메라 후방 계단 컬링 검증
+  // 북쪽(3PI/2) 시선일 때, 플레이어 남쪽 (10, 15) 계단은 카메라 뒤편에 위치
+  const behindStairY = (15 + 0.5) - (10 + 0.5);
+  const dirX = Math.cos(fpRenderer.playerAngle);
+  const dirY = Math.sin(fpRenderer.playerAngle);
+  const planeScale = Math.tan(fpRenderer.fov / 2);
+  const planeX = -dirY * planeScale;
+  const planeY = dirX * planeScale;
+  const invDet = 1.0 / (planeX * dirY - dirX * planeY || 0.0001);
+  const transformYBehind = invDet * (-planeY * 0 + planeX * behindStairY);
+  assert(transformYBehind < 0.25, '후방 계단은 transformY < 0.25로 안전하게 3D 렌더링 컬링');
+}
+
+// 7-4. 나침반 레이더 다이아몬드 인디케이터 렌더링 헬퍼 검증
+fpRenderer._drawRadarStairDiamond(50, 50, '#f43f5e', '#fda4af');
+assert(true, '나침반 레이더 계단 다이아몬드 인디케이터 예외 없이 정상 렌더링');
 
 console.log('='.repeat(80));
 console.log(`🎉 [TEST SUMMARY] 총 ${passed + failed}개 검증 중 ${passed}개 통과 (${((passed / (passed + failed)) * 100).toFixed(1)}%)`);
