@@ -38,6 +38,11 @@ export class FirstPerson3DRenderer {
     this.pitch = 0;
 
     this.resize();
+
+    // 텍스처 사전 로딩 보장
+    if (textureManager && typeof textureManager.loadAll === 'function') {
+      textureManager.loadAll().catch(() => {});
+    }
   }
 
   resize() {
@@ -129,8 +134,24 @@ export class FirstPerson3DRenderer {
     }
 
     // 3. DDA 수직 컬럼 레이캐스팅 루프
-    const texWidth = wallTex?.width || 64;
-    const texHeight = wallTex?.height || 64;
+    const isImage = wallTex && (
+      (typeof HTMLImageElement !== 'undefined' && wallTex instanceof HTMLImageElement) ||
+      (typeof Image !== 'undefined' && wallTex instanceof Image) ||
+      wallTex.complete !== undefined
+    );
+    const isReadyImage = isImage && wallTex.complete && wallTex.naturalWidth > 0;
+    const isCanvas = wallTex && (
+      (typeof HTMLCanvasElement !== 'undefined' && wallTex instanceof HTMLCanvasElement) ||
+      wallTex.getContext !== undefined
+    );
+    const canDrawTexture = isReadyImage || isCanvas;
+
+    const texWidth = isReadyImage 
+      ? wallTex.naturalWidth 
+      : ((wallTex && typeof wallTex.width === 'number' && wallTex.width > 0) ? wallTex.width : 64);
+    const texHeight = isReadyImage 
+      ? wallTex.naturalHeight 
+      : ((wallTex && typeof wallTex.height === 'number' && wallTex.height > 0) ? wallTex.height : 64);
 
     for (let x = 0; x < this.w; x++) {
       const cameraX = (2 * x) / this.w - 1;
@@ -221,7 +242,7 @@ export class FirstPerson3DRenderer {
 
       // 텍스처 1px 슬라이스 렌더링
       const sliceH = Math.max(1, drawEnd - drawStart);
-      if (wallTex && ((typeof HTMLElement !== 'undefined' && wallTex instanceof HTMLElement) || typeof Image !== 'undefined')) {
+      if (canDrawTexture) {
         try {
           this.ctx.drawImage(
             wallTex,
@@ -229,13 +250,10 @@ export class FirstPerson3DRenderer {
             x, drawStart, 1, sliceH
           );
         } catch (_) {
-          // 안전 드로우 폴백
-          this.ctx.fillStyle = side === 1 ? '#334155' : '#475569';
-          this.ctx.fillRect(x, drawStart, 1, sliceH);
+          this._drawProceduralWallSlice(x, drawStart, sliceH, side, theme, texX, texWidth);
         }
       } else {
-        this.ctx.fillStyle = side === 1 ? '#334155' : '#475569';
-        this.ctx.fillRect(x, drawStart, 1, sliceH);
+        this._drawProceduralWallSlice(x, drawStart, sliceH, side, theme, texX, texWidth);
       }
 
       // 거리 감쇄 안개(Depth Fog) 및 측면 음영 (유저 광원량 lightRange 비례 연동)
@@ -264,6 +282,21 @@ export class FirstPerson3DRenderer {
 
     // 6. 계단 도착 인게임 안내 프롬프트 배너 (화면 중앙 하단)
     this._drawStairArrivalPrompt(map, playerX, playerY);
+  }
+
+  /**
+   * 실사 텍스처 로딩 중 또는 예외 발생 시 고품질 절차적 석조 벽면 슬라이스 렌더링
+   */
+  _drawProceduralWallSlice(x, drawStart, sliceH, side, theme, texX = 0, texWidth = 64) {
+    const baseColor = theme?.wallColor || (side === 1 ? '#334155' : '#475569');
+    this.ctx.fillStyle = baseColor;
+    this.ctx.fillRect(x, drawStart, 1, sliceH);
+
+    // 수직 모르타르 그루브 (블록 경계선)
+    if (texX === 0 || texX === Math.floor(texWidth / 2)) {
+      this.ctx.fillStyle = 'rgba(15, 23, 42, 0.65)';
+      this.ctx.fillRect(x, drawStart, 1, sliceH);
+    }
   }
 
   _renderTorchlightGlow(lightRange = 4.0) {

@@ -1,11 +1,11 @@
-# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.24.0)
+# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.25.0)
 
-> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 10 집대성)**
+> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 11 집대성)**
 
-[![Version](https://img.shields.io/badge/version-0.24.0-emerald.svg)](package.json)
+[![Version](https://img.shields.io/badge/version-0.25.0-emerald.svg)](package.json)
 [![Tests](https://img.shields.io/badge/test%20suites-59%2F59%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
-[![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(107%2C801%20LOC)-indigo.svg)](CODE_META_INDEX.md)
-[![Engines](https://img.shields.io/badge/stateless%20engines-15%20engines%20(Pure%20ASCII%20VFX)-blue.svg)](src/systems/)
+[![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(107%2C951%20LOC)-indigo.svg)](CODE_META_INDEX.md)
+[![Engines](https://img.shields.io/badge/stateless%20engines-15%20engines%20(Combat%20%26%20Spell%20VFX)-blue.svg)](src/systems/)
 [![Renderers](https://img.shields.io/badge/tri--mode%20renderers-Voxel%20|%203D%20|%20ASCII-teal.svg)](src/renderer/)
 [![Entities](https://img.shields.io/badge/canonical%20entities-1%2C636-purple.svg)](src/entities/)
 [![Architecture](https://img.shields.io/badge/architecture-5--layer%20Clean%20DOD-orange.svg)](src/meta/code_meta_index.json)
@@ -15,11 +15,11 @@
 ## 🧭 프로젝트 개요 및 엔진 진화 여정
 
 **미미크리 복셀(Mimicry Voxel)**은 플레이어가 쓰러뜨린 몬스터의 정수 코어(Core)를 흡수하여 그 신체 능력과 고유 마법을 의태(Mimicry)하는 전술적 복셀 로그라이크 엔진입니다. 
-초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook) & 전면 관통 계단 비콘**, 그리고 **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템 & 3대 렌더러 전역 아스키 네온 블룸 연동**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
+초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook) & 전면 관통 계단 비콘**, **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템**, 그리고 **물리 5대 메소드(참격, 할퀴기, 물어뜯기, 찌르기, 분쇄) 및 ToME 마법 4대 범주(투사체 볼트 8종, 광역 볼 7종, 21종 드래곤 브레스, 상태이상/유틸 6종) 전수 아스키 그래픽 시각 효과 엔진**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
 
 ```mermaid
 timeline
-    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 10)
+    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 11)
     Phase 1 : 3대 원소 상호작용 프로토타입 (v0.1.0 ~ v0.6.0)
             : 의태 코어 흡수 및 기초 복셀 렌더러 구축
     Phase 2 : 5대 갓오브젝트 해체 및 5대 계층 클린 아키텍처 확립 (v0.7.0 ~ v0.12.0)
@@ -40,6 +40,8 @@ timeline
             : R/F/휠 수직 시선 제어, 천장-바닥 전면 관통 빔, 펄스 거리 홀로그램
     Phase 10: 순차적 다단 히트 콤보 & 3대 렌더러 아스키 블룸 연동 (v0.24.0)
             : 80ms 시차 큐잉, 타격별 각도/글리프 변이, 2.5D/3D/아스키 전역 블룸
+    Phase 11: 물리 5대 메소드 & ToME 마법 4대 범주 전수 아스키 VFX 완비 (v0.25.0)
+            : 참격/할퀴기/물어뜯기/찌르기/분쇄, 볼트 8종, 볼 7종, 21종 브레스, 유틸 6종
 ```
 
 ---
@@ -73,6 +75,38 @@ timeline
 │    (TomeMonstersData, TomeArtifactsData, GameBalanceConfig) │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 🔮 Phase 11: 물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 전투 & 주문 VFX 엔진 완비 (v0.25.0)
+
+### 🔮 v0.25.0 — 물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 전투 & 주문 VFX 엔진 완비
+- **배포일**: 2026-09-03 | **버전**: `v0.25.0` | **모듈 현황**: 75개 모듈 (107,801 LOC) | **테스트 통과**: 59/59 Suites (100% ALL PASS)
+- **개요 및 설계 배경**:
+  - 미미크리 복셀 엔진이 지닌 ToME 2.3.5 정통 데이터셋(851종 몬스터, 106종 주문, 20종 공격 메소드, 27종 타격 효과, 21종 드래곤 브레스)의 방대한 전투 역학에 완벽히 대응하기 위해, **물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 시각 효과 엔진([`CombatVFXEngine.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/CombatVFXEngine.js))**을 완비하였습니다.
+  - 리서치 에이전트(카스미 루리)의 [`COMBAT_AND_MAGIC_VFX_CATALOG_PHASE2.md`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/COMBAT_AND_MAGIC_VFX_CATALOG_PHASE2.md) 전면 확장 명세서에 의거하여, 외부 비트맵 자원 0% 순수 절차적 아스키 캔버스 엔진 상에 물리 5대 타격 메소드, 마법 볼트 8종, 광역 볼 7종, 드래곤 브레스 21종, 상태이상/유틸리티 6종의 고유 글리프 시퀀스 및 네온 블룸 셰이딩을 1:1로 결합하였습니다.
+
+- **주요 변경 사항**:
+  1. **물리 5대 타격 메소드 전수 형상화 (`src/systems/CombatVFXEngine.js`)**:
+     - `SLASH` (베기): 6단 교차 참격 아크 (`⚔`, `▓`, `▒`, `░`, `/`), 시안 네온 글로우 (`#38bdf8`).
+     - `CLAW` (할퀴기): 3줄 평행 할큄선 (`\ \ \`) 및 방사형 핏방울 (`. ' · 🩸`), 핏빛 레드 글로우 (`#ef4444`).
+     - `BITE` (물어뜯기): 화면 상하에서 중심으로 3쌍의 이빨이 맞물려 닫히는 교합 스냅 (`▲ ▲ ▲` over `▼ ▼ ▼`), 앰버 골드 글로우 (`#f59e0b`).
+     - `PIERCE` / `STING` (찌르기/독침): 화면 중심을 향해 원근으로 꿰뚫는 일직선 관통 바늘 궤적 (`─ ━ » ➳ ┼ ✦`), 에메랄드 그린 글로우 (`#10b981`).
+     - `CRUSH` / `BASH` (분쇄/강타): 화면 전체 진동 및 거대 바위 붕괴 파편 사방 비산 (`( [ # @ ▓ ] )`), 웜 오렌지 글로우 (`#d97706`).
+  2. **ToME 마법 4대 범주 42종 주문 계통 전수 렌더링 파이프라인**:
+     - **원거리 투사체 볼트 8대 계통**: `ARROW`, `MISSILE`, `BO_FIRE`, `BO_COLD`, `BO_ELEC`, `BO_ACID`, `BO_NETH`, `BO_LITE` (헤드/몸체/테일 3단 구조 및 탄도 궤적 비행).
+     - **광역 폭풍 볼 7대 계통**: `BA_FIRE`, `BA_COLD`, `BA_ELEC`, `BA_ACID`, `BA_NETH`, `BA_MANA`, `BA_DARK` (동심원 아스키 파동 링 팽창 및 소용돌이 입자).
+     - **드래곤 브레스 21종 스트림**: 5대 원소(화염, 냉기, 번개, 산성, 독) 및 상위 특수 원소(빛, 어둠, 혼돈, 파멸, 시공간, 해체, 굉음, 중력, 관성 등) 3단계(노즐 분사 ➔ 원뿔형 확장 ➔ 잔류 안개) 스트림 시뮬레이션.
+     - **상태이상 & 유틸리티 6대 계통**: `CONFUSION` (회전 물음표 링), `BLIND` (시야 암전 비네팅), `PARALYZE` (황색 구속 번개 감전), `FEAR` (비명 글리프 확산), `HEAL` (상승 녹색 십자가 입자), `TELEPORT` (차원 왜곡 소용돌이 포탈).
+  3. **전투 및 주문 엔진 전면 연동 (`src/systems/TomeSpellEngine.js`, `src/core/CombatSystem.js`)**:
+     - 플레이어 및 몬스터의 물리 공격 시 메소드(`SLASH`, `CLAW`, `BITE`, `PIERCE`, `CRUSH`)에 따라 고유 VFX 자동 분기.
+     - 볼트/볼/브레스/유틸리티 마법 시전 시 `TomeSpellEngine`에서 원소 타입 및 투사 좌표를 `CombatVFXEngine` 파이프라인에 100% 무결 바인딩.
+  4. **3대 렌더러 시점 투영 일관성 완비**:
+     - 1인칭 3D(화면 공간 뷰모델 아크 & 월드 Z-버퍼 소팅 빌보드), 2.5D 복셀(등각 포물선 탄도학 & 충격파 링), 2D 아스키(터미널 14x23 글리프 플래시) 전역 완벽 호환.
+  5. **단위/통합 테스트 확장 및 무결성 검증**:
+     - [`scripts/test_first_person_3d_renderer.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/scripts/test_first_person_3d_renderer.js)에 물리 5대 메소드 및 마법 4대 범주 전수 아스키 그래픽 렌더링 무결성 테스트 추가.
+     - **59개 전체 테스트 스위트 100% ALL PASS 달성 (59/59 PASSED, 0 FAILED)**.
+     - **메타 인덱서 갱신**: `meta_indexer.py --update-wiki` 실행으로 75개 모듈(107,801 LOC) 메타 인덱스 및 위키 문서 최신화 완료.
 
 ---
 
@@ -492,7 +526,7 @@ timeline
 | 분류 | 수치 및 상태 | 비고 |
 | :--- | :--- | :--- |
 | **전체 테스트 스위트** | **59 / 59 ALL PASSED (100%)** | 1,850개 이상 단언문 회귀 결함 0건 완벽 방어 |
-| **스캔된 아키텍처 모듈** | **75개 모듈 (107,801 라인)** | `meta_indexer.py` 정밀 검증 및 위키 동기화 |
+| **스캔된 아키텍처 모듈** | **75개 모듈 (107,951 라인)** | `meta_indexer.py` 정밀 검증 및 위키 동기화 |
 | **정통 ToME 엔티티** | **1,636종 정규 엔티티** | 몬스터, 아티팩트, 에고, 아이템 카탈로그 |
 | **시스템 전담 엔진** | **15대 전담 엔진** | CombatVFX, Loot, Spawner, Budget, Status, AI, Spells, Tags 등 |
 | **배포 버전** | **v0.21.0 (Next-Gen 3D & VFX Release)** | 독립 포크(`fork_experimental/`) 패키징 완료 |

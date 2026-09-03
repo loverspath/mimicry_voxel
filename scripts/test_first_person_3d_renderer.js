@@ -584,6 +584,94 @@ vfxEngine.renderAsciiVFX(mockAsciiRenderer, 0, 0);
 assert(true, '1인칭 3D 및 2D 아스키 렌더러에서 전수 마법 카탈로그 무결 렌더링 검증 완료');
 
 console.log('='.repeat(80));
+console.log('🧪 [TEST SUITE 11] 3D 던전 벽면 텍스처(TextureManager & DDA 슬라이싱) 무결성 검증');
+console.log('='.repeat(80));
+
+const { textureManager: tm, resolveTexturePath, TEXTURE_PATHS: tp, TEXTURE_FILENAMES: tf } = await import('../src/renderer/TextureManager.js');
+
+// 11-1. 경로 해석 리졸버 검증
+const resolvedRuins = resolveTexturePath(tf.CAVE_RUINS);
+assert(resolvedRuins.includes('tex_cave_ruins.jpg'), 'resolveTexturePath()가 유효한 텍스처 URL을 생성함');
+assert(tp.CAVE_RUINS.includes('tex_cave_ruins.jpg'), 'TEXTURE_PATHS.CAVE_RUINS 정합성 확인');
+assert(tp.COMMON_FLOOR.includes('tex_dungeon_floor.jpg'), 'TEXTURE_PATHS.COMMON_FLOOR 정합성 확인');
+
+// 11-2. 폴백 텍스처 및 온디맨드 로딩 트리거 검증
+const wallFallback = tm.getWallTexture('CAVE_RUINS');
+assert(Boolean(wallFallback), 'getWallTexture()가 null이 아닌 텍스처/폴백을 즉각 반환함');
+
+const floorFallback = tm.getFloorTexture();
+assert(Boolean(floorFallback), 'getFloorTexture()가 null이 아닌 바닥재 폴백을 즉각 반환함');
+
+// 11-3. 1인칭 3D 렌더러 DDA 실사 텍스처 슬라이싱 검증
+let drawImageSliceCount = 0;
+const mockCanvasCtx = {
+  ...fpRenderer.ctx,
+  drawImage: (...args) => {
+    drawImageSliceCount++;
+  },
+  fillRect: () => {},
+  createLinearGradient: () => ({ addColorStop: () => {} }),
+  createRadialGradient: () => ({ addColorStop: () => {} }),
+  save: () => {},
+  restore: () => {},
+  fillText: () => {},
+  strokeText: () => {}
+};
+
+const originalCtx = fpRenderer.ctx;
+fpRenderer.ctx = mockCanvasCtx;
+
+// 모의 실사 텍스처 주입 (complete = true, naturalWidth = 256)
+const mockImageTexture = {
+  width: 256,
+  height: 256,
+  naturalWidth: 256,
+  naturalHeight: 256,
+  complete: true
+};
+tm.textures.set('CAVE_RUINS', mockImageTexture);
+
+const wallMap = {
+  width: 10,
+  height: 10,
+  tiles: Array.from({ length: 10 }, (_, y) =>
+    Array.from({ length: 10 }, (_, x) => {
+      const isBoundary = x === 0 || x === 9 || y === 0 || y === 9;
+      return {
+        type: isBoundary ? 'WALL' : 'FLOOR',
+        isWall: isBoundary,
+        isExplored: false
+      };
+    })
+  )
+};
+
+drawImageSliceCount = 0;
+fpRenderer.drawMap(wallMap, 0, 0, 5, 5, 6, 1);
+
+assert(drawImageSliceCount > 0, `실사 텍스처 이미지 DDA 수직 슬라이스(drawImage) 정상 호출 확인 (${drawImageSliceCount} 슬라이스)`);
+
+// 11-4. 텍스처 미완료(complete = false) 시 절차적 벽돌 슬라이스 안전 폴백 검증
+const unreadyTexture = {
+  width: 256,
+  height: 256,
+  naturalWidth: 0,
+  naturalHeight: 0,
+  complete: false
+};
+tm.textures.set('VOLCANIC_FORTRESS', unreadyTexture);
+
+let proceduralFallbackCalled = false;
+fpRenderer._drawProceduralWallSlice = () => {
+  proceduralFallbackCalled = true;
+};
+
+fpRenderer.drawMap(wallMap, 0, 0, 5, 5, 6, 25); // 25층 = VOLCANIC_FORTRESS
+assert(proceduralFallbackCalled, '텍스처 미완료/로딩 중 시 _drawProceduralWallSlice 안전 폴백 정상 작동 확인');
+
+fpRenderer.ctx = originalCtx;
+
+console.log('='.repeat(80));
 console.log(`🎉 [TEST SUMMARY] 총 ${passed + failed}개 검증 중 ${passed}개 통과 (${((passed / (passed + failed)) * 100).toFixed(1)}%)`);
 console.log('='.repeat(80));
 
