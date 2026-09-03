@@ -1,8 +1,8 @@
-# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.29.0)
+# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.30.0)
 
-> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 15 집대성)**
+> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 16 집대성)**
 
-[![Version](https://img.shields.io/badge/version-0.29.0-emerald.svg)](package.json)
+[![Version](https://img.shields.io/badge/version-0.30.0-emerald.svg)](package.json)
 [![Tests](https://img.shields.io/badge/test%20suites-60%2F60%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
 [![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(109%2C240%20LOC)-indigo.svg)](CODE_META_INDEX.md)
 [![Engines](https://img.shields.io/badge/stateless%20engines-15%20engines%20(AutoCast%20Toggle%20%26%20Shield%20Bash)-blue.svg)](src/systems/)
@@ -15,11 +15,11 @@
 ## 🧭 프로젝트 개요 및 엔진 진화 여정
 
 **미미크리 복셀(Mimicry Voxel)**은 플레이어가 쓰러뜨린 몬스터의 정수 코어(Core)를 흡수하여 그 신체 능력과 고유 마법을 의태(Mimicry)하는 전술적 복셀 로그라이크 엔진입니다. 
-초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook)**, **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템**, **물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 VFX 엔진**, **5대 던전 테마 맞춤형 바닥 & 천장 실사 텍스처 10종 탑재 및 플로어캐스팅 렌더러**, **1인칭 3D 공간 일체화**, 그리고 **바닥-천장($z=0.0 \sim 1.0$) 관통형 3D 복셀 계단 구조체, 천장 개구부(Ceiling Skylight Well), 바닥 함몰 개구부 및 5대 던전 테마 10종 실사 계단 텍스처**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
+초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook)**, **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템**, **물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 VFX 엔진**, **5대 던전 테마 맞춤형 바닥 & 천장 실사 텍스처 10종 탑재 및 플로어캐스팅 렌더러**, **1인칭 3D 공간 일체화**, **바닥-천장($z=0.0 \sim 1.0$) 관통형 3D 복셀 계단 구조체 및 5대 던전 테마 10종 실사 계단 텍스처**, 그리고 **3D 복셀 사다리(Ladder) 시스템, 전사 SHIELD_BASH(방패 강타) 완비 및 액티브 스킬 오토캐스트 On/Off 토글 시스템**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
 
 ```mermaid
 timeline
-    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 15)
+    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 16)
     Phase 1 : 3대 원소 상호작용 프로토타입 (v0.1.0 ~ v0.6.0)
             : 의태 코어 흡수 및 기초 복셀 렌더러 구축
     Phase 2 : 5대 갓오브젝트 해체 및 5대 계층 클린 아키텍처 확립 (v0.7.0 ~ v0.12.0)
@@ -50,6 +50,8 @@ timeline
             : 2x2 멀티타일/AO/보행밥, 3단 석조 계단(함몰구/고딕아치), 네온 철거
     Phase 15: 바닥-천장 관통형 3D 계단 구조체 & 10종 테마 텍스처 완비 (v0.29.0)
             : z=0~1.0 관통 기둥/보, 천장 스카이라이트 개구부, 5대 테마 10종 실사 계단
+    Phase 16: 3D 복셀 사다리 & 전사 방패 강타 & 오토캐스트 토글 완비 (v0.30.0)
+            : 3종 사다리 텍스처, SHIELD_BASH(스턴), Shift+1~8 오토캐스트 토글
 ```
 
 ---
@@ -83,6 +85,37 @@ timeline
 │    (TomeMonstersData, TomeArtifactsData, GameBalanceConfig) │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 🏛️ Phase 16: 3D 복셀 사다리(Ladder) 시스템, 전사 SHIELD_BASH(방패 강타) 완비 및 액티브 스킬 오토캐스트 On/Off 토글 시스템 (v0.30.0)
+
+### 🏛️ v0.30.0 — 3D 복셀 사다리(Ladder) 시스템, 전사 SHIELD_BASH(방패 강타) 완비 및 액티브 스킬 오토캐스트 On/Off 토글 시스템
+- **배포일**: 2026-09-03 | **버전**: `v0.30.0` | **모듈 현황**: 75개 모듈 (109,240 LOC) | **테스트 통과**: 60/60 Suites (100% ALL PASS)
+- **개요 및 설계 배경**:
+  - 미미크리 복셀 엔진의 수직 던전 이동 구조물 확장의 일환으로, 석조 계단과 차별화되는 고유한 **3D 복셀 사다리(Ladder) 시스템**을 구축하고 전용 실사 텍스처 3종(나무 사다리, 철제 사다리, 함정문 개구부) 및 절차적 3D 복셀 기둥/가로대 렌더러를 탑재하였습니다.
+  - 전사/근접 몬스터 코어 흡수 시 의도치 않게 배정되던 비전 마법 BLINK(순간이동)를 전면 배제하고, 정통 전사 클래스의 대표 물리 공격 기술인 **SHIELD_BASH(방패 강타: 방패 무게 및 AC 비례 물리 타격 및 100% 기절/스턴 상태이상 유발)** 엔진을 완비하여 전사형 빌드의 근접 전술 가치를 획기적으로 격상시켰습니다.
+  - 플레이어가 원하는 스킬만 선택적으로 자동 발동할 수 있도록 **액티브 스킬 오토캐스트(Auto-Cast) On/Off 토글 시스템**을 개발하여, 키보드 단축키(`Shift+1~8`), 모바일 롱프레스 및 핫바 토글 UI, 세이브/로드 무결성 동기화를 전면 완비하였습니다.
+
+- **주요 변경 사항**:
+  1. **3D 복셀 사다리(Ladder) 시스템 및 실사 텍스처 3종 탑재 ([`src/renderer/FirstPerson3DRenderer.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/FirstPerson3DRenderer.js), [`src/renderer/TextureManager.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/TextureManager.js))**:
+     - **사다리 렌더러 구축**: 바닥에서 천장까지 이어지는 좌우 수직 빔(Pillars)과 다단 수평 가로대(Rungs)를 정밀 복셀 기하학으로 렌더링하고, 바닥에 하향 함정문(Trapdoor Pit) 개구부를 플로어캐스팅.
+     - **사다리 전용 실사 텍스처 3종 탑재 ([`public/textures/`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/public/textures))**:
+       * `tex_ladder_wood.jpg`: 고전 던전의 낡은 참나무 사다리 질감.
+       * `tex_ladder_iron.jpg`: 카타콤 및 앙그반드의 차가운 철제 앵글 사다리 질감.
+       * `tex_ladder_pit.jpg`: 바닥을 뚫고 내려가는 직하 함정문 개구부 질감.
+     - `TextureManager.js`에 `tex_ladder_wood`, `tex_ladder_iron`, `tex_ladder_pit` 등록 및 $128 \times 128$ 픽셀 버퍼 캐시 연동.
+  2. **전사 SHIELD_BASH(방패 강타) 완비 및 근접 몬스터 BLINK 배제 ([`src/systems/MonsterSpellFactory.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/MonsterSpellFactory.js))**:
+     - 전사/물리 근접 몬스터 코어(`warrior`, `soldier`, `knight`, `orc`, `troll` 등)에서 플레이어의 전술을 교란하던 BLINK 스킬을 전면 제거.
+     - `SHIELD_BASH` 고유 물리 기술 탑재: 착용 중인 방패의 기본 방어력(AC) 및 무게(Weight)에 비례하는 순수 물리 피해 산출, 피격 대상에게 100% 확률로 1~3턴간 STUN(기절) 부여.
+  3. **액티브 스킬 오토캐스트(AutoCast) On/Off 개별 토글 시스템 ([`src/entities/Player.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/Player.js), [`src/ui/HUDView.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/HUDView.js), [`src/ui/SkillHotbarView.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/ui/SkillHotbarView.js), [`src/core/SaveSystem.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/SaveSystem.js))**:
+     - `Player.js`: `skillAutoCastEnabled` 불리언 배열(기본 `true`) 관리 및 `toggleSkillAutoCast(index)`, `isSkillAutoCastEnabled(index)` 메서드 제공.
+     - `SaveSystem.js`: 플레이어 세이브/로드 시 `skillAutoCastEnabled` 상태 완벽 보존 및 마이그레이션 호환.
+     - `HUDView.js` / `SkillHotbarView.js`: 단축키 `Shift+1 ~ Shift+8` 입력 처리, 핫바 슬롯 상단 초록색 점등/비점등 Auto 인디케이터 뱃지 표시, 모바일 터치 토글 연동.
+  4. **신규 단위/통합 테스트 스위트 추가 및 무결성 검증**:
+     - [`scripts/test_autocast_toggle.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/scripts/test_autocast_toggle.js) 신설 (총 177 라인): 개별 스킬 AutoCast 토글, 세이브/로드 보존, 비활성 스킬 격발 차단 무결성 검증.
+     - **60개 전체 테스트 스위트 100% ALL PASS 달성 (60/60 PASSED, 0 FAILED)**.
+     - **메타 인덱서 갱신**: `meta_indexer.py --update-wiki` 실행으로 75개 모듈(109,240 LOC) 메타 인덱스 및 위키 문서 최신화 완료.
 
 ---
 
