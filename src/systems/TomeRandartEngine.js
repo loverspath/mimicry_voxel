@@ -21,7 +21,7 @@ export class TomeRandartEngine {
    * @returns {string} 완성된 란다트 명칭
    */
   static generateName(baseName) {
-    const clean = (baseName || 'Equipment').replace(/^[&]\s*/, '').replace(/~$/, '').trim();
+    const clean = (baseName || 'Equipment').replace(/^[&]\s*/, '').replace(/[~#]/g, '').replace(/\s+/g, ' ').trim();
     if (Math.random() < 0.5) {
       const p = SINDARIN_PREFIXES[Math.floor(Math.random() * SINDARIN_PREFIXES.length)];
       const s = SINDARIN_SUFFIXES[Math.floor(Math.random() * SINDARIN_SUFFIXES.length)];

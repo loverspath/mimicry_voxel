@@ -47,11 +47,11 @@ export class Item {
     this.y = y;
     this.type = type;
     this.slotType = slotType || TomeEquipmentEngine.getSlotType(null, type);
-    this._baseName = name;
+    this._baseName = Item.cleanName(name || 'Item');
     this._baseColor = color;
     this._char = TomeEquipmentEngine.sanitizeSymbol(char, type, this.slotType);
     this.color = color;
-    this.name = name;
+    this.name = this._baseName;
     this.lightBonus = lightBonus;
     this.dice = dice; // e.g. '1d8'
     this.coreType = coreType; // 'SLIME', 'GOBLIN', 'BAT', etc.
@@ -189,51 +189,61 @@ export class Item {
     this._char = TomeEquipmentEngine.sanitizeSymbol(val, this.type, this.slotType, this.tval);
   }
 
+  static cleanName(str) {
+    if (!str || typeof str !== 'string') return '';
+    return str
+      .replace(/^[&]\s*/, '')
+      .replace(/[~#]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
   get displayName() {
+    const cleanBase = Item.cleanName(this._baseName);
+
     // 1. 소모품, 음식, 코어, 골드는 기본 이름 노출
     if (this.type === 'POTION' || this.type === 'SCROLL' || this.type === 'CORE' || this.type === 'FOOD' || this.type === 'GOLD') {
-      let finalName = this._baseName;
+      let finalName = cleanBase;
       if (this.type === 'CORE' && this.fusionLevel > 0) {
         finalName += ` +${this.fusionLevel}`;
       }
-      return finalName;
+      return Item.cleanName(finalName);
     }
 
     // 2. 전설 유물 (Artifact)은 고유 명칭 및 강화 수치 항상 보존
     const isArtifact = !!(this.artifactKey || (this.specialTags && this.specialTags.includes('ARTIFACT')));
     if (isArtifact) {
-      let finalName = this._baseName;
+      let finalName = cleanBase;
       if (this.upgradeLevel && this.upgradeLevel > 0) {
         finalName += ` +${this.upgradeLevel}`;
       }
       if (this.idState === 'STAR_IDENTIFIED') {
-        return `${finalName} *IDENTIFIED*`;
+        return `${Item.cleanName(finalName)} *IDENTIFIED*`;
       }
-      return finalName;
+      return Item.cleanName(finalName);
     }
 
     // 3. 미감정 (Tier 0: 외형 기본명만 노출)
     if (this.idState === 'UNIDENTIFIED') {
-      return this._baseName;
+      return cleanBase;
     }
 
     // 4. 의사 감정 (Tier 1: {good}, {cursed} 등 육감 태그 부착)
     if (this.idState === 'PSEUDO_IDENTIFIED') {
       const sense = this.pseudoSense || 'average';
-      return `${this._baseName} {${sense}}`;
+      return `${cleanBase} {${sense}}`;
     }
 
     // 5. 정밀 감정 (Tier 2 & 3: IDENTIFIED & STAR_IDENTIFIED)
-    let finalName = this._baseName;
     let nameParts = [];
     for (const pKey of this.prefixes) {
       if (PREFIX_TAGS[pKey]) nameParts.push(PREFIX_TAGS[pKey].name);
     }
-    nameParts.push(this._baseName);
+    nameParts.push(cleanBase);
     for (const sKey of this.suffixes) {
       if (SUFFIX_TAGS[sKey]) nameParts.push(SUFFIX_TAGS[sKey].name);
     }
-    finalName = nameParts.join(' ');
+    let finalName = Item.cleanName(nameParts.join(' '));
     if (this.upgradeLevel && this.upgradeLevel > 0) {
       finalName += ` +${this.upgradeLevel}`;
     }
@@ -266,7 +276,7 @@ export class Item {
   }
 
   set name(val) {
-    this._baseName = val;
+    this._baseName = Item.cleanName(val);
   }
 
   get displayColor() {

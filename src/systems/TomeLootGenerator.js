@@ -23,6 +23,21 @@ export class TomeLootGenerator {
   static _cachedArtifacts = Object.values(TOME_ARTIFACTS_DATA || {});
 
   /**
+   * Angband/ToME 포맷 토큰(&, ~, #)을 제거하고 깨끗한 표준 아이템 명칭으로 정제합니다.
+   * @param {string} name - 원시 아이템 명칭 (예: '& Short Bow~', '& Cloak~ of Mimicry', '& #~')
+   * @returns {string} 정제된 아이템 명칭
+   */
+  static cleanItemName(name) {
+    if (!name || typeof name !== 'string') return 'Item';
+    return name
+      .replace(/^[&]\s*/, '')      // Angband 관사 토큰 & 제거
+      .replace(/~/g, '')           // Angband 복수형 변환 토큰 ~ 제거
+      .replace(/#+/g, '')          // Angband 템플릿 토큰 # 제거
+      .replace(/\s+/g, ' ')        // 연속 공백 단일화
+      .trim();
+  }
+
+  /**
    * 3대 랜덤 플래그(RANDOM_RESIST, RANDOM_POWER, RANDOM_RES_OR_POWER)를 구체적인 저항 및 권능 플래그로 100% 치환합니다.
    * @param {string[]} flags - 원본 플래그 배열
    * @returns {string[]} 치환 완료된 고유 플래그 배열
@@ -99,7 +114,7 @@ export class TomeLootGenerator {
     if (!base) {
       const match = this._cachedKinds.find(k => k.tval === art.tval && k.sval === art.sval);
       if (match && match.name) {
-        base = match.name.replace(/^[&]\s*/, '').replace(/~$/, '').trim();
+        base = this.cleanItemName(match.name);
       } else {
         if (art.tval === 45 || art.type === 'RING') base = 'Ring';
         else if (art.tval === 40 || art.type === 'AMULET') base = 'Amulet';
@@ -112,30 +127,30 @@ export class TomeLootGenerator {
           base = art.type || 'Artifact';
         }
       }
+    } else {
+      base = this.cleanItemName(base);
     }
 
-    const raw = (art.rawName || art.name || '').replace(/^유물:\s*/, '').trim();
+    const raw = this.cleanItemName((art.rawName || art.name || '').replace(/^유물:\s*/, ''));
 
+    let finalName = '';
     if (art.flags && art.flags.includes('HIDE_TYPE')) {
       if (raw.startsWith('of ') || raw.startsWith('the ')) {
-        return `${base} ${raw}`;
+        finalName = `${base} ${raw}`;
+      } else {
+        finalName = raw;
       }
-      return raw;
+    } else if (raw.startsWith('of ') || raw.startsWith('the ')) {
+      finalName = `${base} ${raw}`;
+    } else if (raw.startsWith("'") && raw.endsWith("'")) {
+      finalName = `${base} ${raw}`;
+    } else if (raw.includes("'")) {
+      finalName = `${base} ${raw}`;
+    } else {
+      finalName = `${base} of ${raw}`;
     }
 
-    if (raw.startsWith('of ') || raw.startsWith('the ')) {
-      return `${base} ${raw}`;
-    }
-
-    if (raw.startsWith("'") && raw.endsWith("'")) {
-      return `${base} ${raw}`;
-    }
-
-    if (raw.includes("'")) {
-      return `${base} ${raw}`;
-    }
-
-    return `${base} of ${raw}`;
+    return this.cleanItemName(finalName);
   }
 
   static _egoPools = null;
@@ -424,15 +439,17 @@ export class TomeLootGenerator {
       char = '[';
     }
 
-    let itemName = baseKind.name;
-    const cleanBase = (baseKind.name || 'Equipment').replace(/^[&]\s*/, '').replace(/~$/, '').trim();
+    const cleanBase = this.cleanItemName(baseKind.name);
+    let itemName = cleanBase;
     if (egoData) {
-      if (egoData.name.startsWith('of ') || egoData.name.startsWith('(')) {
-        itemName = `${cleanBase} ${egoData.name}`;
+      const cleanEgo = this.cleanItemName(egoData.name);
+      if (cleanEgo.startsWith('of ') || cleanEgo.startsWith('(')) {
+        itemName = `${cleanBase} ${cleanEgo}`;
       } else {
-        itemName = `${egoData.name} ${cleanBase}`;
+        itemName = `${cleanEgo} ${cleanBase}`;
       }
     }
+    itemName = this.cleanItemName(itemName);
 
     const itemStatBonuses = { ...(baseKind.statBonuses || {}) };
     if (egoData && egoData.flags) {

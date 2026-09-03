@@ -66322,10 +66322,10 @@
       ],
       "flavorText": "This concoction can transform your body for a short period of time."
     },
-    "KIND_": {
-      "key": "KIND_",
+    "KIND_CLOAK_OF_MIMICRY": {
+      "key": "KIND_CLOAK_OF_MIMICRY",
       "id": 618,
-      "name": "& #~",
+      "name": "Cloak of Mimicry",
       "tval": 35,
       "sval": 100,
       "type": "CLOAK",

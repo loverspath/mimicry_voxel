@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-09-03T12:47:23Z",
+  "generatedAt": "2026-09-03T13:14:38Z",
   "summary": {
     "totalModules": 76,
-    "totalLines": 109918,
+    "totalLines": 109945,
     "categories": {
       "configs": 5,
       "core": 14,
@@ -604,7 +604,7 @@
       "filePath": "src/entities/Item.js",
       "moduleName": "Item",
       "category": "entities",
-      "lines": 358,
+      "lines": 368,
       "responsibility": "던전 바닥 및 인벤토리 내의 장비, 소모품, 마법 디바이스, 정수 코어 아이템 데이터 컨테이너 모델",
       "purity": "Zero-Logic Data Container",
       "dependencies": [
@@ -620,7 +620,7 @@
         "Item"
       ],
       "functions": [],
-      "lastModified": "2026-09-03T12:38:04Z"
+      "lastModified": "2026-09-03T13:13:04Z"
     },
     {
       "filePath": "src/entities/ItemRegistry.js",
@@ -866,7 +866,7 @@
       ],
       "classes": [],
       "functions": [],
-      "lastModified": "2026-09-03T12:37:36Z"
+      "lastModified": "2026-09-03T13:10:54Z"
     },
     {
       "filePath": "src/entities/TomeMonstersData.js",
@@ -1532,7 +1532,7 @@
       "filePath": "src/systems/TomeLootGenerator.js",
       "moduleName": "TomeLootGenerator",
       "category": "systems",
-      "lines": 662,
+      "lines": 679,
       "responsibility": "ToME 2.3.5 정통 알고리즘 기반 던전 깊이(Depth)별 아이템 롤링, 에고(Ego) 접사 합성 및 전설 유물(Artifact) 드랍 파이프라인 엔진",
       "purity": "Pure Loot Factory",
       "dependencies": [
@@ -1551,7 +1551,7 @@
         "TomeLootGenerator"
       ],
       "functions": [],
-      "lastModified": "2026-09-03T12:40:36Z"
+      "lastModified": "2026-09-03T13:12:11Z"
     },
     {
       "filePath": "src/systems/TomeRandartEngine.js",
@@ -1570,7 +1570,7 @@
         "TomeRandartEngine"
       ],
       "functions": [],
-      "lastModified": "2026-09-03T12:42:46Z"
+      "lastModified": "2026-09-03T13:12:25Z"
     },
     {
       "filePath": "src/systems/TomeSpellEngine.js",

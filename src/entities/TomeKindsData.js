@@ -8499,7 +8499,7 @@ export const TOME_KINDS_DATA = Object.freeze({
   "KIND_MORPHIC_OIL_OF": {
     "key": "KIND_MORPHIC_OIL_OF",
     "id": 605,
-    "name": "& Morphic Oil~ of #",
+    "name": "Morphic Oil",
     "tval": 72,
     "sval": 1,
     "type": "ITEM",
@@ -8517,10 +8517,10 @@ export const TOME_KINDS_DATA = Object.freeze({
     ],
     "flavorText": "This concoction can transform your body for a short period of time."
   },
-  "KIND_": {
-    "key": "KIND_",
+  "KIND_CLOAK_OF_MIMICRY": {
+    "key": "KIND_CLOAK_OF_MIMICRY",
     "id": 618,
-    "name": "& #~",
+    "name": "Cloak of Mimicry",
     "tval": 35,
     "sval": 100,
     "type": "CLOAK",
@@ -9316,7 +9316,7 @@ export const TOME_KINDS_DATA = Object.freeze({
   "KIND_SPELLBOOK_OF": {
     "key": "KIND_SPELLBOOK_OF",
     "id": 757,
-    "name": "& Spellbook~ of #",
+    "name": "Spellbook",
     "tval": 111,
     "sval": 255,
     "type": "ITEM",
@@ -9680,7 +9680,7 @@ export const TOME_KINDS_DATA = Object.freeze({
   "KIND_WOODEN_ROD_OF": {
     "key": "KIND_WOODEN_ROD_OF",
     "id": 793,
-    "name": "& Wooden Rod~ of#",
+    "name": "Wooden Rod",
     "tval": 67,
     "sval": 10,
     "type": "ITEM",
@@ -9698,7 +9698,7 @@ export const TOME_KINDS_DATA = Object.freeze({
   "KIND_COPPER_ROD_OF": {
     "key": "KIND_COPPER_ROD_OF",
     "id": 794,
-    "name": "& Copper Rod~ of#",
+    "name": "Copper Rod",
     "tval": 67,
     "sval": 20,
     "type": "ITEM",
@@ -9716,7 +9716,7 @@ export const TOME_KINDS_DATA = Object.freeze({
   "KIND_IRON_ROD_OF": {
     "key": "KIND_IRON_ROD_OF",
     "id": 795,
-    "name": "& Iron Rod~ of#",
+    "name": "Iron Rod",
     "tval": 67,
     "sval": 50,
     "type": "ITEM",
@@ -9734,7 +9734,7 @@ export const TOME_KINDS_DATA = Object.freeze({
   "KIND_SILVER_ROD_OF": {
     "key": "KIND_SILVER_ROD_OF",
     "id": 797,
-    "name": "& Silver Rod~ of#",
+    "name": "Silver Rod",
     "tval": 67,
     "sval": 100,
     "type": "ITEM",
@@ -9752,7 +9752,7 @@ export const TOME_KINDS_DATA = Object.freeze({
   "KIND_GOLDEN_ROD_OF": {
     "key": "KIND_GOLDEN_ROD_OF",
     "id": 798,
-    "name": "& Golden Rod~ of#",
+    "name": "Golden Rod",
     "tval": 67,
     "sval": 125,
     "type": "ITEM",
@@ -9770,7 +9770,7 @@ export const TOME_KINDS_DATA = Object.freeze({
   "KIND_MITHRIL_ROD_OF": {
     "key": "KIND_MITHRIL_ROD_OF",
     "id": 799,
-    "name": "& Mithril Rod~ of#",
+    "name": "Mithril Rod",
     "tval": 67,
     "sval": 160,
     "type": "ITEM",
@@ -9788,7 +9788,7 @@ export const TOME_KINDS_DATA = Object.freeze({
   "KIND_ADAMANTITE_ROD_OF": {
     "key": "KIND_ADAMANTITE_ROD_OF",
     "id": 800,
-    "name": "& Adamantite Rod~ of#",
+    "name": "Adamantite Rod",
     "tval": 67,
     "sval": 200,
     "type": "ITEM",
