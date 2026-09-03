@@ -172,7 +172,7 @@ export const SPECIAL_MONSTER_PACKS = [
 ];
 
 export class Spawner {
-  static _cachedMonsters = Object.values(TOME_MONSTERS_DATA || {});
+  static _cachedMonsters = Object.values(TOME_MONSTERS_DATA || {}).filter(m => !isJokeMonster(m));
 
   /**
    * 던전 층수(floor)에 맞는 던전 테마를 결정합니다.

@@ -132,7 +132,9 @@ export class TomeLootGenerator {
         { name: "하급 체력 물약", type: "POTION", slotType: null, char: "!", color: "#f43f5e", flavorText: "상처를 빠르게 치유하는 붉은 물약입니다." },
         { name: "상급 체력 물약", type: "POTION", slotType: null, char: "!", color: "#a855f7", flavorText: "치명적인 상처도 즉시 봉합하는 보랏빛 영약입니다." },
         { name: "능력치 성장 영약", type: "POTION", slotType: null, char: "!", color: "#10b981", flavorText: "주인공의 잠재력을 영구적으로 증폭시키는 신비한 비약입니다." },
-        { name: "무기 강화 주문서", type: "SCROLL", slotType: null, char: "?", color: "#fb7185", flavorText: "무기에 마법의 예리함을 각인하는 강화 주문서입니다." }
+        { name: "무기 강화 주문서", type: "SCROLL", slotType: null, char: "?", color: "#fb7185", flavorText: "무기에 마법의 예리함을 각인하는 강화 주문서입니다." },
+        { name: "Scroll of Identify", tval: 70, sval: 13, type: "SCROLL", slotType: null, char: "?", color: "#38bdf8", cost: 50, level: 1, flavorText: "미식별 장비의 숨겨진 능력과 접사를 판별해 주는 고대의 감정 주문서입니다." },
+        { name: "Scroll of Remove Curse", tval: 70, sval: 15, type: "SCROLL", slotType: null, char: "?", color: "#fbcfe8", cost: 100, level: 3, flavorText: "장비에 깃든 사악한 결속 저주를 정화하여 안전하게 탈의할 수 있게 해주는 저주 해제 주문서입니다." }
       ];
       baseKind = fallbackTemplates[Math.floor(Math.random() * fallbackTemplates.length)];
     }

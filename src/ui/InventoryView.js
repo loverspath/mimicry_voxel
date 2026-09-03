@@ -435,7 +435,12 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
 
   const isArtifact = item.specialTags?.includes('ARTIFACT') || item.color === '#ffd700' || (item.name && item.name.includes('유물'));
   const isEgo = (item.prefixes && item.prefixes.length > 0) || (item.suffixes && item.suffixes.length > 0);
+  const isCursedItem = !!(item.isCursed || (item.curses && item.curses.length > 0) || (item.specialTags && (item.specialTags.includes('CURSED') || item.specialTags.includes('HEAVY_CURSED') || item.specialTags.includes('PERMA_CURSED'))));
   
+  const curseBadge = isCursedItem
+    ? `<span style="background: rgba(220,38,38,0.22); color: #f87171; border: 1px solid rgba(239,68,68,0.5); padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: bold; font-size: 0.65rem;">${isEquipped ? '☠️ 저주 결속 (해제 불가)' : '☠️ 저주받음 (CURSED)'}</span>`
+    : '';
+
   const gradeBadge = isArtifact 
     ? `<span style="background: rgba(251,191,36,0.18); color: #fbbf24; border: 1px solid rgba(251,191,36,0.4); padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: bold; font-size: 0.65rem;">👑 전설 유물 (Artifact)</span>`
     : isEgo 
@@ -609,8 +614,9 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
 
   return `
     <div class="detail-header" style="text-align: left; display: flex; flex-direction: column; gap: 0.2rem;">
-      <div style="display: flex; align-items: center; gap: 0.4rem;">
+      <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
         ${gradeBadge}
+        ${curseBadge}
         <span style="font-size: 0.68rem; color: #94a3b8; font-weight: bold;">[${slotNameKor}]</span>
       </div>
       <h3 class="detail-title" style="color: ${item.color}; font-size: 1.15rem; font-weight: 700; margin: 0.1rem 0; display: flex; align-items: center; gap: 0.35rem;">
@@ -626,8 +632,13 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
       ${metaBarHTML}
     </div>
     <div class="detail-actions" style="margin-top: auto; display: flex; flex-direction: column; gap: 0.4rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.5rem;">
-      <button class="modal-btn primary" id="detail-equip-btn" style="${isEquipped ? 'background: rgba(244,63,94,0.15); border-color: rgba(244,63,94,0.3); color: #f43f5e;' : 'background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.3); color: #10b981;'} font-weight: bold;">
-        ${isEquipped ? `장착 해제 (${slotNameKor})` : `${slotNameKor} 장착하기`}
+      ${isEquipped && isCursedItem ? `
+        <div style="background: rgba(220, 38, 38, 0.18); border: 1px solid rgba(239, 68, 68, 0.45); border-radius: 6px; padding: 0.4rem 0.6rem; color: #fca5a5; font-size: 0.72rem; text-align: center; font-weight: bold; line-height: 1.4;">
+          ☠️ 사악한 저주가 몸에 결속되어 있습니다!<br>'저주 해제 주문서'로 정화하기 전까지 벗을 수 없습니다.
+        </div>
+      ` : ''}
+      <button class="modal-btn primary" id="detail-equip-btn" style="${isEquipped ? (isCursedItem ? 'background: rgba(127,29,29,0.3); border-color: rgba(239,68,68,0.5); color: #fca5a5; cursor: not-allowed;' : 'background: rgba(244,63,94,0.15); border-color: rgba(244,63,94,0.3); color: #f43f5e;') : 'background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.3); color: #10b981;'} font-weight: bold;">
+        ${isEquipped ? (isCursedItem ? `🔒 [ ☠️ 저주 결속 (해제 불가) ]` : `장착 해제 (${slotNameKor})`) : `${slotNameKor} 장착하기`}
       </button>
       <button class="modal-btn danger" id="detail-drop-btn">버리기</button>
     </div>

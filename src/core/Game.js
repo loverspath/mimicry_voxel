@@ -1769,7 +1769,7 @@ export class Game {
       if (unequipSuccess) {
         this.addLogEntry(`[Equipment] ${e.name}의 장착을 해제했습니다.`, `system`);
       } else {
-        this.addLogEntry(`[Curse] ❌ ${e.displayName}에는 사악한 저주가 깃들어 있어 손에서 벗겨지지 않습니다!`, `danger`);
+        this.addLogEntry(`[Curse] ❌ [${e.displayName}]에는 사악한 저주가 깃들어 있어 손에서 벗겨지지 않습니다! '저주 해제 주문서'로 정화해야 합니다!`, `danger`);
       }
     } else {
       let t = null;
@@ -1799,7 +1799,7 @@ export class Game {
       if (t) {
         const unequipSuccess = this.player.unequipItem(t);
         if (!unequipSuccess) {
-          this.addLogEntry(`[Curse] ❌ 기존 장비 [${t.displayName}]이(가) 저주로 결속되어 교체할 수 없습니다!`, `danger`);
+          this.addLogEntry(`[Curse] ❌ 기존 장비 [${t.displayName}]이(가) 저주로 결속되어 교체할 수 없습니다! '저주 해제 주문서'로 정화해야 합니다!`, `danger`);
           this.closeContextMenu();
           this.renderInventoryList();
           return;
@@ -1814,6 +1814,16 @@ export class Game {
           `[Equipment] ${e.name}을(를) 성공적으로 장착했습니다!${n}`,
           `loot`,
         ));
+
+      // 저주 장비 착용 시 사악한 저주 결속 경고
+      const isCursed = e.isCursed || (e.curses && e.curses.length > 0) || (typeof TomeTagSystem !== 'undefined' && !TomeTagSystem.canUnequip(e));
+      if (isCursed) {
+        e.isCursed = true;
+        this.addLogEntry(
+          `[Curse] 🚨 경고! [${e.displayName}]을(를) 착용하자 사악한 저주의 기운이 뼈속까지 파고들며 몸에 달라붙었습니다! 저주를 해제하기 전까지 벗을 수 없습니다!`,
+          `danger`
+        );
+      }
     }
     (this.closeContextMenu(),
       this.renderInventoryList(),

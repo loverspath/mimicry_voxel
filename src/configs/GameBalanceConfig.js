@@ -209,9 +209,22 @@ export const DUNGEON_CUSTOM_SETTINGS = {
 /** 하위 호환용 단축 참조 */
 export const SPAWN_FEATURE_CONFIG = DUNGEON_CUSTOM_SETTINGS.spawn;
 
+export const JOKE_KEYWORDS = Object.freeze([
+  'programmer',
+  'hacker',
+  'maintainer',
+  'microsoft',
+  'gates',
+  'random number generator',
+  '프로그래머',
+  'jokeangband',
+  'jokeband'
+]);
+
 /**
  * 주어진 몬스터 메타데이터 또는 인스턴스가 조크/이스터에그 몬스터인지 판별합니다.
  * @param {Object} monsterData 
+ * @param {boolean|null} allowJokeOverride
  * @returns {boolean}
  */
 export function isJokeMonster(monsterData, allowJokeOverride = null) {
@@ -222,10 +235,24 @@ export function isJokeMonster(monsterData, allowJokeOverride = null) {
   }
   const cfg = DUNGEON_CUSTOM_SETTINGS?.spawn || SPAWN_FEATURE_CONFIG;
   if (allowJoke ?? cfg.allowJokeMonsters) return false;
+
+  // 1. 플래그 기반 검출
   const flags = monsterData.flags || monsterData.perks || [];
   if (Array.isArray(flags)) {
-    return flags.some(flag => cfg.flagBlacklist.includes(flag));
+    const jokeFlags = ['JOKEANGBAND', 'JOKEBAND', 'JOKE', 'ONLY_JOKE', 'UNFINISHED'];
+    if (flags.some(flag => jokeFlags.includes(flag) || (cfg.flagBlacklist && cfg.flagBlacklist.includes(flag)))) {
+      return true;
+    }
   }
+
+  // 2. 키워드 기반 검출 (이름, 플레이버 텍스트, 설명, 키)
+  const textToCheck = `${monsterData.key || ''} ${monsterData.name || ''} ${monsterData.flavorText || ''} ${monsterData.desc || ''} ${monsterData.description || ''}`.toLowerCase();
+  for (const kw of JOKE_KEYWORDS) {
+    if (textToCheck.includes(kw.toLowerCase())) {
+      return true;
+    }
+  }
+
   return false;
 }
 
