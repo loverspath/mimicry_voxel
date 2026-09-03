@@ -118,6 +118,12 @@ export const THEMED_STAIR_UP_PATHS = Object.freeze({
   DEEP_ANGBAND: '/public/textures/tex_stairs_up_deep_angband.jpg'
 });
 
+export const LADDER_TEXTURE_PATHS = Object.freeze({
+  WOOD: '/public/textures/tex_ladder_wood.jpg',
+  IRON: '/public/textures/tex_ladder_iron.jpg',
+  PIT: '/public/textures/tex_ladder_pit.jpg'
+});
+
 export const ALL_TEXTURE_REGISTRY = Object.freeze({
   // 벽면 5종
   CAVE_RUINS: 'tex_cave_ruins.jpg',
@@ -157,7 +163,12 @@ export const ALL_TEXTURE_REGISTRY = Object.freeze({
   STAIRS_UP_MINES_CATACOMBS: 'tex_stairs_up_catacombs.jpg',
   STAIRS_UP_VOLCANIC_FORTRESS: 'tex_stairs_up_volcanic.jpg',
   STAIRS_UP_DARK_ABYSS: 'tex_stairs_up_dark_abyss.jpg',
-  STAIRS_UP_DEEP_ANGBAND: 'tex_stairs_up_deep_angband.jpg'
+  STAIRS_UP_DEEP_ANGBAND: 'tex_stairs_up_deep_angband.jpg',
+
+  // 사다리 3종 (목재, 흑철, 함몰 트랩도어 핏)
+  LADDER_WOOD: 'tex_ladder_wood.jpg',
+  LADDER_IRON: 'tex_ladder_iron.jpg',
+  LADDER_PIT: 'tex_ladder_pit.jpg'
 });
 
 export class TextureManager {
@@ -418,6 +429,33 @@ export class TextureManager {
       return this.fallbackTextures.get(defaultKey);
     }
     return this.textures.get(defaultKey);
+  }
+
+  /**
+   * 사다리 전용 실사 텍스처를 반환합니다.
+   * @param {string} [themeId] - 던전 테마 키 (예: 'MINES_CATACOMBS', 'VOLCANIC_FORTRESS' 등)
+   * @param {boolean} [isPit=false] - true이면 지하 함몰 트랩도어 핏 텍스처 반환
+   * @returns {HTMLImageElement|HTMLCanvasElement|Object}
+   */
+  getLadderTexture(themeId = null, isPit = false) {
+    if (isPit) {
+      const key = 'LADDER_PIT';
+      if (!this.textures.has(key)) {
+        this._loadSingleTexture(key);
+        return this.fallbackTextures.get(key) || this.fallbackTextures.get('STAIRS_DOWN');
+      }
+      return this.textures.get(key);
+    }
+
+    const normTheme = themeId ? String(themeId).toUpperCase() : 'CAVE_RUINS';
+    const isIron = (normTheme === 'VOLCANIC_FORTRESS' || normTheme === 'DARK_ABYSS' || normTheme === 'DEEP_ANGBAND');
+    const key = isIron ? 'LADDER_IRON' : 'LADDER_WOOD';
+
+    if (!this.textures.has(key)) {
+      this._loadSingleTexture(key);
+      return this.fallbackTextures.get(key) || this.fallbackTextures.get('STAIRS_UP');
+    }
+    return this.textures.get(key);
   }
 
   /**

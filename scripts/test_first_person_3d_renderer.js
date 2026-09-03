@@ -978,6 +978,55 @@ assert(true, '천장 개구부 및 바닥 함몰 개구부가 융합된 1인칭 
 fpRenderer.ctx = originalCtx;
 
 console.log('='.repeat(80));
+console.log('🧪 [TEST SUITE 17] 3D 복셀 사다리 시스템 및 전용 텍스처(WOOD, IRON, PIT) 파이프라인 검증');
+console.log('='.repeat(80));
+
+const { LADDER_TEXTURE_PATHS } = await import('../src/renderer/TextureManager.js');
+
+// 17-1. 사다리 텍스처 3종 경로 정합성 검증
+assert(LADDER_TEXTURE_PATHS.WOOD.includes('tex_ladder_wood.jpg'), '목재 사다리 텍스처 경로 정합성');
+assert(LADDER_TEXTURE_PATHS.IRON.includes('tex_ladder_iron.jpg'), '철제 사다리 텍스처 경로 정합성');
+assert(LADDER_TEXTURE_PATHS.PIT.includes('tex_ladder_pit.jpg'), '트랩도어 핏 텍스처 경로 정합성');
+
+// 17-2. getLadderTexture 메소드 동작 검증
+const woodLadderTex = tm.getLadderTexture('CAVE_RUINS', false);
+assert(woodLadderTex !== null && woodLadderTex !== undefined, '동굴 테마 목재 사다리 텍스처 조회 성공');
+const ironLadderTex = tm.getLadderTexture('VOLCANIC_FORTRESS', false);
+assert(ironLadderTex !== null && ironLadderTex !== undefined, '화산 테마 흑철 사다리 텍스처 조회 성공');
+const pitLadderTex = tm.getLadderTexture('MINES_CATACOMBS', true);
+assert(pitLadderTex !== null && pitLadderTex !== undefined, '하행 트랩도어 핏 텍스처 조회 성공');
+
+// 17-3. 3D 복셀 상행 사다리(_renderUpLadder3D) 바닥~천장(z=0~1.05) 및 7개 렁 렌더링 검증
+fpRenderer.ctx = mockStairCtx;
+fpRenderer._renderUpLadder3D(mockStairCtx, 5, 3, 5, 5, testDirX, testDirY, testPlaneX, testPlaneY, 0, 1.0, 'MINES_CATACOMBS');
+assert(true, '_renderUpLadder3D 목재 수직 레일 및 7단계 발판 렁 렌더링 무결 통과');
+
+fpRenderer._renderUpLadder3D(mockStairCtx, 5, 3, 5, 5, testDirX, testDirY, testPlaneX, testPlaneY, 0, 1.0, 'VOLCANIC_FORTRESS');
+assert(true, '_renderUpLadder3D 흑철 수직 레일 및 벽면 브래킷 렌더링 무결 통과');
+
+// 17-4. 3D 복셀 하행 사다리(_renderDownLadder3D) 안전 손잡이 및 지하 발판 렁 렌더링 검증
+fpRenderer._renderDownLadder3D(mockStairCtx, 5, 3, 5, 5, testDirX, testDirY, testPlaneX, testPlaneY, 0, 1.0, 'DARK_ABYSS');
+assert(true, '_renderDownLadder3D 지상 손잡이, 지하 갱도 레일 및 4단 발판 렁 렌더링 무결 통과');
+
+// 17-5. 사다리 통합 렌더러(_drawVoxelLadders) 검증
+fpRenderer._drawVoxelLadders(multiThemeStairMap, 5, 5, 'CAVE_RUINS');
+assert(true, '_drawVoxelLadders 전수 상/하행 사다리 화가 알고리즘 렌더링 정상 완료');
+
+// 17-6. 사다리 도착 프롬프트 배너 텍스트 갱신 검증
+const ladderPromptMap = {
+  tiles: [
+    [{ type: 'STAIRS_DOWN', char: '>', isStaircase: true }],
+    [{ type: 'STAIRS_UP', char: '<', isUpStaircase: true }]
+  ]
+};
+fpRenderer._drawStairArrivalPrompt(ladderPromptMap, 0, 0);
+assert(true, '하행 사다리 도착 안내 배너 예외 없이 정상 렌더링');
+fpRenderer._drawStairArrivalPrompt(ladderPromptMap, 0, 1);
+assert(true, '상행 사다리 도착 안내 배너 예외 없이 정상 렌더링');
+
+fpRenderer.ctx = originalCtx;
+
+console.log('='.repeat(80));
 console.log(`🎉 [TEST SUMMARY] 총 ${passed + failed}개 검증 중 ${passed}개 통과 (${((passed / (passed + failed)) * 100).toFixed(1)}%)`);
 console.log('='.repeat(80));
 

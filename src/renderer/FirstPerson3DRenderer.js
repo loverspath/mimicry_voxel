@@ -332,8 +332,8 @@ export class FirstPerson3DRenderer {
     // 3. 횃불 앰비언트 글로우(Radial Torchlight Glow) 래스터라이징 (광원량 비례)
     this._renderTorchlightGlow(userLightRange, totalPitch);
 
-    // 4. 다층 3D 복셀 계단 렌더링 (하행/상행 3단 스텝, 비콘 광선, 거리 홀로그램 배지)
-    this._drawVoxelStairs(map, playerX, playerY, theme);
+    // 4. 다층 3D 복셀 사다리 & 계단 렌더링 (천장 관통 수직 사다리, 트랩도어 핏, 실시간 광원 채광)
+    this._drawVoxelLadders(map, playerX, playerY, theme);
 
     // 5. 미니맵 나침반 레이더 오버레이 렌더링
     this._drawCompassRadar(map, playerX, playerY);
@@ -406,9 +406,13 @@ export class FirstPerson3DRenderer {
     const ceilPixels = ceilTex && typeof textureManager.getTexturePixelBuffer === 'function' 
       ? textureManager.getTexturePixelBuffer(ceilTex, 128) 
       : null;
+    const ladderPitTex = textureManager.getLadderTexture(theme, true);
+    const ladderPitPixels = ladderPitTex && typeof textureManager.getTexturePixelBuffer === 'function' 
+      ? textureManager.getTexturePixelBuffer(ladderPitTex, 128) 
+      : null;
 
     if (this.floorBuffer && this.floorCtx && (floorPixels || ceilPixels)) {
-      this._renderFloorAndCeilCasting(floorPixels, ceilPixels, theme, bufW, bufH, posX, posY, dirX, dirY, planeX, planeY, clearDist, maxLightDist, totalPitch, map);
+      this._renderFloorAndCeilCasting(floorPixels, ceilPixels, theme, bufW, bufH, posX, posY, dirX, dirY, planeX, planeY, clearDist, maxLightDist, totalPitch, map, ladderPitPixels);
     } else {
       this._renderProceduralCeilingAndFloorGradients(horizonY, theme);
     }
@@ -417,7 +421,7 @@ export class FirstPerson3DRenderer {
   /**
    * 90s 레트로 정통 수평 스캔라인 원근 투시 (Floorcasting & Ceilingcasting)
    */
-  _renderFloorAndCeilCasting(floorPixels, ceilPixels, theme, bufW, bufH, posX, posY, dirX, dirY, planeX, planeY, clearDist, maxLightDist, totalPitch = 0, map = null) {
+  _renderFloorAndCeilCasting(floorPixels, ceilPixels, theme, bufW, bufH, posX, posY, dirX, dirY, planeX, planeY, clearDist, maxLightDist, totalPitch = 0, map = null, ladderPitPixels = null) {
     const bufHorizonY = Math.floor(bufH / 2 + totalPitch * (bufH / (this.h || 600)));
     const posZ = 0.5 * bufH;
     const scaleToWorld = (this.h || 600) / bufH;
@@ -539,12 +543,27 @@ export class FirstPerson3DRenderer {
           const tileX = Math.floor(mapX);
           const tileY = Math.floor(mapY);
 
-          // 하행 계단 타일 바닥 직접 융합 (시점 회전 시 지면과 100% 동기 회전)
+          // 하행 사다리 트랩도어 핏 타일 바닥 직접 융합 (시점 회전 시 지면과 100% 동기 회전)
           if (map && map.tiles && map.tiles[tileY] && map.tiles[tileY][tileX]) {
             const t = map.tiles[tileY][tileX];
             if (t.type === 'STAIRS_DOWN' || t.char === '>' || t.isStaircase) {
               const u = mapX - tileX;
               const v = mapY - tileY;
+
+              // tex_ladder_pit 트랩도어 텍스처 1:1 직접 매핑
+              if (ladderPitPixels && u >= 0.05 && u <= 0.95 && v >= 0.05 && v <= 0.95) {
+                const su = Math.floor(((u - 0.05) / 0.90) * 128) & 127;
+                const sv = Math.floor(((v - 0.05) / 0.90) * 128) & 127;
+                const pixel = ladderPitPixels[(sv << 7) + su];
+                const r = ((pixel & 0xFF) * fogMul) | 0;
+                const g = (((pixel >> 8) & 0xFF) * fogMul) | 0;
+                const b = (((pixel >> 16) & 0xFF) * fogMul) | 0;
+                this.floorBuffer[rowOffset + x] = 0xFF000000 | (b << 16) | (g << 8) | r;
+                mapX += floorStepX;
+                mapY += floorStepY;
+                continue;
+              }
+
               // 사방 화강암 연석 (외곽 12% 마진)
               if (u < 0.12 || u > 0.88 || v < 0.12 || v > 0.88) {
                 const curbShade = Math.max(16, Math.floor(48 * fogMul));
@@ -552,13 +571,10 @@ export class FirstPerson3DRenderer {
               } else {
                 // 내부 지하 심연 구멍: 칠흑과 깊은 지하 테마별 등불 그라디언트
                 let glowR = 245, glowG = 158, glowB = 11;
-                if (theme === 'VOLCANIC_FORTRESS') {
-                  glowR = 251; glowG = 146; glowB = 60;
-                } else if (theme === 'DARK_ABYSS') {
-                  glowR = 168; glowG = 85; glowB = 247;
-                } else if (theme === 'DEEP_ANGBAND') {
-                  glowR = 239; glowG = 68; glowB = 68;
-                }
+                if (theme === 'VOLCANIC_FORTRESS') glowR = 251, glowG = 146, glowB = 60;
+                else if (theme === 'DARK_ABYSS') glowR = 168, glowG = 85, glowB = 247;
+                else if (theme === 'DEEP_ANGBAND') glowR = 239, glowG = 68, glowB = 68;
+
                 const pitDist = Math.hypot(u - 0.5, v - 0.65);
                 const glow = Math.max(0.04, 0.28 - pitDist * 0.35);
                 const r = Math.min(255, Math.floor((glowR * 0.16) * glow * fogMul + 8 * fogMul));
@@ -874,7 +890,7 @@ export class FirstPerson3DRenderer {
     return { downStairs, upStairs };
   }
 
-  _drawVoxelStairs(map, playerX, playerY, theme = 'CAVE_RUINS') {
+  _drawVoxelLadders(map, playerX, playerY, theme = 'CAVE_RUINS') {
     if (!this.ctx || !map) return;
 
     const { downStairs, upStairs } = this._getStairLocations(map);
@@ -921,12 +937,16 @@ export class FirstPerson3DRenderer {
       });
     }
 
-    // 원거리 계단부터 화가 알고리즘(Painter's Algorithm) 정렬
+    // 원거리 계단/사다리부터 화가 알고리즘(Painter's Algorithm) 정렬
     stairsWithDist.sort((a, b) => b.transformY - a.transformY);
 
     for (const stair of stairsWithDist) {
-      this._renderSingleVoxelStair(stair, map.floor || 1, posX, posY, dirX, dirY, planeX, planeY, totalPitch, theme);
+      this._renderSingleVoxelLadder(stair, map.floor || 1, posX, posY, dirX, dirY, planeX, planeY, totalPitch, theme);
     }
+  }
+
+  _drawVoxelStairs(map, playerX, playerY, theme = 'CAVE_RUINS') {
+    return this._drawVoxelLadders(map, playerX, playerY, theme);
   }
 
   _isReadyTexture(tex) {
@@ -1007,7 +1027,7 @@ export class FirstPerson3DRenderer {
     }
   }
 
-  _renderSingleVoxelStair(stair, currentFloor = 1, posX = null, posY = null, dirX = null, dirY = null, planeX = null, planeY = null, totalPitch = null, theme = 'CAVE_RUINS') {
+  _renderSingleVoxelLadder(stair, currentFloor = 1, posX = null, posY = null, dirX = null, dirY = null, planeX = null, planeY = null, totalPitch = null, theme = 'CAVE_RUINS') {
     const ctx = this.ctx;
     const isDown = stair.type === 'STAIRS_DOWN';
     const transformY = stair.transformY;
@@ -1036,12 +1056,169 @@ export class FirstPerson3DRenderer {
     ctx.globalAlpha = Math.max(0.20, fogMul);
 
     if (isDown) {
-      this._renderDownstairs3D(ctx, stair.x, stair.y, pX, pY, dX, dY, plX, plY, effPitch, fogMul, theme);
+      this._renderDownLadder3D(ctx, stair.x, stair.y, pX, pY, dX, dY, plX, plY, effPitch, fogMul, theme);
     } else {
-      this._renderUpstairs3D(ctx, stair.x, stair.y, pX, pY, dX, dY, plX, plY, effPitch, fogMul, theme);
+      this._renderUpLadder3D(ctx, stair.x, stair.y, pX, pY, dX, dY, plX, plY, effPitch, fogMul, theme);
     }
 
     ctx.restore();
+  }
+
+  _renderSingleVoxelStair(stair, currentFloor = 1, posX = null, posY = null, dirX = null, dirY = null, planeX = null, planeY = null, totalPitch = null, theme = 'CAVE_RUINS') {
+    return this._renderSingleVoxelLadder(stair, currentFloor, posX, posY, dirX, dirY, planeX, planeY, totalPitch, theme);
+  }
+
+  /**
+   * 월드 좌표계 100% 고정형 하행 사다리(Trapdoor Pit & Ladder) 3D 다면체 렌더링
+   */
+  _renderDownLadder3D(ctx, tx, ty, posX, posY, dirX, dirY, planeX, planeY, totalPitch, fogMul, theme = 'CAVE_RUINS') {
+    const q = (p1, p2, p3, p4, col, stroke, sw = 1) => {
+      this._render3DQuad(ctx, p1, p2, p3, p4, col, stroke, posX, posY, dirX, dirY, planeX, planeY, totalPitch, sw);
+    };
+
+    const isIron = (theme === 'VOLCANIC_FORTRESS' || theme === 'DARK_ABYSS' || theme === 'DEEP_ANGBAND');
+    const curbCol = `rgba(${Math.floor(51 * fogMul)}, ${Math.floor(65 * fogMul)}, ${Math.floor(85 * fogMul)}, 0.95)`;
+    const curbDark = `rgba(${Math.floor(30 * fogMul)}, ${Math.floor(41 * fogMul)}, ${Math.floor(59 * fogMul)}, 0.95)`;
+    const curbStroke = `rgba(${Math.floor(71 * fogMul)}, ${Math.floor(85 * fogMul)}, ${Math.floor(105 * fogMul)}, 0.8)`;
+
+    const handleCol = isIron
+      ? `rgba(${Math.floor(100 * fogMul)}, ${Math.floor(116 * fogMul)}, ${Math.floor(139 * fogMul)}, 0.95)`
+      : `rgba(${Math.floor(180 * fogMul)}, ${Math.floor(83 * fogMul)}, ${Math.floor(9 * fogMul)}, 0.95)`;
+    const handleDark = isIron
+      ? `rgba(${Math.floor(39 * fogMul)}, ${Math.floor(45 * fogMul)}, ${Math.floor(55 * fogMul)}, 0.95)`
+      : `rgba(${Math.floor(90 * fogMul)}, ${Math.floor(38 * fogMul)}, ${Math.floor(8 * fogMul)}, 0.95)`;
+    const rungCol = isIron
+      ? `rgba(${Math.floor(148 * fogMul)}, ${Math.floor(163 * fogMul)}, ${Math.floor(184 * fogMul)}, 0.95)`
+      : `rgba(${Math.floor(217 * fogMul)}, ${Math.floor(119 * fogMul)}, ${Math.floor(6 * fogMul)}, 0.95)`;
+
+    // 1. 사방 지면 보호 연석 (Safety Curb Rim: z in [0.0, 0.08])
+    const cz = 0.08;
+    q([tx+0.08, ty+0.08, cz], [tx+0.92, ty+0.08, cz], [tx+0.92, ty+0.16, cz], [tx+0.08, ty+0.16, cz], curbCol, curbStroke);
+    q([tx+0.08, ty+0.84, cz], [tx+0.92, ty+0.84, cz], [tx+0.92, ty+0.92, cz], [tx+0.08, ty+0.92, cz], curbCol, curbStroke);
+    q([tx+0.08, ty+0.16, cz], [tx+0.16, ty+0.16, cz], [tx+0.16, ty+0.84, cz], [tx+0.08, ty+0.84, cz], curbCol, curbStroke);
+    q([tx+0.84, ty+0.16, cz], [tx+0.92, ty+0.16, cz], [tx+0.92, ty+0.84, cz], [tx+0.84, ty+0.84, cz], curbCol, curbStroke);
+
+    // 2. 지면 위로 솟아오른 3D 사다리 안전 손잡이 (Top Ladder Handles: z in [0.0, 0.20])
+    q([tx+0.32, ty+0.68, 0.0], [tx+0.37, ty+0.68, 0.0], [tx+0.37, ty+0.68, 0.20], [tx+0.32, ty+0.68, 0.20], handleCol, curbStroke);
+    q([tx+0.32, ty+0.74, 0.0], [tx+0.32, ty+0.68, 0.0], [tx+0.32, ty+0.68, 0.20], [tx+0.32, ty+0.74, 0.20], handleDark, curbStroke);
+    q([tx+0.63, ty+0.68, 0.0], [tx+0.68, ty+0.68, 0.0], [tx+0.68, ty+0.68, 0.20], [tx+0.63, ty+0.68, 0.20], handleCol, curbStroke);
+    q([tx+0.68, ty+0.68, 0.0], [tx+0.68, ty+0.74, 0.0], [tx+0.68, ty+0.74, 0.20], [tx+0.68, ty+0.68, 0.20], handleDark, curbStroke);
+
+    // 3. 지하 심연 함몰 갱도 (Shaft Base at z = -0.65)
+    const pitBase = `rgba(${Math.floor(9 * fogMul)}, ${Math.floor(13 * fogMul)}, ${Math.floor(22 * fogMul)}, 0.95)`;
+    q([tx+0.16, ty+0.16, -0.65], [tx+0.84, ty+0.16, -0.65], [tx+0.84, ty+0.84, -0.65], [tx+0.16, ty+0.84, -0.65], pitBase, null);
+
+    // 4. 지하로 곧게 뻗어 내려가는 사다리 수직 레일 (Stiles: z in [-0.65, 0.0])
+    q([tx+0.32, ty+0.68, -0.65], [tx+0.37, ty+0.68, -0.65], [tx+0.37, ty+0.68, 0.0], [tx+0.32, ty+0.68, 0.0], handleDark, null);
+    q([tx+0.63, ty+0.68, -0.65], [tx+0.68, ty+0.68, -0.65], [tx+0.68, ty+0.68, 0.0], [tx+0.63, ty+0.68, 0.0], handleDark, null);
+
+    // 5. 지하로 내려가는 4단계 수평 3D 발판 렁 (Rungs at z = 0.0, -0.15, -0.30, -0.45)
+    const downRungZ = [0.0, -0.15, -0.30, -0.45];
+    for (const rz of downRungZ) {
+      q([tx+0.37, ty+0.68, rz], [tx+0.63, ty+0.68, rz], [tx+0.63, ty+0.68, rz + 0.03], [tx+0.37, ty+0.68, rz + 0.03], rungCol, curbStroke);
+      q([tx+0.37, ty+0.68, rz + 0.03], [tx+0.63, ty+0.68, rz + 0.03], [tx+0.63, ty+0.72, rz + 0.03], [tx+0.37, ty+0.72, rz + 0.03], rungCol, null);
+    }
+
+    // 6. 지하 깊은 곳의 따스한 테마별 등불 앰비언트 글로우
+    let glowR = 245, glowG = 158, glowB = 11;
+    if (theme === 'VOLCANIC_FORTRESS') glowR = 251, glowG = 146, glowB = 60;
+    else if (theme === 'DARK_ABYSS') glowR = 168, glowG = 85, glowB = 247;
+    else if (theme === 'DEEP_ANGBAND') glowR = 239, glowG = 68, glowB = 68;
+
+    const glowCenter = this._projectWorldPoint(tx + 0.5, ty + 0.65, -0.60, posX, posY, dirX, dirY, planeX, planeY, totalPitch);
+    if (glowCenter && glowCenter.visible) {
+      const glowRad = Math.max(10, Math.min(80, (this.h / glowCenter.depth) * 0.28));
+      const glowGrad = ctx.createRadialGradient(glowCenter.sx, glowCenter.sy, 2, glowCenter.sx, glowCenter.sy, glowRad);
+      glowGrad.addColorStop(0, `rgba(${glowR}, ${glowG}, ${glowB}, ${0.40 * fogMul})`);
+      glowGrad.addColorStop(0.5, `rgba(${Math.floor(glowR * 0.8)}, ${Math.floor(glowG * 0.6)}, ${Math.floor(glowB * 0.4)}, ${0.18 * fogMul})`);
+      glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = glowGrad;
+      ctx.fillRect(glowCenter.sx - glowRad, glowCenter.sy - glowRad, glowRad * 2, glowRad * 2);
+    }
+  }
+
+  /**
+   * 바닥(z=0.0)부터 천장 개구부 위(z=1.05)까지 관통하는 3D 복셀 상행 사다리 렌더링
+   */
+  _renderUpLadder3D(ctx, tx, ty, posX, posY, dirX, dirY, planeX, planeY, totalPitch, fogMul, theme = 'CAVE_RUINS') {
+    const q = (p1, p2, p3, p4, col, stroke, sw = 1) => {
+      this._render3DQuad(ctx, p1, p2, p3, p4, col, stroke, posX, posY, dirX, dirY, planeX, planeY, totalPitch, sw);
+    };
+
+    const isIron = (theme === 'VOLCANIC_FORTRESS' || theme === 'DARK_ABYSS' || theme === 'DEEP_ANGBAND');
+    let stileFront, stileSide, stileTop, rungFront, rungTop, rungDark, bandCol, strokeCol;
+    if (isIron) {
+      stileFront = `rgba(${Math.floor(71 * fogMul)}, ${Math.floor(85 * fogMul)}, ${Math.floor(105 * fogMul)}, 0.95)`;
+      stileSide = `rgba(${Math.floor(39 * fogMul)}, ${Math.floor(45 * fogMul)}, ${Math.floor(55 * fogMul)}, 0.95)`;
+      stileTop = `rgba(${Math.floor(148 * fogMul)}, ${Math.floor(163 * fogMul)}, ${Math.floor(184 * fogMul)}, 0.95)`;
+      rungFront = `rgba(${Math.floor(100 * fogMul)}, ${Math.floor(116 * fogMul)}, ${Math.floor(139 * fogMul)}, 0.95)`;
+      rungTop = `rgba(${Math.floor(161 * fogMul)}, ${Math.floor(161 * fogMul)}, ${Math.floor(170 * fogMul)}, 0.95)`;
+      rungDark = `rgba(${Math.floor(24 * fogMul)}, ${Math.floor(24 * fogMul)}, ${Math.floor(27 * fogMul)}, 0.95)`;
+      bandCol = `rgba(${Math.floor(30 * fogMul)}, ${Math.floor(41 * fogMul)}, ${Math.floor(59 * fogMul)}, 0.95)`;
+      strokeCol = `rgba(${Math.floor(15 * fogMul)}, ${Math.floor(23 * fogMul)}, ${Math.floor(42 * fogMul)}, 0.8)`;
+    } else {
+      stileFront = `rgba(${Math.floor(146 * fogMul)}, ${Math.floor(64 * fogMul)}, ${Math.floor(14 * fogMul)}, 0.95)`;
+      stileSide = `rgba(${Math.floor(90 * fogMul)}, ${Math.floor(38 * fogMul)}, ${Math.floor(8 * fogMul)}, 0.95)`;
+      stileTop = `rgba(${Math.floor(180 * fogMul)}, ${Math.floor(83 * fogMul)}, ${Math.floor(9 * fogMul)}, 0.95)`;
+      rungFront = `rgba(${Math.floor(217 * fogMul)}, ${Math.floor(119 * fogMul)}, ${Math.floor(6 * fogMul)}, 0.95)`;
+      rungTop = `rgba(${Math.floor(245 * fogMul)}, ${Math.floor(158 * fogMul)}, ${Math.floor(11 * fogMul)}, 0.95)`;
+      rungDark = `rgba(${Math.floor(69 * fogMul)}, ${Math.floor(26 * fogMul)}, ${Math.floor(3 * fogMul)}, 0.95)`;
+      bandCol = `rgba(${Math.floor(63 * fogMul)}, ${Math.floor(63 * fogMul)}, ${Math.floor(70 * fogMul)}, 0.95)`;
+      strokeCol = `rgba(${Math.floor(40 * fogMul)}, ${Math.floor(20 * fogMul)}, ${Math.floor(5 * fogMul)}, 0.8)`;
+    }
+
+    // 1. 좌우 수직 3D 사다리 레일 기둥 (Floor-to-Ceiling Stiles: z in [0.0, 1.05])
+    // Left Stile: x in [tx+0.32, tx+0.38], y in [ty+0.70, ty+0.76], z in [0.0, 1.05]
+    q([tx+0.32, ty+0.70, 0.0], [tx+0.38, ty+0.70, 0.0], [tx+0.38, ty+0.70, 1.05], [tx+0.32, ty+0.70, 1.05], stileFront, strokeCol);
+    q([tx+0.32, ty+0.76, 0.0], [tx+0.32, ty+0.70, 0.0], [tx+0.32, ty+0.70, 1.05], [tx+0.32, ty+0.76, 1.05], stileSide, strokeCol);
+    q([tx+0.38, ty+0.70, 0.0], [tx+0.38, ty+0.76, 0.0], [tx+0.38, ty+0.76, 1.05], [tx+0.38, ty+0.70, 1.05], stileSide, strokeCol);
+    q([tx+0.32, ty+0.70, 1.05], [tx+0.38, ty+0.70, 1.05], [tx+0.38, ty+0.76, 1.05], [tx+0.32, ty+0.76, 1.05], stileTop, strokeCol);
+
+    // Right Stile: x in [tx+0.62, tx+0.68], y in [ty+0.70, ty+0.76], z in [0.0, 1.05]
+    q([tx+0.62, ty+0.70, 0.0], [tx+0.68, ty+0.70, 0.0], [tx+0.68, ty+0.70, 1.05], [tx+0.62, ty+0.70, 1.05], stileFront, strokeCol);
+    q([tx+0.62, ty+0.76, 0.0], [tx+0.62, ty+0.70, 0.0], [tx+0.62, ty+0.70, 1.05], [tx+0.62, ty+0.76, 1.05], stileSide, strokeCol);
+    q([tx+0.68, ty+0.70, 0.0], [tx+0.68, ty+0.76, 0.0], [tx+0.68, ty+0.76, 1.05], [tx+0.68, ty+0.70, 1.05], stileSide, strokeCol);
+    q([tx+0.62, ty+0.70, 1.05], [tx+0.68, ty+0.70, 1.05], [tx+0.68, ty+0.76, 1.05], [tx+0.62, ty+0.76, 1.05], stileTop, strokeCol);
+
+    // 2. 7단계 수평 가로 발판 렁 (7 Horizontal 3D Rungs: z in [0.15, 0.30, 0.45, 0.60, 0.75, 0.90, 1.05])
+    const rungsZ = [0.15, 0.30, 0.45, 0.60, 0.75, 0.90, 1.05];
+    for (const rz of rungsZ) {
+      q([tx+0.38, ty+0.70, rz], [tx+0.62, ty+0.70, rz], [tx+0.62, ty+0.70, rz + 0.035], [tx+0.38, ty+0.70, rz + 0.035], rungFront, strokeCol);
+      q([tx+0.38, ty+0.70, rz + 0.035], [tx+0.62, ty+0.70, rz + 0.035], [tx+0.62, ty+0.74, rz + 0.035], [tx+0.38, ty+0.74, rz + 0.035], rungTop, strokeCol);
+      q([tx+0.38, ty+0.74, rz], [tx+0.62, ty+0.74, rz], [tx+0.62, ty+0.70, rz], [tx+0.38, ty+0.70, rz], rungDark, null);
+    }
+
+    // 3. 벽면 고정 철제 브래킷 (Wall Anchor Brackets at z = 0.40, z = 0.85)
+    const bracketZ = [0.40, 0.85];
+    for (const bz of bracketZ) {
+      q([tx+0.32, ty+0.76, bz], [tx+0.38, ty+0.76, bz], [tx+0.38, ty+0.85, bz], [tx+0.32, ty+0.85, bz], bandCol, strokeCol);
+      q([tx+0.62, ty+0.76, bz], [tx+0.68, ty+0.76, bz], [tx+0.68, ty+0.85, bz], [tx+0.62, ty+0.85, bz], bandCol, strokeCol);
+    }
+
+    // 4. 천장 개구부에서 쏟아져 내리는 테마별 채광 (Skylight Volumetric Light)
+    let skyR = 224, skyG = 242, skyB = 254;
+    if (theme === 'VOLCANIC_FORTRESS') skyR = 251, skyG = 146, skyB = 60;
+    else if (theme === 'MINES_CATACOMBS') skyR = 245, skyG = 158, skyB = 11;
+    else if (theme === 'DARK_ABYSS') skyR = 168, skyG = 85, skyB = 247;
+    else if (theme === 'DEEP_ANGBAND') skyR = 239, skyG = 68, skyB = 68;
+
+    const skylightTop = this._projectWorldPoint(tx + 0.5, ty + 0.72, 1.05, posX, posY, dirX, dirY, planeX, planeY, totalPitch);
+    const skylightBase = this._projectWorldPoint(tx + 0.5, ty + 0.50, 0.0, posX, posY, dirX, dirY, planeX, planeY, totalPitch);
+    if (skylightTop && skylightBase && skylightTop.visible && skylightBase.visible) {
+      const coneW = Math.max(16, Math.min(110, (this.h / skylightTop.depth) * 0.42));
+      const lightGrad = ctx.createLinearGradient(skylightTop.sx, skylightTop.sy, skylightBase.sx, skylightBase.sy);
+      lightGrad.addColorStop(0, `rgba(${skyR}, ${skyG}, ${skyB}, ${0.35 * fogMul})`);
+      lightGrad.addColorStop(0.5, `rgba(${Math.floor(skyR * 0.85)}, ${Math.floor(skyG * 0.85)}, ${Math.floor(skyB * 0.85)}, ${0.15 * fogMul})`);
+      lightGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = lightGrad;
+      ctx.beginPath();
+      ctx.moveTo(skylightTop.sx - coneW * 0.35, skylightTop.sy);
+      ctx.lineTo(skylightTop.sx + coneW * 0.35, skylightTop.sy);
+      ctx.lineTo(skylightBase.sx + coneW * 0.75, skylightBase.sy);
+      ctx.lineTo(skylightBase.sx - coneW * 0.75, skylightBase.sy);
+      ctx.closePath();
+      ctx.fill();
+    }
   }
 
   /**
@@ -1514,11 +1691,11 @@ export class FirstPerson3DRenderer {
     let glowColor = null;
 
     if (tile.type === 'STAIRS_DOWN' || tile.char === '>' || tile.isStaircase) {
-      promptText = "⚡ [하행 계단 도착]: '>' 키 또는 'Enter'로 다음 층 이동";
+      promptText = "🪜 [하행 사다리 도착]: '>' 키로 아래층 이동";
       strokeColor = '#f43f5e';
       glowColor = 'rgba(244, 63, 94, 0.90)';
     } else if (tile.type === 'STAIRS_UP' || tile.char === '<' || tile.isUpStaircase) {
-      promptText = "⚡ [상행 계단 도착]: '<' 키 또는 'Enter'로 이전 층 이동";
+      promptText = "🪜 [상행 사다리 도착]: '<' 키로 위층 이동";
       strokeColor = '#38bdf8';
       glowColor = 'rgba(56, 189, 248, 0.90)';
     }

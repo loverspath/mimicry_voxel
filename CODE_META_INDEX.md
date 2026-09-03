@@ -2,9 +2,9 @@
 
 > **자동 생성 메타데이터**
 > - **엔진 버전**: `v1.2.0`
-> - **생성 일시**: `2026-09-03T05:17:05Z`
+> - **생성 일시**: `2026-09-03T05:36:01Z`
 > - **총 모듈 수**: `75개`
-> - **총 코드 라인 수**: `108,907줄`
+> - **총 코드 라인 수**: `109,122줄`
 
 ---
 
@@ -67,8 +67,8 @@
 | [`src/map/Map.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/map/Map.js) | **Map** | `map` | 757 | 1~50층 5대 테마 던전 절차적 생성기, 타일 충돌/투명도 FOV 판정, 보스룸 및 특수 지형(보물 금고 Vault & 몬스터 피트 Monster Pit) 배치 시스템 | Data Model / State Store | `RectRoom, Map` |
 | [`src/map/Voxel3DMapBridge.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/map/Voxel3DMapBridge.js) | **Voxel3DMapBridge** | `map` | 200 | 2D 던전 맵 타일 데이터를 차세대 3D 다층 높이맵(Z=0~3) 복셀 블록 스택으로 변환 및 동기화하는 브릿지 시스템 | Data Model / State Store | `VOXEL_THEMES, Voxel3DMapBridge` |
 | [`src/renderer/Classic2DAsciiRenderer.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/Classic2DAsciiRenderer.js) | **Classic2DAsciiRenderer** | `renderer` | 443 | 원본 Mimicry 정통 2D 탑다운 격자(ASCII Grid) 렌더러. 클래식 로그라이크 스타일의 2D 타일 폰트 렌더링, 시야/안개 시스템, 엔티티 및 아이템 심볼 표시를 지원하며, Game.js 및 Effects.js와의 100% 드롭인(Drop-in) 호환성을 보장합니다. | DOM / Canvas Renderer | `Classic2DAsciiRenderer` |
-| [`src/renderer/FirstPerson3DRenderer.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/FirstPerson3DRenderer.js) | **FirstPerson3DRenderer** | `renderer` | 1600 | 초기 둠 / 위저드리 시점 DDA 레이캐스팅 1인칭 3D 텍스처 어드벤처 렌더러. 나노바나나 생성 텍스처 매핑, 거리 감쇄 안개(Depth Fog), 빌보드 스프라이트 및 미니맵 레이더 제공 | DOM / Canvas Renderer | `FirstPerson3DRenderer` |
-| [`src/renderer/TextureManager.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/TextureManager.js) | **TextureManager** | `renderer` | 464 | 나노바나나(Imagen) 생성 5대 던전 테마 벽면, 바닥재 및 천장 텍스처 비동기 로딩, 동적 온디맨드 로딩, 픽셀 버퍼 캐싱 및 90s 레트로 플로어캐스팅 지원 매니저 | State Store / Pure Loader | `TextureManager, textureManager, TEXTURE_PATHS 외 12개` |
+| [`src/renderer/FirstPerson3DRenderer.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/FirstPerson3DRenderer.js) | **FirstPerson3DRenderer** | `renderer` | 1777 | 초기 둠 / 위저드리 시점 DDA 레이캐스팅 1인칭 3D 텍스처 어드벤처 렌더러. 나노바나나 생성 텍스처 매핑, 거리 감쇄 안개(Depth Fog), 빌보드 스프라이트 및 미니맵 레이더 제공 | DOM / Canvas Renderer | `FirstPerson3DRenderer` |
+| [`src/renderer/TextureManager.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/TextureManager.js) | **TextureManager** | `renderer` | 502 | 나노바나나(Imagen) 생성 5대 던전 테마 벽면, 바닥재 및 천장 텍스처 비동기 로딩, 동적 온디맨드 로딩, 픽셀 버퍼 캐싱 및 90s 레트로 플로어캐스팅 지원 매니저 | State Store / Pure Loader | `TextureManager, textureManager, TEXTURE_PATHS 외 13개` |
 | [`src/renderer/Voxel3DRenderer.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/Voxel3DRenderer.js) | **Voxel3DRenderer** | `renderer` | 647 | Mimicry Roguelike 차세대 3D 다층 복셀(Voxel) 렌더러. 정석 2.5D 아이소메트릭 중앙 정렬 좌표계, 반응형 화면비(Galaxy Fold 등) 실시간 적응, 표준 로그라이크 FOV 시스템, 실시간 포인트 라이트 및 3D 마이크로 복셀 파편 물리 통합 렌더링. | DOM / Canvas Renderer | `Voxel3DRenderer` |
 | [`src/renderer/VoxelParticleSystem.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/VoxelParticleSystem.js) | **VoxelParticleSystem** | `renderer` | 125 | 3D 마이크로 복셀 큐브 물리 파편 및 파티클 연산 시스템. 피격, 처치, 걷기, 포식, 레벨업 시 3D 회전과 바닥 튕김(Bounce) 물리 연산을 지원합니다. | DOM / Canvas Renderer | `VoxelParticleSystem` |
 | [`src/systems/ArtifactActivationEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/ArtifactActivationEngine.js) | **ArtifactActivationEngine** | `systems` | 346 | ToME 2.3.5 정통 183종 전설 유물의 고유 발동(Activation: ACT_SUNLIGHT, ACT_BO_ACID_1, ACT_BA_COLD_1, ACT_HEAL_1, ACT_RESTORE_STAT, ACT_WORD_OF_RECALL, ACT_GROND, ACT_THRAIN 등)을 식별하고 쿨다운(Cooldown) 관리 및 특수 주문 효과를 발동하는 순수 무상태 유물 발동 엔진. | Stateless System | `ArtifactActivationEngine, TOME_ARTIFACT_ACTIVATIONS, ARTIFACT_KEY_TO_ACTIVATION` |

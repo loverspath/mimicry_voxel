@@ -33,7 +33,7 @@ TOTAL: 59 | PASSED: 59 | FAILED: 0
 
 - **도구**: `scripts/meta_indexer.py` (Python AST/정규식 기반 정적 분석기)
 - **스캔 대상**: 75개 ESM 자바스크립트 모듈
-- **총 코드 볼륨**: 108,907 라인
+- **총 코드 볼륨**: 109,122 라인
 - **동기화 산출물**:
   - `src/meta/code_meta_index.json` (기계 가독형 전체 인덱스 데이터)
   - `CODE_META_INDEX.md` (저장소 루트 공식 메타 인덱스 문서)
