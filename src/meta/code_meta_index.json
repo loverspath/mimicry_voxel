@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-09-03T03:15:52Z",
+  "generatedAt": "2026-09-03T03:29:31Z",
   "summary": {
     "totalModules": 75,
-    "totalLines": 107201,
+    "totalLines": 107351,
     "categories": {
       "configs": 5,
       "core": 14,
@@ -218,7 +218,7 @@
       "filePath": "src/core/CombatSystem.js",
       "moduleName": "CombatSystem",
       "category": "core",
-      "lines": 544,
+      "lines": 545,
       "responsibility": "전투 판정 및 격발 오케스트레이션을 일괄 처리하는 중앙 조율 시스템 모듈. 세부적인 수학 연산, 원소 결합 레지스트리, 전리품 루팅 및 50F 보스 페이즈 전환 제어를 슬림하게 조율합니다.",
       "purity": "Stateless System / Orchestrator",
       "dependencies": [
@@ -243,13 +243,13 @@
         "CombatSystem"
       ],
       "functions": [],
-      "lastModified": "2026-09-03T01:41:38Z"
+      "lastModified": "2026-09-03T03:27:52Z"
     },
     {
       "filePath": "src/core/Effects.js",
       "moduleName": "Effects",
       "category": "core",
-      "lines": 745,
+      "lines": 752,
       "responsibility": "게임 내 2.5D 아이소메트릭 기반 실시간 데이터 지향 스킬 비주얼 이펙트 파이프라인 엔진 모듈. Skills.js 및 CombatSystem.js의 스킬 엔티티 메타데이터(원소, 사거리, 각도, 글리프, 투사체 형태, 결합 반응)를 주입받아 3D 고밀도 미니 복셀 입자 스트림 브레스(SkillConeBreathEffect), 3D 포물선 탄도학 & 공전 에너지 링 마법 투사체(SkillProjectileEffect), 연속 전도 레이저/낙뢰 빔(SkillBeamEffect), 2.5D 등각타원 슬래시 아크(SkillMeleeSlashEffect), 3D 앵커링 플로팅 텍스트(FloatingTextEffect), 광역 폭발(AoEExplosionEffect)을 정석 아이소메트릭 좌표계(toScreen)로 통합 렌더링합니다.",
       "purity": "Stateless System / Logic",
       "dependencies": [],
@@ -278,13 +278,13 @@
       "functions": [
         "getElementTheme"
       ],
-      "lastModified": "2026-08-25T11:58:07Z"
+      "lastModified": "2026-09-03T03:27:31Z"
     },
     {
       "filePath": "src/core/Game.js",
       "moduleName": "Game",
       "category": "core",
-      "lines": 2270,
+      "lines": 2276,
       "responsibility": "미미크리 로그라이크 핵심 게임 루프, 턴 스케줄링, 엔티티 상호작용 및 UI 모달 이벤트 통합 조율 오케스트레이터",
       "purity": "State Store",
       "dependencies": [
@@ -333,7 +333,7 @@
         "setClick",
         "updateSlotLabels"
       ],
-      "lastModified": "2026-09-03T03:14:45Z"
+      "lastModified": "2026-09-03T03:28:04Z"
     },
     {
       "filePath": "src/core/GameEngine.js",
@@ -1189,8 +1189,8 @@
       "filePath": "src/systems/CombatVFXEngine.js",
       "moduleName": "CombatVFXEngine",
       "category": "systems",
-      "lines": 427,
-      "responsibility": "레트로 사이버펑크 순수 아스키 그래픽(ASCII as Graphics) 기반 전투 시각 효과 엔진. 정적 비트맵 이미지 의존성 100% 제거. 8대 공격 유형 아스키 파티클, 1인칭 검기 아크, 3D 빌보드 룬 폭발, 네온 블룸 CRT 글로우 및 화면 흔들림 제어",
+      "lines": 563,
+      "responsibility": "레트로 사이버펑크 순수 아스키 그래픽(ASCII as Graphics) 기반 전투 시각 효과 엔진. 다단 히트(Sequential Multi-Hit Combo) 시차 발동 & 다각도 슬래시 궤적 지원. 정적 비트맵 이미지 의존성 100% 제거. 8대 공격 유형 아스키 파티클, 1인칭 검기 아크, 3D 빌보드 룬 폭발, 2D 아스키 텍스트 블룸, 콤보 배너 및 화면 흔들림 제어",
       "purity": "State Store / High-Performance Canvas Renderer",
       "dependencies": [
         "EventBus.js",
@@ -1208,7 +1208,7 @@
         "CombatVFXEngine"
       ],
       "functions": [],
-      "lastModified": "2026-09-03T02:54:02Z"
+      "lastModified": "2026-09-03T03:28:35Z"
     },
     {
       "filePath": "src/systems/ConsumableEffectEngine.js",

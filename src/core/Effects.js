@@ -125,12 +125,17 @@ export function getElementTheme(element = "PHYSICAL") {
  * 기본 비주얼 이펙트 추상 기본 클래스
  */
 export class VisualEffect {
-  constructor(duration) {
+  constructor(duration, delay = 0) {
     this.age = 0;
     this.duration = duration;
+    this.delay = delay;
   }
 
   update(dt) {
+    if (this.delay > 0) {
+      this.delay -= dt;
+      if (this.delay > 0) return true;
+    }
     this.age += dt;
     return this.age < this.duration;
   }
@@ -661,17 +666,19 @@ export class AoEExplosionEffect extends VisualEffect {
  * 엔티티 3D 복셀 머리 위 정중앙 앵커링 대미지/힐 플로팅 텍스트 이펙트
  */
 export class FloatingTextEffect extends VisualEffect {
-  constructor(x, y, text, color = "#ef4444", isCrit = false, z = null) {
-    super(650); // 650ms float
+  constructor(x, y, text, color = "#ef4444", isCrit = false, delaySeconds = 0, z = null) {
+    const delayMs = (typeof delaySeconds === 'number' && delaySeconds <= 10) ? Math.max(0, delaySeconds * 1000) : 0;
+    super(650, delayMs); // 650ms float
     this.x = x;
     this.y = y;
-    this.z = z;
+    this.z = (typeof delaySeconds === 'number' && delaySeconds > 10) ? delaySeconds : z;
     this.text = text;
     this.color = color;
     this.isCrit = isCrit;
   }
 
   draw(renderer) {
+    if (this.delay > 0) return;
     if (!renderer || !renderer.toScreen) return;
 
     const topV = renderer.mapBridge ? renderer.mapBridge.getTopVoxel(this.x, this.y) : null;

@@ -170,8 +170,8 @@ export class CombatSystem {
                 const totalDmg = physDmg + extraElemDmgTotal;
                 let attackEl = CombatSystem.resolvePlayerAttackElement(player);
                 game.effects.push(new MeleeSlashEffect(monster.x, monster.y, attackEl));
-                game.effects.push(new FloatingTextEffect(monster.x, monster.y, `-${totalDmg}`, genericResult.isStrong ? "#ffd700" : "#f43f5e", genericResult.isStrong));
-                combatVFXEngine.triggerAttackFX(attackEl ? `${attackEl}_BURST` : VFX_TYPES.SLASH, player, monster, genericResult.isStrong, game?.renderer);
+                game.effects.push(new FloatingTextEffect(monster.x, monster.y, `-${totalDmg}`, genericResult.isStrong ? "#ffd700" : "#f43f5e", genericResult.isStrong, h * 0.08));
+                combatVFXEngine.triggerAttackFX(attackEl ? `${attackEl}_BURST` : VFX_TYPES.SLASH, player, monster, genericResult.isStrong, game?.renderer, h, blows.length, totalDmg);
                 let d = monster.takeDamage(totalDmg);
 
                 // Print Unified Combat Log with Blow method name
@@ -434,8 +434,9 @@ export class CombatSystem {
                 let attackEl = (currentAtk.effect === 'FIRE' || currentAtk.effect === 'ACID' || currentAtk.effect === 'ELEC' || currentAtk.effect === 'COLD') ? currentAtk.effect : 'PHYSICAL';
                 if (game && game.effects) {
                     game.effects.push(new MeleeSlashEffect(player.x, player.y, attackEl));
-                    game.effects.push(new FloatingTextEffect(player.x, player.y, `-${finalDmg}`, "#ef4444", false));
+                    game.effects.push(new FloatingTextEffect(player.x, player.y, `-${finalDmg}`, "#ef4444", false, _a * 0.08));
                 }
+                combatVFXEngine.triggerAttackFX(attackEl !== 'PHYSICAL' ? `${attackEl}_BURST` : VFX_TYPES.BASH, monster, player, false, game?.renderer, _a, activeAttacks.length, finalDmg);
 
                 if (player.stats.hp <= 0) {
                     player.lastDamageSource = monster.displayName || monster.name;

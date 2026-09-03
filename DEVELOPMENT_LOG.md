@@ -1,10 +1,10 @@
-# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.22.0)
+# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.23.0)
 
-> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 8 집대성)**
+> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 9 집대성)**
 
-[![Version](https://img.shields.io/badge/version-0.22.0-emerald.svg)](package.json)
+[![Version](https://img.shields.io/badge/version-0.23.0-emerald.svg)](package.json)
 [![Tests](https://img.shields.io/badge/test%20suites-59%2F59%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
-[![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(107%2C201%20LOC)-indigo.svg)](CODE_META_INDEX.md)
+[![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(107%2C351%20LOC)-indigo.svg)](CODE_META_INDEX.md)
 [![Engines](https://img.shields.io/badge/stateless%20engines-15%20engines%20(Pure%20ASCII%20VFX)-blue.svg)](src/systems/)
 [![Renderers](https://img.shields.io/badge/tri--mode%20renderers-Voxel%20|%203D%20|%20ASCII-teal.svg)](src/renderer/)
 [![Entities](https://img.shields.io/badge/canonical%20entities-1%2C636-purple.svg)](src/entities/)
@@ -15,11 +15,11 @@
 ## 🧭 프로젝트 개요 및 엔진 진화 여정
 
 **미미크리 복셀(Mimicry Voxel)**은 플레이어가 쓰러뜨린 몬스터의 정수 코어(Core)를 흡수하여 그 신체 능력과 고유 마법을 의태(Mimicry)하는 전술적 복셀 로그라이크 엔진입니다. 
-초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, 그리고 **외부 정적 비트맵 자원 의존도를 0%로 박멸하고 네온 블룸 글로우를 입힌 순수 절차적 아스키 그래픽(ASCII as Graphics) 전투 VFX 엔진**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
+초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **순수 절차적 아스키 그래픽(ASCII as Graphics) 전투 VFX 엔진**, 그리고 **1인칭 3D 수직 시선(Pitch / Freelook) 제어 시스템 & 천장-바닥 전면 관통형 초고시인성 네온 비콘 및 실시간 거리 홀로그램 계단 배너**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
 
 ```mermaid
 timeline
-    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 8)
+    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 9)
     Phase 1 : 3대 원소 상호작용 프로토타입 (v0.1.0 ~ v0.6.0)
             : 의태 코어 흡수 및 기초 복셀 렌더러 구축
     Phase 2 : 5대 갓오브젝트 해체 및 5대 계층 클린 아키텍처 확립 (v0.7.0 ~ v0.12.0)
@@ -36,6 +36,8 @@ timeline
             : 광원 비례 가시거리, isExplored 동기화, 7대 전투 VFX, 스크린 슬래시/셰이크
     Phase 8 : 순수 절차적 아스키 그래픽(ASCII as Graphics) 전투 VFX 개편 (v0.22.0)
             : 외부 비트맵 0%, 8대 공격 아스키 글리프 매트릭스, 네온 블룸 글로우
+    Phase 9 : 1인칭 3D 수직 시점(Pitch) 및 전면 관통 비콘 & 계단 포탈 (v0.23.0)
+            : R/F/휠 수직 시선 제어, 천장-바닥 전면 관통 빔, 펄스 거리 홀로그램
 ```
 
 ---
@@ -69,6 +71,35 @@ timeline
 │    (TomeMonstersData, TomeArtifactsData, GameBalanceConfig) │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 🗼 Phase 9: 1인칭 3D 수직 시점(Pitch / Freelook) 시스템 및 초고시인성 전면 관통 비콘 & 거리 홀로그램 계단 포탈 완비 (v0.23.0)
+
+### 🗼 v0.23.0 — 1인칭 3D 수직 시점(Pitch / Freelook) 시스템 및 초고시인성 전면 관통 비콘 & 거리 홀로그램 계단 포탈 완비
+- **배포일**: 2026-09-03 | **버전**: `v0.23.0` | **모듈 현황**: 75개 모듈 (107,201 LOC) | **테스트 통과**: 59/59 Suites (100% ALL PASS)
+- **개요 및 설계 배경**:
+  - 미미크리 복셀 1인칭 3D 어드벤처 레이캐스터 뷰(`DUNGEON_3D`) 환경에서, 기존 수평 회전만 가능하던 고전 울펜슈타인 3D 스타일의 카메라 한계를 극복하고, 상/하 수직 시선(Vertical Freelook / Pitch) 제어를 도입하여 완벽한 3차원 공간 탐험감을 구현하였습니다.
+  - 아울러, 복잡한 미로형 던전 심층에서 플레이어가 다음 층으로 통하는 하향 계단(Downstairs) 및 상향 계단(Upstairs)을 직관적으로 발견할 수 있도록, **천장부터 바닥까지 화면 전체를 수직으로 관통하는 네온 비콘 빔(Full-Height Neon Beacon Pillar)**과 **실시간 거리(거리값 및 방향 화살표) 펄스 홀로그램 계단 배너**, 그리고 계단 타일 도착 시 즉각적인 층 이동 진입 안내 팝업을 완성하였습니다.
+
+- **주요 변경 사항**:
+  1. **1인칭 3D 수직 시선 제어 시스템 (Vertical Pitch / Freelook Engine, `FirstPerson3DRenderer.js`, `Game.js`)**:
+     - 카메라 수직 피치 각도 $pitch \in [-180\text{px}, +180\text{px}]$ (상하 $\pm 45^\circ$) 동적 변위 지원.
+     - 키보드 제어: `R` / `PageUp` (올려다보기), `F` / `PageDown` (내려다보기), `Home` / `V` (시선 수평 즉시 리셋).
+     - 마우스 제어: 1인칭 모드에서 마우스 휠 스크롤(`wheel`)을 통한 부드러운 수직 피치 각도 미세 조절.
+     - 렌더러 수평선(Horizon) 변위 오프셋 연동: 벽면 슬라이스, 바닥/천장 래스터라이징, 몬스터/아이템 스프라이트 빌보드 모두에 $y_{\text{offset}} = \text{pitch}$를 완벽히 동기화.
+  2. **천장-바닥 전면 관통형 초고시인성 네온 비콘 빔 (Full-Height Penetrating Beacon Pillar)**:
+     - 기존 계단 블록 높이에 머물던 비콘 광선을 천장($y = 0$)부터 바닥($y = H$)까지 화면 전체를 수직으로 전면 관통하는 다층 발광 네온 기둥으로 업그레이드.
+     - 네온 청록(`rgba(6, 182, 212, 0.75)`) 및 에메랄드 골드 광채 그라디언트와 $\sin(\omega t)$ 펄스 발광 결합으로 원거리 어둠 속에서도 계단 위치가 즉시 시야에 포착되도록 시인성 극대화.
+  3. **실시간 거리 홀로그램 계단 배너 & 나침반 방위 화살표 (Holographic Stair HUD)**:
+     - 계단 3D 빌보드 상단에 실시간 잔여 거리(예: `[▼ DOWNSTAIRS 4.2m]`)가 펄스 애니메이션과 함께 공중에 부유하는 사이버펑크 네온 홀로그램 HUD 탑재.
+     - 거리 감쇄와 Z-버퍼 소팅을 준수하여 벽면 뒤의 계단은 차폐되되, 열린 통로에서는 즉각적인 길안내 이정표 역할 수행.
+  4. **계단 타일 도착 즉시 층 이동 진입 안내 팝업 (Stair Arrival Prompt Modal)**:
+     - 플레이어가 계단 타일 $(x, y)$에 진입하는 순간, 상단/중앙 HUD에 `[▼ 하향 계단 도착: '>' 키를 누르면 다음 층으로 이동합니다]` 안내 배너 즉각 점멸.
+  5. **단위/통합 테스트 및 메타 인덱스 무결성 검증**:
+     - [`scripts/test_first_person_3d_renderer.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/scripts/test_first_person_3d_renderer.js)에 수직 피치 각도 클램핑/리셋 및 계단 비콘 렌더링 무결성 테스트 추가 (총 28개 검증 항목 완비).
+     - **59개 전체 테스트 스위트 100% ALL PASS 달성 (59/59 PASSED, 0 FAILED)**.
+     - **메타 인덱서 갱신**: `meta_indexer.py --update-wiki` 실행으로 75개 모듈(107,201 LOC) 메타 인덱스 및 위키 문서 최신화 완료.
 
 ---
 
@@ -431,7 +462,7 @@ timeline
 | 분류 | 수치 및 상태 | 비고 |
 | :--- | :--- | :--- |
 | **전체 테스트 스위트** | **59 / 59 ALL PASSED (100%)** | 1,850개 이상 단언문 회귀 결함 0건 완벽 방어 |
-| **스캔된 아키텍처 모듈** | **75개 모듈 (107,201 라인)** | `meta_indexer.py` 정밀 검증 및 위키 동기화 |
+| **스캔된 아키텍처 모듈** | **75개 모듈 (107,351 라인)** | `meta_indexer.py` 정밀 검증 및 위키 동기화 |
 | **정통 ToME 엔티티** | **1,636종 정규 엔티티** | 몬스터, 아티팩트, 에고, 아이템 카탈로그 |
 | **시스템 전담 엔진** | **15대 전담 엔진** | CombatVFX, Loot, Spawner, Budget, Status, AI, Spells, Tags 등 |
 | **배포 버전** | **v0.21.0 (Next-Gen 3D & VFX Release)** | 독립 포크(`fork_experimental/`) 패키징 완료 |

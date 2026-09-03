@@ -2009,8 +2009,14 @@ export class Game {
       if (this.renderer.updateParticles) {
         this.renderer.updateParticles(0.016);
       }
-      if (this.renderMode === 'dungeon3d' && combatVFXEngine) {
-        combatVFXEngine.renderFirstPersonVFX(this.renderer);
+      if (combatVFXEngine) {
+        if (this.renderMode === 'dungeon3d') {
+          combatVFXEngine.renderFirstPersonVFX(this.renderer);
+        } else if (this.renderMode === 'ascii') {
+          combatVFXEngine.renderAsciiVFX(this.renderer, e, t);
+        } else {
+          combatVFXEngine.renderVoxelVFX(this.renderer, e, t);
+        }
       }
       if (this.transitionAlpha > 0.001) {
         this.renderer.ctx.fillStyle = `rgba(0, 0, 0, ${Math.min(1, Math.max(0, this.transitionAlpha))})`;

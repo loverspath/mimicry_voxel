@@ -479,6 +479,60 @@ fpRenderer._drawStairArrivalPrompt(stairPromptMap, 0, 1);
 assert(true, '상행 계단 타일 도착 안내 프롬프트 배너 예외 없이 정상 렌더링');
 
 console.log('='.repeat(80));
+console.log('🧪 [TEST SUITE 9] 다단 히트(Sequential Multi-Hit Combo) 시차 발동 & 2D 아스키 렌더러 연동 검증');
+console.log('='.repeat(80));
+
+// 9-1. 4연타 콤보 시차 딜레이 및 궤적 각도 생성 검증
+vfxEngine.activeVFX = [];
+const mockPlayer = { x: 5, y: 5, isPlayer: true };
+const mockTarget = { x: 6, y: 5, hitFlash: 0 };
+
+for (let i = 0; i < 4; i++) {
+  vfxEngine.triggerAttackFX('SLASH', mockPlayer, mockTarget, false, fpRenderer, i, 4, 15 + i * 5);
+}
+
+assert(vfxEngine.activeVFX.length === 4, '4연타 콤보 4개 VFX 동시 등록 확인');
+assert(vfxEngine.activeVFX[0].delay === 0, '1타(히트 0)는 딜레이 0s 즉시 발동');
+assert(Math.abs(vfxEngine.activeVFX[1].delay - 0.08) < 0.001, '2타(히트 1)는 0.08s 시차 딜레이 부여');
+assert(Math.abs(vfxEngine.activeVFX[2].delay - 0.16) < 0.001, '3타(히트 2)는 0.16s 시차 딜레이 부여');
+assert(Math.abs(vfxEngine.activeVFX[3].delay - 0.24) < 0.001, '4타(히트 3)는 0.24s 시차 딜레이 부여');
+
+// 9-2. 콤보 텍스트 배너 검증
+assert(vfxEngine.activeVFX[0].comboText === '⚔ 1 HIT!', '1타 콤보 텍스트 [⚔ 1 HIT!] 확인');
+assert(vfxEngine.activeVFX[1].comboText === '⚔ 2 HITS!', '2타 콤보 텍스트 [⚔ 2 HITS!] 확인');
+assert(vfxEngine.activeVFX[2].comboText === '⚔ 3 HITS!', '3타 콤보 텍스트 [⚔ 3 HITS!] 확인');
+assert(vfxEngine.activeVFX[3].comboText === '⚡ 4 HITS COMBO! ⚡', '4타 콤보 텍스트 [⚡ 4 HITS COMBO! ⚡] 확인');
+
+// 9-3. 시간 경과에 따른 시차 순차 발동 검증
+assert(vfxEngine.activeVFX[0].hasTriggeredFeedback === true, '1타는 즉시 피드백 발동 완료');
+assert(vfxEngine.activeVFX[1].hasTriggeredFeedback === false, '2타는 아직 대기 상태');
+
+vfxEngine.update(0.09); // 0.09초 경과 (2타 발동 시점)
+assert(vfxEngine.activeVFX[1].delay === 0, '0.09초 경과 후 2타 딜레이 만료');
+assert(vfxEngine.activeVFX[1].hasTriggeredFeedback === true, '2타 피드백(화면 셰이크) 순차 발동 완료');
+assert(vfxEngine.activeVFX[2].hasTriggeredFeedback === false, '3타는 여전히 대기 상태');
+
+// 9-4. 2D 클래식 아스키 렌더러 전용 VFX 렌더링 호출 안전성 검증
+const mockAsciiRenderer = {
+  ctx: fpRenderer.ctx,
+  charWidth: 14,
+  charHeight: 23,
+  w: 800,
+  h: 600
+};
+vfxEngine.renderAsciiVFX(mockAsciiRenderer, 0, 0);
+assert(true, '2D 클래식 아스키 렌더러(renderAsciiVFX) 예외 없이 무결 렌더링 완료');
+
+// 9-5. 몬스터 역습 연타 및 핏빛 비네팅 연동 검증
+vfxEngine.activeVFX = [];
+const mockEnemy = { x: 6, y: 5, isPlayer: false };
+vfxEngine.triggerAttackFX('BASH', mockEnemy, mockPlayer, false, fpRenderer, 0, 2, 20);
+vfxEngine.triggerAttackFX('BASH', mockEnemy, mockPlayer, false, fpRenderer, 1, 2, 22);
+
+assert(vfxEngine.bloodVignetteAlpha > 0.3, '몬스터 피격 시 핏빛 비네팅 점멸 확인');
+assert(vfxEngine.activeVFX.length === 2, '몬스터 2연타 정상 등록 확인');
+
+console.log('='.repeat(80));
 console.log(`🎉 [TEST SUMMARY] 총 ${passed + failed}개 검증 중 ${passed}개 통과 (${((passed / (passed + failed)) * 100).toFixed(1)}%)`);
 console.log('='.repeat(80));
 
