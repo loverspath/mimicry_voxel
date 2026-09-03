@@ -102,9 +102,11 @@ def run_server(host='0.0.0.0', port=8080, directory=None):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Mimicry Roguelike No-Cache Dev Server')
+    parser.add_argument('positional_port', nargs='?', type=int, default=None, help='Optional positional port number (e.g. 8080)')
     parser.add_argument('--host', default='0.0.0.0', help='Host address (default: 0.0.0.0)')
-    parser.add_argument('--port', type=int, default=8080, help='Port number (default: 8080)')
+    parser.add_argument('--port', type=int, default=None, help='Port number (default: 8080)')
     parser.add_argument('--dir', default=None, help='Directory to serve (default: mimicry_voxel root)')
     args = parser.parse_args()
     
-    run_server(host=args.host, port=args.port, directory=args.dir)
+    selected_port = args.port or args.positional_port or 8080
+    run_server(host=args.host, port=selected_port, directory=args.dir)
