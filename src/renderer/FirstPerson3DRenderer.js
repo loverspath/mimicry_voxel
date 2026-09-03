@@ -34,6 +34,9 @@ export class FirstPerson3DRenderer {
     // Z-Buffer (스크린 수직선별 최소 벽 깊이)
     this.depthBuffer = new Float32Array(Math.max(1, this.w));
 
+    // 수직 시점 각도(Pitch / Y-Shearing 수직 오프셋 px, 한계치 +-0.42*H)
+    this.pitch = 0;
+
     this.resize();
   }
 
@@ -47,6 +50,15 @@ export class FirstPerson3DRenderer {
       this.h = this.canvas.height || 600;
     }
     this.depthBuffer = new Float32Array(Math.max(1, this.w));
+  }
+
+  adjustPitch(deltaPitch) {
+    const maxPitch = Math.floor(this.h * 0.42);
+    this.pitch = Math.max(-maxPitch, Math.min(maxPitch, (this.pitch || 0) + deltaPitch));
+  }
+
+  resetPitch() {
+    this.pitch = 0;
   }
 
   snapCamera(x, y, z = 0) {
@@ -192,10 +204,11 @@ export class FirstPerson3DRenderer {
       // Z-Buffer 저장
       this.depthBuffer[x] = perpWallDist;
 
-      // 스크린 투사 벽 높이 및 수직 범위 연산
+      // 스크린 투사 벽 높이 및 수직 범위 연산 (Y-Shearing Pitch 수직 시점 적용)
+      const horizonY = Math.floor(this.h / 2 + (this.pitch || 0));
       const lineHeight = Math.floor(this.h / perpWallDist);
-      const drawStart = Math.max(0, -lineHeight / 2 + this.h / 2);
-      const drawEnd = Math.min(this.h - 1, lineHeight / 2 + this.h / 2);
+      const drawStart = Math.max(0, -lineHeight / 2 + horizonY);
+      const drawEnd = Math.min(this.h - 1, lineHeight / 2 + horizonY);
 
       // 텍스처 수직 슬라이스 X 좌표 산출
       let wallX = side === 0 ? posY + perpWallDist * rayDirY : posX + perpWallDist * rayDirX;
@@ -243,17 +256,21 @@ export class FirstPerson3DRenderer {
     // 3. 횃불 앰비언트 글로우(Radial Torchlight Glow) 래스터라이징 (광원량 비례)
     this._renderTorchlightGlow(userLightRange);
 
-    // 4. 다층 3D 복셀 계단 렌더링 (하행/상행 3단 스텝, 비콘 광선, 플로팅 네온 배지)
+    // 4. 다층 3D 복셀 계단 렌더링 (하행/상행 3단 스텝, 비콘 광선, 거리 홀로그램 배지)
     this._drawVoxelStairs(map, playerX, playerY);
 
     // 5. 미니맵 나침반 레이더 오버레이 렌더링
     this._drawCompassRadar(map, playerX, playerY);
+
+    // 6. 계단 도착 인게임 안내 프롬프트 배너 (화면 중앙 하단)
+    this._drawStairArrivalPrompt(map, playerX, playerY);
   }
 
   _renderTorchlightGlow(lightRange = 4.0) {
     if (!this.ctx) return;
+    const horizonY = Math.floor(this.h / 2 + (this.pitch || 0));
     const cx = this.w / 2;
-    const cy = this.h / 2;
+    const cy = horizonY;
     const rangeScale = Math.max(0.6, Math.min(2.5, (lightRange || 4.0) / 4.0));
     const maxR = Math.max(this.w, this.h) * 0.70 * rangeScale;
     const centerAlpha = Math.min(0.18, 0.08 * rangeScale);
@@ -274,22 +291,27 @@ export class FirstPerson3DRenderer {
 
   _renderCeilingAndFloor(floorTex, theme) {
     if (!this.ctx) return;
+    const horizonY = Math.floor(this.h / 2 + (this.pitch || 0));
 
     // 상단 천장 그라디언트 (웅장한 둥근 석조 아치 볼트 - 명도 상향)
-    const ceilGrad = this.ctx.createLinearGradient(0, 0, 0, this.h / 2);
-    ceilGrad.addColorStop(0, '#0a0e17');
-    ceilGrad.addColorStop(0.7, '#141d2d');
-    ceilGrad.addColorStop(1, '#1e293b');
-    this.ctx.fillStyle = ceilGrad;
-    this.ctx.fillRect(0, 0, this.w, this.h / 2);
+    if (horizonY > 0) {
+      const ceilGrad = this.ctx.createLinearGradient(0, 0, 0, horizonY);
+      ceilGrad.addColorStop(0, '#0a0e17');
+      ceilGrad.addColorStop(0.7, '#141d2d');
+      ceilGrad.addColorStop(1, '#1e293b');
+      this.ctx.fillStyle = ceilGrad;
+      this.ctx.fillRect(0, 0, this.w, horizonY);
+    }
 
     // 하단 바닥 그라디언트 (고대 지하 석조 바닥 - 명도 상향)
-    const floorGrad = this.ctx.createLinearGradient(0, this.h / 2, 0, this.h);
-    floorGrad.addColorStop(0, '#1e293b');
-    floorGrad.addColorStop(0.3, '#172033');
-    floorGrad.addColorStop(1, '#0c111a');
-    this.ctx.fillStyle = floorGrad;
-    this.ctx.fillRect(0, this.h / 2, this.w, this.h / 2);
+    if (horizonY < this.h) {
+      const floorGrad = this.ctx.createLinearGradient(0, horizonY, 0, this.h);
+      floorGrad.addColorStop(0, '#1e293b');
+      floorGrad.addColorStop(0.3, '#172033');
+      floorGrad.addColorStop(1, '#0c111a');
+      this.ctx.fillStyle = floorGrad;
+      this.ctx.fillRect(0, horizonY, this.w, this.h - horizonY);
+    }
   }
 
   /**
@@ -350,7 +372,8 @@ export class FirstPerson3DRenderer {
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
 
-    const drawY = this.h / 2 + (isItem ? spriteSize * 0.22 : 0);
+    const horizonY = Math.floor(this.h / 2 + (this.pitch || 0));
+    const drawY = horizonY + (isItem ? spriteSize * 0.22 : 0);
     
     // 심연/원거리 안개 감쇄 (유저 광원량 currentLightRange 비례 연동)
     const lr = this.currentLightRange || 4.0;
@@ -472,10 +495,10 @@ export class FirstPerson3DRenderer {
   }
 
   _drawRadarStairDiamond(px, py, fill, glow) {
-    const d = 3.5;
+    const d = 5.5;
     this.ctx.save();
     this.ctx.shadowColor = glow;
-    this.ctx.shadowBlur = 6;
+    this.ctx.shadowBlur = 12;
     this.ctx.fillStyle = fill;
     this.ctx.beginPath();
     this.ctx.moveTo(px, py - d);
@@ -484,6 +507,18 @@ export class FirstPerson3DRenderer {
     this.ctx.lineTo(px - d, py);
     this.ctx.closePath();
     this.ctx.fill();
+
+    // 외곽 네온 펄스 링 (Halo Ring)
+    this.ctx.strokeStyle = glow;
+    this.ctx.lineWidth = 1.5;
+    this.ctx.beginPath();
+    this.ctx.moveTo(px, py - d - 3);
+    this.ctx.lineTo(px + d + 3, py);
+    this.ctx.lineTo(px, py + d + 3);
+    this.ctx.lineTo(px - d - 3, py);
+    this.ctx.closePath();
+    this.ctx.stroke();
+
     this.ctx.restore();
   }
 
@@ -560,6 +595,8 @@ export class FirstPerson3DRenderer {
 
       stairsWithDist.push({
         ...stair,
+        stairX,
+        stairY,
         transformX,
         transformY,
         screenX
@@ -591,7 +628,8 @@ export class FirstPerson3DRenderer {
     }
     const alpha = Math.max(0.35, 1.0 - fog);
 
-    // 고대비 네온 복셀 팔레트
+    // 실시간 유클리드 거리 및 고대비 네온 복셀 팔레트
+    const distM = Math.hypot(stair.stairX || 0, stair.stairY || 0).toFixed(1);
     const palette = isDown
       ? {
           top: '#f43f5e',       // 네온 로즈/마젠타
@@ -599,8 +637,8 @@ export class FirstPerson3DRenderer {
           side: '#881337',      // 섀도우 마젠타
           rim: '#fda4af',       // 테두리 네온 림 글로우
           beam: 'rgba(244, 63, 94, ',
-          badgeText: `▼ [DOWN STAIRS >]`,
-          badgeBg: 'rgba(136, 19, 55, 0.88)',
+          badgeText: `[ 🔻 하행 계단 • ${distM}m > ]`,
+          badgeBg: 'rgba(136, 19, 55, 0.90)',
           badgeBorder: '#f43f5e'
         }
       : {
@@ -609,30 +647,31 @@ export class FirstPerson3DRenderer {
           side: '#0369a1',      // 섀도우 블루
           rim: '#bae6fd',       // 테두리 네온 림 글로우
           beam: 'rgba(56, 189, 248, ',
-          badgeText: `▲ [UP STAIRS <]`,
-          badgeBg: 'rgba(3, 105, 161, 0.88)',
+          badgeText: `[ 🔺 상행 계단 • ${distM}m < ]`,
+          badgeBg: 'rgba(3, 105, 161, 0.90)',
           badgeBorder: '#38bdf8'
         };
 
-    const baseW = Math.abs(Math.floor(this.h / transformY)) * 0.82;
-    const baseH = Math.abs(Math.floor(this.h / transformY)) * 0.44;
-    const groundY = this.h / 2 + Math.floor(this.h / transformY * 0.44);
+    const horizonY = Math.floor(this.h / 2 + (this.pitch || 0));
+    const baseW = Math.max(24, Math.min(this.w * 0.90, Math.abs(Math.floor(this.h / transformY)) * 0.88));
+    const baseH = Math.max(16, Math.min(this.h * 0.48, Math.abs(Math.floor(this.h / transformY)) * 0.46));
+    const groundY = Math.min(this.h - 15, Math.floor(horizonY + Math.min(this.h * 0.40, (this.h / transformY) * 0.38)));
 
     ctx.save();
     ctx.globalAlpha = alpha;
 
-    // 1. 수직 비콘 광선 기둥 (Vertical Beacon Beam) - 가산 혼합
+    // 1. 천장-바닥 전면 관통 수직 네온 비콘 광선 (Full-Height Beacon Pillar) - 가산 혼합
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
-    const beamW = Math.max(16, Math.floor(baseW * 0.45));
+    const beamW = Math.max(24, Math.floor(baseW * 0.52));
     const beamGrad = ctx.createLinearGradient(screenX, groundY, screenX, 0);
-    beamGrad.addColorStop(0, `${palette.beam}0.50)`);
-    beamGrad.addColorStop(0.3, `${palette.beam}0.28)`);
-    beamGrad.addColorStop(0.7, `${palette.beam}0.10)`);
-    beamGrad.addColorStop(1.0, `${palette.beam}0.00)`);
+    beamGrad.addColorStop(0, `${palette.beam}0.58)`);
+    beamGrad.addColorStop(0.3, `${palette.beam}0.38)`);
+    beamGrad.addColorStop(0.7, `${palette.beam}0.18)`);
+    beamGrad.addColorStop(1.0, `${palette.beam}0.02)`);
 
     ctx.fillStyle = beamGrad;
-    ctx.fillRect(screenX - beamW / 2, 0, beamW, groundY);
+    ctx.fillRect(screenX - beamW / 2, 0, beamW, this.h);
     ctx.restore();
 
     // 2. 3단 복셀 계단 단차 (3-Tier Perspective Voxel Steps)
@@ -654,29 +693,29 @@ export class FirstPerson3DRenderer {
     const t3Y = t2Y - t3H;
     this._drawPerspectiveVoxelBlock(ctx, screenX, t3Y, t3W, t3H, palette);
 
-    // 3. 상단 플로팅 네온 배지 (Floating Neon Badge)
-    const badgeFontSize = Math.max(11, Math.min(20, Math.floor(baseW * 0.15)));
+    // 3. 3D 홀로그램 거리 웨이포인트 배너 (Floating Waypoint Hologram Badge)
+    const badgeFontSize = Math.max(12, Math.min(22, Math.floor(baseW * 0.15)));
     ctx.font = `bold ${badgeFontSize}px 'Fira Code', monospace`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    const textWidth = ctx.measureText ? ctx.measureText(palette.badgeText).width : badgeFontSize * 12;
-    const badgePadX = 8;
-    const badgePadY = 4;
+    const textWidth = ctx.measureText ? ctx.measureText(palette.badgeText).width : badgeFontSize * 16;
+    const badgePadX = 10;
+    const badgePadY = 5;
     const badgeW = textWidth + badgePadX * 2;
     const badgeH = badgeFontSize + badgePadY * 2;
-    const badgeY = t3Y - badgeH - Math.max(8, baseH * 0.14);
+    const badgeY = t3Y - badgeH - Math.max(10, baseH * 0.16);
 
-    // 배지 배경 및 네온 글로우
+    // 배지 배경 및 고휘도 네온 글로우
     ctx.fillStyle = palette.badgeBg;
     ctx.strokeStyle = palette.badgeBorder;
-    ctx.lineWidth = 1.8;
+    ctx.lineWidth = 2.0;
     ctx.shadowColor = palette.rim;
-    ctx.shadowBlur = 10;
+    ctx.shadowBlur = 12;
 
     if (ctx.roundRect) {
       ctx.beginPath();
-      ctx.roundRect(screenX - badgeW / 2, badgeY, badgeW, badgeH, 4);
+      ctx.roundRect(screenX - badgeW / 2, badgeY, badgeW, badgeH, 6);
       ctx.fill();
       ctx.stroke();
     } else {
@@ -687,6 +726,70 @@ export class FirstPerson3DRenderer {
     ctx.shadowBlur = 0;
     ctx.fillStyle = '#ffffff';
     ctx.fillText(palette.badgeText, screenX, badgeY + badgeH / 2);
+
+    ctx.restore();
+  }
+
+  /**
+   * 계단 도착 인게임 안내 프롬프트 배너 (화면 중앙 하단)
+   */
+  _drawStairArrivalPrompt(map, playerX, playerY) {
+    if (!this.ctx || !map || !map.tiles) return;
+    const row = map.tiles[playerY];
+    if (!row) return;
+    const tile = row[playerX];
+    if (!tile) return;
+
+    let promptText = null;
+    let strokeColor = null;
+    let glowColor = null;
+
+    if (tile.type === 'STAIRS_DOWN' || tile.char === '>' || tile.isStaircase) {
+      promptText = "⚡ [하행 계단 도착]: '>' 키 또는 'Enter'로 다음 층 이동";
+      strokeColor = '#f43f5e';
+      glowColor = 'rgba(244, 63, 94, 0.90)';
+    } else if (tile.type === 'STAIRS_UP' || tile.char === '<' || tile.isUpStaircase) {
+      promptText = "⚡ [상행 계단 도착]: '<' 키 또는 'Enter'로 이전 층 이동";
+      strokeColor = '#38bdf8';
+      glowColor = 'rgba(56, 189, 248, 0.90)';
+    }
+
+    if (!promptText) return;
+
+    const ctx = this.ctx;
+    ctx.save();
+    const fontSize = Math.max(13, Math.min(20, Math.floor(this.w * 0.024)));
+    ctx.font = `bold ${fontSize}px 'Fira Code', monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const textWidth = ctx.measureText ? ctx.measureText(promptText).width : fontSize * 24;
+    const padX = 18;
+    const padY = 9;
+    const boxW = textWidth + padX * 2;
+    const boxH = fontSize + padY * 2;
+    const boxX = this.w / 2 - boxW / 2;
+    const boxY = this.h - boxH - 28;
+
+    ctx.fillStyle = 'rgba(10, 14, 24, 0.92)';
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = 2.2;
+    ctx.shadowColor = glowColor;
+    ctx.shadowBlur = 14;
+
+    if (ctx.roundRect) {
+      ctx.beginPath();
+      ctx.roundRect(boxX, boxY, boxW, boxH, 8);
+      ctx.fill();
+      ctx.stroke();
+    } else {
+      ctx.fillRect(boxX, boxY, boxW, boxH);
+      ctx.strokeRect(boxX, boxY, boxW, boxH);
+    }
+
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(promptText, this.w / 2, boxY + boxH / 2);
 
     ctx.restore();
   }

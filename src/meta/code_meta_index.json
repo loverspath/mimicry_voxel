@@ -1,9 +1,9 @@
 {
   "version": "1.2.0",
-  "generatedAt": "2026-09-03T02:55:20Z",
+  "generatedAt": "2026-09-03T03:15:52Z",
   "summary": {
     "totalModules": 75,
-    "totalLines": 107053,
+    "totalLines": 107201,
     "categories": {
       "configs": 5,
       "core": 14,
@@ -284,7 +284,7 @@
       "filePath": "src/core/Game.js",
       "moduleName": "Game",
       "category": "core",
-      "lines": 2225,
+      "lines": 2270,
       "responsibility": "미미크리 로그라이크 핵심 게임 루프, 턴 스케줄링, 엔티티 상호작용 및 UI 모달 이벤트 통합 조율 오케스트레이터",
       "purity": "State Store",
       "dependencies": [
@@ -333,7 +333,7 @@
         "setClick",
         "updateSlotLabels"
       ],
-      "lastModified": "2026-09-03T01:42:09Z"
+      "lastModified": "2026-09-03T03:14:45Z"
     },
     {
       "filePath": "src/core/GameEngine.js",
@@ -1029,7 +1029,7 @@
       "filePath": "src/renderer/FirstPerson3DRenderer.js",
       "moduleName": "FirstPerson3DRenderer",
       "category": "renderer",
-      "lines": 728,
+      "lines": 831,
       "responsibility": "초기 둠 / 위저드리 시점 DDA 레이캐스팅 1인칭 3D 텍스처 어드벤처 렌더러. 나노바나나 생성 텍스처 매핑, 거리 감쇄 안개(Depth Fog), 빌보드 스프라이트 및 미니맵 레이더 제공",
       "purity": "DOM / Canvas Renderer",
       "dependencies": [
@@ -1043,7 +1043,7 @@
         "FirstPerson3DRenderer"
       ],
       "functions": [],
-      "lastModified": "2026-09-03T01:58:17Z"
+      "lastModified": "2026-09-03T03:14:05Z"
     },
     {
       "filePath": "src/renderer/TextureManager.js",

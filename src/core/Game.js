@@ -188,6 +188,7 @@ export class Game {
     let pointerStartTime = 0;
     let isDraggingLook = false;
     let lastDragX = 0;
+    let lastDragY = 0;
     let hasDraggedSignificantly = false;
 
     const onPointerDown = (ev) => {
@@ -197,6 +198,7 @@ export class Game {
       pointerStartX = clientX;
       pointerStartY = clientY;
       lastDragX = clientX;
+      lastDragY = clientY;
       pointerStartTime = Date.now();
       isDraggingLook = true;
       hasDraggedSignificantly = false;
@@ -207,20 +209,33 @@ export class Game {
       const clientX = ev.clientX ?? (ev.touches && ev.touches[0] ? ev.touches[0].clientX : 0);
       const clientY = ev.clientY ?? (ev.touches && ev.touches[0] ? ev.touches[0].clientY : 0);
       const dx = clientX - lastDragX;
+      const dy = clientY - lastDragY;
       lastDragX = clientX;
+      lastDragY = clientY;
 
       if (Math.hypot(clientX - pointerStartX, clientY - pointerStartY) > 8) {
         hasDraggedSignificantly = true;
       }
 
-      if (this.renderMode === 'dungeon3d' && Math.abs(dx) > 0) {
-        // 1인칭 3D 모드: 화면 터치 슬라이스 / 마우스 드래그 실시간 360도 시선 회전
-        const sensitivity = 0.007;
-        this.playerAngle = (this.playerAngle + dx * sensitivity + 2 * Math.PI) % (2 * Math.PI);
-        if (this.renderer && this.renderer.playerAngle !== undefined) {
-          this.renderer.playerAngle = this.playerAngle;
+      if (this.renderMode === 'dungeon3d') {
+        let changed = false;
+        if (Math.abs(dx) > 0) {
+          // 1인칭 3D 모드: 화면 터치 슬라이스 / 마우스 드래그 실시간 360도 시선 회전 (Yaw)
+          const sensitivity = 0.007;
+          this.playerAngle = (this.playerAngle + dx * sensitivity + 2 * Math.PI) % (2 * Math.PI);
+          if (this.renderer && this.renderer.playerAngle !== undefined) {
+            this.renderer.playerAngle = this.playerAngle;
+          }
+          changed = true;
         }
-        this.render();
+        if (Math.abs(dy) > 0 && this.renderer && typeof this.renderer.adjustPitch === 'function') {
+          // 수직 시점(Pitch / Y-shearing): 위로 드래그하면 위를 바라보고, 아래로 드래그하면 아래를 바라봄
+          this.renderer.adjustPitch(-dy * 0.85);
+          changed = true;
+        }
+        if (changed) {
+          this.render();
+        }
       }
     };
 
@@ -233,6 +248,18 @@ export class Game {
       const endY = ev.clientY ?? (ev.changedTouches && ev.changedTouches[0] ? ev.changedTouches[0].clientY : pointerStartY);
       const dist = Math.hypot(endX - pointerStartX, endY - pointerStartY);
       const dt = Date.now() - pointerStartTime;
+
+      if (dt < 300 && dist < 12) {
+        const now = Date.now();
+        if (this._lastTapTime && now - this._lastTapTime < 320) {
+          // 더블 탭 시 수직 시점 중앙 복귀 (Reset Pitch)
+          if (this.renderMode === 'dungeon3d' && this.renderer && typeof this.renderer.resetPitch === 'function') {
+            this.renderer.resetPitch();
+            this.render();
+          }
+        }
+        this._lastTapTime = now;
+      }
 
       if (!hasDraggedSignificantly && dist < 14 && dt < 450) {
         this.handleCanvasClick({ clientX: endX, clientY: endY });
@@ -270,6 +297,12 @@ export class Game {
       }
       if (e.key === "t" || e.key === "T") {
         this.toggleAutoFire();
+      }
+      if (e.key === "Home" || e.key === "End") {
+        if (this.renderMode === 'dungeon3d' && this.renderer && typeof this.renderer.resetPitch === 'function') {
+          this.renderer.resetPitch();
+          this.render();
+        }
       }
       if (e.key === "F9") {
         e.preventDefault();
@@ -1459,6 +1492,18 @@ export class Game {
       this.renderer.playerAngle = this.playerAngle;
     }
     this.render();
+  }
+  pitchFirstPerson(deltaPitch = 0) {
+    if (this.renderer && typeof this.renderer.adjustPitch === 'function') {
+      this.renderer.adjustPitch(deltaPitch);
+      this.render();
+    }
+  }
+  resetFirstPersonPitch() {
+    if (this.renderer && typeof this.renderer.resetPitch === 'function') {
+      this.renderer.resetPitch();
+      this.render();
+    }
   }
   cycleZoom() {
     const presets = [0.6, 0.85, 1.0, 1.35, 1.7];

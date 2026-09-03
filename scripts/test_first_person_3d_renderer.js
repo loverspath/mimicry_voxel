@@ -433,6 +433,52 @@ fpRenderer._drawRadarStairDiamond(50, 50, '#f43f5e', '#fda4af');
 assert(true, '나침반 레이더 계단 다이아몬드 인디케이터 예외 없이 정상 렌더링');
 
 console.log('='.repeat(80));
+console.log('🧪 [TEST SUITE 8] 수직 시점(Pitch / Freelook) 및 초고시인성 계단 비콘/프롬프트 검증');
+console.log('='.repeat(80));
+
+// 8-1. 수직 시점(Pitch / Y-shearing) 초기화 및 클램핑 검증
+assert(fpRenderer.pitch === 0, '1인칭 렌더러 기본 수직 시점(pitch) 0px 확인');
+
+fpRenderer.adjustPitch(80);
+assert(fpRenderer.pitch === 80, '수직 시점 상향 틸트(+80px) 반영 확인');
+
+const maxAllowedPitch = Math.floor(fpRenderer.h * 0.42);
+fpRenderer.adjustPitch(2000);
+assert(fpRenderer.pitch === maxAllowedPitch, `수직 시점 최대 각도 클램프(${maxAllowedPitch}px) 보호 확인`);
+
+fpRenderer.adjustPitch(-4000);
+assert(fpRenderer.pitch === -maxAllowedPitch, `수직 시점 최소 각도 클램프(-${maxAllowedPitch}px) 보호 확인`);
+
+fpRenderer.resetPitch();
+assert(fpRenderer.pitch === 0, 'resetPitch() 호출 시 수직 시점 중앙(0px) 완벽 복귀');
+
+// 8-2. Game.js 1인칭 수직 시점 메소드 연동 검증
+if (game.renderMode !== 'dungeon3d') {
+  game.toggleRenderMode();
+}
+game.pitchFirstPerson(-45);
+assert(game.renderer.pitch === -45, 'Game.pitchFirstPerson() 실시간 시점 틸트 연동 확인');
+
+game.resetFirstPersonPitch();
+assert(game.renderer.pitch === 0, 'Game.resetFirstPersonPitch() 중앙 복귀 연동 확인');
+
+// 8-3. 계단 도착 인게임 안내 프롬프트 검증 (_drawStairArrivalPrompt)
+const stairPromptMap = {
+  width: 10,
+  height: 10,
+  tiles: [
+    [{ type: 'STAIRS_DOWN', char: '>' }],
+    [{ type: 'STAIRS_UP', char: '<' }]
+  ]
+};
+
+fpRenderer._drawStairArrivalPrompt(stairPromptMap, 0, 0);
+assert(true, '하행 계단 타일 도착 안내 프롬프트 배너 예외 없이 정상 렌더링');
+
+fpRenderer._drawStairArrivalPrompt(stairPromptMap, 0, 1);
+assert(true, '상행 계단 타일 도착 안내 프롬프트 배너 예외 없이 정상 렌더링');
+
+console.log('='.repeat(80));
 console.log(`🎉 [TEST SUMMARY] 총 ${passed + failed}개 검증 중 ${passed}개 통과 (${((passed / (passed + failed)) * 100).toFixed(1)}%)`);
 console.log('='.repeat(80));
 

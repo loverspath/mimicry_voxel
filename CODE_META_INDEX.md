@@ -2,9 +2,9 @@
 
 > **자동 생성 메타데이터**
 > - **엔진 버전**: `v1.2.0`
-> - **생성 일시**: `2026-09-03T02:55:20Z`
+> - **생성 일시**: `2026-09-03T03:15:52Z`
 > - **총 모듈 수**: `75개`
-> - **총 코드 라인 수**: `107,053줄`
+> - **총 코드 라인 수**: `107,201줄`
 
 ---
 
@@ -36,7 +36,7 @@
 | [`src/core/CombatCalculator.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/CombatCalculator.js) | **CombatCalculator** | `core` | 1022 | 전투 주사위 롤링, 대미지 계산, 치명타 판정, 방어력 감쇄 및 시너지 효과 연산 전담 수학 연산 엔진 | Stateless System | `COMBAT_CONFIG, SYNERGY_TRIGGERS, SPELL_SYNERGY_TRIGGERS 외 1개` |
 | [`src/core/CombatSystem.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/CombatSystem.js) | **CombatSystem** | `core` | 544 | 전투 판정 및 격발 오케스트레이션을 일괄 처리하는 중앙 조율 시스템 모듈. 세부적인 수학 연산, 원소 결합 레지스트리, 전리품 루팅 및 50F 보스 페이즈 전환 제어를 슬림하게 조율합니다. | Stateless System / Orchestrator | `CombatSystem` |
 | [`src/core/Effects.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Effects.js) | **Effects** | `core` | 745 | 게임 내 2.5D 아이소메트릭 기반 실시간 데이터 지향 스킬 비주얼 이펙트 파이프라인 엔진 모듈. Skills.js 및 CombatSystem.js의 스킬 엔티티 메타데이터(원소, 사거리, 각도, 글리프, 투사체 형태, 결합 반응)를 주입받아 3D 고밀도 미니 복셀 입자 스트림 브레스(SkillConeBreathEffect), 3D 포물선 탄도학 & 공전 에너지 링 마법 투사체(SkillProjectileEffect), 연속 전도 레이저/낙뢰 빔(SkillBeamEffect), 2.5D 등각타원 슬래시 아크(SkillMeleeSlashEffect), 3D 앵커링 플로팅 텍스트(FloatingTextEffect), 광역 폭발(AoEExplosionEffect)을 정석 아이소메트릭 좌표계(toScreen)로 통합 렌더링합니다. | Stateless System / Logic | `AoEExplosionEffect, ConeBreathEffect, ELEMENT_THEMES 외 7개` |
-| [`src/core/Game.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Game.js) | **Game** | `core` | 2225 | 미미크리 로그라이크 핵심 게임 루프, 턴 스케줄링, 엔티티 상호작용 및 UI 모달 이벤트 통합 조율 오케스트레이터 | State Store | `Game` |
+| [`src/core/Game.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Game.js) | **Game** | `core` | 2270 | 미미크리 로그라이크 핵심 게임 루프, 턴 스케줄링, 엔티티 상호작용 및 UI 모달 이벤트 통합 조율 오케스트레이터 | State Store | `Game` |
 | [`src/core/GameEngine.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/GameEngine.js) | **GameEngine** | `core` | 88 | 순수 턴 스케줄링, 엔티티 라이프사이클 관리 및 EventBus 기반 메시지 디스패치를 전담하는 슬림 엔진 코어 | State Store / Logic Engine | `GameEngine` |
 | [`src/core/Input.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/Input.js) | **Input** | `core` | 116 | 키보드(화살표, WASD, 넘패드), 마우스 및 가상 패드 입력을 추상화된 게임 액션으로 매핑하고 발송하는 입력 제어 모듈 | DOM Event Handler | `Input` |
 | [`src/core/LootSystem.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/core/LootSystem.js) | **LootSystem** | `core` | 308 | 몬스터 처치 시 전리품(정수 코어, 유니크 전설 유물, 에고 장비) 드롭 확률 연산, 경험치(XP) 가산 공식, 로어 숙련도 계산 및 처치 로그 취합 등 몬스터 사망에 수반되는 모든 후처리 보상 라이프사이클을 제어하는 전담 모듈 | Stateless Logic / System | `LootSystem` |
@@ -67,7 +67,7 @@
 | [`src/map/Map.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/map/Map.js) | **Map** | `map` | 757 | 1~50층 5대 테마 던전 절차적 생성기, 타일 충돌/투명도 FOV 판정, 보스룸 및 특수 지형(보물 금고 Vault & 몬스터 피트 Monster Pit) 배치 시스템 | Data Model / State Store | `RectRoom, Map` |
 | [`src/map/Voxel3DMapBridge.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/map/Voxel3DMapBridge.js) | **Voxel3DMapBridge** | `map` | 200 | 2D 던전 맵 타일 데이터를 차세대 3D 다층 높이맵(Z=0~3) 복셀 블록 스택으로 변환 및 동기화하는 브릿지 시스템 | Data Model / State Store | `VOXEL_THEMES, Voxel3DMapBridge` |
 | [`src/renderer/Classic2DAsciiRenderer.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/Classic2DAsciiRenderer.js) | **Classic2DAsciiRenderer** | `renderer` | 443 | 원본 Mimicry 정통 2D 탑다운 격자(ASCII Grid) 렌더러. 클래식 로그라이크 스타일의 2D 타일 폰트 렌더링, 시야/안개 시스템, 엔티티 및 아이템 심볼 표시를 지원하며, Game.js 및 Effects.js와의 100% 드롭인(Drop-in) 호환성을 보장합니다. | DOM / Canvas Renderer | `Classic2DAsciiRenderer` |
-| [`src/renderer/FirstPerson3DRenderer.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/FirstPerson3DRenderer.js) | **FirstPerson3DRenderer** | `renderer` | 728 | 초기 둠 / 위저드리 시점 DDA 레이캐스팅 1인칭 3D 텍스처 어드벤처 렌더러. 나노바나나 생성 텍스처 매핑, 거리 감쇄 안개(Depth Fog), 빌보드 스프라이트 및 미니맵 레이더 제공 | DOM / Canvas Renderer | `FirstPerson3DRenderer` |
+| [`src/renderer/FirstPerson3DRenderer.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/FirstPerson3DRenderer.js) | **FirstPerson3DRenderer** | `renderer` | 831 | 초기 둠 / 위저드리 시점 DDA 레이캐스팅 1인칭 3D 텍스처 어드벤처 렌더러. 나노바나나 생성 텍스처 매핑, 거리 감쇄 안개(Depth Fog), 빌보드 스프라이트 및 미니맵 레이더 제공 | DOM / Canvas Renderer | `FirstPerson3DRenderer` |
 | [`src/renderer/TextureManager.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/TextureManager.js) | **TextureManager** | `renderer` | 127 | 나노바나나(Imagen) 생성 5대 던전 테마 텍스처 및 바닥재 비동기 로딩, 캐싱 및 절차적 캔버스 패턴 폴백 가드 매니저 | State Store / Pure Loader | `TextureManager, textureManager, TEXTURE_PATHS` |
 | [`src/renderer/Voxel3DRenderer.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/Voxel3DRenderer.js) | **Voxel3DRenderer** | `renderer` | 647 | Mimicry Roguelike 차세대 3D 다층 복셀(Voxel) 렌더러. 정석 2.5D 아이소메트릭 중앙 정렬 좌표계, 반응형 화면비(Galaxy Fold 등) 실시간 적응, 표준 로그라이크 FOV 시스템, 실시간 포인트 라이트 및 3D 마이크로 복셀 파편 물리 통합 렌더링. | DOM / Canvas Renderer | `Voxel3DRenderer` |
 | [`src/renderer/VoxelParticleSystem.js`](file:////data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/renderer/VoxelParticleSystem.js) | **VoxelParticleSystem** | `renderer` | 125 | 3D 마이크로 복셀 큐브 물리 파편 및 파티클 연산 시스템. 피격, 처치, 걷기, 포식, 레벨업 시 3D 회전과 바닥 튕김(Bounce) 물리 연산을 지원합니다. | DOM / Canvas Renderer | `VoxelParticleSystem` |
