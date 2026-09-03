@@ -1,14 +1,23 @@
 /**
- * @module EntryPoint
- * @description Mimicry Roguelike 게임의 최종 진입점(Entry Point). DOM 로드가 완료되면 Game 인스턴스와 터치용 VirtualController를 초기화하고 기동합니다.
- * @dependency Game.js, VirtualController.js
+ * @module MainEntryPoint
+ * @category root
+ * @description 미미크리 복셀(Mimicry Voxel) 공식 메인 버전 진입점.
+ *              동적 밸런스 프리셋 엔진, 4대 액티브 스킬 플로팅 핫바, HUD 실시간 상태이상/버프 칩 바,
+ *              위기 비네팅 펄스 및 플레이어 아이덴티티 특성/저항 매트릭스 모달을 통합 오케스트레이션합니다.
+ * @dependencies Game.js, VirtualController.js, SkillHotbarView.js, GameStartPresetModalView.js, PlayerIdentityModalView.js, BalanceModifierManager.js, EventBus.js, GameEvents.js
+ * @exports mainInit, experimentalInit
  */
+
 import { Game } from './src/core/Game.js';
 import { VirtualController } from './src/ui/VirtualController.js';
+import { SkillHotbarView } from './src/ui/SkillHotbarView.js';
 import { GameStartPresetModalView } from './src/ui/GameStartPresetModalView.js';
+import { PlayerIdentityModalView } from './src/ui/PlayerIdentityModalView.js';
 import { balanceModifierManager } from './src/systems/BalanceModifierManager.js';
+import { eventBus } from './src/events/EventBus.js';
+import { GameEvents } from './src/events/GameEvents.js';
 
-// 전역 에러 핸들러 및 화면 상단 크래시 배너 장착
+// 전역 에러 배너 핸들러
 function showCrashBanner(errorMsg, source, lineno, colno, error) {
   console.error("[GLOBAL ERROR CAUGHT]", { errorMsg, source, lineno, colno, error });
   let banner = document.getElementById('global-crash-banner');
@@ -35,7 +44,6 @@ function showCrashBanner(errorMsg, source, lineno, colno, error) {
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <span style="font-weight:bold; font-size:0.85rem;">🚨 [런타임 에러 감지]</span>
       <div>
-        <button id="btn-copy-crash" style="background:rgba(0,0,0,0.3); border:1px solid #fff; color:#fff; border-radius:4px; padding:0.2rem 0.5rem; cursor:pointer; font-size:0.75rem; margin-right:0.3rem;">에러 복사</button>
         <button onclick="location.reload();" style="background:rgba(0,0,0,0.3); border:1px solid #fff; color:#fff; border-radius:4px; padding:0.2rem 0.5rem; cursor:pointer; font-size:0.75rem;">새로고침</button>
         <button onclick="this.closest('#global-crash-banner').remove();" style="background:transparent; border:none; color:#fff; font-size:1rem; cursor:pointer; margin-left:0.5rem;">✕</button>
       </div>
@@ -43,23 +51,7 @@ function showCrashBanner(errorMsg, source, lineno, colno, error) {
     <div style="word-break:break-all; font-size:0.75rem; opacity:0.95;"><b>메시지:</b> ${errorMsg} (${file}:${lineno || 0})</div>
     ${stack ? `<pre style="margin:0; font-size:0.68rem; opacity:0.85; max-height:80px; overflow-y:auto; background:rgba(0,0,0,0.3); padding:0.3rem 0.5rem; border-radius:4px; white-space:pre-wrap;">${stack}</pre>` : ''}
   `;
-
-  const copyBtn = document.getElementById('btn-copy-crash');
-  if (copyBtn) {
-    copyBtn.onclick = () => {
-      const fullText = `${errorMsg}\nLocation: ${file}:${lineno}\nStack:\n${stack}`;
-      navigator.clipboard.writeText(fullText).then(() => {
-        copyBtn.innerText = "복사 완료!";
-      });
-    };
-  }
-
-  if (window.__game && window.__game.addLogEntry) {
-    window.__game.addLogEntry(`[Error] 🚨 ${errorMsg}`, `danger`);
-  }
 }
-
-window.showCrashBanner = showCrashBanner;
 
 window.onerror = function (message, source, lineno, colno, error) {
   showCrashBanner(message, source, lineno, colno, error);
@@ -71,32 +63,200 @@ window.addEventListener('unhandledrejection', function (event) {
   showCrashBanner(reason.message || String(reason), reason.fileName || '', reason.lineNumber || 0, 0, reason);
 });
 
-// Initialize the game when the window loads
-window.addEventListener('load', () => {
+/**
+ * 차세대 공식 메인 엔진 초기화 함수
+ */
+export function mainInit() {
   try {
     const game = new Game();
     const virtualController = new VirtualController(game.input);
-    window.__game = game; // Expose for inline HTML button handlers (breath element selector)
 
-    // 동적 밸런스 프리셋 모달 연동
-    const presetModal = new GameStartPresetModalView('game-start-preset-modal-root');
-    presetModal.init();
-    presetModal.onConfirm((presetId, overrides) => {
-      balanceModifierManager.applyPreset(presetId, overrides);
-      if (game.addLogEntry) {
-        game.addLogEntry(`⚖️ [밸런스 변경] ${balanceModifierManager.getPresetName()} 프리셋 적용 완료`, 'system');
+    // 1. 4대 스킬 플로팅 핫바 뷰 초기화
+    const skillHotbar = new SkillHotbarView('skill-hotbar-container');
+    skillHotbar.init(document.getElementById('game-container') || document.body);
+
+    // 스킬 원터치 격발 콜백
+    skillHotbar.setOnSkillTrigger((slotNum) => {
+      if (!game.player || game.isMainMenuOpen || game.isGameOver) return;
+      const castSuccess = game.player.castActiveSkill(slotNum, game);
+      if (castSuccess) {
+        // 턴 진행 및 몬스터 턴 시뮬레이션
+        game.playerTurn = false;
+        game.update();
+        game.updateUI();
+        game.render();
       }
     });
 
-    const balanceBtn = document.getElementById('btn-balance-preset-quick');
-    if (balanceBtn) {
-      balanceBtn.addEventListener('click', () => {
-        presetModal.open(balanceModifierManager.currentPresetId, balanceModifierManager.customOverrides);
+    // 2. 동적 밸런스 프리셋 모달 뷰 초기화
+    const presetModal = new GameStartPresetModalView('game-start-preset-modal-root');
+    presetModal.init(document.body);
+
+    // 2-B. 플레이어 아이덴티티 & 특성 매트릭스 모달 초기화
+    const identityModal = new PlayerIdentityModalView('player-identity-modal');
+    identityModal.init(document.body);
+
+    const openIdentityModal = () => {
+      if (game.player) identityModal.open(game.player);
+    };
+
+    const identityBtn = document.getElementById('btn-player-identity');
+    if (identityBtn) identityBtn.onclick = openIdentityModal;
+
+    // 단축키 'C' (또는 'c') 지원
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'c' || e.key === 'C') {
+        if (!identityModal.modalEl || identityModal.modalEl.classList.contains('hidden')) {
+          openIdentityModal();
+        } else {
+          identityModal.close();
+        }
+      }
+    });
+
+    // 3. 상단바 프리셋 인디케이터 배지 갱신 로직
+    const updatePresetBadge = () => {
+      const activeCfg = balanceModifierManager.getActiveConfig();
+      const badgeBtn = document.getElementById('ui-preset-badge');
+      const labelEl = document.getElementById('ui-preset-label');
+      const dotEl = badgeBtn ? badgeBtn.querySelector('.preset-dot') : null;
+
+      if (badgeBtn && activeCfg) {
+        const shortId = activeCfg.presetId ? activeCfg.presetId.replace('_', ' ') : 'CLASSIC';
+        if (labelEl) labelEl.textContent = `📜 ${shortId}`;
+        badgeBtn.style.borderColor = activeCfg.badgeColor || '#38bdf8';
+        badgeBtn.style.color = activeCfg.badgeColor || '#38bdf8';
+        if (dotEl) dotEl.style.background = activeCfg.badgeColor || '#38bdf8';
+      }
+    };
+
+    updatePresetBadge();
+
+    // 4. 프리셋 모달 오픈 버튼 이벤트 바인딩
+    const openPresetModal = () => presetModal.open();
+
+    const badgeBtn = document.getElementById('ui-preset-badge');
+    if (badgeBtn) badgeBtn.onclick = openPresetModal;
+
+    const quickPresetBtn = document.getElementById('btn-balance-preset-quick');
+    if (quickPresetBtn) quickPresetBtn.onclick = openPresetModal;
+
+    const optionsPresetBtn = document.getElementById('btn-open-preset-from-options');
+    if (optionsPresetBtn) optionsPresetBtn.onclick = openPresetModal;
+
+    const menuPresetBtn = document.getElementById('menu-preset-config-btn');
+    if (menuPresetBtn) menuPresetBtn.onclick = openPresetModal;
+
+    // 5. EventBus 밸런스 변경 수신
+    if (typeof eventBus !== 'undefined' && eventBus) {
+      const evName = (GameEvents && GameEvents.BALANCE_CONFIG_CHANGED) ? GameEvents.BALANCE_CONFIG_CHANGED : 'BALANCE_CONFIG_CHANGED';
+      eventBus.on(evName, (payload) => {
+        updatePresetBadge();
+        if (game && typeof game.addLogEntry === 'function' && payload?.config) {
+          game.addLogEntry(`⚖️ [밸런스 모디파이어] ${payload.config.name} 설정이 적용되었습니다.`, 'system');
+        }
       });
     }
 
+    // 6. 실시간 상태이상 칩 바 갱신 함수
+    const updateStatusChips = (player) => {
+      const container = document.getElementById('hud-status-chips-bar');
+      if (!container || !player) return;
+
+      const chips = [];
+
+      // A. 플레이어 실시간 상태이상 (statuses)
+      if (player.statuses && typeof player.statuses === 'object') {
+        for (const [key, st] of Object.entries(player.statuses)) {
+          if (st && (st.duration > 0 || st.stacks > 0)) {
+            const icon = st.icon || '⚡';
+            const name = st.name || key;
+            const dur = st.duration ? `${st.duration}T` : `${st.stacks}S`;
+            const isBuff = !['POISON', 'BLEEDING', 'STUN', 'BLIND', 'SLOW', 'CONFUSION'].includes(key.toUpperCase());
+            const chipClass = isBuff ? 'buff' : 'debuff';
+            chips.push(`
+              <span class="status-chip ${chipClass}" title="${name} (${dur})">
+                <span>${icon}</span>
+                <span>${name}</span>
+                <span style="opacity: 0.8; font-size: 0.65rem;">${dur}</span>
+              </span>
+            `);
+          }
+        }
+      }
+
+      // B. 플레이어 디버프 (debuffs)
+      if (player.debuffs && typeof player.debuffs === 'object') {
+        for (const [key, val] of Object.entries(player.debuffs)) {
+          if (val && !chips.some(c => c.includes(key))) {
+            chips.push(`
+              <span class="status-chip debuff" title="디버프: ${key}">
+                <span>⚠️</span>
+                <span>${key}</span>
+              </span>
+            `);
+          }
+        }
+      }
+
+      container.innerHTML = chips.join('');
+    };
+
+    // 7. 저체력 위기 비네팅 펄스 갱신 함수
+    const updateLowHpVignette = (player) => {
+      const vignette = document.getElementById('low-hp-vignette');
+      if (!vignette || !player || !player.stats) return;
+
+      const hp = player.stats.hp || 0;
+      const maxHp = player.stats.maxHp || 1;
+      const ratio = hp / maxHp;
+
+      if (ratio <= 0.15 && hp > 0) {
+        vignette.className = 'low-hp-vignette active critical';
+      } else if (ratio <= 0.30 && hp > 0) {
+        vignette.className = 'low-hp-vignette active';
+      } else {
+        vignette.className = 'low-hp-vignette';
+      }
+    };
+
+    // 8. 기존 game.updateUI 가로채기 (Monkey-patching with original call)
+    const origUpdateUI = game.updateUI.bind(game);
+    game.updateUI = function () {
+      origUpdateUI();
+      if (this.player) {
+        skillHotbar.update(this.player);
+        updateStatusChips(this.player);
+        updateLowHpVignette(this.player);
+        updatePresetBadge();
+      }
+    };
+
+    // 9. 전역 참조 노출
+    window.__game = game;
+    window.__balanceModifierManager = balanceModifierManager;
+    window.__presetModal = presetModal;
+    window.__skillHotbar = skillHotbar;
+    window.__identityModal = identityModal;
+
+    // 10. 게임 루프 기동
     game.start();
+
+    // 초기 UI 동기화
+    if (game.player) {
+      skillHotbar.update(game.player);
+      updateStatusChips(game.player);
+      updateLowHpVignette(game.player);
+    }
   } catch (err) {
-    showCrashBanner(err.message, err.fileName || 'Game.js', err.lineNumber || 0, 0, err);
+    showCrashBanner(err.message, err.fileName || 'main.js', err.lineNumber || 0, 0, err);
   }
-});
+}
+
+// 하위 호환성용 별칭
+export const experimentalInit = mainInit;
+
+// 브라우저 로드 시 자동 기동
+if (typeof window !== 'undefined') {
+  window.addEventListener('load', mainInit);
+}
