@@ -1,11 +1,11 @@
-# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.33.0)
+# 📜 Mimicry Voxel Engine Comprehensive Development Log (v0.1.0 ~ v0.34.0)
 
-> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 19 집대성)**
+> **ToME 2.3.5 / TomeNET 정통 규칙 기반 데이터 지향 복셀 로그라이크 누적 개발 연혁 및 아키텍처 변천사 (Phase 1 ~ Phase 20 집대성)**
 
-[![Version](https://img.shields.io/badge/version-0.33.0-emerald.svg)](package.json)
-[![Tests](https://img.shields.io/badge/test%20suites-63%2F63%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
-[![Modules](https://img.shields.io/badge/code%20modules-75%20modules%20(109%2C527%20LOC)-indigo.svg)](CODE_META_INDEX.md)
-[![Engines](https://img.shields.io/badge/stateless%20engines-15%20engines%20(Curse%20Sanctuary%20%26%20Scrolls)-blue.svg)](src/systems/)
+[![Version](https://img.shields.io/badge/version-0.34.0-emerald.svg)](package.json)
+[![Tests](https://img.shields.io/badge/test%20suites-64%2F64%20ALL%20PASS-brightgreen.svg)](scripts/run_all_tests.js)
+[![Modules](https://img.shields.io/badge/code%20modules-76%20modules%20(109%2C918%20LOC)-indigo.svg)](CODE_META_INDEX.md)
+[![Engines](https://img.shields.io/badge/stateless%20engines-16%20engines%20(Procedural%20Randart%20Engine)-blue.svg)](src/systems/)
 [![Renderers](https://img.shields.io/badge/tri--mode%20renderers-Voxel%20|%203D%20|%20ASCII-teal.svg)](src/renderer/)
 [![Entities](https://img.shields.io/badge/canonical%20entities-1%2C636-purple.svg)](src/entities/)
 [![Architecture](https://img.shields.io/badge/architecture-5--layer%20Clean%20DOD-orange.svg)](src/meta/code_meta_index.json)
@@ -15,11 +15,11 @@
 ## 🧭 프로젝트 개요 및 엔진 진화 여정
 
 **미미크리 복셀(Mimicry Voxel)**은 플레이어가 쓰러뜨린 몬스터의 정수 코어(Core)를 흡수하여 그 신체 능력과 고유 마법을 의태(Mimicry)하는 전술적 복셀 로그라이크 엔진입니다. 
-초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook)**, **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템**, **물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 VFX 엔진**, **5대 던전 테마 맞춤형 바닥 & 천장 실사 텍스처 10종 탑재 및 플로어캐스팅 렌더러**, **1인칭 3D 공간 일체화**, **바닥-천장 관통형 3D 복셀 계단 구조체 및 3D 복셀 사다리 시스템**, **전사 SHIELD_BASH(방패 강타) 및 오토캐스트 On/Off 토글**, **ToME/TomeNET 정통 드랍 플래그 엔진**, **차세대 UI/UX 포크의 공식 메인(index.html) 승격 및 레거시 메인 백업 이전**, 그리고 **감정/저주해제 주문서 연동, 조크 몬스터 원천 박멸, 저주 장비 버리기 차단 및 인벤토리 슬롯 고스트 먹통 결함 완치**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
+초기 프로토타입 단계의 **5대 갓오브젝트(God Objects) 안티패턴을 완벽히 해체**하고 **5대 계층 클린 아키텍처**를 확립한 이래, 전설적인 정통 로그라이크 **ToME 2.3.5 (Tales of Middle-Earth)**의 방대한 1,636개 엔티티 데이터셋과 **TomeNET 5단계 AI 의사결정 트리**, **1~50F 4단계 티어 게이팅 & 가치 예산 엔진**, **실시간 의태 액티브 스킬 자동 격발(Auto-Cast) 엔진**, **절차적(Procedural) BFS 안전 드랍 엔진**, **동적 밸런스 프리셋 엔진 & ToME 정통 4단계 의사 감정(Pseudo-ID) & 18종 저주 태그 시스템**, **1인칭 3D 어드벤처 레이캐스터 렌더러와 3단 순환 전환 파이프라인(2.5D 복셀 ➔ 1인칭 3D ➔ 2D 아스키)**, **소지 광원량 비례 동적 조명 & 탐험 지도(isExplored) 동기화**, **1인칭 3D 수직 시선(Pitch / Freelook)**, **순차적 다단 히트 콤보(Sequential Multi-Hit Combo) 시스템**, **물리 5대 메소드 및 ToME 마법 4대 범주 전수 아스키 그래픽 VFX 엔진**, **5대 던전 테마 맞춤형 바닥 & 천장 실사 텍스처 10종 탑재 및 플로어캐스팅 렌더러**, **1인칭 3D 공간 일체화**, **바닥-천장 관통형 3D 복셀 계단 구조체 및 3D 복셀 사다리 시스템**, **전사 SHIELD_BASH(방패 강타) 및 오토캐스트 On/Off 토글**, **ToME/TomeNET 정통 드랍 플래그 엔진**, **차세대 UI/UX 포크 공식 메인 승격**, **감정/저주해제 주문서 및 저주 버리기 차단**, 그리고 **TomeNET 정통 에고/아티팩트 네이밍 복원, 랜덤 플래그 런타임 변환, 101종 에고/브랜드 풀 연동 및 절차적 란다트(Randart) 엔진**까지 탑재된 완성형 엔터프라이즈 하이브리드 엔진으로 진화했습니다.
 
 ```mermaid
 timeline
-    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 19)
+    title 미미크리 Voxel 로그라이크 엔진 전체 진화 타임라인 (Phase 1 ~ Phase 20)
     Phase 1 : 3대 원소 상호작용 프로토타입 (v0.1.0 ~ v0.6.0)
             : 의태 코어 흡수 및 기초 복셀 렌더러 구축
     Phase 2 : 5대 갓오브젝트 해체 및 5대 계층 클린 아키텍처 확립 (v0.7.0 ~ v0.12.0)
@@ -58,6 +58,8 @@ timeline
             : fork_experimental 공식 승격, legacy_main/ 및 classic.html 보존
     Phase 19: 감정/저주해제 주문서 & 저주 버리기 차단 & 슬롯 완치 (v0.33.0)
             : 주문서 2종, 조크 박멸, canDrop 모듈화, 인벤토리 고스트 슬롯 완치
+    Phase 20: TomeNET 정통 아이템/에고/아티팩트 & 란다트 엔진 (v0.34.0)
+            : 101종 에고 풀, 네이밍 규칙 복원, RES_RANDOM 실체화, 절차적 란다트
 ```
 
 ---
@@ -91,6 +93,34 @@ timeline
 │    (TomeMonstersData, TomeArtifactsData, GameBalanceConfig) │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 🏛️ Phase 20: TomeNET 정통 에고/아티팩트 네이밍 복원, 랜덤 플래그 런타임 변환, 슬링/원거리 사양 정상화, 101종 에고/브랜드 풀 연동 및 절차적 란다트(Randart) 엔진 구축 (v0.34.0)
+
+### 🏛️ v0.34.0 — TomeNET 정통 에고/아티팩트 네이밍 복원, 랜덤 플래그 런타임 변환, 슬링/원거리 사양 정상화, 101종 에고/브랜드 풀 연동 및 절차적 란다트(Randart) 엔진 구축
+- **배포일**: 2026-09-03 | **버전**: `v0.34.0` | **모듈 현황**: 76개 모듈 (109,918 LOC) | **테스트 통과**: 64/64 Suites (100% ALL PASS)
+- **개요 및 설계 배경**:
+  - 기존 전리품 생성 엔진에서 누락되거나 단순화되었던 정통 로그라이크 **ToME 2.3.5 / TomeNET C-소프트웨어의 아이템 생성 사양(TOMENET_ITEM_GENERATION_SPEC)**을 완벽히 복원하였습니다.
+  - 고유 아티팩트(Artifact) 및 에고(Ego) 장비의 **TomeNET 원작 네이밍 규칙(the Base '<Artifact>' / Base of Ego)**을 엄격히 준수하도록 개편하고, 텍스트 플래그 상태로만 존재하던 **원작 랜덤 플래그(`RES_RANDOM`, `POW_RANDOM`, `ESP_RANDOM` 등)**를 런타임 주사위 굴림을 통해 실제 게임플레이 저항 및 능력치로 변환하는 실체화 파이프라인을 구축하였습니다.
+  - 슬링(Sling) 등 원거리 투사체 무기의 장비 슬롯 및 탄약 사양을 정상화하고, 101종에 달하는 정통 에고/브랜드 데이터셋을 전면 연계하였으며, 심층 및 특수 상황에서 무한한 옵션 조합을 절차적으로 생성하는 **절차적 란다트(Randart) 생성 엔진([`src/systems/TomeRandartEngine.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeRandartEngine.js))**을 신설하였습니다.
+
+- **주요 변경 사항**:
+  1. **절차적 란다트(Randart) 생성 엔진 구축 ([`src/systems/TomeRandartEngine.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeRandartEngine.js))**:
+     - 신규 모듈 `TomeRandartEngine` 신설 (총 154 라인, 시스템 계층 23번째 모듈).
+     - 던전 심도 및 전리품 예산에 비례하여 기본 베이스 아이템에 고유 에픽 명칭, 랜덤 스탯 가산치, 원소 저항, 슬레이(Slay) 및 발동 능력을 절차적으로 부여하는 알고리즘 탑재.
+  2. **TomeNET 정통 네이밍 규칙 및 랜덤 플래그 런타임 실체화 ([`src/systems/TomeLootGenerator.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/systems/TomeLootGenerator.js))**:
+     - **네이밍 포맷 복원**: 아티팩트 `the <BaseName> '<ArtifactName>'` (예: `the Long Sword 'Ringil'`), 에고 `<BaseName> of <EgoName>` (예: `Dagger of Slaying`).
+     - **랜덤 플래그 주사위 해석**: `RES_RANDOM` (화염/냉기/전기/산성/독 등 무작위 저항 배정), `POW_RANDOM` (힘/민첩/지능/건강 등 무작위 스탯 보너스 배정), `ESP_RANDOM` (무작위 텔레파시 부여) 등 C-코드 원작 로직을 100% 런타임 수치로 치환.
+     - **101종 정통 에고/브랜드 풀 전면 연동**: 무기, 방어구, 장신구 전반의 ToME 에고 정의 연계.
+  3. **슬링(Sling) 및 원거리 사양/아이템 모델 정상화 ([`src/entities/TomeKindsData.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/TomeKindsData.js), [`src/entities/Item.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/src/entities/Item.js))**:
+     - 슬링 무기의 장비 슬롯 매핑(`BOW`) 및 발사체 탄약(`SHOT`) 정합성 복원.
+     - `Item.js`: 다중 에고, 란다트 태그 및 런타임 변환 플래그를 안정적으로 직렬화/역직렬화할 수 있도록 프로퍼티 구조 확장.
+  4. **신규 단위/통합 테스트 스위트 추가 및 사양서 수록**:
+     - [`scripts/test_tomenet_item_generation_complete.js`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/scripts/test_tomenet_item_generation_complete.js) 신설 (총 213 라인): 네이밍 정합성, 랜덤 플래그 실체화, 101종 에고 합성, 란다트 생성 무결성 검증.
+     - [`TOMENET_ITEM_GENERATION_SPEC.md`](file:///data/data/com.termux/files/home/opendcmart/mimicry_voxel/TOMENET_ITEM_GENERATION_SPEC.md) 수록 (424 라인): TomeNET 정통 전리품 생성 공식 및 플래그 사양 완비.
+     - **64개 전체 테스트 스위트 100% ALL PASS 달성 (64/64 PASSED, 0 FAILED)**.
+     - **메타 인덱서 갱신**: `meta_indexer.py --update-wiki` 실행으로 76개 모듈(109,918 LOC) 메타 인덱스 및 위키 문서 최신화 완료.
 
 ---
 
