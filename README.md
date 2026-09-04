@@ -9,7 +9,7 @@
 [![Renderers](https://img.shields.io/badge/renderers-Tri--Mode%20(3D%20|%202.5D%20|%20ASCII)-teal.svg)](src/renderer/)
 [![Entities](https://img.shields.io/badge/ToME%20Entities-1%2C636%20Canonical-purple.svg)](src/entities/)
 [![Live Demo](https://img.shields.io/badge/demo-GitHub%20Pages%20Live-success.svg)](https://loverspath.github.io/mimicry_voxel/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](LICENSE)
 
 ---
 
@@ -244,7 +244,8 @@ mimicry_voxel/
 ├── legacy_main/               # 레거시 메인 백업 저장소 (index.html, main.js)
 ├── style.css                  # 모던 다크 글래스모피즘 HUD 스타일시트 (?v=0.36.0)
 ├── main.js                    # 메인 부트스트랩 및 3D/2.5D/아스키 모듈 초기화
-├── package.json               # 프로젝트 매니페스트 (v0.36.0)
+├── package.json               # 프로젝트 매니페스트 (v0.36.0, GPL-3.0-or-later)
+├── LICENSE                    # GNU General Public License v3.0 전문
 ├── README.md                  # 본 종합 아키텍처 및 사용 가이드 문서
 ├── ROADMAP.md                 # Clean Architecture & Phase 1~22 개발 로드맵
 ├── CODE_META_INDEX.md         # 76개 전 모듈 상세 메타 인덱스 명세서
@@ -269,4 +270,15 @@ mimicry_voxel/
 
 ---
 
-**© 2026 OpenDCMart Engine Team & Mimicry Voxel Engineering Group.** All rights reserved.
+## 📜 9. 라이선스 (License)
+
+본 프로젝트는 **[GNU General Public License v3.0 (GPL-3.0-or-later)](LICENSE)**에 따라 배포되는 자유 소프트웨어(Free Software)입니다.
+
+- 사용자는 자유 소프트웨어 재단(FSF)이 공표한 GNU 일반 공중 사용 허가서 조건에 따라 소프트웨어를 자유롭게 실행, 연구, 수정 및 재배포할 수 있습니다.
+- 본 프로젝트를 수정하거나 파생 저작물을 작성하여 배포하는 경우, 동일한 GNU GPL-3.0 이상의 라이선스 조건 하에 전체 소스코드를 공개하여야 합니다(Copyleft).
+- 원작인 **Tales of Middle-Earth (ToME 2.3.5, Angband 기반)** 및 **TomeNET** 생태계의 오픈소스 유산과 완전한 법적·기술적 호환성을 유지합니다.
+- 라이선스 전문은 루트 디렉토리의 [`LICENSE`](LICENSE) 파일을 참조하시기 바랍니다.
+
+---
+
+**© 2026 OpenDCMart Engine Team & Mimicry Voxel Engineering Group.** Released under the GNU General Public License v3.0 (GPL-3.0-or-later).
