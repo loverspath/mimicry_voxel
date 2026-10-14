@@ -497,4 +497,119 @@ describe('Argon Phase 3: Item Schema Interpreter, Device & Turn/Input Contract T
       expect(StatusEffectEngine.hasStatus(player, 'HEROISM')).toBe(true);
     });
   });
+
+  describe('Argon Hotfix: Monster Turn Loop Contract & Game Method Bindings', () => {
+    let game;
+    let monster;
+
+    beforeEach(() => {
+      game = new Game();
+      game.player = new Player(5, 5, 'MON_NOVICE_WARRIOR');
+      game.player.energy = 0;
+      game.player.stats.hp = 100;
+      game.player.stats.maxHp = 100;
+
+      monster = new Monster(5, 7, 'MON_SCAVENGER_RAT', 'Scavenger Rat');
+      monster.energy = 100;
+      monster.stats = { hp: 20, maxHp: 20, speed: 110, plev: 1 };
+
+      game.monsters = [monster];
+      game.map = {
+        width: 20,
+        height: 20,
+        isWalkable: () => true,
+        getTile: (x, y) => ({ x, y, isWalkable: true, type: 'FLOOR', char: '.' }),
+        isTransparent: () => true
+      };
+    });
+
+    it('verifies Game.prototype has isMonsterAt, getMonsterAt, updateFOV, attackPlayer, useMonsterBreath, handleMonsterBuffsAndHeals', () => {
+      expect(typeof game.isMonsterAt).toBe('function');
+      expect(typeof game.getMonsterAt).toBe('function');
+      expect(typeof game.updateFOV).toBe('function');
+      expect(typeof game.attackPlayer).toBe('function');
+      expect(typeof game.useMonsterBreath).toBe('function');
+      expect(typeof game.handleMonsterBuffsAndHeals).toBe('function');
+
+      expect(game.isMonsterAt(5, 7)).toBe(true);
+      expect(game.isMonsterAt(1, 1)).toBe(false);
+      expect(game.getMonsterAt(5, 7)).toBe(monster);
+      expect(game.getMonsterAt(1, 1)).toBe(null);
+
+      // Dead monsters should not register
+      monster.stats.hp = 0;
+      expect(game.isMonsterAt(5, 7)).toBe(false);
+      expect(game.getMonsterAt(5, 7)).toBe(null);
+    });
+
+    it('runs _runTurnLoopChunk with live monster and executes monster.act without errors', () => {
+      monster.stats.hp = 20;
+      monster.energy = 100;
+
+      const spyIsMonsterAt = vi.spyOn(game, 'isMonsterAt');
+      const spyHandleBuffs = vi.spyOn(game, 'handleMonsterBuffsAndHeals');
+      const logEntries = [];
+      game.addLogEntry = vi.fn((msg, type) => {
+        logEntries.push({ msg, type });
+      });
+
+      // Monster at (5, 7) moves towards player at (5, 5) and calls isMonsterAt
+      game._loopState = { e: 0, globalTicks: 0, monsterActCount: 0 };
+      game._runTurnLoopChunk();
+
+      const errorLogs = logEntries.filter(l => l.msg && l.msg.includes('몬스터 행동 오류'));
+      expect(errorLogs).toHaveLength(0);
+      expect(spyHandleBuffs).toHaveBeenCalled();
+      expect(spyIsMonsterAt).toHaveBeenCalled();
+    });
+
+    it('executes monster melee attack via attackPlayer when adjacent during turn loop', () => {
+      monster.stats.hp = 20;
+      monster.energy = 100;
+      // Position adjacent to player (5, 5) -> (5, 6)
+      monster.x = 5;
+      monster.y = 6;
+
+      const spyAttackPlayer = vi.spyOn(game, 'attackPlayer');
+      const logEntries = [];
+      game.addLogEntry = vi.fn((msg, type) => {
+        logEntries.push({ msg, type });
+      });
+
+      game._loopState = { e: 0, globalTicks: 0, monsterActCount: 0 };
+      game._runTurnLoopChunk();
+
+      const errorLogs = logEntries.filter(l => l.msg && l.msg.includes('몬스터 행동 오류'));
+      expect(errorLogs).toHaveLength(0);
+      expect(spyAttackPlayer).toHaveBeenCalled();
+    });
+
+    it('verifies useMonsterBreath and handleMonsterBuffsAndHeals execute without throwing', () => {
+      monster.stats.hp = 20;
+      expect(() => {
+        game.handleMonsterBuffsAndHeals(monster);
+      }).not.toThrow();
+
+      expect(() => {
+        game.useMonsterBreath(monster, 'FIRE', 10, '불꽃 브레스');
+      }).not.toThrow();
+    });
+
+    it('audits that 100% of this.<methodName>( calls across Game.js exist on Game.prototype', async () => {
+      const fs = await import('fs');
+      const code = fs.readFileSync('src/core/Game.js', 'utf8');
+      const matches = [...code.matchAll(/this\.([a-zA-Z0-9_$]+)\s*\(/g)];
+      const methodNames = new Set(matches.map(m => m[1]));
+
+      const proto = Game.prototype;
+      const missing = [];
+      for (const name of methodNames) {
+        if (typeof proto[name] !== 'function') {
+          missing.push(name);
+        }
+      }
+
+      expect(missing).toEqual([]);
+    });
+  });
 });

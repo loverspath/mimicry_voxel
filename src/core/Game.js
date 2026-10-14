@@ -799,6 +799,38 @@ export class Game {
       }
     }
   }
+
+  isMonsterAt(x, y) {
+    if (!this.monsters || !Array.isArray(this.monsters)) return false;
+    return this.monsters.some((m) => m && m.x === x && m.y === y && (!m.stats || m.stats.hp > 0));
+  }
+
+  getMonsterAt(x, y) {
+    if (!this.monsters || !Array.isArray(this.monsters)) return null;
+    return this.monsters.find((m) => m && m.x === x && m.y === y && (!m.stats || m.stats.hp > 0)) || null;
+  }
+
+  updateFOV() {
+    if (!this.map || !this.player) return;
+    const r = (this.player.lightRange !== undefined ? this.player.lightRange : 8);
+    const px = this.player.x;
+    const py = this.player.y;
+    for (let dy = -r; dy <= r; dy++) {
+      for (let dx = -r; dx <= r; dx++) {
+        if (dx * dx + dy * dy <= (r + 0.5) * (r + 0.5)) {
+          const tx = px + dx;
+          const ty = py + dy;
+          if (tx >= 0 && ty >= 0 && this.map.height && ty < this.map.height && this.map.width && tx < this.map.width) {
+            const tile = typeof this.map.getTile === 'function' ? this.map.getTile(tx, ty) : this.map.tiles?.[ty]?.[tx];
+            if (tile && (typeof this.map.isTransparent !== 'function' || this.map.isTransparent(px, py, tx, ty))) {
+              tile.explored = true;
+            }
+          }
+        }
+      }
+    }
+  }
+
   movePlayer(dx, dy) {
     if (this.isGameOver || this._isHandlingDeath || !this.player) return false;
 
