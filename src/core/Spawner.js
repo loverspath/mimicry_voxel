@@ -99,6 +99,76 @@ export const MONSTER_PIT_THEMES = [
   }
 ];
 
+/**
+ * 방 내부 또는 주변에서 벽/문/막힌 타일이 아닌 안전한 바닥(FLOOR) 좌표를 탐색하는 헬퍼 함수
+ * @param {Object} map - 게임 맵 인스턴스
+ * @param {number} preferredX - 선호 X 좌표
+ * @param {number} preferredY - 선호 Y 좌표
+ * @param {Object|null} room - 대상 방 객체 (옵션)
+ * @param {Set<string>|null} occupiedSet - 이미 점유된 좌표 집합 (옵션)
+ * @returns {{ x: number, y: number }}
+ */
+export function findSafeFloorPos(map, preferredX, preferredY, room = null, occupiedSet = null) {
+  if (!map) return { x: preferredX, y: preferredY };
+
+  const isSafe = (x, y) => {
+    if (x < 1 || x >= map.width - 1 || y < 1 || y >= map.height - 1) return false;
+    if (!map.isWalkable(x, y)) return false;
+    const tile = map.getTile(x, y);
+    if (!tile) return false;
+    if (tile.char === '#' || tile.char === '+' || tile.type === 'WALL' || tile.type === 'VAULT_WALL' || tile.type === 'DOOR') {
+      return false;
+    }
+    if (occupiedSet && occupiedSet.has(`${x},${y}`)) return false;
+    return true;
+  };
+
+  // 1. 선호 좌표가 안전한 바닥이면 바로 사용
+  if (isSafe(preferredX, preferredY)) {
+    return { x: preferredX, y: preferredY };
+  }
+
+  // 2. 선호 좌표 주변 나선형 반경 탐색
+  const maxRadius = room ? Math.max(room.w, room.h, 6) : 6;
+  for (let r = 1; r <= maxRadius; r++) {
+    for (let dx = -r; dx <= r; dx++) {
+      for (let dy = -r; dy <= r; dy++) {
+        if (Math.abs(dx) !== r && Math.abs(dy) !== r) continue;
+        const nx = preferredX + dx;
+        const ny = preferredY + dy;
+        if (room) {
+          if (nx <= room.x1 || nx >= room.x2 - 1 || ny <= room.y1 || ny >= room.y2 - 1) continue;
+        }
+        if (isSafe(nx, ny)) {
+          return { x: nx, y: ny };
+        }
+      }
+    }
+  }
+
+  // 3. 방 내부 전체 바닥 검사
+  if (room) {
+    for (let ry = room.y1 + 1; ry < room.y2 - 1; ry++) {
+      for (let rx = room.x1 + 1; rx < room.x2 - 1; rx++) {
+        if (isSafe(rx, ry)) {
+          return { x: rx, y: ry };
+        }
+      }
+    }
+  }
+
+  // 4. Fallback: 맵 전체에서 안전한 바닥 좌표 탐색
+  for (let y = 1; y < map.height - 1; y++) {
+    for (let x = 1; x < map.width - 1; x++) {
+      if (isSafe(x, y)) {
+        return { x, y };
+      }
+    }
+  }
+
+  return { x: preferredX, y: preferredY };
+}
+
 export const SPECIAL_MONSTER_PACKS = [
   {
     name: "비전 의회 (Arcane Council)",
@@ -109,7 +179,7 @@ export const SPECIAL_MONSTER_PACKS = [
     setup: (leader, danger) => ({
       speciesOverride: leader.type,
       prefixRoll: () => [],
-      suffixRoll: () => ["MAGE"]
+      suffixRoll: () => []
     }),
     logMessage: "🔮 방 주변 마력이 격렬히 공명합니다! 고위 마법사들로 구성된 '비전 의회' 무리를 마주했습니다!"
   },
@@ -119,22 +189,11 @@ export const SPECIAL_MONSTER_PACKS = [
     minFloor: 6,
     allowedSpecies: ["ORC", "OGRE", "GOBLIN", "TITAN"],
     packSizeRange: [3, 4],
-    setup: (leader, danger) => {
-      let count = 0;
-      return {
-        speciesOverride: leader.type,
-        prefixRoll: () => [],
-        suffixRoll: () => {
-          count++;
-          if (count === 1) {
-            if (danger >= 14.7) return ["CHIEFTAIN"];
-            if (danger >= 7.6) return ["CHAMPION"];
-            return ["WARRIOR"];
-          }
-          return ["WARRIOR"];
-        }
-      };
-    },
+    setup: (leader, danger) => ({
+      speciesOverride: leader.type,
+      prefixRoll: () => [],
+      suffixRoll: () => []
+    }),
     logMessage: "⚔️ 절도 있고 묵직한 군화 소리가 통로를 타고 울립니다! '전쟁 선봉대'와 정예 지휘관이 기습해옵니다!"
   },
   {
@@ -146,7 +205,7 @@ export const SPECIAL_MONSTER_PACKS = [
     setup: (leader, danger) => ({
       speciesOverride: (idx, allowed) => allowed[idx % allowed.length],
       prefixRoll: () => [],
-      suffixRoll: (idx) => idx % 2 === 0 ? ["SHAMAN"] : ["PRIEST"]
+      suffixRoll: () => []
     }),
     logMessage: "🌿 대자연의 속삭임과 치유 아우라가 가득 찹니다! 원소 토템을 공유하는 다종족 '사제단 무리'가 가로막습니다!"
   },
@@ -156,17 +215,11 @@ export const SPECIAL_MONSTER_PACKS = [
     minFloor: 6,
     allowedSpecies: ["BAT", "SLIME", "GOBLIN"],
     packSizeRange: [3, 4],
-    setup: (leader, danger) => {
-      const pool = ["TOXIC"];
-      if (danger >= 3.9) pool.push("FURIOUS");
-      if (danger >= 12.0) pool.push("BLOODTHIRSTY");
-      const chosenPrefix = pool[Math.floor(Math.random() * pool.length)];
-      return {
-        speciesOverride: leader.type,
-        prefixRoll: () => [chosenPrefix],
-        suffixRoll: () => []
-      };
-    },
+    setup: (leader, danger) => ({
+      speciesOverride: leader.type,
+      prefixRoll: () => [],
+      suffixRoll: () => []
+    }),
     logMessage: "💀 기이하고 광폭한 울음소리가 동굴을 메웁니다! 치명적인 돌연변이 인자를 공유하는 '돌연변이 군집'입니다!"
   }
 ];
@@ -250,6 +303,20 @@ export class Spawner {
   }
 
   /**
+   * 던전 층 내 모든 방에 몬스터와 아이템을 동적 배치합니다 (spawnFloorContent 호환 래퍼).
+   * @param {Object} game - Game 핵심 인스턴스
+   * @param {number} [floor=null] - 선택적 던전 층수
+   */
+  static spawnEntitiesForFloor(game, floor = null) {
+    if (floor !== null && game) game.floor = floor;
+    if (game) {
+      game.items = [];
+      game.monsters = [];
+    }
+    return this.spawnFloorContent(game);
+  }
+
+  /**
    * 던전 층 내 모든 방(Room)에 ToME 2.3.5 기반 유니크 몬스터, Vault/Pit 전용 스폰, 테마별 몬스터와 아이템을 동적 배치합니다.
    * @param {Object} game - Game 핵심 인스턴스
    */
@@ -284,6 +351,14 @@ export class Spawner {
       game.items.push(new Item(sc.x, sc.y, 'LAMP', '~', '#fbbf24', '횃불', 1, 'LIGHT', {}, null, null, [], [], [], "주변을 밝혀주는 기본적인 횃불입니다."));
     }
 
+    const occupiedPositions = new Set();
+    if (game.player) {
+      occupiedPositions.add(`${game.player.x},${game.player.y}`);
+    }
+    if (game.map?.stairs) {
+      occupiedPositions.add(`${game.map.stairs.x},${game.map.stairs.y}`);
+    }
+
     // 2. 각 방별 몬스터 및 전리품 동적 생성
     for (let i = 1; i < game.map.rooms.length; i++) {
       const room = game.map.rooms[i];
@@ -295,12 +370,14 @@ export class Spawner {
       // ----------------------------------------------------
       if (room.type === 'BOSS') {
         let bossMonster = null;
+        const bPos = findSafeFloorPos(game.map, center.x, center.y, room, occupiedPositions);
+        occupiedPositions.add(`${bPos.x},${bPos.y}`);
 
         // 0) 50F 모르고스의 옥좌 최종 보스 확정 스폰
         if (game.floor >= 50) {
           const morgothData = umm.getUniqueMonsterByKey('MON_MORGOTH_LORD_OF_DARKNESS') || TOME_MONSTERS_DATA['MON_MORGOTH_LORD_OF_DARKNESS'];
           if (morgothData) {
-            bossMonster = umm.createUniqueMonsterInstance(center.x, center.y, morgothData, 100);
+            bossMonster = umm.createUniqueMonsterInstance(bPos.x, bPos.y, morgothData, 100);
             if (bossMonster) {
               bossPhaseEngine.initBossEncounter(bossMonster, game);
               uniqueSpawnedThisFloor = true;
@@ -317,18 +394,14 @@ export class Spawner {
           });
 
           if (uniqueData) {
-            bossMonster = umm.createUniqueMonsterInstance(center.x, center.y, uniqueData, game.floor + 2);
+            bossMonster = umm.createUniqueMonsterInstance(bPos.x, bPos.y, uniqueData, game.floor + 2);
             uniqueSpawnedThisFloor = true;
           } else {
-            // 2) 폴백 종족 보스 스폰 (BudgetEngine 위임)
+            // 2) 폴백 종족 보스 스폰 (레거시 접사 전면 배제)
             const bossSpecies = Spawner.rollMonsterSpecies(game.floor, true);
             const bossLevel = game.floor + 2;
-            const bossTags = DungeonValueBudgetEngine.rollMonsterAffixes(game.floor, true, false);
-            const job = DungeonValueBudgetEngine.rollMonsterJobSuffix(game.floor, true);
-            const bossSuffixes = [...bossTags.suffixes];
-            if (job && !bossSuffixes.includes(job)) bossSuffixes.push(job);
 
-            bossMonster = new Monster(center.x, center.y, bossSpecies, bossLevel, bossTags.prefixes, bossSuffixes);
+            bossMonster = new Monster(bPos.x, bPos.y, bossSpecies, bossLevel, [], []);
             bossMonster.stats.hp = clampMonsterHp(Math.floor(bossMonster.stats.hp * 1.35), bossLevel);
             bossMonster.stats.maxHp = bossMonster.stats.hp;
             bossMonster.xpValue *= 3;
@@ -353,13 +426,17 @@ export class Spawner {
           }, 1000);
         }
 
-        // 보스룸 특별 전리품 배치 (전설 유물 / 에고 무기)
+        // 보스룸 특별 전리품 배치 (전설 유물 / 에고 무기) - 안전 바닥 탐색 보장
         if (!game.items) game.items = [];
-        const bossItem = TomeLootGenerator.generateFloorItem(center.x + 1, center.y, game.floor, true);
+        const bItem1Pos = findSafeFloorPos(game.map, center.x + 1, center.y, room, occupiedPositions);
+        occupiedPositions.add(`${bItem1Pos.x},${bItem1Pos.y}`);
+        const bossItem = TomeLootGenerator.generateFloorItem(bItem1Pos.x, bItem1Pos.y, game.floor, true);
         game.items.push(bossItem);
 
-        // 보스 격파 보상 특급 전리품 절차적 생성 배치
-        game.items.push(TomeLootGenerator.generateFloorItem(center.x - 1, center.y, game.floor + 1, true));
+        // 보스 격파 보상 특급 전리품 절차적 생성 배치 - 안전 바닥 탐색 보장
+        const bItem2Pos = findSafeFloorPos(game.map, center.x - 1, center.y, room, occupiedPositions);
+        occupiedPositions.add(`${bItem2Pos.x},${bItem2Pos.y}`);
+        game.items.push(TomeLootGenerator.generateFloorItem(bItem2Pos.x, bItem2Pos.y, game.floor + 1, true));
 
       // ----------------------------------------------------
       // B. 비밀 보물 금고 룸 (TREASURE_VAULT) 스폰
@@ -368,19 +445,28 @@ export class Spawner {
         if (!game.items) game.items = [];
         if (!game.monsters) game.monsters = [];
 
-        // 1) 보물 금고 특급 전리품 1~2개 배치
-        const vaultItem1 = TomeLootGenerator.generateFloorItem(center.x, center.y, game.floor + 3, true);
+        // 1) 보물 금고 특급 전리품 1~2개 배치 - 안전 바닥 탐색 100% 보장
+        const vPos1 = findSafeFloorPos(game.map, center.x, center.y, room, occupiedPositions);
+        occupiedPositions.add(`${vPos1.x},${vPos1.y}`);
+        const vaultItem1 = TomeLootGenerator.generateFloorItem(vPos1.x, vPos1.y, game.floor + 3, true);
         game.items.push(vaultItem1);
 
         if (Math.random() < 0.65) {
-          const vaultItem2 = TomeLootGenerator.generateFloorItem(center.x + 1, center.y, game.floor + 2, true);
+          const vPos2 = findSafeFloorPos(game.map, center.x + 1, center.y, room, occupiedPositions);
+          occupiedPositions.add(`${vPos2.x},${vPos2.y}`);
+          const vaultItem2 = TomeLootGenerator.generateFloorItem(vPos2.x, vPos2.y, game.floor + 2, true);
           game.items.push(vaultItem2);
         }
 
-        // 보물 금고 추가 마법 전리품 절차적 생성 배치
-        game.items.push(TomeLootGenerator.generateFloorItem(center.x, center.y - 1, game.floor + 2, true));
+        // 보물 금고 추가 마법 전리품 절차적 생성 배치 - 안전 바닥 탐색 100% 보장
+        const vPos3 = findSafeFloorPos(game.map, center.x, center.y - 1, room, occupiedPositions);
+        occupiedPositions.add(`${vPos3.x},${vPos3.y}`);
+        game.items.push(TomeLootGenerator.generateFloorItem(vPos3.x, vPos3.y, game.floor + 2, true));
 
-        // 2) 금고 수호자 스폰 (35% 확률로 유니크 수호자, 아니면 BudgetEngine 정예)
+        // 2) 금고 수호자 스폰 (35% 확률로 유니크 수호자, 아니면 BudgetEngine 정예) - 안전 바닥 및 레거시 접사 제거
+        const gPos = findSafeFloorPos(game.map, center.x - 1, center.y, room, occupiedPositions);
+        occupiedPositions.add(`${gPos.x},${gPos.y}`);
+
         let guardMonster = null;
         if (!uniqueSpawnedThisFloor && Math.random() < 0.35) {
           const uniqueData = umm.rollUniqueMonster(game.floor + 1, {
@@ -389,20 +475,14 @@ export class Spawner {
             autoMarkSpawned: true
           });
           if (uniqueData) {
-            guardMonster = umm.createUniqueMonsterInstance(center.x - 1, center.y, uniqueData, game.floor + 1);
+            guardMonster = umm.createUniqueMonsterInstance(gPos.x, gPos.y, uniqueData, game.floor + 1);
             uniqueSpawnedThisFloor = true;
           }
         }
 
         if (!guardMonster) {
           const guardSpecies = Spawner.rollMonsterSpecies(game.floor + 1, false);
-          const guardTags = DungeonValueBudgetEngine.rollMonsterAffixes(game.floor, false, true);
-          const guardJob = DungeonValueBudgetEngine.rollMonsterJobSuffix(game.floor, false);
-          const guardPrefixes = guardTags.prefixes;
-          const guardSuffixes = [...guardTags.suffixes];
-          if (guardJob && !guardSuffixes.includes(guardJob)) guardSuffixes.push(guardJob);
-
-          guardMonster = new Monster(center.x - 1, center.y, guardSpecies, game.floor + 2, guardPrefixes, guardSuffixes);
+          guardMonster = new Monster(gPos.x, gPos.y, guardSpecies, game.floor + 2, [], []);
           guardMonster.stats.hp = clampMonsterHp(Math.floor(guardMonster.stats.hp * 1.3), game.floor + 2);
           guardMonster.stats.maxHp = guardMonster.stats.hp;
         }
@@ -428,39 +508,37 @@ export class Spawner {
         const eligiblePits = MONSTER_PIT_THEMES.filter(p => game.floor >= p.minFloor);
         const chosenPit = eligiblePits.length > 0 ? eligiblePits[Math.floor(Math.random() * eligiblePits.length)] : MONSTER_PIT_THEMES[0];
 
-        // 2) Pit 우두머리 스폰
+        // 2) Pit 우두머리 스폰 - 안전 바닥 탐색 및 레거시 접사 제거
         const leaderLevel = Math.max(1, game.floor + 1);
-        const leaderTags = DungeonValueBudgetEngine.rollMonsterAffixes(game.floor, false, true);
-        const leaderJob = DungeonValueBudgetEngine.rollMonsterJobSuffix(game.floor, false);
-        const leaderSuffixes = [...leaderTags.suffixes];
-        if (leaderJob && !leaderSuffixes.includes(leaderJob)) leaderSuffixes.push(leaderJob);
-        else if (chosenPit.leaderSuffix && !leaderSuffixes.includes(chosenPit.leaderSuffix) && game.floor >= 6) leaderSuffixes.push(chosenPit.leaderSuffix);
+        const lPos = findSafeFloorPos(game.map, center.x, center.y, room, occupiedPositions);
+        occupiedPositions.add(`${lPos.x},${lPos.y}`);
 
-        const leaderMonster = new Monster(center.x, center.y, chosenPit.leaderSpecies, leaderLevel, leaderTags.prefixes, leaderSuffixes);
+        const leaderMonster = new Monster(lPos.x, lPos.y, chosenPit.leaderSpecies, leaderLevel, [], []);
         game.monsters.push(leaderMonster);
 
-        // 3) 군집 몬스터 스폰 (4~7마리 격자 배치)
+        // 3) 군집 몬스터 스폰 (4~7마리 격자 배치) - 안전 바닥 탐색 및 레거시 접사 제거
         const packSize = Math.floor(Math.random() * (chosenPit.packSizeRange[1] - chosenPit.packSizeRange[0] + 1)) + chosenPit.packSizeRange[0];
         let spawnedCount = 1;
 
         for (let dx = -2; dx <= 2 && spawnedCount < packSize; dx++) {
           for (let dy = -2; dy <= 2 && spawnedCount < packSize; dy++) {
             if (dx === 0 && dy === 0) continue;
-            const cx = center.x + dx;
-            const cy = center.y + dy;
+            const fPos = findSafeFloorPos(game.map, center.x + dx, center.y + dy, room, occupiedPositions);
 
-            if (game.map.isWalkable(cx, cy) && !isMonsterPresent(cx, cy) && !(game.player && cx === game.player.x && cy === game.player.y)) {
+            if (!isMonsterPresent(fPos.x, fPos.y) && !(game.player && fPos.x === game.player.x && fPos.y === game.player.y)) {
+              occupiedPositions.add(`${fPos.x},${fPos.y}`);
               const followerSpecies = chosenPit.followerSpecies[spawnedCount % chosenPit.followerSpecies.length];
               const fLevel = Math.max(1, game.floor + (Math.random() > 0.5 ? 0 : -1));
-              const fTags = DungeonValueBudgetEngine.rollMonsterAffixes(game.floor, false, false);
-              game.monsters.push(new Monster(cx, cy, followerSpecies, fLevel, fTags.prefixes, fTags.suffixes));
+              game.monsters.push(new Monster(fPos.x, fPos.y, followerSpecies, fLevel, [], []));
               spawnedCount++;
             }
           }
         }
 
-        // 4) Pit 보물 상자 전리품 배치
-        const pitTreasure = TomeLootGenerator.generateFloorItem(center.x + 1, center.y, game.floor + 1, true);
+        // 4) Pit 보물 상자 전리품 배치 - 안전 바닥 탐색 보장
+        const pTreasurePos = findSafeFloorPos(game.map, center.x + 1, center.y, room, occupiedPositions);
+        occupiedPositions.add(`${pTreasurePos.x},${pTreasurePos.y}`);
+        const pitTreasure = TomeLootGenerator.generateFloorItem(pTreasurePos.x, pTreasurePos.y, game.floor + 1, true);
         game.items.push(pitTreasure);
 
         setTimeout(() => {
@@ -476,28 +554,32 @@ export class Spawner {
         if (!game.items) game.items = [];
         if (!game.monsters) game.monsters = [];
 
-        // 1) 일반 방 아이템 스폰
+        // 1) 일반 방 아이템 스폰 - 안전 바닥 탐색 보장
         const itemChance = game.floor <= 3 ? 0.70 : 0.45;
         if (Math.random() < itemChance) {
-          const floorItem = TomeLootGenerator.generateFloorItem(center.x, center.y, game.floor, false);
+          const itemPos = findSafeFloorPos(game.map, center.x, center.y, room, occupiedPositions);
+          occupiedPositions.add(`${itemPos.x},${itemPos.y}`);
+          const floorItem = TomeLootGenerator.generateFloorItem(itemPos.x, itemPos.y, game.floor, false);
           game.items.push(floorItem);
         }
 
-        // 저층(1~3층) 탐험 지원 물약 추가 롤링
+        // 저층(1~3층) 탐험 지원 물약 추가 롤링 - 안전 바닥 탐색 보장
         if (game.floor <= 3 && Math.random() < 0.50) {
-          const potionX = center.x + (Math.random() > 0.5 ? 1 : -1);
-          const potionY = center.y + (Math.random() > 0.5 ? 1 : -1);
-          if (game.map.isWalkable(potionX, potionY)) {
-            const supPotion = TomeLootGenerator.generateFloorItem(potionX, potionY, game.floor, false);
-            game.items.push(supPotion);
-          }
+          const potionCandX = center.x + (Math.random() > 0.5 ? 1 : -1);
+          const potionCandY = center.y + (Math.random() > 0.5 ? 1 : -1);
+          const potionPos = findSafeFloorPos(game.map, potionCandX, potionCandY, room, occupiedPositions);
+          occupiedPositions.add(`${potionPos.x},${potionPos.y}`);
+          const supPotion = TomeLootGenerator.generateFloorItem(potionPos.x, potionPos.y, game.floor, false);
+          game.items.push(supPotion);
         }
 
-        // 2) 일반 방 유니크 몬스터 기습 등장 판정 (층당 1회 통합 검증)
-        const mx = center.x + (Math.random() > 0.5 ? 1 : -1);
-        const my = center.y + (Math.random() > 0.5 ? 1 : -1);
+        // 2) 일반 방 유니크 / 일반 몬스터 기습 등장 판정 - 안전 바닥 탐색 및 레거시 접사 제거
+        const mCandX = center.x + (Math.random() > 0.5 ? 1 : -1);
+        const mCandY = center.y + (Math.random() > 0.5 ? 1 : -1);
+        const mPos = findSafeFloorPos(game.map, mCandX, mCandY, room, occupiedPositions);
 
-        if (game.map.isWalkable(mx, my) && !isMonsterPresent(mx, my) && !(game.player && mx === game.player.x && my === game.player.y)) {
+        if (!isMonsterPresent(mPos.x, mPos.y) && !(game.player && mPos.x === game.player.x && mPos.y === game.player.y)) {
+          occupiedPositions.add(`${mPos.x},${mPos.y}`);
           let uniqueMonster = null;
           if (!uniqueSpawnedThisFloor && i === floorUniqueTargetRoomIndex) {
             const uniqueData = umm.rollUniqueMonster(game.floor, {
@@ -506,7 +588,7 @@ export class Spawner {
               autoMarkSpawned: true
             });
             if (uniqueData) {
-              uniqueMonster = umm.createUniqueMonsterInstance(mx, my, uniqueData, game.floor);
+              uniqueMonster = umm.createUniqueMonsterInstance(mPos.x, mPos.y, uniqueData, game.floor);
               uniqueSpawnedThisFloor = true;
             }
           }
@@ -519,13 +601,7 @@ export class Spawner {
               }
             }, 1000);
           } else {
-            // 3) 일반 몬스터 및 특수 무리(Special Monster Pack) 스폰 (BudgetEngine 위임)
-            const tags = DungeonValueBudgetEngine.rollMonsterAffixes(game.floor, false, false);
-            const job = DungeonValueBudgetEngine.rollMonsterJobSuffix(game.floor, false);
-            const monsterPrefixes = tags.prefixes;
-            const monsterSuffixes = [...tags.suffixes];
-            if (job && !monsterSuffixes.includes(job)) monsterSuffixes.push(job);
-
+            // 3) 일반 몬스터 및 특수 무리(Special Monster Pack) 스폰 (레거시 접사 제거)
             const species = Spawner.rollMonsterSpecies(game.floor, false, floorTheme.id || floorTheme.key);
             const monsterLevel = Math.max(1, game.floor + Math.floor(Math.random() * 3) - 1);
 
@@ -558,19 +634,17 @@ export class Spawner {
                 leaderSpecies = packRules.speciesOverride;
               }
 
-              const leaderPrefs = packRules.prefixRoll(0);
-              const leaderSuffs = packRules.suffixRoll(0);
-              const leaderMonster = new Monster(mx, my, leaderSpecies, monsterLevel, leaderPrefs, leaderSuffs);
+              const leaderMonster = new Monster(mPos.x, mPos.y, leaderSpecies, monsterLevel, [], []);
               game.monsters.push(leaderMonster);
 
               let spawnedCount = 1;
               for (let dx = -2; dx <= 2 && spawnedCount < packSize; dx++) {
                 for (let dy = -2; dy <= 2 && spawnedCount < packSize; dy++) {
                   if (dx === 0 && dy === 0) continue;
-                  const cx = mx + dx;
-                  const cy = my + dy;
+                  const compPos = findSafeFloorPos(game.map, mPos.x + dx, mPos.y + dy, room, occupiedPositions);
 
-                  if (game.map.isWalkable(cx, cy) && !isMonsterPresent(cx, cy) && !(game.player && cx === game.player.x && cy === game.player.y)) {
+                  if (!isMonsterPresent(compPos.x, compPos.y) && !(game.player && compPos.x === game.player.x && compPos.y === game.player.y)) {
+                    occupiedPositions.add(`${compPos.x},${compPos.y}`);
                     let compSpecies = species;
                     if (typeof packRules.speciesOverride === "function") {
                       compSpecies = packRules.speciesOverride(spawnedCount, specialPack.allowedSpecies);
@@ -578,11 +652,8 @@ export class Spawner {
                       compSpecies = packRules.speciesOverride;
                     }
 
-                    const compPrefs = packRules.prefixRoll(spawnedCount);
-                    const compSuffs = packRules.suffixRoll(spawnedCount);
                     const compLevel = Math.max(1, monsterLevel + Math.floor(Math.random() * 3) - 1);
-
-                    game.monsters.push(new Monster(cx, cy, compSpecies, compLevel, compPrefs, compSuffs));
+                    game.monsters.push(new Monster(compPos.x, compPos.y, compSpecies, compLevel, [], []));
                     spawnedCount++;
                   }
                 }
@@ -595,8 +666,8 @@ export class Spawner {
               }, 800);
 
             } else {
-              // 일반 단일 스폰 또는 일반 무리 스폰
-              game.monsters.push(new Monster(mx, my, species, monsterLevel, monsterPrefixes, monsterSuffixes));
+              // 일반 단일 스폰 또는 일반 무리 스폰 (레거시 접사 전면 배제)
+              game.monsters.push(new Monster(mPos.x, mPos.y, species, monsterLevel, [], []));
 
               if (isPack) {
                 const packSize = Math.floor(Math.random() * 3) + 2; // 2 ~ 4마리
@@ -605,18 +676,12 @@ export class Spawner {
                 for (let dx = -2; dx <= 2 && spawnedCount < packSize; dx++) {
                   for (let dy = -2; dy <= 2 && spawnedCount < packSize; dy++) {
                     if (dx === 0 && dy === 0) continue;
-                    const cx = mx + dx;
-                    const cy = my + dy;
+                    const compPos = findSafeFloorPos(game.map, mPos.x + dx, mPos.y + dy, room, occupiedPositions);
 
-                    if (game.map.isWalkable(cx, cy) && !isMonsterPresent(cx, cy) && !(game.player && cx === game.player.x && cy === game.player.y)) {
-                      const compTags = DungeonValueBudgetEngine.rollMonsterAffixes(game.floor, false, false);
-                      const compJob = DungeonValueBudgetEngine.rollMonsterJobSuffix(game.floor, false);
-                      const compPrefixes = compTags.prefixes;
-                      const compSuffixes = [...compTags.suffixes];
-                      if (compJob && !compSuffixes.includes(compJob)) compSuffixes.push(compJob);
-
+                    if (!isMonsterPresent(compPos.x, compPos.y) && !(game.player && compPos.x === game.player.x && compPos.y === game.player.y)) {
+                      occupiedPositions.add(`${compPos.x},${compPos.y}`);
                       const compLevel = Math.max(1, monsterLevel + Math.floor(Math.random() * 3) - 1);
-                      game.monsters.push(new Monster(cx, cy, species, compLevel, compPrefixes, compSuffixes));
+                      game.monsters.push(new Monster(compPos.x, compPos.y, species, compLevel, [], []));
                       spawnedCount++;
                     }
                   }

@@ -28,7 +28,10 @@ global.window = {
 
 import { describe, it, expect, vi } from 'vitest';
 import { TOME_MONSTERS_DATA } from '../src/entities/TomeMonstersData.js';
+import { TOME_KINDS_DATA } from '../src/entities/TomeKindsData.js';
 import { ProceduralSkillSynthesizer } from '../src/systems/ProceduralSkillSynthesizer.js';
+import { TomeLootGenerator } from '../src/systems/TomeLootGenerator.js';
+import { DungeonValueBudgetEngine, rollMonsterAffixes, rollMonsterJobSuffix } from '../src/systems/DungeonValueBudgetEngine.js';
 import { MONSTER_GROWTH_PATTERNS, getSpeciesConfig } from '../src/entities/MonsterRegistry.js';
 import { Player } from '../src/entities/Player.js';
 import { Monster } from '../src/entities/Monster.js';
@@ -36,6 +39,8 @@ import { CombatCalculator } from '../src/core/CombatCalculator.js';
 import { CombatSystem } from '../src/core/CombatSystem.js';
 import { CORE_SKILL_TREES } from '../src/core/Skills.js';
 import { Game } from '../src/core/Game.js';
+import { Spawner, findSafeFloorPos } from '../src/core/Spawner.js';
+import { Map, RectRoom } from '../src/map/Map.js';
 
 describe('Procedural Gimmick & Classic Fantasy Naming V2 Specification Test Suite', () => {
 
@@ -425,6 +430,183 @@ describe('Procedural Gimmick & Classic Fantasy Naming V2 Specification Test Suit
       expect(game.player.y).toBe(5);
       // HP remains 100 because trap was bypassed by flight
       expect(game.player.stats.hp).toBe(100);
+    });
+  });
+
+  // =========================================================================
+  // 5. Emergency Hotfix: Contract 1 - Mage Staff & Equipment Recovery
+  // =========================================================================
+  describe('Emergency Hotfix Contract 1: Mage Staff & Missing Equipment Recovery', () => {
+    it('[1] KIND_MAGE_STAFF (tval: 6) equips as WEAPON, accelerates cooldown, boosts INT and magic power', () => {
+      // 1. TomeKindsData 정의 검증
+      const mageStaffKind = TOME_KINDS_DATA['KIND_MAGE_STAFF'];
+      expect(mageStaffKind).toBeDefined();
+      expect(mageStaffKind.tval).toBe(6);
+      expect(mageStaffKind.type).toBe('WEAPON');
+      expect(mageStaffKind.slotType).toBe('WEAPON');
+
+      // 2. TomeLootGenerator 아이템 생성 검증
+      const staffItem = TomeLootGenerator.createBaseItem(mageStaffKind, 0, 0, 5);
+      expect(staffItem.type).toBe('WEAPON');
+      expect(staffItem.slotType).toBe('WEAPON');
+      expect(staffItem.tval).toBe(6);
+
+      // 3. Player.equipItem 검증
+      const player = new Player(5, 5, 'MON_NOVICE_WARRIOR');
+      const baseInt = player.getEffectiveStat('int');
+
+      player.equipItem(staffItem);
+      expect(player.equipment.weapon).toBe(staffItem);
+
+      // 4. 지능(INT) 보너스(+2 이상) 검증
+      const intWithStaff = player.getEffectiveStat('int');
+      expect(intWithStaff).toBeGreaterThanOrEqual(baseInt + 2);
+
+      // 5. 마나 리젠(스킬 쿨다운 회복 가속) 검증
+      player.setTracker('skill_1', 'cooldown', 5);
+      expect(player.getTracker('skill_1', 'cooldown')).toBe(5);
+
+      // 기본 상태는 1턴 감소이지만, Mage Staff 장착 시 최소 2턴 감소
+      player.decrementCooldown('skill_1');
+      const remainingCd = player.getTracker('skill_1', 'cooldown');
+      expect(remainingCd).toBeLessThanOrEqual(3); // 5 - 2 = 3 이하
+
+      // 6. 마법 위력 증폭(FOCUS +20%) 검증
+      const activeTags = player.compileActiveTags();
+      expect(activeTags['FOCUS']).toBeGreaterThanOrEqual(1);
+
+      // 7. 누락 장비군(tval: 15, 14, 115) 장착 무결성
+      const boomerangKind = TOME_KINDS_DATA['KIND_WOODEN_BOOMERANG'];
+      const boomerangItem = TomeLootGenerator.createBaseItem(boomerangKind, 0, 0, 5);
+      player.equipItem(boomerangItem);
+      expect(player.equipment.bow).toBe(boomerangItem);
+
+      const demonbladeKind = TOME_KINDS_DATA['KIND_DEMONBLADE'];
+      const demonbladeItem = TomeLootGenerator.createBaseItem(demonbladeKind, 0, 0, 5);
+      player.equipItem(demonbladeItem);
+      expect(player.equipment.weapon).toBe(demonbladeItem);
+
+      const demonshieldKind = TOME_KINDS_DATA['KIND_DEMONSHIELD'];
+      const demonshieldItem = TomeLootGenerator.createBaseItem(demonshieldKind, 0, 0, 5);
+      player.equipItem(demonshieldItem);
+      expect(player.equipment.shield).toBe(demonshieldItem);
+
+      const demonhornKind = TOME_KINDS_DATA['KIND_DEMONHORN'];
+      const demonhornItem = TomeLootGenerator.createBaseItem(demonhornKind, 0, 0, 5);
+      player.equipItem(demonhornItem);
+      expect(player.equipment.helmet).toBe(demonhornItem);
+    });
+  });
+
+  // =========================================================================
+  // 6. Emergency Hotfix: Contract 2 - Vault & Special Rooms Wall Spawn Prevention
+  // =========================================================================
+  describe('Emergency Hotfix Contract 2: Wall Spawn Prevention in Vaults and Special Rooms', () => {
+    it('[2] verifies items and monsters in TREASURE_VAULT rooms (7x7, 8x8, 9x9) are never spawned on walls (#)', () => {
+      const roomSizes = [
+        { w: 7, h: 7 },
+        { w: 8, h: 8 },
+        { w: 9, h: 9 },
+        { w: 10, h: 10 }
+      ];
+
+      for (const size of roomSizes) {
+        for (let iter = 0; iter < 10; iter++) {
+          const game = new Game();
+          game.floor = 5;
+          game.map = new Map(60, 40, 5);
+
+          // TREASURE_VAULT 방 강제 추가
+          const rx = 10;
+          const ry = 10;
+          const vaultRoom = new RectRoom(rx, ry, size.w, size.h, 'TREASURE_VAULT');
+          game.map.rooms = [
+            new RectRoom(2, 2, 5, 5, 'NORMAL'), // 시작 방
+            vaultRoom
+          ];
+
+          // 맵 카빙 실행
+          game.map.carveRoomsAndCorridors();
+
+          // Spawner로 아이템/몬스터 생성
+          Spawner.spawnEntitiesForFloor(game, 5);
+
+          // 생성된 모든 아이템 검증
+          for (const item of game.items) {
+            const isWalkable = game.map.isWalkable(item.x, item.y);
+            const tile = game.map.getTile(item.x, item.y);
+            expect(isWalkable).toBe(true);
+            expect(tile).toBeDefined();
+            expect(tile.char).not.toBe('#');
+            expect(tile.type).not.toBe('WALL');
+            expect(tile.type).not.toBe('VAULT_WALL');
+          }
+
+          // 생성된 모든 몬스터 검증
+          for (const monster of game.monsters) {
+            expect(game.map.isWalkable(monster.x, monster.y)).toBe(true);
+            const tile = game.map.getTile(monster.x, monster.y);
+            expect(tile).toBeDefined();
+            expect(tile.char).not.toBe('#');
+            expect(tile.type).not.toBe('WALL');
+            expect(tile.type).not.toBe('VAULT_WALL');
+          }
+        }
+      }
+    });
+  });
+
+  // =========================================================================
+  // 7. Emergency Hotfix: Contract 3 - Legacy Monster Affixes Eradication
+  // =========================================================================
+  describe('Emergency Hotfix Contract 3: Legacy Monster Affixes Eradication', () => {
+    it('[3-A] verifies rollMonsterAffixes and rollMonsterJobSuffix return empty/null', () => {
+      for (let floor = 1; floor <= 50; floor += 5) {
+        const affixes = rollMonsterAffixes(floor, false, false);
+        expect(affixes.prefixes).toEqual([]);
+        expect(affixes.suffixes).toEqual([]);
+
+        const bossAffixes = rollMonsterAffixes(floor, true, false);
+        expect(bossAffixes.prefixes).toEqual([]);
+        expect(bossAffixes.suffixes).toEqual([]);
+
+        const guardAffixes = rollMonsterAffixes(floor, false, true);
+        expect(guardAffixes.prefixes).toEqual([]);
+        expect(guardAffixes.suffixes).toEqual([]);
+
+        const job = rollMonsterJobSuffix(floor, false);
+        expect(job).toBeNull();
+        const bossJob = rollMonsterJobSuffix(floor, true);
+        expect(bossJob).toBeNull();
+      }
+    });
+
+    it('[3-B] verifies monsters spawned via Spawner have 0 legacy affixes in displayName', () => {
+      const legacyTerms = ['바람구두', '맹독의', '짜릿한', '피갈망', '철벽', '광폭한', '난무', '치프틴'];
+
+      for (let floor = 1; floor <= 30; floor += 5) {
+        for (let iter = 0; iter < 5; iter++) {
+          const game = new Game();
+          game.floor = floor;
+          game.map = new Map(60, 40, floor);
+          game.map.rooms = [
+            new RectRoom(2, 2, 5, 5, 'NORMAL'),
+            new RectRoom(10, 10, 8, 8, 'NORMAL'),
+            new RectRoom(22, 10, 8, 8, 'TREASURE_VAULT'),
+            new RectRoom(34, 10, 8, 8, 'MONSTER_PIT'),
+            new RectRoom(46, 10, 8, 8, 'BOSS')
+          ];
+          game.map.carveRoomsAndCorridors();
+          Spawner.spawnEntitiesForFloor(game, floor);
+
+          for (const m of game.monsters) {
+            for (const term of legacyTerms) {
+              expect(m.displayName).not.toContain(term);
+              expect(m.name).not.toContain(term);
+            }
+          }
+        }
+      }
     });
   });
 });

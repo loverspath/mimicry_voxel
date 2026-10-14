@@ -585,11 +585,15 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
     LAMP: '광원 등불'
   };
   const slotNameKor = SLOT_NAME_MAP[item.slotType] || SLOT_NAME_MAP[item.type] || item.type;
+  const isMageStaff = item.tval === 6 || item.key === 'KIND_MAGE_STAFF' || (item.name && item.name.includes('Mage Staff'));
 
   // 1. 핵심 스펙 그리드 블록 (Dice, AC, Range, Light, Ammo/Launcher Info)
   const specItems = [];
   if (item.dice) {
     specItems.push(`<div><span style="color: #94a3b8;">⚔️ 공격 다이스:</span> <b style="color: #f87171;">${item.dice}</b></div>`);
+  }
+  if (isMageStaff) {
+    specItems.push(`<div><span style="color: #38bdf8;">🪄 고유 효과:</span> <b style="color: #60a5fa;">마나 리젠+1 / INT+2 / 마법위력+20%</b></div>`);
   }
   if (typeof item.baseAC === 'number' && item.baseAC > 0) {
     specItems.push(`<div><span style="color: #94a3b8;">🛡️ 기본 방어 (AC):</span> <b style="color: #38bdf8;">+${item.baseAC}</b></div>`);
@@ -643,6 +647,12 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
   const specGridHTML = specItems.length > 0 ? `
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem 0.5rem; background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 0.45rem 0.6rem; font-size: 0.78rem;">
       ${specItems.join('')}
+    </div>
+  ` : '';
+
+  const mageStaffNoticeHTML = isMageStaff ? `
+    <div style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.45); border-radius: 6px; padding: 0.45rem 0.65rem; color: #38bdf8; font-size: 0.78rem; font-weight: bold; line-height: 1.4;">
+      [마법사 지팡이 고유 효과: 마나 리젠(스킬 쿨타임 회복 가속) +1 / 지능(INT) +2 / 마법 위력 +20%]
     </div>
   ` : '';
 
@@ -738,6 +748,10 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
     }
   }
 
+  if (isMageStaff) {
+    flagItems.unshift(`<li>• <span style="color: #38bdf8; font-weight: bold;">[마법사 지팡이 고유 효과: 마나 리젠(스킬 쿨타임 회복 가속) +1 / 지능(INT) +2 / 마법 위력 +20%]</span></li>`);
+  }
+
   const flagsHTML = flagItems.length > 0 ? `
     <div style="border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 0.4rem; margin-top: 0.2rem; font-size: 0.76rem;">
       <p style="font-weight: bold; color: var(--text-main); margin-bottom: 0.25rem;">✨ 고유 플래그 및 마법 효과:</p>
@@ -781,6 +795,7 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
     </div>
     <div class="detail-desc" style="margin-top: 0.4rem; font-size: 0.8rem; color: var(--text-muted); text-align: left; padding-right: 4px; display: flex; flex-direction: column; gap: 0.4rem;">
       ${specGridHTML}
+      ${mageStaffNoticeHTML}
       ${statChipsHTML}
       ${flagsHTML}
       ${loreHTML}

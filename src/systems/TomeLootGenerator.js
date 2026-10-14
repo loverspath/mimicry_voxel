@@ -194,8 +194,92 @@ export class TomeLootGenerator {
   /**
    * ToME 데이터셋 초기 로더 (호환성 유지용)
    */
-  static async initDataset() {
-    return true;
+  /**
+   * ToME 베이스 아이템 인스턴스를 생성합니다.
+   * @param {Object} baseKind - TomeKindsData의 베이스 아이템 정의
+   * @param {number} [x=0] - 월드 X
+   * @param {number} [y=0] - 월드 Y
+   * @param {number} [danger=1] - 위험도/층수
+   * @returns {Item}
+   */
+  static createBaseItem(baseKind, x = 0, y = 0, danger = 1) {
+    if (!baseKind) return null;
+
+    let type = baseKind.type;
+    let slotType = baseKind.slotType;
+    let char = baseKind.char || Item.getDefaultSymbol(type, slotType, baseKind.name);
+
+    if (baseKind.tval === 16 || baseKind.tval === 17 || baseKind.tval === 18 || type === 'AMMO' || type === 'QUIVER' || slotType === 'QUIVER') {
+      type = 'AMMO';
+      slotType = 'QUIVER';
+      char = '{';
+    } else if (baseKind.tval === 19 || baseKind.tval === 15 || type === 'BOW' || slotType === 'BOW') {
+      type = 'BOW';
+      slotType = 'BOW';
+      char = '}';
+    } else if (baseKind.tval === 6 || baseKind.tval === 14 || (baseKind.tval === 115 && baseKind.sval === 55)) {
+      type = 'WEAPON';
+      slotType = 'WEAPON';
+      char = baseKind.char || (baseKind.tval === 6 ? '\\' : (baseKind.tval === 14 ? '/' : '|'));
+    } else if (baseKind.tval === 34 || type === 'SHIELD' || (baseKind.tval === 115 && baseKind.sval === 56)) {
+      type = 'SHIELD';
+      slotType = 'SHIELD';
+      char = ')';
+    } else if (baseKind.tval === 31 || type === 'GLOVES') {
+      type = 'GLOVES';
+      slotType = 'GLOVES';
+      char = ']';
+    } else if (baseKind.tval === 30 || type === 'BOOTS') {
+      type = 'BOOTS';
+      slotType = 'BOOTS';
+      char = ']';
+    } else if (baseKind.tval === 35 || type === 'CLOAK') {
+      type = 'CLOAK';
+      slotType = 'CLOAK';
+      char = '(';
+    } else if (baseKind.tval === 32 || baseKind.tval === 33 || type === 'HELMET' || type === 'CROWN' || (baseKind.tval === 115 && baseKind.sval === 57)) {
+      type = 'HELMET';
+      slotType = 'HELMET';
+      char = ']';
+    } else if (baseKind.tval === 36 || baseKind.tval === 37 || baseKind.tval === 38 || type === 'ARMOR') {
+      type = 'ARMOR';
+      slotType = 'ARMOR';
+      char = '[';
+    }
+
+    const cleanBase = this.cleanItemName(baseKind.name);
+    const itemStatBonuses = { ...(baseKind.statBonuses || {}) };
+    if (baseKind.tval === 6 && (!itemStatBonuses.int || itemStatBonuses.int < 2)) {
+      itemStatBonuses.int = 2;
+    }
+
+    const item = new Item(
+      x, y,
+      type,
+      char,
+      baseKind.color || "#cbd5e1",
+      cleanBase,
+      baseKind.lightBonus || (baseKind.type === 'LAMP' ? 2 : 0),
+      slotType,
+      itemStatBonuses,
+      baseKind.dice || null,
+      null,
+      [],
+      [],
+      [...(baseKind.specialTags || [])],
+      baseKind.flavorText || "깊은 던전에서 발견된 ToME 장비입니다."
+    );
+
+    if (baseKind.tval !== undefined) item.tval = baseKind.tval;
+    if (baseKind.sval !== undefined) item.sval = baseKind.sval;
+    if (typeof baseKind.baseAC === 'number') item.baseAC = baseKind.baseAC;
+    if (typeof baseKind.weight === 'number') item.weight = baseKind.weight;
+    if (typeof baseKind.cost === 'number') item.cost = baseKind.cost;
+    if (typeof baseKind.level === 'number') item.level = baseKind.level;
+    if (baseKind.flags && Array.isArray(baseKind.flags)) item.flags = [...baseKind.flags];
+    if (baseKind.multiplier) item.multiplier = baseKind.multiplier;
+    item.syncComponents();
+    return item;
   }
 
   /**
@@ -220,18 +304,22 @@ export class TomeLootGenerator {
       type = 'AMMO';
       slotType = 'QUIVER';
       char = '{';
-    } else if (art.tval === 19 || type === 'BOW' || baseKind?.type === 'BOW') {
+    } else if (art.tval === 19 || art.tval === 15 || type === 'BOW' || baseKind?.type === 'BOW') {
       type = 'BOW';
       slotType = 'BOW';
       char = '}';
+    } else if (art.tval === 6 || art.tval === 14 || (art.tval === 115 && art.sval === 55)) {
+      type = 'WEAPON';
+      slotType = 'WEAPON';
+      char = art.char || (art.tval === 6 ? '\\' : (art.tval === 14 ? '/' : '|'));
+    } else if (art.tval === 34 || type === 'SHIELD' || (art.tval === 115 && art.sval === 56)) {
+      type = 'SHIELD';
+      slotType = 'SHIELD';
+      char = ')';
     } else if (art.tval === 31 || type === 'GLOVES') {
       type = 'GLOVES';
       slotType = 'GLOVES';
       char = ']';
-    } else if (art.tval === 34 || type === 'SHIELD') {
-      type = 'SHIELD';
-      slotType = 'SHIELD';
-      char = ')';
     } else if (art.tval === 30 || type === 'BOOTS') {
       type = 'BOOTS';
       slotType = 'BOOTS';
@@ -240,7 +328,7 @@ export class TomeLootGenerator {
       type = 'CLOAK';
       slotType = 'CLOAK';
       char = '(';
-    } else if (art.tval === 32 || art.tval === 33 || type === 'HELMET' || type === 'CROWN') {
+    } else if (art.tval === 32 || art.tval === 33 || type === 'HELMET' || type === 'CROWN' || (art.tval === 115 && art.sval === 57)) {
       type = 'HELMET';
       slotType = 'HELMET';
       char = ']';
@@ -414,18 +502,22 @@ export class TomeLootGenerator {
       type = 'AMMO';
       slotType = 'QUIVER';
       char = '{';
-    } else if (baseKind.tval === 19 || type === 'BOW' || slotType === 'BOW') {
+    } else if (baseKind.tval === 19 || baseKind.tval === 15 || type === 'BOW' || slotType === 'BOW') {
       type = 'BOW';
       slotType = 'BOW';
       char = '}';
+    } else if (baseKind.tval === 6 || baseKind.tval === 14 || (baseKind.tval === 115 && baseKind.sval === 55)) {
+      type = 'WEAPON';
+      slotType = 'WEAPON';
+      char = baseKind.char || (baseKind.tval === 6 ? '\\' : (baseKind.tval === 14 ? '/' : '|'));
+    } else if (baseKind.tval === 34 || type === 'SHIELD' || (baseKind.tval === 115 && baseKind.sval === 56)) {
+      type = 'SHIELD';
+      slotType = 'SHIELD';
+      char = ')';
     } else if (baseKind.tval === 31 || type === 'GLOVES') {
       type = 'GLOVES';
       slotType = 'GLOVES';
       char = ']';
-    } else if (baseKind.tval === 34 || type === 'SHIELD') {
-      type = 'SHIELD';
-      slotType = 'SHIELD';
-      char = ')';
     } else if (baseKind.tval === 30 || type === 'BOOTS') {
       type = 'BOOTS';
       slotType = 'BOOTS';
@@ -434,7 +526,7 @@ export class TomeLootGenerator {
       type = 'CLOAK';
       slotType = 'CLOAK';
       char = '(';
-    } else if (baseKind.tval === 32 || baseKind.tval === 33 || type === 'HELMET' || type === 'CROWN') {
+    } else if (baseKind.tval === 32 || baseKind.tval === 33 || type === 'HELMET' || type === 'CROWN' || (baseKind.tval === 115 && baseKind.sval === 57)) {
       type = 'HELMET';
       slotType = 'HELMET';
       char = ']';
@@ -457,6 +549,9 @@ export class TomeLootGenerator {
     itemName = this.cleanItemName(itemName);
 
     const itemStatBonuses = { ...(baseKind.statBonuses || {}) };
+    if (baseKind.tval === 6 && (!itemStatBonuses.int || itemStatBonuses.int < 2)) {
+      itemStatBonuses.int = 2;
+    }
     if (egoData && egoData.flags) {
       if (egoData.flags.includes('STR')) itemStatBonuses.str = (itemStatBonuses.str || 0) + 2;
       if (egoData.flags.includes('DEX')) itemStatBonuses.dex = (itemStatBonuses.dex || 0) + 2;

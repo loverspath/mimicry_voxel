@@ -374,6 +374,15 @@ export class MimicBody {
         if (gear.specialTags) {
           addTags(gear.specialTags);
         }
+        // Mage Staff (tval === 6) 및 MANA / SPELL / DEC_MANA / WIELD_CAST 플래그 연동
+        const gFlags = Array.isArray(gear.flags) ? gear.flags : [];
+        const isMageStaff = gear.tval === 6 || gear.key === 'KIND_MAGE_STAFF' || (gear.name && gear.name.includes('Mage Staff'));
+        if (isMageStaff || gFlags.includes('MANA') || gFlags.includes('DEC_MANA') || gear.specialTags?.includes('MANA') || gear.specialTags?.includes('DEC_MANA')) {
+          addTags(['QUICKCAST', 'INT_BOOST']);
+        }
+        if (isMageStaff || gFlags.includes('SPELL') || gFlags.includes('WIELD_CAST') || gear.specialTags?.includes('SPELL') || gear.specialTags?.includes('WIELD_CAST')) {
+          addTags(['FOCUS']);
+        }
       }
     }
 

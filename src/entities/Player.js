@@ -422,15 +422,15 @@ export class Player {
     }
     if (item.slotType === 'QUIVER' || item.type === 'AMMO' || item.type === 'QUIVER' || item.char === '{' || item.tval === 16 || item.tval === 17 || item.tval === 18) {
       this.equipment.quiver = item;
-    } else if (item.slotType === 'BOW' || item.type === 'BOW' || item.tval === 19 || item.char === '}') {
+    } else if (item.slotType === 'BOW' || item.type === 'BOW' || item.tval === 19 || item.tval === 15 || item.char === '}') {
       this.equipment.bow = item;
-    } else if (item.slotType === 'WEAPON' || item.type === 'WEAPON') {
+    } else if (item.slotType === 'WEAPON' || item.type === 'WEAPON' || item.tval === 6 || item.tval === 14 || (item.tval === 115 && item.sval === 55)) {
       this.equipment.weapon = item;
-    } else if (item.slotType === 'SHIELD' || item.type === 'SHIELD' || item.char === ')') {
+    } else if (item.slotType === 'SHIELD' || item.type === 'SHIELD' || item.char === ')' || (item.tval === 115 && item.sval === 56)) {
       this.equipment.shield = item;
     } else if (item.slotType === 'ARMOR' || item.type === 'ARMOR') {
       this.equipment.armor = item;
-    } else if (item.slotType === 'HELMET' || item.type === 'HELMET') {
+    } else if (item.slotType === 'HELMET' || item.type === 'HELMET' || (item.tval === 115 && item.sval === 57)) {
       this.equipment.helmet = item;
     } else if (item.slotType === 'GLOVES' || item.type === 'GLOVES') {
       this.equipment.gloves = item;
@@ -1074,7 +1074,16 @@ export class Player {
   decrementCooldown(key) {
     let amount = 1;
     const activeTags = this.compileActiveTags();
-    const quickcastStacks = activeTags["QUICKCAST"] || 0;
+    let quickcastStacks = activeTags["QUICKCAST"] || 0;
+    // Mage Staff (tval === 6) 또는 MANA / DEC_MANA 플래그 보유 장비 장착 시 가속 보장
+    const hasMageStaffOrMana = Object.values(this.equipment || {}).some(gear =>
+      gear && (gear.tval === 6 || gear.key === 'KIND_MAGE_STAFF' || (gear.name && gear.name.includes('Mage Staff')) ||
+               (Array.isArray(gear.flags) && (gear.flags.includes('MANA') || gear.flags.includes('DEC_MANA'))) ||
+               (Array.isArray(gear.specialTags) && (gear.specialTags.includes('MANA') || gear.specialTags.includes('DEC_MANA'))))
+    );
+    if (hasMageStaffOrMana && quickcastStacks === 0) {
+      quickcastStacks += 1;
+    }
     if (quickcastStacks > 0) {
       amount = 1 + quickcastStacks;
     }

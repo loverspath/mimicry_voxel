@@ -329,8 +329,8 @@ export class Map {
           }
         }
 
-        if (w >= 7 && h >= 7) {
-          // 대형 금고: 내부 이중벽 밀실 구조 (Inner Chamber Sanctum)
+        if (w >= 9 && h >= 9) {
+          // 대형 금고: 내부 이중벽 밀실 구조 (Inner Chamber Sanctum, 9x9 이상에서만 중심 3x3 여백 보장)
           room.vaultType = 'INNER_CHAMBER';
           const innerX1 = room.x1 + 2;
           const innerY1 = room.y1 + 2;
@@ -597,6 +597,186 @@ export class Map {
     }
 
     return tiles;
+  }
+
+  /**
+   * 지정된 방 목록 또는 현재 맵의 방들을 캔버스에 카빙하고 복도 및 특수 방 구조를 생성합니다.
+   * @param {Array<RectRoom>} [customRooms=null]
+   */
+  carveRoomsAndCorridors(customRooms = null) {
+    if (customRooms && Array.isArray(customRooms)) {
+      this.rooms = customRooms;
+    }
+
+    const wallColor = this.theme.colors.wallColor;
+    const wallChar = this.theme.colors.wallChar || '#';
+    const floorColor = this.theme.colors.floorColor;
+    const floorChar = this.theme.colors.floorChar || '.';
+    const corridorColor = this.theme.colors.corridorColor || floorColor;
+
+    // 타일 초기화 (외벽 제외 내부 벽으로)
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const tile = this.tiles[y][x];
+        tile.char = wallChar;
+        tile.color = wallColor;
+        tile.type = 'WALL';
+        tile.isWalkable = false;
+        tile.roomType = null;
+        tile.isTrap = false;
+        tile.isPitTile = false;
+        tile.isVaultTile = false;
+      }
+    }
+
+    const carveTile = (x, y, char = floorChar, color = floorColor, type = 'FLOOR', roomType = null, extraProps = {}) => {
+      if (x > 0 && x < this.width - 1 && y > 0 && y < this.height - 1) {
+        const tile = this.tiles[y][x];
+        const isWall = (char === '#' || type === 'WALL' || type === 'VAULT_WALL');
+        tile.isWalkable = !isWall;
+        tile.char = char;
+        tile.color = color;
+        tile.type = type;
+        tile.roomType = roomType;
+        if (extraProps && typeof extraProps === 'object') {
+          Object.assign(tile, extraProps);
+        }
+      }
+    };
+
+    const placeWallTile = (x, y, char = '#', color = wallColor, type = 'VAULT_WALL', roomType = null) => {
+      if (x > 0 && x < this.width - 1 && y > 0 && y < this.height - 1) {
+        const tile = this.tiles[y][x];
+        tile.isWalkable = false;
+        tile.char = char;
+        tile.color = color;
+        tile.type = type;
+        tile.roomType = roomType;
+      }
+    };
+
+    const carveHorizontalTunnel = (x1, x2, y) => {
+      const start = Math.min(x1, x2);
+      const end = Math.max(x1, x2);
+      for (let x = start; x <= end; x++) {
+        carveTile(x, y, '.', corridorColor, 'CORRIDOR');
+      }
+    };
+
+    const carveVerticalTunnel = (y1, y2, x) => {
+      const start = Math.min(y1, y2);
+      const end = Math.max(y1, y2);
+      for (let y = start; y <= end; y++) {
+        carveTile(x, y, '.', corridorColor, 'CORRIDOR');
+      }
+    };
+
+    for (let i = 0; i < this.rooms.length; i++) {
+      const room = this.rooms[i];
+      for (let ry = room.y1; ry < room.y2; ry++) {
+        for (let rx = room.x1; rx < room.x2; rx++) {
+          carveTile(rx, ry, floorChar, floorColor, 'FLOOR', room.type);
+        }
+      }
+      if (i > 0) {
+        const prevCenter = this.rooms[i - 1].center;
+        const center = room.center;
+        carveHorizontalTunnel(prevCenter.x, center.x, prevCenter.y);
+        carveVerticalTunnel(prevCenter.y, center.y, center.x);
+      }
+    }
+
+    // 특수 룸 구조 적용
+    for (let i = 0; i < this.rooms.length; i++) {
+      const room = this.rooms[i];
+      const w = room.w;
+      const h = room.h;
+      const center = room.center;
+
+      if (room.type === 'TREASURE_VAULT') {
+        const vaultFloorCol = this.theme.colors.vaultFloorColor || '#c084fc';
+        const trapCol = this.theme.colors.trapColor || '#f59e0b';
+        const doorCol = this.theme.colors.doorColor || '#b45309';
+
+        for (let ry = room.y1; ry < room.y2; ry++) {
+          for (let rx = room.x1; rx < room.x2; rx++) {
+            carveTile(rx, ry, '*', vaultFloorCol, 'VAULT_FLOOR', 'TREASURE_VAULT', { isVaultTile: true });
+          }
+        }
+
+        if (w >= 9 && h >= 9) {
+          room.vaultType = 'INNER_CHAMBER';
+          const innerX1 = room.x1 + 2;
+          const innerY1 = room.y1 + 2;
+          const innerX2 = room.x2 - 3;
+          const innerY2 = room.y2 - 3;
+
+          for (let iy = innerY1; iy <= innerY2; iy++) {
+            for (let ix = innerX1; ix <= innerX2; ix++) {
+              const isBorder = (ix === innerX1 || ix === innerX2 || iy === innerY1 || iy === innerY2);
+              if (isBorder) {
+                placeWallTile(ix, iy, '#', wallColor, 'VAULT_WALL', 'TREASURE_VAULT');
+                room.innerWalls.push({ x: ix, y: iy });
+              }
+            }
+          }
+
+          const doorX = center.x;
+          const doorY = innerY2;
+          carveTile(doorX, doorY, '+', doorCol, 'DOOR', 'TREASURE_VAULT', { isWalkable: true });
+          room.doorTiles.push({ x: doorX, y: doorY });
+
+          carveTile(center.x, center.y, '$', '#facc15', 'TREASURE', 'TREASURE_VAULT', { isVaultTile: true, isWalkable: true });
+          room.treasureTiles.push({ x: center.x, y: center.y, isGuarded: true });
+
+          const trapCandidates = [
+            { x: center.x - 1, y: center.y },
+            { x: center.x + 1, y: center.y },
+            { x: center.x, y: center.y - 1 }
+          ];
+          trapCandidates.forEach(tc => {
+            if (tc.x > innerX1 && tc.x < innerX2 && tc.y > innerY1 && tc.y < innerY2) {
+              carveTile(tc.x, tc.y, '^', trapCol, 'TRAP', 'TREASURE_VAULT', { isTrap: true, isWalkable: true, isVaultTile: true });
+              room.trapTiles.push({ x: tc.x, y: tc.y, type: 'TRAP' });
+            }
+          });
+        } else {
+          room.vaultType = 'GEM_ALCOVE';
+          carveTile(center.x, center.y, '$', '#facc15', 'TREASURE', 'TREASURE_VAULT', { isVaultTile: true, isWalkable: true });
+          room.treasureTiles.push({ x: center.x, y: center.y, isGuarded: true });
+
+          const trapCandidates = [
+            { x: center.x - 1, y: center.y },
+            { x: center.x + 1, y: center.y },
+            { x: center.x, y: center.y - 1 },
+            { x: center.x, y: center.y + 1 }
+          ];
+          for (const trapPos of trapCandidates) {
+            if (trapPos.x > room.x1 && trapPos.x < room.x2 - 1 && trapPos.y > room.y1 && trapPos.y < room.y2 - 1) {
+              carveTile(trapPos.x, trapPos.y, '^', trapCol, 'TRAP', 'TREASURE_VAULT', { isTrap: true, isWalkable: true, isVaultTile: true });
+              room.trapTiles.push({ x: trapPos.x, y: trapPos.y, type: 'TRAP' });
+              break;
+            }
+          }
+        }
+      } else if (room.type === 'MONSTER_PIT') {
+        const pitFloorCol = this.theme.colors.pitFloorColor || '#ef4444';
+        for (let ry = room.y1; ry < room.y2; ry++) {
+          for (let rx = room.x1; rx < room.x2; rx++) {
+            carveTile(rx, ry, '.', pitFloorCol, 'PIT_FLOOR', 'MONSTER_PIT', {
+              isPitTile: true,
+              pitSpecies: room.pitSpecies || null
+            });
+          }
+        }
+      } else if (room.type === 'BOSS') {
+        for (let ry = room.y1; ry < room.y2; ry++) {
+          for (let rx = room.x1; rx < room.x2; rx++) {
+            carveTile(rx, ry, 'x', '#fca5a5', 'BOSS', 'BOSS');
+          }
+        }
+      }
+    }
   }
 
   /**

@@ -239,15 +239,8 @@ export class Monster {
   }
 
   get displayName() {
-    let nameParts = [];
-    for (const pKey of this.prefixes) {
-      if (PREFIX_TAGS[pKey]) nameParts.push(PREFIX_TAGS[pKey].name);
-    }
-    nameParts.push(this._baseName);
-    for (const sKey of this.suffixes) {
-      if (SUFFIX_TAGS[sKey]) nameParts.push(SUFFIX_TAGS[sKey].name);
-    }
-    return nameParts.join(' ');
+    // ToME 2.3.5 정통 851종 몬스터 명칭 보존: 레거시 접두/접미사('맹독의', '바람구두' 등) 부착 원천 차단
+    return this._baseName;
   }
 
   get name() {

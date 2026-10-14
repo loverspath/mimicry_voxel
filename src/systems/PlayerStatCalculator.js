@@ -98,7 +98,7 @@ export class PlayerStatCalculator {
     for (const key in player.equipment) {
       if (key === 'subCore1' || key === 'subCore2') continue;
       const gear = player.equipment[key];
-      if (gear && gear.statBonuses && gear.statBonuses[name]) {
+      if (gear) {
         const nameKorMap = {
           weapon: '근접무기',
           shield: '방패',
@@ -114,8 +114,21 @@ export class PlayerStatCalculator {
           amulet: '목걸이'
         };
         let nameKor = nameKorMap[key] || '장신구';
-        contributions.push({ source: `장비 장착 (${nameKor}: ${gear.name})`, value: gear.statBonuses[name], color: "#60a5fa" });
-        statValue += gear.statBonuses[name];
+
+        let statBonusVal = (gear.statBonuses && gear.statBonuses[name]) || 0;
+        // Mage Staff (tval === 6) 또는 INT/MANA 플래그 보유 장비의 지능 보너스(+2 이상) 보장
+        if (name === 'int') {
+          const isMageStaff = gear.tval === 6 || gear.key === 'KIND_MAGE_STAFF' || (gear.name && gear.name.includes('Mage Staff'));
+          const gFlags = Array.isArray(gear.flags) ? gear.flags : [];
+          if ((isMageStaff || gFlags.includes('INT') || gFlags.includes('MANA')) && statBonusVal < 2) {
+            statBonusVal = 2;
+          }
+        }
+
+        if (statBonusVal > 0) {
+          contributions.push({ source: `장비 장착 (${nameKor}: ${gear.name})`, value: statBonusVal, color: "#60a5fa" });
+          statValue += statBonusVal;
+        }
       }
     }
     if (player.equippedLamp && player.equippedLamp.statBonuses && player.equippedLamp.statBonuses[name]) {

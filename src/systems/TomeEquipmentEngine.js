@@ -12,6 +12,9 @@ export const TVAL = Object.freeze({
   SKELETON: 1,
   BOTTLE: 2,
   CHEST: 5,
+  MAGE_STAFF: 6,
+  INSTRUMENT: 14,
+  BOOMERANG: 15,
   SHOT: 16,
   ARROW: 17,
   BOLT: 18,
@@ -41,10 +44,14 @@ export const TVAL = Object.freeze({
   POTION: 71,
   FLASK: 77,
   FOOD: 80,
-  GOLD: 100
+  GOLD: 100,
+  DEMON: 115
 });
 
 const TVAL_SLOT_MAP = Object.freeze({
+  [TVAL.MAGE_STAFF]: 'WEAPON',
+  [TVAL.INSTRUMENT]: 'WEAPON',
+  [TVAL.BOOMERANG]: 'BOW',
   [TVAL.BOW]: 'BOW',
   [TVAL.SHOT]: 'QUIVER',
   [TVAL.ARROW]: 'QUIVER',
@@ -69,6 +76,9 @@ const TVAL_SLOT_MAP = Object.freeze({
 });
 
 const TVAL_SYMBOL_MAP = Object.freeze({
+  [TVAL.MAGE_STAFF]: '\\',
+  [TVAL.INSTRUMENT]: '/',
+  [TVAL.BOOMERANG]: '}',
   [TVAL.BOW]: '}',
   [TVAL.SHOT]: '{',
   [TVAL.ARROW]: '{',
@@ -146,7 +156,13 @@ export class TomeEquipmentEngine {
    * @param {string|null} fallbackType 
    * @returns {string|null}
    */
-  static getSlotType(tval, fallbackType = null) {
+  static getSlotType(tval, fallbackType = null, sval = null) {
+    if (tval === TVAL.DEMON || tval === 115) {
+      if (sval === 55) return 'WEAPON';
+      if (sval === 56) return 'SHIELD';
+      if (sval === 57) return 'HELMET';
+      return 'WEAPON';
+    }
     if (typeof tval === 'number' && TVAL_SLOT_MAP[tval]) {
       return TVAL_SLOT_MAP[tval];
     }
@@ -208,7 +224,7 @@ export class TomeEquipmentEngine {
       return '{';
     }
     // 원거리 발사기(Bow)는 항상 정통 심볼 '}' 보장
-    if (slotType === 'BOW' || type === 'BOW' || tval === TVAL.BOW) {
+    if (slotType === 'BOW' || type === 'BOW' || tval === TVAL.BOW || tval === TVAL.BOOMERANG || tval === 15) {
       return '}';
     }
     if (char && VALID_TOME_SYMBOLS.has(char)) {
@@ -227,7 +243,7 @@ export class TomeEquipmentEngine {
     if (item._weaponCategory) return item._weaponCategory;
 
     const tval = item.tval;
-    if (tval === TVAL.BOW || tval === TVAL.SHOT || tval === TVAL.ARROW || tval === TVAL.BOLT) {
+    if (tval === TVAL.BOW || tval === TVAL.SHOT || tval === TVAL.ARROW || tval === TVAL.BOLT || tval === TVAL.BOOMERANG || tval === 15) {
       return 'ARCHERY';
     }
     if (item.slotType === 'BOW' || item.slotType === 'QUIVER' || item.type === 'BOW' || item.type === 'QUIVER') {
@@ -235,8 +251,14 @@ export class TomeEquipmentEngine {
     }
 
     if (tval === TVAL.SWORD) return 'SWORD';
-    if (tval === TVAL.DIGGING || tval === TVAL.AXE || tval === TVAL.HAFTED) return 'BLUNT';
+    if (tval === TVAL.DIGGING || tval === TVAL.AXE || tval === TVAL.HAFTED || tval === TVAL.MAGE_STAFF || tval === 6 || tval === TVAL.INSTRUMENT || tval === 14) {
+      return 'BLUNT';
+    }
     if (tval === TVAL.POLEARM) return 'POLEARM';
+    if (tval === TVAL.DEMON || tval === 115) {
+      if (item.sval === 55) return 'SWORD';
+      return null;
+    }
 
     if (item.slotType === 'WEAPON' || item.type === 'WEAPON') {
       if (item.char === '\\') return 'BLUNT';

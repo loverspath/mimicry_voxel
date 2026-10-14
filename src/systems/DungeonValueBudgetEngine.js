@@ -429,106 +429,30 @@ export function rollOutOfDepthLevel(floor = 1, oodChance = 0.10, maxOffset = 8) 
 
 /**
  * 던전 층수 및 몬스터 분류에 따른 접두사/접미사(Affix) 롤링 함수.
- * 1~5층(Tier 1)에서는 0~5% COMMON/UNCOMMON만 허용하며, RARE/EPIC 접사(IMMORTAL, BLOODTHIRSTY 등)는 완전 차단됩니다.
- * @param {number} floor - 던전 층수
+ * ToME 2.3.5 851종 정통 몬스터 명칭 무결성을 위해 레거시 접두/접미사 부착 전면 차단 (항상 빈 배열 반환).
+ * @param {number} [floor=1] - 던전 층수
  * @param {boolean} [isBoss=false] - 보스 여부
  * @param {boolean} [isGuard=false] - 금고 수호자 여부
  * @returns {{ prefixes: Array<string>, suffixes: Array<string> }}
  */
 export function rollMonsterAffixes(floor = 1, isBoss = false, isGuard = false) {
-  const safeFloor = Math.max(1, Math.floor(floor || 1));
-  const tierConfig = getTierConfig(safeFloor);
-  const { affixes } = tierConfig;
-
-  // 정예 접사 획득 확률 계산
-  const span = Math.max(1, tierConfig.maxFloor - tierConfig.minFloor);
-  const progress = (safeFloor - tierConfig.minFloor) / span;
-  let eliteChance = affixes.eliteChanceMin + progress * (affixes.eliteChanceMax - affixes.eliteChanceMin);
-  
-  if (isBoss) eliteChance = Math.min(1.0, eliteChance + 0.35);
-  if (isGuard) eliteChance = Math.min(1.0, eliteChance + 0.25);
-
-  if (Math.random() > eliteChance && !isBoss && !isGuard) {
-    return { prefixes: [], suffixes: [] };
-  }
-
-  const selectedPrefixes = [];
-  const selectedSuffixes = [];
-
-  // 허용 접두사 필터링 (차단 목록 완전 배제)
-  const validPrefixes = (affixes.allowedPrefixes || []).filter(p => !affixes.blockedPrefixes.includes(p));
-  const validSuffixes = (affixes.allowedSuffixes || []).filter(s => !affixes.blockedSuffixes.includes(s) && !['WARRIOR', 'MAGE', 'SHAMAN', 'PRIEST', 'CHAMPION', 'CHIEFTAIN'].includes(s));
-
-  if (validPrefixes.length > 0) {
-    const pCount = isBoss ? Math.min(affixes.maxPrefixCount, 2) : 1;
-    const shuffled = [...validPrefixes].sort(() => 0.5 - Math.random());
-    for (let i = 0; i < Math.min(pCount, shuffled.length); i++) {
-      selectedPrefixes.push(shuffled[i]);
-    }
-  }
-
-  if (validSuffixes.length > 0 && (isBoss || isGuard || Math.random() < 0.40)) {
-    const sCount = isBoss ? Math.min(affixes.maxSuffixCount, 2) : 1;
-    const shuffled = [...validSuffixes].sort(() => 0.5 - Math.random());
-    for (let i = 0; i < Math.min(sCount, shuffled.length); i++) {
-      selectedSuffixes.push(shuffled[i]);
-    }
-  }
-
+  // ToME 2.3.5 정통 몬스터 명칭 보존을 위해 레거시 접사 전면 비활성화
   return {
-    prefixes: Array.from(new Set(selectedPrefixes)),
-    suffixes: Array.from(new Set(selectedSuffixes))
+    prefixes: [],
+    suffixes: []
   };
 }
 
 /**
  * 던전 층수 및 몬스터 분류에 따른 직업 접미사(Job Suffix) 롤링 함수.
- * 1~11층에서는 CHAMPION이 절대 스폰되지 않으며, 1~24층에서는 CHIEFTAIN이 절대 스폰되지 않습니다.
- * @param {number} floor - 던전 층수
+ * ToME 정통 몬스터 명칭 오염 차단을 위해 레거시 직업 접미사 전면 차단 (항상 null 반환).
+ * @param {number} [floor=1] - 던전 층수
  * @param {boolean} [isBoss=false] - 보스 여부
- * @returns {string|null} 선택된 직업 접미사 키 또는 null
+ * @returns {string|null}
  */
 export function rollMonsterJobSuffix(floor = 1, isBoss = false) {
-  const safeFloor = Math.max(1, Math.floor(floor || 1));
-  const tierConfig = getTierConfig(safeFloor);
-  const { jobs } = tierConfig;
-
-  const span = Math.max(1, tierConfig.maxFloor - tierConfig.minFloor);
-  const progress = (safeFloor - tierConfig.minFloor) / span;
-  let jobChance = jobs.jobChanceMin !== undefined
-    ? jobs.jobChanceMin + progress * (jobs.jobChanceMax - jobs.jobChanceMin)
-    : jobs.jobChance;
-
-  if (isBoss) jobChance = Math.min(1.0, jobChance + 0.40);
-
-  if (Math.random() > jobChance && !isBoss) {
-    return null;
-  }
-
-  const jobPool = [];
-  jobPool.push({ key: 'WARRIOR', weight: 30 });
-  jobPool.push({ key: 'MAGE', weight: 25 });
-  jobPool.push({ key: 'SHAMAN', weight: 20 });
-  jobPool.push({ key: 'PRIEST', weight: 25 });
-
-  // 1~11층 CHAMPION 차단 (12F+ 해금)
-  if (safeFloor >= 12 && !jobs.blockedJobs.includes('CHAMPION')) {
-    jobPool.push({ key: 'CHAMPION', weight: 15 + safeFloor * 0.5 });
-  }
-
-  // 1~24층 CHIEFTAIN 차단 (25F+ 해금)
-  if (safeFloor >= 25 && !jobs.blockedJobs.includes('CHIEFTAIN')) {
-    jobPool.push({ key: 'CHIEFTAIN', weight: 8 + safeFloor * 0.4 });
-  }
-
-  const totalWeight = jobPool.reduce((sum, j) => sum + j.weight, 0);
-  let roll = Math.random() * totalWeight;
-  for (const item of jobPool) {
-    roll -= item.weight;
-    if (roll <= 0) return item.key;
-  }
-
-  return 'WARRIOR';
+  // ToME 정통 몬스터 명칭 보존을 위해 레거시 직업 접미사 전면 비활성화
+  return null;
 }
 
 /**
