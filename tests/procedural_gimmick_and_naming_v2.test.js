@@ -160,6 +160,65 @@ describe('Procedural Gimmick & Classic Fantasy Naming V2 Specification Test Suit
       expect(allTags).toContain('SPELL_CHARGE');
       expect(allTags).toContain('QUICKCAST');
     });
+
+    it('verifies IMP manual skill cast triggers damage, ProjectileEffect, and FloatingTextEffect', () => {
+      const game = new Game();
+      game.player = new Player(5, 5, 'MON_IMP');
+      game.player.energy = 100;
+      game.effects = [];
+      const monster = new Monster(7, 5, 'MON_NOVICE_WARRIOR');
+      monster.stats.hp = 100;
+      monster.stats.maxHp = 100;
+      game.monsters = [monster];
+      game.map = {
+        width: 30,
+        height: 30,
+        isWalkable: () => true,
+        isTransparent: () => true,
+        getTile: (x, y) => ({ x, y, isWalkable: true, type: 'FLOOR', char: '.' })
+      };
+
+      const initialHp = monster.stats.hp;
+      const success = game.castActiveSkill(1);
+
+      expect(success).toBe(true);
+      expect(monster.stats.hp).toBeLessThan(initialHp);
+      expect(game.effects.length).toBeGreaterThan(0);
+      expect(game.effects.some(e => e.constructor.name === 'ProjectileEffect' || e.startX !== undefined)).toBe(true);
+      expect(game.effects.some(e => e.constructor.name === 'FloatingTextEffect' || e.text !== undefined)).toBe(true);
+    });
+
+    it('verifies IMP auto-cast deterministically triggers offensive spell on turn advance when enemies in range', () => {
+      const game = new Game();
+      game.player = new Player(5, 5, 'MON_IMP');
+      game.player.energy = 100;
+      game.effects = [];
+      const monster = new Monster(8, 5, 'MON_NOVICE_WARRIOR');
+      monster.stats.hp = 100;
+      monster.stats.maxHp = 100;
+      game.monsters = [monster];
+      game.map = {
+        width: 30,
+        height: 30,
+        isWalkable: () => true,
+        isTransparent: () => true,
+        getTile: (x, y) => ({ x, y, isWalkable: true, type: 'FLOOR', char: '.' })
+      };
+
+      const skills = game.player.getInnateSkills();
+      const fireSkill = skills.find(s => s.slot === 1);
+      expect(fireSkill).toBeDefined();
+      expect(game.player.isAutoCastEnabled(fireSkill.id)).toBe(true);
+      expect(game.player.getTracker(fireSkill.id, 'cooldown')).toBe(0);
+
+      const initialHp = monster.stats.hp;
+      // Advance turn by moving player
+      game.movePlayer(0, 1);
+
+      // Verify that auto-cast fired, dealt damage, and triggered cooldown and effects
+      expect(monster.stats.hp).toBeLessThan(initialHp);
+      expect(game.effects.length).toBeGreaterThan(0);
+    });
   });
 
   // =========================================================================

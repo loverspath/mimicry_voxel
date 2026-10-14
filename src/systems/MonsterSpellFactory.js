@@ -641,7 +641,7 @@ export class MonsterSpellFactory {
       if (!m || !m.stats || m.stats.hp <= 0) return false;
       const dist = Math.hypot(m.x - player.x, m.y - player.y);
       if (dist > maxRange) return false;
-      return game.map ? game.map.isTransparent(player.x, player.y, m.x, m.y) : true;
+      return (game.map && typeof game.map.isTransparent === 'function') ? game.map.isTransparent(player.x, player.y, m.x, m.y) : true;
     });
     if (candidates.length === 0) return null;
     candidates.sort((a, b) => Math.hypot(a.x - player.x, a.y - player.y) - Math.hypot(b.x - player.x, b.y - player.y));

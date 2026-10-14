@@ -892,6 +892,7 @@ export class Player {
    */
   tryAutoCastInnateSkills(game) {
     if (!game || this.stats.hp <= 0) return false;
+    if (this.isAutoCastEnabled === false || this.autoCastEnabled === false) return false;
     const skills = this.getInnateSkills ? this.getInnateSkills() : (this.activeSkills || []);
     if (!skills || skills.length === 0) return false;
 
@@ -899,8 +900,10 @@ export class Player {
     let didCast = false;
 
     for (const skill of skills) {
-      if (!skill.isUnlocked(masteryLvl)) continue;
-      if (!this.isAutoCastEnabled(skill.id)) continue;
+      if (!skill) continue;
+      if (typeof skill.isUnlocked === 'function' && !skill.isUnlocked(masteryLvl)) continue;
+      if (typeof this.isAutoCastEnabled === 'function' && !this.isAutoCastEnabled(skill.id)) continue;
+      if (typeof skill.execute !== 'function') continue;
       const cd = this.getTracker(skill.id, 'cooldown');
       if (cd > 0) continue;
 
@@ -970,13 +973,12 @@ export class Player {
         continue;
       }
 
-      // 4. 광역 브레스 (BREATH / AOE)
-      const isBreath = skillType === 'BREATH' || skillType === 'AOE' || skillId.includes('BREATH');
+      // 4. 광역 브레스 및 원소 폭풍 (BREATH / AOE / AOE_BURST / CONE_BREATH)
+      const isBreath = skillType === 'BREATH' || skillType === 'AOE' || skillType === 'AOE_BURST' || skillType === 'CONE_BREATH' || skillId.includes('BREATH') || skillId.includes('AOE');
       if (isBreath) {
-        const monsterList = game.dungeon?.monsters || game.monsters || [];
-        const hasTarget = monsterList.some(m => m && m.stats && m.stats.hp > 0 && Math.hypot(m.x - this.x, m.y - this.y) <= (skill.maxRange || 6.0));
-        if (hasTarget) {
-          const success = skill.execute(game, this);
+        const targetEnemy = MonsterSpellFactory._findTarget ? MonsterSpellFactory._findTarget(game, this, skill.maxRange || 6.0) : null;
+        if (targetEnemy) {
+          const success = skill.execute(game, this, targetEnemy);
           if (success) {
             didCast = true;
             continue;
@@ -985,11 +987,15 @@ export class Player {
         continue;
       }
 
-      // 5. 원거리 볼트 / 물리 강타 (PROJECTILE / MELEE_STRIKE / BOLT / STRIKE / BEAM)
-      const isOffense = skillType === 'PROJECTILE' || skillType === 'MELEE_STRIKE' || (skill.maxRange && skill.maxRange > 0);
+      // 5. 원거리 볼트 / 물리 강타 / 디버프 (PROJECTILE / MELEE_STRIKE / BOLT / STRIKE / BEAM / DEBUFF)
+      const isOffense = skillType === 'PROJECTILE' || skillType === 'MELEE_STRIKE' || skillType === 'DEBUFF' || skillType === 'BEAM' || (skill.maxRange && skill.maxRange > 0);
       if (isOffense) {
-        const targetEnemy = MonsterSpellFactory._findTarget ? MonsterSpellFactory._findTarget(game, this, skill.maxRange || 5.5) : null;
+        const maxRange = skill.maxRange || (skillType === 'MELEE_STRIKE' ? 1.5 : 5.5);
+        const targetEnemy = MonsterSpellFactory._findTarget ? MonsterSpellFactory._findTarget(game, this, maxRange) : null;
         if (targetEnemy) {
+          if (skillType === 'MELEE_STRIKE' && Math.hypot(targetEnemy.x - this.x, targetEnemy.y - this.y) > 1.8) {
+            continue;
+          }
           const success = skill.execute(game, this, targetEnemy);
           if (success) {
             didCast = true;
@@ -1000,6 +1006,53 @@ export class Player {
     }
 
     return didCast;
+  }
+
+  /**
+   * 원거리 공격 마법/스킬 격발 (F키 또는 원거리 적 타겟팅 시 캐스터 마법 연동)
+   * Slot 1 공격 마법 우선 시전, 또는 사용 가능한 원거리 공격 스킬 시전
+   */
+  tryCastRangedSpell(game, target = null) {
+    if (!game || this.stats.hp <= 0) return false;
+    const skills = this.getInnateSkills ? this.getInnateSkills() : (this.activeSkills || []);
+    if (!skills || skills.length === 0) return false;
+
+    const masteryLvl = this.getMorphMasteryLevel ? this.getMorphMasteryLevel() : 1;
+
+    // 1. Slot 1 공격 마법 우선 확인
+    const slot1 = skills.find(s => s && s.slot === 1);
+    if (slot1 && slot1.isUnlocked(masteryLvl) && this.getTracker(slot1.id, 'cooldown') <= 0) {
+      const range = slot1.maxRange || 5.5;
+      const resolvedTarget = target || (MonsterSpellFactory._findTarget ? MonsterSpellFactory._findTarget(game, this, range) : null);
+      if (resolvedTarget) {
+        const dist = Math.hypot(resolvedTarget.x - this.x, resolvedTarget.y - this.y);
+        if (dist <= range && (!game.map || game.map.isTransparent(this.x, this.y, resolvedTarget.x, resolvedTarget.y))) {
+          return slot1.execute(game, this, resolvedTarget);
+        }
+      }
+    }
+
+    // 2. 다른 사용 가능한 원거리 공격/디버프 스킬 탐색
+    for (const skill of skills) {
+      if (!skill || skill.slot === 1) continue;
+      if (!skill.isUnlocked(masteryLvl)) continue;
+      if (this.getTracker(skill.id, 'cooldown') > 0) continue;
+      const sType = (skill.type || '').toUpperCase();
+      if (sType === 'SELF' || sType === 'TELEPORT') continue;
+
+      const range = skill.maxRange || 5.5;
+      if (range < 2.0) continue; // 근접 전용 제외
+
+      const resolvedTarget = target || (MonsterSpellFactory._findTarget ? MonsterSpellFactory._findTarget(game, this, range) : null);
+      if (resolvedTarget) {
+        const dist = Math.hypot(resolvedTarget.x - this.x, resolvedTarget.y - this.y);
+        if (dist <= range && (!game.map || game.map.isTransparent(this.x, this.y, resolvedTarget.x, resolvedTarget.y))) {
+          return skill.execute(game, this, resolvedTarget);
+        }
+      }
+    }
+
+    return false;
   }
 
   getTracker(key, field = 'cooldown') {

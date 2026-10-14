@@ -18,6 +18,8 @@ import {
 } from '../configs/SynthesisSchemaConfig.js';
 import { EFFECT_OP_TYPES } from '../configs/EffectOpSchema.js';
 import { EffectVM } from './EffectVM.js';
+import { ProjectileEffect, ConeBreathEffect, AoEExplosionEffect, FloatingTextEffect } from '../core/Effects.js';
+import { combatVFXEngine } from './CombatVFXEngine.js';
 
 export const ELEMENT_KO = Object.freeze({
   PHYSICAL: '물리',
@@ -153,6 +155,46 @@ export class ActiveSkill {
       if (game.addLogEntry) {
         game.addLogEntry(`✨ [스킬 발동] <b>${this.name}</b> 시전 성공!`, 'combat');
       }
+
+      // Visual Effects (ProjectileEffect, ConeBreathEffect, AoEExplosionEffect, combatVFXEngine)
+      if (game && Array.isArray(game.effects)) {
+        const sx = player.x;
+        const sy = player.y;
+        const tx = resolvedTarget ? resolvedTarget.x : sx;
+        const ty = resolvedTarget ? resolvedTarget.y : sy;
+        const sType = (this.type || '').toUpperCase();
+        const hasAreaOp = this.ops && this.ops.some(op => op.op === EFFECT_OP_TYPES.PROJECT_AREA);
+
+        if ((sType === 'BREATH' || sType === 'CONE_BREATH') && !hasAreaOp) {
+          game.effects.push(new ConeBreathEffect(sx, sy, tx, ty, this));
+        } else if ((sType === 'AOE' || sType === 'AOE_BURST') && !hasAreaOp) {
+          game.effects.push(new AoEExplosionEffect(tx, ty, this.aoeRadius || this.maxRange || 2.5, this.element || 'FIRE', null, this));
+        } else if (resolvedTarget && (this.maxRange > 1.5 || sType === 'PROJECTILE' || sType === 'DEBUFF' || sType === 'BOLT')) {
+          game.effects.push(new ProjectileEffect(sx, sy, tx, ty, this));
+        }
+      }
+
+      if (combatVFXEngine && typeof combatVFXEngine.triggerSpellAction === 'function') {
+        const sType = (this.type || '').toUpperCase();
+        let vfxId = 'MISSILE';
+        const el = (this.element || 'MANA').toUpperCase();
+        if (sType === 'BREATH' || sType === 'CONE_BREATH') {
+          vfxId = 'BREATH';
+        } else if (sType === 'AOE' || sType === 'AOE_BURST') {
+          vfxId = `BA_${el === 'FIRE' ? 'FIRE' : el === 'COLD' || el === 'ICE' ? 'COLD' : el === 'LIGHTNING' || el === 'ELEC' ? 'ELEC' : el === 'ACID' ? 'ACID' : 'MANA'}`;
+        } else if (sType === 'PROJECTILE' || sType === 'BOLT') {
+          vfxId = `BO_${el === 'FIRE' ? 'FIRE' : el === 'COLD' || el === 'ICE' ? 'COLD' : el === 'LIGHTNING' || el === 'ELEC' ? 'ELEC' : el === 'ACID' ? 'ACID' : 'FIRE'}`;
+        } else if (sType === 'DEBUFF') {
+          if (this.id.includes('BLIND') || this.name.includes('실명')) vfxId = 'BLIND';
+          else if (this.id.includes('CONF') || this.name.includes('혼란')) vfxId = 'CONFUSION';
+          else if (this.id.includes('FEAR') || this.name.includes('공포')) vfxId = 'FEAR';
+          else vfxId = 'MISSILE';
+        } else if (sType === 'TELEPORT') {
+          vfxId = 'TELEPORT';
+        }
+        combatVFXEngine.triggerSpellAction(vfxId, player, resolvedTarget, this.element, 0);
+      }
+
       this._postExecute(game, player, masteryLvl);
       return true;
     }
@@ -179,7 +221,7 @@ export class ActiveSkill {
       if (!m || !m.stats || m.stats.hp <= 0) return false;
       const dist = Math.hypot(m.x - player.x, m.y - player.y);
       if (dist > maxRange) return false;
-      return game.map ? game.map.isTransparent(player.x, player.y, m.x, m.y) : true;
+      return (game.map && typeof game.map.isTransparent === 'function') ? game.map.isTransparent(player.x, player.y, m.x, m.y) : true;
     });
     if (candidates.length === 0) return null;
     candidates.sort((a, b) => Math.hypot(a.x - player.x, a.y - player.y) - Math.hypot(b.x - player.x, b.y - player.y));

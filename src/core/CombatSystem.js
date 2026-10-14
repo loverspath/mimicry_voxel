@@ -321,15 +321,24 @@ export class CombatSystem {
      * @returns {boolean} 스킬 격발 성공 여부
      */
     static checkAndCastAutoSkills(game, player) {
-        if (!game || !player || !player.activeSkills || player.activeSkills.length === 0) return false;
-        if (player.stats.hp <= 0) return false;
+        if (!game || !player) return false;
+        if (player.stats && player.stats.hp <= 0) return false;
+
+        // Player의 표준 오토캐스트 파이프라인으로 단일화하여 중복 발동 방지
+        if (typeof player.tryAutoCastInnateSkills === 'function') {
+            return player.tryAutoCastInnateSkills(game);
+        }
+
+        const skills = player.getInnateSkills ? player.getInnateSkills() : (player.activeSkills || []);
+        if (!skills || skills.length === 0) return false;
 
         const masteryLvl = player.getMorphMasteryLevel ? player.getMorphMasteryLevel() : 1;
 
-        // 쿨다운이 0이고 해금된 스킬 필터링
-        const availableSkills = player.activeSkills.filter(skill => {
+        // 쿨다운이 0이고 해금 및 오토캐스트 허용된 스킬 필터링
+        const availableSkills = skills.filter(skill => {
             if (!skill) return false;
-            if (!skill.isUnlocked(masteryLvl)) return false;
+            if (typeof skill.isUnlocked === 'function' && !skill.isUnlocked(masteryLvl)) return false;
+            if (typeof player.isAutoCastEnabled === 'function' && !player.isAutoCastEnabled(skill.id)) return false;
             const cd = player.getTracker ? player.getTracker(skill.id, 'cooldown') : 0;
             return cd <= 0;
         });
@@ -407,8 +416,8 @@ export class CombatSystem {
             const dy = m.y - player.y;
             const dist = Math.max(Math.abs(dx), Math.abs(dy));
             if (dist < 2 || dist > maxRange) return false;
-            if (!game.map) return false;
-            return game.map.isTransparent(player.x, player.y, m.x, m.y);
+            if (!game.map) return true;
+            return typeof game.map.isTransparent === 'function' ? game.map.isTransparent(player.x, player.y, m.x, m.y) : true;
         });
 
         if (validMonsters.length === 0) return false;

@@ -195,7 +195,7 @@ export class Game {
     let hasDraggedSignificantly = false;
 
     const onPointerDown = (ev) => {
-      if (ev.target && ev.target.closest && ev.target.closest('#top-bar, #virtual-controller, .modal-content, #context-menu, #combat-log, .hotbar-slot')) return;
+      if (ev.target && ev.target.closest && ev.target.closest('#top-bar, #virtual-controller, .modal-content, #context-menu, #combat-log, .hotbar-slot, #skill-hotbar-container, .skill-hotbar-root, .skill-slot, #inventory-modal')) return;
       const clientX = ev.clientX ?? (ev.touches && ev.touches[0] ? ev.touches[0].clientX : 0);
       const clientY = ev.clientY ?? (ev.touches && ev.touches[0] ? ev.touches[0].clientY : 0);
       pointerStartX = clientX;
@@ -245,7 +245,7 @@ export class Game {
     const onPointerUp = (ev) => {
       if (!isDraggingLook) return;
       isDraggingLook = false;
-      if (ev.target && ev.target.closest && ev.target.closest('#top-bar, #virtual-controller, .modal-content, #context-menu, #combat-log, .hotbar-slot')) return;
+      if (ev.target && ev.target.closest && ev.target.closest('#top-bar, #virtual-controller, .modal-content, #context-menu, #combat-log, .hotbar-slot, #skill-hotbar-container, .skill-hotbar-root, .skill-slot, #inventory-modal')) return;
 
       const endX = ev.clientX ?? (ev.changedTouches && ev.changedTouches[0] ? ev.changedTouches[0].clientX : pointerStartX);
       const endY = ev.clientY ?? (ev.changedTouches && ev.changedTouches[0] ? ev.changedTouches[0].clientY : pointerStartY);
@@ -521,8 +521,15 @@ export class Game {
         }
       } else if (this.input.isActionActive(`FIRE`) || this.input.isActionActive(`RANGED_FIRE`)) {
         this.input.clear();
-        CombatSystem.tryAutoRangedAttack(this, this.player);
-        n = !0;
+        let fired = CombatSystem.tryAutoRangedAttack(this, this.player);
+        if (!fired && this.player && typeof this.player.tryCastRangedSpell === 'function') {
+          fired = this.player.tryCastRangedSpell(this);
+        }
+        if (fired) {
+          n = !0;
+        } else {
+          this.addLogEntry(`⚠️ [원거리 공격 실패] 사거리 내 유효한 적이 없거나 준비된 원거리 무기/마법이 없습니다.`, `system`);
+        }
       } else if (this.input.isActionActive(`REST`) || this.input.isActionActive(`WAIT`)) {
         n = !0;
         this.input.clear();
@@ -580,12 +587,13 @@ export class Game {
           this.addLogEntry(`[Skill] 자연 재생(REGEN_UNIT x${regenStacks}) 효과로 체력이 +${regenAmt} 자동 회복되었습니다. (HP: ${this.player.stats.hp}/${this.player.stats.maxHp})`, `loot`);
         }
 
-        if (this.player.isAutoCastEnabled === true) {
-          CombatSystem.checkAndCastAutoSkills(this, this.player);
-          CombatSystem.tryAutoRangedAttack(this, this.player);
+        if (this.player.isAutoCastEnabled !== false && this.player.autoCastEnabled !== false) {
           if (typeof this.player.tryAutoCastInnateSkills === 'function') {
             this.player.tryAutoCastInnateSkills(this);
+          } else {
+            CombatSystem.checkAndCastAutoSkills(this, this.player);
           }
+          CombatSystem.tryAutoRangedAttack(this, this.player);
         }
         this.checkItemCollision();
         this.player.energy = (this.player.energy || 100) - 100;
@@ -918,13 +926,14 @@ export class Game {
         }
       }
 
-      // Auto-cast ONLY when player.isAutoCastEnabled === true
-      if (this.player.isAutoCastEnabled === true) {
-        CombatSystem.checkAndCastAutoSkills(this, this.player);
-        CombatSystem.tryAutoRangedAttack(this, this.player);
+      // Auto-cast active skills & auto ranged attack
+      if (this.player.isAutoCastEnabled !== false && this.player.autoCastEnabled !== false) {
         if (typeof this.player.tryAutoCastInnateSkills === 'function') {
           this.player.tryAutoCastInnateSkills(this);
+        } else {
+          CombatSystem.checkAndCastAutoSkills(this, this.player);
         }
+        CombatSystem.tryAutoRangedAttack(this, this.player);
       }
 
       // Overload check
@@ -2460,7 +2469,7 @@ export class Game {
         const dy = monster.y - this.player.y;
         const dist = Math.max(Math.abs(dx), Math.abs(dy));
         const bow = this.player.equipment.bow || (this.player.equipment.weapon && (this.player.equipment.weapon.slotType === 'BOW' || this.player.equipment.weapon.char === '}' || this.player.equipment.weapon.weaponCategory === 'ARCHERY' || this.player.equipment.weapon.weaponCategory === 'RANGED') ? this.player.equipment.weapon : null);
-        // 원거리 무기 장착 상태에서 2칸 이상 떨어진 몬스터를 클릭/터치한 경우 직접 타겟 사격 격발
+        // 1. 원거리 무기 장착 상태에서 2칸 이상 떨어진 몬스터를 클릭/터치한 경우 직접 타겟 사격 격발
         if (bow && dist >= 2 && dist <= (bow.range || 5) && this.map && this.map.isTransparent(this.player.x, this.player.y, monster.x, monster.y)) {
           CombatSystem.attackMonster(this, this.player, monster);
           this.player.energy -= 100;
@@ -2468,6 +2477,18 @@ export class Game {
           this.runTurnLoop();
           this.updateUI();
           return;
+        }
+
+        // 2. 캐스터 마법 연동: 원거리 무기가 없거나 사격 불능 시, 준비된 원거리 마법 격발
+        if (dist >= 2 && this.player && typeof this.player.tryCastRangedSpell === 'function') {
+          const castSuccess = this.player.tryCastRangedSpell(this, monster);
+          if (castSuccess) {
+            this.player.energy -= 100;
+            this.playerTurn = false;
+            this.runTurnLoop();
+            this.updateUI();
+            return;
+          }
         }
       }
       this.openInspectModal(result);

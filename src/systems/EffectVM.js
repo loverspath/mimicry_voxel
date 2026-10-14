@@ -15,6 +15,8 @@ import { StatusEffectEngine } from './StatusEffectEngine.js';
 import { LootSystem } from '../core/LootSystem.js';
 import { Monster } from '../entities/Monster.js';
 import { bossPhaseEngine } from './BossPhaseEngine.js';
+import { FloatingTextEffect, AoEExplosionEffect, ConeBreathEffect, ProjectileEffect } from '../core/Effects.js';
+import { combatVFXEngine } from './CombatVFXEngine.js';
 
 export class EffectVM {
   /**
@@ -189,6 +191,29 @@ export class EffectVM {
       }
     }
 
+    // 6. 시각 효과 (FloatingTextEffect 및 CombatVFXEngine 연동)
+    const game = context.game;
+    if (game && Array.isArray(game.effects)) {
+      const textColor = target.isPlayer 
+        ? "#ef4444" 
+        : (element === 'FIRE' ? "#f97316" : (element === 'COLD' || element === 'ICE') ? "#38bdf8" : (element === 'LIGHTNING' || element === 'ELEC') ? "#eab308" : element === 'ACID' ? "#84cc16" : element === 'HOLY' ? "#ffd700" : "#f87171");
+      game.effects.push(new FloatingTextEffect(target.x, target.y, `-${finalDmg}`, textColor, false));
+    }
+    if (combatVFXEngine && typeof combatVFXEngine.triggerHitEffect === 'function') {
+      combatVFXEngine.triggerHitEffect({
+        type: element ? `BO_${element}` : 'MISSILE',
+        element: element || 'PHYSICAL',
+        x: target.x,
+        y: target.y,
+        sourceX: caster ? caster.x : target.x,
+        sourceY: caster ? caster.y : target.y,
+        damage: finalDmg,
+        isCrit: false,
+        isPlayerAttacker: Boolean(caster && caster.isPlayer),
+        target: target
+      });
+    }
+
     // 몬스터 사망 시 통합 훅 발동
     if (!target.isPlayer && target.stats.hp <= 0) {
       this._handleMonsterDeath(target, context);
@@ -211,6 +236,20 @@ export class EffectVM {
     const affectedTiles = this._calculateAreaTiles(shape, caster.x, caster.y, targetX, targetY, range, radius, context.map);
     const monsters = this._resolveMonsters(context);
     const affectedEntities = [];
+
+    // 광역 시각 효과 (AoEExplosionEffect 또는 ConeBreathEffect 및 CombatVFXEngine)
+    const game = context.game;
+    if (game && Array.isArray(game.effects)) {
+      if (shape === 'CONE') {
+        game.effects.push(new ConeBreathEffect(caster.x, caster.y, targetX, targetY, op));
+      } else {
+        game.effects.push(new AoEExplosionEffect(targetX, targetY, radius, op.element || 'FIRE', null, op));
+      }
+    }
+    if (combatVFXEngine && typeof combatVFXEngine.triggerSpellAction === 'function') {
+      const aoeId = shape === 'CONE' ? 'BREATH' : (op.element ? `BA_${op.element.toUpperCase()}` : 'BA_FIRE');
+      combatVFXEngine.triggerSpellAction(aoeId, caster, { x: targetX, y: targetY }, op.element, 0);
+    }
 
     // 영역 내 몬스터 탐색
     for (const m of monsters) {
@@ -274,6 +313,18 @@ export class EffectVM {
     const logFn = this._getLogFn(context);
 
     const res = StatusEffectEngine.applyStatus(target, op.statusId, duration, power, caster, logFn);
+    if (res.applied) {
+      const game = context.game;
+      if (game && Array.isArray(game.effects)) {
+        const sName = (StatusEffectEngine.STATUS_NAMES && StatusEffectEngine.STATUS_NAMES[op.statusId]) || op.statusId;
+        game.effects.push(new FloatingTextEffect(target.x, target.y, `[${sName}]`, "#c084fc", false));
+      }
+      if (combatVFXEngine && typeof combatVFXEngine.triggerSpellAction === 'function') {
+        const vfxMap = { BLIND: 'BLIND', CONFUSE: 'CONFUSION', CONFUSION: 'CONFUSION', FEAR: 'FEAR', PARALYZE: 'PARALYZE' };
+        const vfxId = vfxMap[op.statusId] || 'MISSILE';
+        combatVFXEngine.triggerSpellAction(vfxId, caster, target, null, 0);
+      }
+    }
     return { op: op.op, executed: res.applied, ...res };
   }
 
@@ -317,6 +368,14 @@ export class EffectVM {
       if (target.stats.mp !== undefined) {
         target.stats.mp = Math.min(target.stats.maxMp || 100, target.stats.mp + restoredMana);
       }
+    }
+
+    const game = context.game;
+    if (game && Array.isArray(game.effects) && healAmt > 0) {
+      game.effects.push(new FloatingTextEffect(target.x, target.y, `+${healAmt}`, "#22c55e", false));
+    }
+    if (combatVFXEngine && typeof combatVFXEngine.triggerSpellAction === 'function') {
+      combatVFXEngine.triggerSpellAction('HEAL', context.caster || target, target, null, -healAmt);
     }
 
     const logFn = this._getLogFn(context);
@@ -389,6 +448,13 @@ export class EffectVM {
       if (newPos) {
         target.x = newPos.x;
         target.y = newPos.y;
+        const game = context.game;
+        if (game && Array.isArray(game.effects)) {
+          game.effects.push(new FloatingTextEffect(target.x, target.y, `[전이]`, "#a855f7", false));
+        }
+        if (combatVFXEngine && typeof combatVFXEngine.triggerSpellAction === 'function') {
+          combatVFXEngine.triggerSpellAction('TELEPORT', context.caster || target, target);
+        }
         if (logFn) {
           const name = target.displayName || target.name || '대상';
           logFn(`[Teleport] 🌀 ${name}이(가) 공간 이동했습니다! (${newPos.x}, ${newPos.y})`, 'system');
