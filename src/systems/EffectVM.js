@@ -646,6 +646,83 @@ export class EffectVM {
         }
       }
       if (logFn) logFn('[Map] 💥 대지가 뒤흔들리며 지형이 붕괴합니다!', 'combat');
+    } else if (action === 'DARKNESS' && map && map.tiles) {
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          const tx = caster.x + dx;
+          const ty = caster.y + dy;
+          if (map.tiles[ty] && map.tiles[ty][tx]) {
+            map.tiles[ty][tx].lit = false;
+          }
+        }
+      }
+      if (logFn) logFn('[Map] 🌑 주변이 칠흑 같은 어둠에 휩싸입니다!', 'warning');
+    } else if (action === 'DETECT_ITEMS' || action === 'DETECT_TREASURE') {
+      const items = context.game?.items || [];
+      let count = 0;
+      for (const it of items) {
+        if (!it) continue;
+        if (action === 'DETECT_TREASURE' && it.type !== 'GOLD' && it.type !== 'TREASURE' && it.char !== '$') continue;
+        it.detected = true;
+        count++;
+        if (map && map.tiles && map.tiles[it.y]?.[it.x]) {
+          map.tiles[it.y][it.x].revealed = true;
+          map.tiles[it.y][it.x].explored = true;
+          map.tiles[it.y][it.x].isExplored = true;
+        }
+      }
+      if (logFn) logFn(`[Map] 🔍 탐지 마법이 발동하여 ${count}개의 물건/보물 위치를 감지했습니다!`, 'loot');
+    } else if (action === 'DETECT_TRAPS' && map && map.tiles) {
+      let count = 0;
+      for (let y = 0; y < map.tiles.length; y++) {
+        for (let x = 0; x < map.tiles[y].length; x++) {
+          const tile = map.tiles[y][x];
+          if (tile && (tile.isTrap || tile.type === 'TRAP' || tile.char === '^')) {
+            tile.revealed = true;
+            tile.explored = true;
+            tile.isExplored = true;
+            tile.trapDetected = true;
+            count++;
+          }
+        }
+      }
+      if (logFn) logFn(`[Map] ⚠️ 함정 탐지 마법으로 ${count}개의 숨겨진 함정을 발견했습니다!`, 'loot');
+    } else if (action === 'DETECT_DOORS_STAIRS' && map && map.tiles) {
+      let count = 0;
+      for (let y = 0; y < map.tiles.length; y++) {
+        for (let x = 0; x < map.tiles[y].length; x++) {
+          const tile = map.tiles[y][x];
+          if (tile && (tile.isDoor || tile.type === 'DOOR' || tile.char === '+' || tile.char === '\'' ||
+                       tile.isStaircase || tile.isUpStaircase || tile.type === 'STAIRS_UP' || tile.type === 'STAIRS_DOWN' ||
+                       tile.char === '<' || tile.char === '>')) {
+            tile.revealed = true;
+            tile.explored = true;
+            tile.isExplored = true;
+            count++;
+          }
+        }
+      }
+      if (logFn) logFn(`[Map] 🚪 문과 계단 ${count}곳의 위치를 확인했습니다!`, 'loot');
+    } else if (action === 'TRAP_CREATION' && map && map.tiles) {
+      let count = 0;
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          const tx = caster.x + dx;
+          const ty = caster.y + dy;
+          const tile = map.getTile ? map.getTile(tx, ty) : map.tiles[ty]?.[tx];
+          if (tile && tile.isWalkable && !tile.isStaircase && !tile.isUpStaircase) {
+            tile.isTrap = true;
+            tile.type = 'TRAP';
+            tile.char = '^';
+            tile.trapDetected = true;
+            tile.isExplored = true;
+            count++;
+            if (count >= 3) break;
+          }
+        }
+        if (count >= 3) break;
+      }
+      if (logFn) logFn(`[Map] ⚠️ 바닥에 ${count}개의 치명적인 함정이 생성되었습니다!`, 'warning');
     }
 
     return { op: op.op, executed: true, action };
@@ -688,6 +765,22 @@ export class EffectVM {
       if (armor) {
         armor.upgradeLevel = (armor.upgradeLevel || 0) + 1;
         if (logFn) logFn(`[Enchant] 🛡️ [${armor.name}]에 마법이 부여되어 방어 수치가 +1 증가했습니다!`, 'loot');
+      }
+    } else if (action === 'CURSE_WEAPON') {
+      const weapon = player?.equipment?.weapon;
+      if (weapon) {
+        weapon.isCursed = true;
+        weapon.cursed = true;
+        weapon.upgradeLevel = (weapon.upgradeLevel || 0) - 1;
+        if (logFn) logFn(`[Curse] ☠️ [${weapon.name}]이(가) 저주받아 성능이 약화되었습니다!`, 'warning');
+      }
+    } else if (action === 'CURSE_ARMOR') {
+      const armor = player?.equipment?.armor || player?.equipment?.shield;
+      if (armor) {
+        armor.isCursed = true;
+        armor.cursed = true;
+        armor.upgradeLevel = (armor.upgradeLevel || 0) - 1;
+        if (logFn) logFn(`[Curse] ☠️ [${armor.name}]이(가) 저주받아 방어력이 약화되었습니다!`, 'warning');
       }
     }
 

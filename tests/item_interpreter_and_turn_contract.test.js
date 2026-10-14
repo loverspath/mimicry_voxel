@@ -612,4 +612,180 @@ describe('Argon Phase 3: Item Schema Interpreter, Device & Turn/Input Contract T
       expect(missing).toEqual([]);
     });
   });
+
+  describe('Hotfix Verification: Scroll Effects & Obsolete Status Panel Removal Contract', () => {
+    let hotfixPlayer, hotfixGame, testWeapon;
+
+    beforeEach(() => {
+      hotfixPlayer = new Player(10, 10, 'MON_NOVICE_WARRIOR');
+      testWeapon = { name: 'Long Sword', upgradeLevel: 0, toHit: 0, toDmg: 0 };
+      hotfixPlayer.equipment = { weapon: testWeapon };
+
+      const tiles = Array.from({ length: 25 }, () =>
+        Array.from({ length: 25 }, () => ({
+          isWalkable: true,
+          isExplored: false,
+          explored: false,
+          revealed: false,
+          lit: false,
+          type: 'FLOOR',
+          char: '.'
+        }))
+      );
+
+      hotfixGame = {
+        player: hotfixPlayer,
+        map: {
+          width: 25,
+          height: 25,
+          tiles,
+          getTile: (x, y) => tiles[y]?.[x] || null,
+          isWalkable: (x, y) => true
+        },
+        items: [],
+        monsters: [],
+        addLogEntry: vi.fn(),
+        updateFOV: vi.fn()
+      };
+    });
+
+    it('[1] Object Detection (sval 27), Trap Detection (sval 28), Light (sval 24), Darkness (sval 0) scrolls NEVER enchant weapon and execute their original effects', () => {
+      // 1. Object Detection (sval: 27)
+      const groundItem = { x: 12, y: 12, name: 'Iron Ring', type: 'RING' };
+      hotfixGame.items = [groundItem];
+
+      const objectScroll = { tval: 70, sval: 27, name: 'Object Detection', count: 1 };
+      const resObj = TomeConsumableEngine.useConsumable(objectScroll, hotfixPlayer, hotfixGame);
+
+      expect(resObj).toBe(true);
+      expect(testWeapon.upgradeLevel).toBe(0);
+      expect(testWeapon.toHit).toBe(0);
+      expect(testWeapon.toDmg).toBe(0);
+      expect(groundItem.detected).toBe(true);
+      expect(hotfixGame.map.tiles[12][12].isExplored).toBe(true);
+
+      // 2. Trap Detection (sval: 28)
+      hotfixGame.map.tiles[15][15].isTrap = true;
+      hotfixGame.map.tiles[15][15].type = 'TRAP';
+      hotfixGame.map.tiles[15][15].char = '^';
+
+      const trapScroll = { tval: 70, sval: 28, name: 'Trap Detection', count: 1 };
+      const resTrap = TomeConsumableEngine.useConsumable(trapScroll, hotfixPlayer, hotfixGame);
+
+      expect(resTrap).toBe(true);
+      expect(testWeapon.upgradeLevel).toBe(0);
+      expect(testWeapon.toHit).toBe(0);
+      expect(testWeapon.toDmg).toBe(0);
+      expect(hotfixGame.map.tiles[15][15].trapDetected).toBe(true);
+      expect(hotfixGame.map.tiles[15][15].isExplored).toBe(true);
+
+      // 3. Light (sval: 24)
+      const lightScroll = { tval: 70, sval: 24, name: 'Light', count: 1 };
+      const resLight = TomeConsumableEngine.useConsumable(lightScroll, hotfixPlayer, hotfixGame);
+
+      expect(resLight).toBe(true);
+      expect(testWeapon.upgradeLevel).toBe(0);
+      expect(testWeapon.toHit).toBe(0);
+      expect(testWeapon.toDmg).toBe(0);
+      expect(hotfixGame.map.tiles[10][10].lit).toBe(true);
+      expect(hotfixGame.map.tiles[10][10].isExplored).toBe(true);
+
+      // 4. Darkness (sval: 0)
+      const darkScroll = { tval: 70, sval: 0, name: 'Darkness', count: 1 };
+      const resDark = TomeConsumableEngine.useConsumable(darkScroll, hotfixPlayer, hotfixGame);
+
+      expect(resDark).toBe(true);
+      expect(testWeapon.upgradeLevel).toBe(0);
+      expect(testWeapon.toHit).toBe(0);
+      expect(testWeapon.toDmg).toBe(0);
+      expect(hotfixGame.map.tiles[10][10].lit).toBe(false);
+      expect(StatusEffectEngine.hasStatus(hotfixPlayer, 'BLIND')).toBe(true);
+
+      // Verify that genuine weapon enchantment scrolls (e.g. sval: 21 *Enchant Weapon*) DO increase weapon stats
+      const enchantScroll = { tval: 70, sval: 21, name: '*Enchant Weapon*', count: 1 };
+      const resEnchant = TomeConsumableEngine.useConsumable(enchantScroll, hotfixPlayer, hotfixGame);
+
+      expect(resEnchant).toBe(true);
+      expect(testWeapon.upgradeLevel).toBe(1);
+      expect(testWeapon.toHit).toBe(1);
+      expect(testWeapon.toDmg).toBe(1);
+    });
+
+    it('[2] Inventory default view does not render obsolete #player-status-panel duplicate buttons (#active-core-btn, #skill-tree-btn, etc.) and only item list and item-detail are displayed', async () => {
+      const fs = await import('fs');
+      const html = fs.readFileSync('index.html', 'utf8');
+
+      // 1. Verify index.html does not contain #player-status-panel inside #inventory-split-view
+      expect(html).not.toMatch(/<div\s+id=["']player-status-panel["']/);
+
+      // 2. Mock DOM container elements for Game.renderInventoryList
+      const listEl = {
+        innerHTML: '',
+        appendChild: vi.fn()
+      };
+      const detailEl = {
+        innerHTML: '<div class="detail-empty">소지품에서 아이템을 선택하세요.</div>'
+      };
+      const panelEl = {
+        innerHTML: 'OBSOLETE',
+        style: {}
+      };
+
+      const elementMap = {
+        'inventory-list': listEl,
+        'item-detail': detailEl,
+        'player-status-panel': panelEl
+      };
+
+      const originalGetElementById = global.document.getElementById;
+      global.document.getElementById = vi.fn(id => elementMap[id] || originalGetElementById(id));
+
+      try {
+        const gameInstance = new Game();
+        gameInstance.player = hotfixPlayer;
+        gameInstance.player.inventory = [
+          { name: 'Potion of Healing', type: 'POTION', char: '!', color: '#ff0000', count: 1 }
+        ];
+
+        // Call renderInventoryList
+        gameInstance.renderInventoryList();
+
+        // Ensure player-status-panel is either cleared & hidden or not populated
+        expect(panelEl.innerHTML).toBe('');
+        expect(panelEl.style.display).toBe('none');
+
+        // Ensure obsolete duplicate buttons are NOT created or queried
+        expect(global.document.getElementById).not.toHaveBeenCalledWith('active-core-btn');
+        expect(global.document.getElementById).not.toHaveBeenCalledWith('skill-tree-btn');
+        expect(global.document.getElementById).not.toHaveBeenCalledWith('char-info-btn');
+        expect(global.document.getElementById).not.toHaveBeenCalledWith('mastery-info-btn');
+
+        // Ensure inventory items were appended to listEl
+        expect(listEl.appendChild).toHaveBeenCalled();
+      } finally {
+        global.document.getElementById = originalGetElementById;
+      }
+    });
+
+    it('verifies renderItemDetailHTML for consumable with artifact activation does not throw ReferenceError on flagItems', () => {
+      const activableScroll = {
+        name: 'Ancient Scroll of Power',
+        type: 'SCROLL',
+        tval: 70,
+        sval: 27,
+        char: '?',
+        color: '#cbd5e1',
+        flavorText: 'An ancient parchment radiating mystic glow.',
+        activate: {
+          effectKey: 'CURE_700',
+          desc: '700 HP를 즉시 회복하고 모든 상태이상을 치유합니다.'
+        }
+      };
+
+      expect(() => {
+        const html = renderItemDetailHTML(activableScroll, hotfixPlayer);
+        expect(html).toContain('유물 발동');
+      }).not.toThrow();
+    });
+  });
 });

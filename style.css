@@ -415,6 +415,10 @@ canvas {
   color: #34d399;
 }
 
+#player-status-panel {
+  display: none !important;
+}
+
 .inventory-right {
   flex: 0.8;
   display: flex;

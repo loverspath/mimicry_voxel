@@ -18,7 +18,8 @@ import { renderMonsterLoreModalHTML } from './MonsterLoreView.js';
 import { ProceduralSkillSynthesizer } from '../systems/ProceduralSkillSynthesizer.js';
 
 /**
- * 인벤토리 내 플레이어 요약 상태 패널 HTML을 생성합니다.
+ * [레거시/보존용] 플레이어 요약 상태 패널 HTML을 생성합니다.
+ * 참고: 인벤토리 메인 뷰(#inventory-split-view)에서는 제거되었으며, 각 탭(캐릭터 상세/코어/스킬/도감)으로 완전히 대체되었습니다.
  * @param {Object} player - 플레이어 인스턴스
  * @returns {string} HTML 문자열
  */

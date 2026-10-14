@@ -14,13 +14,21 @@ import { TomeTagSystem } from './TomeTagSystem.js';
 import { StatusEffectEngine } from './StatusEffectEngine.js';
 import { EffectVM } from './EffectVM.js';
 import { LootSystem } from '../core/LootSystem.js';
+import { TomeLootGenerator } from './TomeLootGenerator.js';
 
 // 고속 베이스명 정확 일치 색인 맵
 const KINDS_BY_NAME = {};
+const SCROLL_KINDS_BY_NAME = {};
 for (const k of Object.values(TOME_KINDS_DATA || {})) {
+  if (!k) continue;
   KINDS_BY_NAME[k.name] = k;
   const cleanName = k.name.replace(/^[&\s]+/, '').replace(/[~#]/g, '').trim();
   if (!KINDS_BY_NAME[cleanName]) KINDS_BY_NAME[cleanName] = k;
+
+  if (k.tval === TVAL.SCROLL || k.type === 'SCROLL') {
+    SCROLL_KINDS_BY_NAME[k.name] = k;
+    if (!SCROLL_KINDS_BY_NAME[cleanName]) SCROLL_KINDS_BY_NAME[cleanName] = k;
+  }
 }
 
 // 한글 레거시 아이템명 정확 일치 튜플 매핑 사전 (문자열 부분 파싱 0%)
@@ -48,13 +56,22 @@ const KOREAN_KIND_ALIASES = Object.freeze({
   '해독 물약': { tval: TVAL.POTION, sval: 27 },
 
   '마법 지도 주문서': { tval: TVAL.SCROLL, sval: 25 },
+  'Magic Mapping': { tval: TVAL.SCROLL, sval: 25 },
   '무기 강화 주문서': { tval: TVAL.SCROLL, sval: 21 },
   '방어구 강화 주문서': { tval: TVAL.SCROLL, sval: 20 },
   '갑옷 강화 주문서': { tval: TVAL.SCROLL, sval: 20 },
   '차원 도약 주문서': { tval: TVAL.SCROLL, sval: 8 },
-  '순간이동 주문서': { tval: TVAL.SCROLL, sval: 10 },
-  '텔레포트 주문서': { tval: TVAL.SCROLL, sval: 10 },
+  'Phase Door': { tval: TVAL.SCROLL, sval: 8 },
+  '순간이동 주문서': { tval: TVAL.SCROLL, sval: 9 },
+  '텔레포트 주문서': { tval: TVAL.SCROLL, sval: 9 },
+  'Teleportation': { tval: TVAL.SCROLL, sval: 9 },
+  'Teleport Level': { tval: TVAL.SCROLL, sval: 10 },
+  '귀환의 주문서': { tval: TVAL.SCROLL, sval: 11 },
+  'Word of Recall': { tval: TVAL.SCROLL, sval: 11 },
   '축복 주문서': { tval: TVAL.SCROLL, sval: 33 },
+  'Blessing': { tval: TVAL.SCROLL, sval: 33 },
+  'Holy Chant': { tval: TVAL.SCROLL, sval: 34 },
+  'Holy Prayer': { tval: TVAL.SCROLL, sval: 35 },
   '감정 주문서': { tval: TVAL.SCROLL, sval: 13 },
   '진실의 감정 주문서': { tval: TVAL.SCROLL, sval: 14 },
   '저주 해제 주문서': { tval: TVAL.SCROLL, sval: 15 },
@@ -63,7 +80,58 @@ const KOREAN_KIND_ALIASES = Object.freeze({
   'Scroll of *Identify*': { tval: TVAL.SCROLL, sval: 14 },
   'Scroll of Remove Curse': { tval: TVAL.SCROLL, sval: 15 },
   'Scroll of *Remove Curse*': { tval: TVAL.SCROLL, sval: 16 },
-  '대파괴 주문서': { tval: TVAL.SCROLL, sval: 41 }
+  '물건 탐지 주문서': { tval: TVAL.SCROLL, sval: 27 },
+  '아이템 탐지 주문서': { tval: TVAL.SCROLL, sval: 27 },
+  'Object Detection': { tval: TVAL.SCROLL, sval: 27 },
+  '보물 탐지 주문서': { tval: TVAL.SCROLL, sval: 26 },
+  'Treasure Detection': { tval: TVAL.SCROLL, sval: 26 },
+  '함정 탐지 주문서': { tval: TVAL.SCROLL, sval: 28 },
+  'Trap Detection': { tval: TVAL.SCROLL, sval: 28 },
+  '문/계단 탐지 주문서': { tval: TVAL.SCROLL, sval: 29 },
+  'Door/Stair Location': { tval: TVAL.SCROLL, sval: 29 },
+  '투명체 감지 주문서': { tval: TVAL.SCROLL, sval: 30 },
+  'Detect Invisible': { tval: TVAL.SCROLL, sval: 30 },
+  '빛의 주문서': { tval: TVAL.SCROLL, sval: 24 },
+  'Light': { tval: TVAL.SCROLL, sval: 24 },
+  '몬스터 혼란 주문서': { tval: TVAL.SCROLL, sval: 36 },
+  'Monster Confusion': { tval: TVAL.SCROLL, sval: 36 },
+  '보호의 룬 주문서': { tval: TVAL.SCROLL, sval: 38 },
+  'Rune of Protection': { tval: TVAL.SCROLL, sval: 38 },
+  '대파괴 주문서': { tval: TVAL.SCROLL, sval: 41 },
+  '*Destruction*': { tval: TVAL.SCROLL, sval: 41 },
+  '언데드 퇴치 주문서': { tval: TVAL.SCROLL, sval: 42 },
+  'Dispel Undead': { tval: TVAL.SCROLL, sval: 42 },
+  '제노사이드 주문서': { tval: TVAL.SCROLL, sval: 44 },
+  'Genocide': { tval: TVAL.SCROLL, sval: 44 },
+  '집단 제노사이드 주문서': { tval: TVAL.SCROLL, sval: 45 },
+  'Mass Genocide': { tval: TVAL.SCROLL, sval: 45 },
+  '획득의 주문서': { tval: TVAL.SCROLL, sval: 46 },
+  'Acquirement': { tval: TVAL.SCROLL, sval: 46 },
+  '*Acquirement*': { tval: TVAL.SCROLL, sval: 47 },
+  '얼음 주문서': { tval: TVAL.SCROLL, sval: 49 },
+  'Ice': { tval: TVAL.SCROLL, sval: 49 },
+  '혼돈 주문서': { tval: TVAL.SCROLL, sval: 50 },
+  'Chaos': { tval: TVAL.SCROLL, sval: 50 },
+  '어둠 주문서': { tval: TVAL.SCROLL, sval: 0 },
+  'Darkness': { tval: TVAL.SCROLL, sval: 0 },
+  '몬스터 각성 주문서': { tval: TVAL.SCROLL, sval: 1 },
+  'Aggravate Monster': { tval: TVAL.SCROLL, sval: 1 },
+  '방어구 저주 주문서': { tval: TVAL.SCROLL, sval: 2 },
+  'Curse Armour': { tval: TVAL.SCROLL, sval: 2 },
+  '무기 저주 주문서': { tval: TVAL.SCROLL, sval: 3 },
+  'Curse Weapon': { tval: TVAL.SCROLL, sval: 3 },
+  '몬스터 소환 주문서': { tval: TVAL.SCROLL, sval: 4 },
+  'Summon Monsters': { tval: TVAL.SCROLL, sval: 4 },
+  '언데드 소환 주문서': { tval: TVAL.SCROLL, sval: 5 },
+  'Summon Undead': { tval: TVAL.SCROLL, sval: 5 },
+  '함정 생성 주문서': { tval: TVAL.SCROLL, sval: 7 },
+  'Trap Creation': { tval: TVAL.SCROLL, sval: 7 },
+  '장인정신 주문서': { tval: TVAL.SCROLL, sval: 19 },
+  'Craftsmanship': { tval: TVAL.SCROLL, sval: 19 },
+  '소문의 주문서': { tval: TVAL.SCROLL, sval: 51 },
+  'Rumour': { tval: TVAL.SCROLL, sval: 51 },
+  '유물 창조 주문서': { tval: TVAL.SCROLL, sval: 52 },
+  'Artifact Creation': { tval: TVAL.SCROLL, sval: 52 }
 });
 
 export class TomeConsumableEngine {
@@ -98,16 +166,22 @@ export class TomeConsumableEngine {
     let tval = item.tval;
     let sval = item.sval;
 
-    if (tval === undefined || sval === undefined) {
-      const alias = KOREAN_KIND_ALIASES[item._baseName || item.name];
+    const itemName = item._baseName || item.name || '';
+    const cleanItemName = typeof itemName === 'string' ? itemName.replace(/^[&\s]+/, '').replace(/[~#]/g, '').trim() : '';
+
+    if (tval === undefined || sval === undefined || sval === null) {
+      const alias = KOREAN_KIND_ALIASES[itemName] || KOREAN_KIND_ALIASES[cleanItemName];
       if (alias) {
         tval = tval !== undefined ? tval : alias.tval;
-        sval = sval !== undefined ? sval : alias.sval;
+        sval = sval !== undefined && sval !== null ? sval : alias.sval;
       } else {
-        const baseKind = KINDS_BY_NAME[item._baseName || item.name];
+        const isScrollType = item.type === 'SCROLL' || tval === TVAL.SCROLL;
+        const baseKind = isScrollType
+          ? (SCROLL_KINDS_BY_NAME[itemName] || SCROLL_KINDS_BY_NAME[cleanItemName] || KINDS_BY_NAME[itemName] || KINDS_BY_NAME[cleanItemName])
+          : (KINDS_BY_NAME[itemName] || KINDS_BY_NAME[cleanItemName]);
         if (baseKind) {
           tval = tval !== undefined ? tval : baseKind.tval;
-          sval = sval !== undefined ? sval : baseKind.sval;
+          sval = sval !== undefined && sval !== null ? sval : baseKind.sval;
         }
       }
     }
@@ -117,6 +191,13 @@ export class TomeConsumableEngine {
       else if (item.type === 'SCROLL') tval = TVAL.SCROLL;
       else if (item.type === 'FOOD') tval = TVAL.FOOD;
       else if (item.type === 'FLASK') tval = TVAL.FLASK;
+    }
+
+    if ((tval === TVAL.SCROLL || item.type === 'SCROLL') && (sval === undefined || sval === null)) {
+      const scrollKind = SCROLL_KINDS_BY_NAME[itemName] || SCROLL_KINDS_BY_NAME[cleanItemName];
+      if (scrollKind) {
+        sval = scrollKind.sval;
+      }
     }
 
     if (tval === TVAL.POTION || item.type === 'POTION') {
@@ -518,7 +599,145 @@ export class TomeConsumableEngine {
     let used = false;
 
     switch (sval) {
-      // 1. 단거리 점멸 (Phase Door: 3~5칸 안전 텔레포트)
+      // 0. 어둠 주문서 (Darkness)
+      case 0:
+        if (map && map.tiles) {
+          const rad = 6;
+          for (let dy = -rad; dy <= rad; dy++) {
+            for (let dx = -rad; dx <= rad; dx++) {
+              const tx = player.x + dx;
+              const ty = player.y + dy;
+              if (map.tiles[ty]?.[tx]) {
+                map.tiles[ty][tx].lit = false;
+              }
+            }
+          }
+          if (game && typeof game.updateFOV === 'function') {
+            game.updateFOV();
+          }
+        }
+        StatusEffectEngine.applyStatus(player, 'BLIND', 10, log);
+        log(`[Scroll] 🌑 칠흑의 어둠 주문서(Darkness)가 발동하여 주변 시야를 암흑으로 뒤덮었습니다!`, 'warning');
+        used = true;
+        break;
+
+      // 1. 몬스터 각성 주문서 (Aggravate Monster)
+      case 1:
+        if (game && Array.isArray(game.monsters)) {
+          let count = 0;
+          for (const m of game.monsters) {
+            if (!m || (m.stats && m.stats.hp <= 0)) continue;
+            m.isAwake = true;
+            m.isAggro = true;
+            m.target = player;
+            count++;
+          }
+          log(`[Scroll] 📢 몬스터 각성 주문서(Aggravate Monster)의 끔찍한 비명이 던전 전역을 울리며 ${count}체의 괴물들을 분노케 했습니다!`, 'warning');
+          used = true;
+        } else {
+          log(`[Scroll] 📢 몬스터 각성 주문서의 비명이 메아리쳤으나 반응하는 적이 없습니다.`, 'warning');
+          used = true;
+        }
+        break;
+
+      // 2. 방어구 저주 주문서 (Curse Armour)
+      case 2:
+        {
+          const armor = player.equipment?.armor || player.equipment?.shield || player.equipment?.helmet;
+          if (armor) {
+            armor.isCursed = true;
+            armor.cursed = true;
+            if (!armor.specialTags) armor.specialTags = [];
+            if (!armor.specialTags.includes('CURSED')) armor.specialTags.push('CURSED');
+            armor.baseAC = Math.max(0, (armor.baseAC || 0) - 2);
+            armor.upgradeLevel = (armor.upgradeLevel || 0) - 1;
+            log(`[Scroll] ☠️ 방어구 저주 주문서(Curse Armour)가 발동하여 [${armor.name}]이(가) 저주받아 방어력이 저하되었습니다!`, 'warning');
+          } else {
+            log(`[Scroll] ☠️ 불길한 저주의 기운이 감돌았으나 저주받을 방어구를 착용하고 있지 않습니다.`, 'warning');
+          }
+          used = true;
+        }
+        break;
+
+      // 3. 무기 저주 주문서 (Curse Weapon)
+      case 3:
+        {
+          const weapon = player.equipment?.weapon;
+          if (weapon) {
+            weapon.isCursed = true;
+            weapon.cursed = true;
+            if (!weapon.specialTags) weapon.specialTags = [];
+            if (!weapon.specialTags.includes('CURSED')) weapon.specialTags.push('CURSED');
+            weapon.toHit = (weapon.toHit || 0) - 2;
+            weapon.toDmg = (weapon.toDmg || 0) - 2;
+            weapon.upgradeLevel = (weapon.upgradeLevel || 0) - 1;
+            log(`[Scroll] ☠️ 무기 저주 주문서(Curse Weapon)가 발동하여 [${weapon.name}]이(가) 사악한 저주에 결속되었습니다!`, 'warning');
+          } else {
+            log(`[Scroll] ☠️ 사악한 저주의 기운이 감돌았으나 저주받을 무기를 장착하고 있지 않습니다.`, 'warning');
+          }
+          used = true;
+        }
+        break;
+
+      // 4. 몬스터 소환 주문서 (Summon Monsters)
+      case 4:
+        EffectVM.execute([
+          { op: 'SUMMON_ENTITIES', count: 2, summonFilter: 'ORC' }
+        ], { caster: player, game, monsters: game?.monsters, map, addLogEntry: log });
+        log(`[Scroll] 👹 몬스터 소환 주문서(Summon Monsters)가 발동하여 주변에 사악한 괴물들이 소환되었습니다!`, 'warning');
+        used = true;
+        break;
+
+      // 5. 언데드 소환 주문서 (Summon Undead)
+      case 5:
+        EffectVM.execute([
+          { op: 'SUMMON_ENTITIES', count: 2, summonFilter: 'UNDEAD' }
+        ], { caster: player, game, monsters: game?.monsters, map, addLogEntry: log });
+        log(`[Scroll] 💀 언데드 소환 주문서(Summon Undead)가 발동하여 묘지의 망령들이 플레이어 주변으로 기어 나왔습니다!`, 'warning');
+        used = true;
+        break;
+
+      // 6. 고정 펫 소환 주문서 (Summon Never-Moving Pet)
+      case 6:
+        EffectVM.execute([
+          { op: 'SUMMON_ENTITIES', count: 1, summonFilter: 'GOBLIN' }
+        ], { caster: player, game, monsters: game?.monsters, map, addLogEntry: log });
+        log(`[Scroll] 🐾 고정 펫 소환 주문서가 발동했습니다.`, 'loot');
+        used = true;
+        break;
+
+      // 7. 함정 생성 주문서 (Trap Creation)
+      case 7:
+        if (map && map.tiles) {
+          let created = 0;
+          const dirs = [
+            { dx: -1, dy: -1 }, { dx: 0, dy: -1 }, { dx: 1, dy: -1 },
+            { dx: -1, dy: 0 },                    { dx: 1, dy: 0 },
+            { dx: -1, dy: 1 },  { dx: 0, dy: 1 },  { dx: 1, dy: 1 }
+          ];
+          for (const d of dirs) {
+            const tx = player.x + d.dx;
+            const ty = player.y + d.dy;
+            const tile = map.getTile ? map.getTile(tx, ty) : map.tiles[ty]?.[tx];
+            if (tile && tile.isWalkable && !tile.isStaircase && !tile.isUpStaircase) {
+              tile.isTrap = true;
+              tile.type = 'TRAP';
+              tile.char = '^';
+              tile.trapDetected = true;
+              tile.isExplored = true;
+              if (map.bridge && typeof map.bridge.updateTile === 'function') {
+                map.bridge.updateTile(tx, ty);
+              }
+              created++;
+              if (created >= 3) break;
+            }
+          }
+          log(`[Scroll] ⚠️ 함정 생성 주문서(Trap Creation)가 발동하여 주변 바닥에 치명적인 함정(${created}개)이 설치되었습니다!`, 'warning');
+          used = true;
+        }
+        break;
+
+      // 8. 단거리 점멸 (Phase Door: 3~5칸 안전 텔레포트)
       case 8: // Phase Door
         if (this._teleportPlayer(player, map, 3, 5)) {
           log(`[Scroll] 🌀 차원 도약 주문서(Phase Door)가 발동하여 근처 안전한 위치로 순식간에 점멸했습니다!`, 'loot');
@@ -526,7 +745,15 @@ export class TomeConsumableEngine {
         }
         break;
 
-      // 2. 장거리 순간이동 (Teleportation)
+      // 9. 장거리 순간이동 (Teleportation)
+      case 9: // Teleportation
+        if (this._teleportPlayer(player, map, 10, 50)) {
+          log(`[Scroll] ✨ 텔레포트 주문서(Teleportation)가 발동하여 먼 공간으로 순간이동했습니다!`, 'loot');
+          used = true;
+        }
+        break;
+
+      // 10. 층간 순간이동 / 장거리 텔레포트 (Teleport Level)
       case 10: // Teleport Level
         if (this._teleportPlayer(player, map, 8, 30)) {
           log(`[Scroll] ✨ 텔레포트 주문서(Teleportation)가 발동하여 던전의 새로운 방으로 순간이동했습니다!`, 'loot');
@@ -534,63 +761,21 @@ export class TomeConsumableEngine {
         }
         break;
 
-      // 3. 지도 밝히기 (Magic Mapping)
-      case 25: // Magic Mapping
-      case 31: // Divination
-        if (map) {
-          if (typeof map.revealAll === 'function') {
-            map.revealAll();
-          }
-          if (map.tiles) {
-            for (let y = 0; y < map.tiles.length; y++) {
-              for (let x = 0; x < map.tiles[y].length; x++) {
-                if (map.tiles[y] && map.tiles[y][x]) {
-                  map.tiles[y][x].isExplored = true;
-                  map.tiles[y][x].explored = true;
-                  map.tiles[y][x].revealed = true;
-                }
-              }
-            }
-          }
-          log(`[Scroll] 🗺️ 마법 지도 주문서(Magic Mapping)가 이번 층의 모든 방과 복도를 100% 탐지했습니다!`, 'loot');
-          used = true;
+      // 11. 귀환의 주문서 (Word of Recall)
+      case 11:
+        player.wordOfRecall = 15;
+        if (game && typeof game.recallPlayer === 'function') {
+          game.recallPlayer();
+        } else if (game && typeof game.prevFloor === 'function' && game.floor > 1) {
+          log(`[Scroll] 🏛️ 귀환의 주문서(Word of Recall)가 작동하여 지상/이전 층으로 차원 전이합니다!`, 'loot');
+          game.prevFloor();
+        } else {
+          log(`[Scroll] 🏛️ 귀환의 주문서(Word of Recall)를 읊조렸습니다. 공간의 파동이 형성되며 차원 귀환의 기운이 감돕니다!`, 'loot');
         }
+        used = true;
         break;
 
-      // 4. 무기 강화 주문서
-      case 17: // Enchant Weapon To-Hit
-      case 18: // Enchant Weapon To-Dam
-      case 21: // *Enchant Weapon*
-        {
-          const weapon = player.equipment?.weapon;
-          if (!weapon) {
-            log(`[System] ⚠️ 강화할 무기가 장착되어 있지 않습니다! 무기를 먼저 장착해 주세요.`, 'system');
-            return false;
-          }
-          weapon.upgradeLevel = (weapon.upgradeLevel || 0) + 1;
-          weapon.toHit = (weapon.toHit || 0) + 1;
-          weapon.toDmg = (weapon.toDmg || 0) + 1;
-          log(`[Scroll] ✨ 무기 강화 대성공! 장착 중인 [${weapon.name}]이(가) +${weapon.upgradeLevel}단계 (명중+${weapon.toHit}, 피해+${weapon.toDmg})로 강화되었습니다!`, 'loot');
-          used = true;
-        }
-        break;
-
-      // 5. 방어구 강화 주문서
-      case 20: // *Enchant Armour*
-        {
-          const armor = player.equipment?.armor || player.equipment?.shield || player.equipment?.helmet;
-          if (!armor) {
-            log(`[System] ⚠️ 강화할 방어구가 장착되어 있지 않습니다! 방어구를 먼저 장착해 주세요.`, 'system');
-            return false;
-          }
-          armor.upgradeLevel = (armor.upgradeLevel || 0) + 1;
-          armor.baseAC = (armor.baseAC || 0) + 1;
-          log(`[Scroll] 🛡️ 방어구 강화 대성공! [${armor.name}]의 기본 방어력(AC)이 +${armor.baseAC}로 강화되었습니다!`, 'loot');
-          used = true;
-        }
-        break;
-
-      // 6. 감정의 주문서 (Scroll of Identify: sval 13)
+      // 13. 감정의 주문서 (Scroll of Identify)
       case 13: {
         let target = targetItem;
         if (!target) {
@@ -615,7 +800,7 @@ export class TomeConsumableEngine {
         break;
       }
 
-      // 7. 진실의 감정 주문서 (Scroll of *Identify*: sval 14)
+      // 14. 진실의 감정 주문서 (Scroll of *Identify*)
       case 14: {
         let target = targetItem;
         if (!target) {
@@ -640,7 +825,7 @@ export class TomeConsumableEngine {
         break;
       }
 
-      // 8. 저주 해제의 주문서 (Scroll of Remove Curse: sval 15)
+      // 15. 저주 해제의 주문서 (Scroll of Remove Curse)
       case 15: {
         let target = targetItem;
         if (!target) {
@@ -665,8 +850,22 @@ export class TomeConsumableEngine {
         break;
       }
 
-      // 9. 강력한 저주 해제의 주문서 (Scroll of *Remove Curse*: sval 16)
+      // 16. 강력한 저주 해제의 주문서 (Scroll of *Remove Curse*) / 명칭에 따라 무기 강화
       case 16: {
+        if (item && (item.name?.includes('Enchant') || item.name?.includes('강화'))) {
+          const weapon = player.equipment?.weapon;
+          if (!weapon) {
+            log(`[System] ⚠️ 강화할 무기가 장착되어 있지 않습니다! 무기를 먼저 장착해 주세요.`, 'system');
+            return false;
+          }
+          weapon.upgradeLevel = (weapon.upgradeLevel || 0) + 1;
+          weapon.toHit = (weapon.toHit || 0) + 1;
+          weapon.toDmg = (weapon.toDmg || 0) + 1;
+          log(`[Scroll] ✨ 무기 강화 대성공! 장착 중인 [${weapon.name}]이(가) +${weapon.upgradeLevel}단계로 강화되었습니다!`, 'loot');
+          used = true;
+          break;
+        }
+
         const count = TomeTagSystem.removeAllCurses(player);
         if (count > 0) {
           log(`[Purify] ☀️ 찬란한 정화의 광휘가 전신을 감싸며 착용 중인 모든 장비의 흉악한 저주(${count}개)가 완전히 소멸했습니다!`, 'loot');
@@ -674,9 +873,9 @@ export class TomeConsumableEngine {
         } else {
           let invCount = 0;
           if (Array.isArray(player.inventory)) {
-            for (const item of player.inventory) {
-              if (item && (item.isCursed || !TomeTagSystem.canUnequip(item))) {
-                const res = TomeTagSystem.removeCurse(item, true);
+            for (const it of player.inventory) {
+              if (it && (it.isCursed || !TomeTagSystem.canUnequip(it))) {
+                const res = TomeTagSystem.removeCurse(it, true);
                 if (res.success) invCount++;
               }
             }
@@ -692,7 +891,272 @@ export class TomeConsumableEngine {
         break;
       }
 
-      // 10. 신성 축복 (Blessing)
+      // 17, 18, 19, 21. 무기 강화 / 세공 주문서
+      case 17: // Enchant Weapon To-Hit
+      case 18: // Enchant Weapon To-Dam
+      case 19: // Craftsmanship
+      case 21: // *Enchant Weapon*
+        {
+          const weapon = player.equipment?.weapon;
+          if (!weapon) {
+            log(`[System] ⚠️ 강화할 무기가 장착되어 있지 않습니다! 무기를 먼저 장착해 주세요.`, 'system');
+            return false;
+          }
+          weapon.upgradeLevel = (weapon.upgradeLevel || 0) + 1;
+          weapon.toHit = (weapon.toHit || 0) + 1;
+          weapon.toDmg = (weapon.toDmg || 0) + 1;
+          log(`[Scroll] ✨ 무기 강화 대성공! 장착 중인 [${weapon.name}]이(가) +${weapon.upgradeLevel}단계 (명중+${weapon.toHit}, 피해+${weapon.toDmg})로 강화되었습니다!`, 'loot');
+          used = true;
+        }
+        break;
+
+      // 20. 방어구 강화 주문서
+      case 20: // *Enchant Armour*
+        {
+          const armor = player.equipment?.armor || player.equipment?.shield || player.equipment?.helmet;
+          if (!armor) {
+            log(`[System] ⚠️ 강화할 방어구가 장착되어 있지 않습니다! 방어구를 먼저 장착해 주세요.`, 'system');
+            return false;
+          }
+          armor.upgradeLevel = (armor.upgradeLevel || 0) + 1;
+          armor.baseAC = (armor.baseAC || 0) + 1;
+          log(`[Scroll] 🛡️ 방어구 강화 대성공! [${armor.name}]의 기본 방어력(AC)이 +${armor.baseAC}로 강화되었습니다!`, 'loot');
+          used = true;
+        }
+        break;
+
+      // 22. 마법 도구 재충전 (Recharging)
+      case 22:
+        if (player.inventory) {
+          let recharged = 0;
+          for (const invItem of player.inventory) {
+            if (invItem && invItem.charges !== undefined) {
+              invItem.charges += 3;
+              recharged++;
+            }
+          }
+          log(`[Scroll] ⚡ 재충전 주문서(Recharging)로 소지 중인 마법 완드/스태프의 충전량이 +3 회복되었습니다!`, 'loot');
+          used = true;
+        }
+        break;
+
+      // 23. 귀환 좌표 재설정 (Reset Recall)
+      case 23:
+        log(`[Scroll] 🌀 귀환 좌표 재설정 주문서(Reset Recall)로 귀환 목표 위치가 재조정되었습니다.`, 'loot');
+        used = true;
+        break;
+
+      // 24. 빛의 주문서 (Light)
+      case 24:
+        if (map && map.tiles) {
+          const rad = 6;
+          for (let dy = -rad; dy <= rad; dy++) {
+            for (let dx = -rad; dx <= rad; dx++) {
+              const tx = player.x + dx;
+              const ty = player.y + dy;
+              const tile = map.getTile ? map.getTile(tx, ty) : map.tiles?.[ty]?.[tx];
+              if (tile) {
+                tile.isExplored = true;
+                tile.explored = true;
+                tile.revealed = true;
+                tile.lit = true;
+                if (map.bridge && typeof map.bridge.updateTile === 'function') {
+                  map.bridge.updateTile(tx, ty);
+                }
+              }
+            }
+          }
+          if (game && typeof game.updateFOV === 'function') {
+            game.updateFOV();
+          }
+        }
+        log(`[Scroll] ☀️ 빛의 주문서(Light)가 주변을 환한 빛으로 환하게 밝혔습니다!`, 'loot');
+        used = true;
+        break;
+
+      // 25. 지도 밝히기 (Magic Mapping)
+      case 25:
+      case 31: // Divination
+        if (map) {
+          if (typeof map.revealAll === 'function') {
+            map.revealAll();
+          }
+          if (map.tiles) {
+            for (let y = 0; y < map.tiles.length; y++) {
+              for (let x = 0; x < map.tiles[y].length; x++) {
+                if (map.tiles[y] && map.tiles[y][x]) {
+                  map.tiles[y][x].isExplored = true;
+                  map.tiles[y][x].explored = true;
+                  map.tiles[y][x].revealed = true;
+                }
+              }
+            }
+          }
+          log(`[Scroll] 🗺️ 마법 지도 주문서(Magic Mapping)가 이번 층의 모든 방과 복도를 100% 탐지했습니다!`, 'loot');
+          used = true;
+        }
+        break;
+
+      // 26. 보물 탐지 주문서 (Treasure Detection)
+      case 26:
+        {
+          let treasureCount = 0;
+          if (game && Array.isArray(game.items)) {
+            for (const it of game.items) {
+              if (it && (it.type === 'GOLD' || it.type === 'TREASURE' || it.char === '$' || it.isVaultTile)) {
+                it.detected = true;
+                treasureCount++;
+                const tile = map ? (map.getTile ? map.getTile(it.x, it.y) : map.tiles?.[it.y]?.[it.x]) : null;
+                if (tile) {
+                  tile.isExplored = true;
+                  tile.explored = true;
+                  tile.revealed = true;
+                  if (map.bridge && typeof map.bridge.updateTile === 'function') {
+                    map.bridge.updateTile(it.x, it.y);
+                  }
+                }
+              }
+            }
+          }
+          if (map && map.tiles) {
+            for (let y = 0; y < map.tiles.length; y++) {
+              for (let x = 0; x < map.tiles[y].length; x++) {
+                const tile = map.tiles[y][x];
+                if (tile && (tile.type === 'TREASURE' || tile.char === '$' || tile.isVaultTile)) {
+                  tile.isExplored = true;
+                  tile.explored = true;
+                  tile.revealed = true;
+                  treasureCount++;
+                  if (map.bridge && typeof map.bridge.updateTile === 'function') {
+                    map.bridge.updateTile(x, y);
+                  }
+                }
+              }
+            }
+          }
+          if (game && typeof game.updateFOV === 'function') {
+            game.updateFOV();
+          }
+          log(`[Scroll] 💰 보물 탐지 주문서(Treasure Detection)가 이번 층의 모든 보물과 금화 위치(${treasureCount}곳)를 감지했습니다!`, 'loot');
+          used = true;
+        }
+        break;
+
+      // 27. 물건 탐지 주문서 (Object Detection)
+      case 27:
+        {
+          let itemCount = 0;
+          if (game && Array.isArray(game.items)) {
+            for (const it of game.items) {
+              if (!it) continue;
+              it.detected = true;
+              itemCount++;
+              const tile = map ? (map.getTile ? map.getTile(it.x, it.y) : map.tiles?.[it.y]?.[it.x]) : null;
+              if (tile) {
+                tile.isExplored = true;
+                tile.explored = true;
+                tile.revealed = true;
+                if (map.bridge && typeof map.bridge.updateTile === 'function') {
+                  map.bridge.updateTile(it.x, it.y);
+                }
+              }
+            }
+          }
+          if (game && typeof game.updateFOV === 'function') {
+            game.updateFOV();
+          }
+          log(`[Scroll] 💍 물건 탐지 주문서(Object Detection)가 이번 층의 모든 아이템 위치(${itemCount}개)를 감지했습니다!`, 'loot');
+          used = true;
+        }
+        break;
+
+      // 28. 함정 탐지 주문서 (Trap Detection)
+      case 28:
+        {
+          let trapCount = 0;
+          if (map && map.tiles) {
+            for (let y = 0; y < map.tiles.length; y++) {
+              for (let x = 0; x < map.tiles[y].length; x++) {
+                const tile = map.tiles[y][x];
+                if (tile && (tile.isTrap || tile.type === 'TRAP' || tile.char === '^')) {
+                  tile.isExplored = true;
+                  tile.explored = true;
+                  tile.revealed = true;
+                  tile.trapDetected = true;
+                  trapCount++;
+                  if (map.bridge && typeof map.bridge.updateTile === 'function') {
+                    map.bridge.updateTile(x, y);
+                  }
+                }
+              }
+            }
+          }
+          if (game && typeof game.updateFOV === 'function') {
+            game.updateFOV();
+          }
+          log(`[Scroll] ⚠️ 함정 탐지 주문서(Trap Detection)가 이번 층의 숨겨진 함정(${trapCount}개)을 모두 드러냈습니다!`, 'loot');
+          used = true;
+        }
+        break;
+
+      // 29. 문/계단 탐지 주문서 (Door/Stair Location)
+      case 29:
+        {
+          let doorStairCount = 0;
+          if (map && map.tiles) {
+            for (let y = 0; y < map.tiles.length; y++) {
+              for (let x = 0; x < map.tiles[y].length; x++) {
+                const tile = map.tiles[y][x];
+                if (tile && (tile.isDoor || tile.type === 'DOOR' || tile.char === '+' || tile.char === '\'' ||
+                             tile.isStaircase || tile.isUpStaircase || tile.type === 'STAIRS_UP' || tile.type === 'STAIRS_DOWN' ||
+                             tile.char === '<' || tile.char === '>')) {
+                  tile.isExplored = true;
+                  tile.explored = true;
+                  tile.revealed = true;
+                  doorStairCount++;
+                  if (map.bridge && typeof map.bridge.updateTile === 'function') {
+                    map.bridge.updateTile(x, y);
+                  }
+                }
+              }
+            }
+          }
+          if (game && typeof game.updateFOV === 'function') {
+            game.updateFOV();
+          }
+          log(`[Scroll] 🚪 문/계단 탐지 주문서(Door/Stair Location)가 이번 층의 문과 계단(${doorStairCount}곳)의 위치를 밝혔습니다!`, 'loot');
+          used = true;
+        }
+        break;
+
+      // 30. 투명체 감지 주문서 (Detect Invisible)
+      case 30:
+        {
+          StatusEffectEngine.applyStatus(player, 'SEE_INVIS', 50, log);
+          player.seeInvisible = true;
+          if (player.perks && typeof player.perks.add === 'function') player.perks.add('SEE_INVIS');
+          let invisCount = 0;
+          if (game && Array.isArray(game.monsters)) {
+            for (const m of game.monsters) {
+              if (m && (m.flags?.includes?.('INVISIBLE') || m.invisible)) {
+                m.revealed = true;
+                m.visible = true;
+                invisCount++;
+              }
+            }
+          }
+          log(`[Scroll] 👁️ 투명체 감지 주문서(Detect Invisible)가 발동하여 숨겨진 투명체와 몬스터들의 기척(${invisCount}체)이 훤히 드러납니다!`, 'loot');
+          used = true;
+        }
+        break;
+
+      // 32. 포만감 주문서 (Satisfy Hunger)
+      case 32:
+        log(`[Scroll] 🍞 주문서의 마력으로 허기가 가셨습니다.`, 'loot');
+        used = true;
+        break;
+
+      // 33, 34, 35, 37. 신성 축복 및 보호 (Blessing / Holy Chant / Holy Prayer / Protection from Evil)
       case 33: // Blessing
       case 34: // Holy Chant
       case 35: // Holy Prayer
@@ -707,7 +1171,47 @@ export class TomeConsumableEngine {
         used = true;
         break;
 
-      // 7. 대파괴 (*Destruction*)
+      // 36. 몬스터 혼란 주문서 (Monster Confusion)
+      case 36:
+        if (game && Array.isArray(game.monsters)) {
+          let count = 0;
+          for (const m of game.monsters) {
+            if (!m || (m.stats && m.stats.hp <= 0)) continue;
+            const dist = Math.hypot(m.x - player.x, m.y - player.y);
+            if (dist <= 8) {
+              StatusEffectEngine.applyStatus(m, 'CONFUSION', 15, log);
+              count++;
+            }
+          }
+          log(`[Scroll] 🌀 몬스터 혼란 주문서(Monster Confusion)가 발동하여 주변의 적 ${count}체가 극심한 혼란에 빠졌습니다!`, 'combat');
+          used = true;
+        } else {
+          log(`[Scroll] 🌀 몬스터 혼란의 마력이 주변을 휩쓸었습니다.`, 'combat');
+          used = true;
+        }
+        break;
+
+      // 38. 보호의 룬 주문서 (Rune of Protection)
+      case 38:
+        StatusEffectEngine.applyStatus(player, 'SHIELD', 30, log);
+        if (map) {
+          const tile = map.getTile ? map.getTile(player.x, player.y) : map.tiles?.[player.y]?.[player.x];
+          if (tile) {
+            tile.hasRune = true;
+            tile.runeType = 'PROTECTION';
+          }
+        }
+        log(`[Scroll] 🛡️ 보호의 룬 주문서(Rune of Protection)가 발동하여 발밑에 신성한 수호 룬을 새기고 강력한 보호막을 둘렀습니다!`, 'loot');
+        used = true;
+        break;
+
+      // 40. 고대 탈환의 주문서 (& Old Scroll~ of Deincarnation)
+      case 40:
+        log(`[Scroll] 📜 고대의 탈의/탈환 주문서가 신비로운 파동을 일으킵니다.`, 'loot');
+        used = true;
+        break;
+
+      // 41. 대파괴 주문서 (*Destruction*)
       case 41:
         if (game && Array.isArray(game.monsters)) {
           let killed = 0;
@@ -742,7 +1246,7 @@ export class TomeConsumableEngine {
         }
         break;
 
-      // 8. 언데드 퇴치 (Dispel Undead)
+      // 42. 언데드 퇴치 (Dispel Undead)
       case 42:
         if (game && Array.isArray(game.monsters)) {
           let count = 0;
@@ -776,42 +1280,183 @@ export class TomeConsumableEngine {
         }
         break;
 
-      // 9. 포만감 / 더미
-      case 32: // Satisfy Hunger
-        log(`[Scroll] 🍞 주문서의 마력으로 허기가 가셨습니다.`, 'loot');
+      // 44, 45. 제노사이드 / 집단 제노사이드 (Genocide / Mass Genocide)
+      case 44:
+      case 45:
+        if (game && Array.isArray(game.monsters)) {
+          let eliminated = 0;
+          let targetSpecies = null;
+          if (sval === 44) {
+            let nearestDist = Infinity;
+            for (const m of game.monsters) {
+              if (!m || (m.stats && m.stats.hp <= 0)) continue;
+              const d = Math.hypot(m.x - player.x, m.y - player.y);
+              if (d < nearestDist && d <= 15) {
+                nearestDist = d;
+                targetSpecies = m.species || m.type || m.name;
+              }
+            }
+          }
+          for (let i = game.monsters.length - 1; i >= 0; i--) {
+            const m = game.monsters[i];
+            if (!m || (m.stats && m.stats.hp <= 0)) continue;
+            const dist = Math.hypot(m.x - player.x, m.y - player.y);
+            if (dist <= 15) {
+              if (sval === 44 && targetSpecies) {
+                const mSpecies = m.species || m.type || m.name;
+                if (mSpecies !== targetSpecies) continue;
+              }
+              m.stats.hp = 0;
+              eliminated++;
+              if (game?.bossPhaseEngine?.checkPhaseTransition) {
+                game.bossPhaseEngine.checkPhaseTransition(m, game);
+                if (m.stats && m.stats.hp > 0) continue;
+              }
+              if (typeof game?.handleMonsterDeath === 'function') {
+                game.handleMonsterDeath(m, sval === 44 ? '제노사이드 주문서' : '집단 제노사이드 주문서');
+              } else {
+                try {
+                  LootSystem.processMonsterDeath(m, game);
+                } catch (_) {}
+                try {
+                  if (game && player) LootSystem.processMonsterDeath(game, player, m, sval === 44 ? '제노사이드 주문서' : '집단 제노사이드 주문서');
+                } catch (_) {}
+                EffectVM._handleMonsterDeath(m, { game, player });
+              }
+            }
+          }
+          const scrollTitle = sval === 44 ? '제노사이드(Genocide)' : '집단 제노사이드(Mass Genocide)';
+          log(`[Scroll] ⚡ ${scrollTitle} 주문서가 발동하여 시야 내의 적 ${eliminated}체를 일소했습니다!`, 'combat');
+          used = true;
+        } else {
+          log(`[Scroll] ⚡ 제노사이드의 빛이 던전을 휩쓸었으나 대상이 없습니다.`, 'combat');
+          used = true;
+        }
+        break;
+
+      // 46, 47. 획득의 주문서 (Acquirement / *Acquirement*)
+      case 46:
+      case 47:
+        {
+          const bonusFloor = Math.max(15, (game?.floor || 1) + (sval === 47 ? 15 : 8));
+          let spawnedItem = null;
+          try {
+            spawnedItem = TomeLootGenerator.generateEquipmentItem(player.x, player.y, bonusFloor, true) ||
+                          TomeLootGenerator.generateFloorItem(player.x, player.y, bonusFloor, true);
+          } catch (_) {}
+          if (spawnedItem) {
+            if (player.inventory && player.inventory.length < 24) {
+              player.inventory.push(spawnedItem);
+              log(`[Scroll] 🎁 획득의 주문서(Acquirement)가 발동하여 인벤토리에 고급 장비 [${spawnedItem.name}]이(가) 나타났습니다!`, 'loot');
+            } else if (game?.items) {
+              game.items.push(spawnedItem);
+              log(`[Scroll] 🎁 획득의 주문서(Acquirement)가 발동하여 발밑에 고급 장비 [${spawnedItem.name}]이(가) 소환되었습니다!`, 'loot');
+            } else {
+              log(`[Scroll] 🎁 획득의 주문서(Acquirement)가 발동하여 고급 장비 [${spawnedItem.name}]의 기운이 깃들었습니다!`, 'loot');
+            }
+          } else {
+            log(`[Scroll] 🎁 획득의 주문서(Acquirement)가 찬란한 황금빛을 뿜어냅니다!`, 'loot');
+          }
+          used = true;
+        }
+        break;
+
+      // 49. 얼음 주문서 (Ice)
+      case 49:
+        if (game && Array.isArray(game.monsters)) {
+          let hitCount = 0;
+          for (const m of game.monsters) {
+            if (!m || (m.stats && m.stats.hp <= 0)) continue;
+            const dist = Math.hypot(m.x - player.x, m.y - player.y);
+            if (dist <= 5) {
+              m.stats.hp = Math.max(0, m.stats.hp - 60);
+              StatusEffectEngine.applyStatus(m, 'FROST', 10, log);
+              hitCount++;
+              if (m.stats.hp <= 0) {
+                if (typeof game?.handleMonsterDeath === 'function') {
+                  game.handleMonsterDeath(m, '얼음 주문서');
+                } else {
+                  try {
+                    LootSystem.processMonsterDeath(m, game);
+                  } catch (_) {}
+                  try {
+                    if (game && player) LootSystem.processMonsterDeath(game, player, m, '얼음 주문서');
+                  } catch (_) {}
+                  EffectVM._handleMonsterDeath(m, { game, player });
+                }
+              }
+            }
+          }
+          log(`[Scroll] ❄️ 얼음 주문서(Ice)가 폭발하여 주변 5칸에 극저온의 냉기 폭풍을 일으켰습니다! (${hitCount}체 적중)`, 'combat');
+          used = true;
+        } else {
+          log(`[Scroll] ❄️ 얼음 주문서의 서늘한 기운이 주변을 감쌉니다.`, 'combat');
+          used = true;
+        }
+        break;
+
+      // 50. 혼돈 주문서 (Chaos)
+      case 50:
+        if (game && Array.isArray(game.monsters)) {
+          let hitCount = 0;
+          const statuses = ['CONFUSION', 'BLIND', 'STUN', 'POISON', 'FROST'];
+          for (const m of game.monsters) {
+            if (!m || (m.stats && m.stats.hp <= 0)) continue;
+            const dist = Math.hypot(m.x - player.x, m.y - player.y);
+            if (dist <= 5) {
+              m.stats.hp = Math.max(0, m.stats.hp - 85);
+              const st = statuses[Math.floor(Math.random() * statuses.length)];
+              StatusEffectEngine.applyStatus(m, st, 12, log);
+              hitCount++;
+              if (m.stats.hp <= 0) {
+                if (typeof game?.handleMonsterDeath === 'function') {
+                  game.handleMonsterDeath(m, '혼돈 주문서');
+                } else {
+                  try {
+                    LootSystem.processMonsterDeath(m, game);
+                  } catch (_) {}
+                  try {
+                    if (game && player) LootSystem.processMonsterDeath(game, player, m, '혼돈 주문서');
+                  } catch (_) {}
+                  EffectVM._handleMonsterDeath(m, { game, player });
+                }
+              }
+            }
+          }
+          log(`[Scroll] 🌀 혼돈 주문서(Chaos)가 폭발하여 시공간을 왜곡하고 카오스 에너지를 방출했습니다! (${hitCount}체 적중)`, 'combat');
+          used = true;
+        } else {
+          log(`[Scroll] 🌀 혼돈 주문서의 기운이 대기를 뒤흔들었습니다.`, 'combat');
+          used = true;
+        }
+        break;
+
+      // 51. 소문의 주문서 (Rumour)
+      case 51:
+        log(`[Scroll] 📜 소문의 주문서(Rumour): "던전 깊은 곳의 유적에는 강력한 고대 유물들이 잠들어 있다고 합니다..."`, 'system');
         used = true;
         break;
 
-      // 10. 마법 도구 재충전 (Recharging)
-      case 22: // Recharging
-        if (player.inventory) {
-          let recharged = 0;
-          for (const invItem of player.inventory) {
-            if (invItem.charges !== undefined) {
-              invItem.charges += 3;
-              recharged++;
-            }
+      // 52. 유물 창조 주문서 (Artifact Creation)
+      case 52:
+        {
+          const weapon = player.equipment?.weapon;
+          if (weapon) {
+            weapon.upgradeLevel = (weapon.upgradeLevel || 0) + 3;
+            weapon.toHit = (weapon.toHit || 0) + 3;
+            weapon.toDmg = (weapon.toDmg || 0) + 3;
+            log(`[Scroll] 👑 유물 창조 주문서(Artifact Creation)의 절대적 마력이 [${weapon.name}]에 깃들어 전설적 위력(+3 강화)을 부여했습니다!`, 'loot');
+          } else {
+            log(`[Scroll] 👑 유물 창조 주문서의 위대한 권능이 대기를 진동시켰습니다.`, 'loot');
           }
-          log(`[Scroll] ⚡ 재충전 주문서(Recharging)로 소지 중인 마법 완드/스태프의 충전량이 +3 회복되었습니다!`, 'loot');
           used = true;
         }
         break;
 
-      // 11. 폴백 기본 주문서 (무기 강화 또는 체력 회복)
+      // 폴백 기본 주문서 (어떤 경우에도 무기를 엉뚱하게 강화하지 않음!)
       default:
-        {
-          const weapon = player.equipment?.weapon;
-          if (weapon) {
-            weapon.upgradeLevel = (weapon.upgradeLevel || 0) + 1;
-            weapon.toHit = (weapon.toHit || 0) + 1;
-            weapon.toDmg = (weapon.toDmg || 0) + 1;
-            log(`[Scroll] ✨ 신비한 주문서의 마력이 무기에 깃들어 [${weapon.name}]이(가) +${weapon.upgradeLevel}강화되었습니다!`, 'loot');
-          } else {
-            player.stats.hp = Math.min(player.stats.maxHp, player.stats.hp + 20);
-            log(`[Scroll] ✨ 신비한 주문서가 발동하여 체력이 +20 회복되었습니다.`, 'loot');
-          }
-          used = true;
-        }
+        log(`[Scroll] 📜 주문서의 고대 글귀가 은은한 빛을 발했으나 평온하게 흩어졌습니다.`, 'system');
+        used = true;
         break;
     }
 

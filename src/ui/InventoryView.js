@@ -510,8 +510,9 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
       ArtifactActivationEngine.resolveArtifactActivation(item)
     );
     const activationEffect = isActivable ? ArtifactActivationEngine.resolveArtifactActivation(item) : null;
+    let activableHTML = '';
     if (activationEffect && activationEffect.desc) {
-      flagItems.push(`<li>• <span style="color: #fbbf24; font-weight: bold;">⚡ [유물 발동]</span>: <span style="color: #fde68a;">${activationEffect.desc}</span></li>`);
+      activableHTML = `<p style="margin-top: 0.25rem;">• <span style="color: #fbbf24; font-weight: bold;">⚡ [유물 발동]</span>: <span style="color: #fde68a;">${activationEffect.desc}</span></p>`;
     }
 
     return `
@@ -524,6 +525,7 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
       </div>
       <div class="detail-desc" style="margin-top: 0.4rem; font-size: 0.8rem; color: var(--text-muted); text-align: left; padding-right: 4px; line-height: 1.4; display: flex; flex-direction: column; gap: 0.35rem;">
         <p><b>효과:</b> <span style="color: #cbd5e1;">${desc}</span></p>
+        ${activableHTML}
         ${consumableFlavorHTML}
       </div>
       <div class="detail-actions" style="margin-top: auto; display: flex; flex-direction: column; gap: 0.4rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.5rem;">

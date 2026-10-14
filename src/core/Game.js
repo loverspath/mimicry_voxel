@@ -1839,16 +1839,10 @@ export class Game {
     if (!e) return;
     e.innerHTML = ``;
     let t = document.getElementById(`player-status-panel`);
-    t &&
-      ((t.innerHTML = ee(this.player)),
-      (document.getElementById(`active-core-btn`).onclick = () =>
-        this.showActiveCoreDetails()),
-      (document.getElementById(`char-info-btn`).onclick = () =>
-        this.showPlayerDetails()),
-      (document.getElementById(`skill-tree-btn`).onclick = () =>
-        this.showSkillTree()),
-      (document.getElementById(`mastery-info-btn`).onclick = () =>
-        this.showMasteryDetails()));
+    if (t) {
+      t.innerHTML = ``;
+      t.style.display = `none`;
+    }
     const totalSlots = Math.max(24, (this.player.inventory && this.player.inventory.length) || 0);
     for (let t = 0; t < totalSlots; t++) {
       let n = this.player.inventory[t],

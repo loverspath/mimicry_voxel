@@ -375,6 +375,18 @@ export class ItemSchemaInterpreter {
         ops.push({ op: EFFECT_OP_TYPES.ALTER_MAP, action: 'DARKNESS' });
         break;
 
+      case 1: // Aggravate Monster
+        ops.push({ op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'AGGRAVATE', target: 'ALL_MONSTERS' });
+        break;
+
+      case 2: // Curse Armour
+        ops.push({ op: EFFECT_OP_TYPES.MUTATE_INVENTORY, action: 'CURSE_ARMOR' });
+        break;
+
+      case 3: // Curse Weapon
+        ops.push({ op: EFFECT_OP_TYPES.MUTATE_INVENTORY, action: 'CURSE_WEAPON' });
+        break;
+
       case 4: // Summon Monsters
         ops.push({ op: EFFECT_OP_TYPES.SUMMON_ENTITIES, count: 2, summonFilter: 'GOBLIN' });
         break;
@@ -383,12 +395,24 @@ export class ItemSchemaInterpreter {
         ops.push({ op: EFFECT_OP_TYPES.SUMMON_ENTITIES, count: 2, summonFilter: 'UNDEAD' });
         break;
 
+      case 7: // Trap Creation
+        ops.push({ op: EFFECT_OP_TYPES.ALTER_MAP, action: 'TRAP_CREATION' });
+        break;
+
       case 8: // Phase Door
         ops.push({ op: EFFECT_OP_TYPES.DISPLACE, mode: 'BLINK', dist: 10, target: 'SELF' });
         break;
 
+      case 9: // Teleportation
+        ops.push({ op: EFFECT_OP_TYPES.DISPLACE, mode: 'TELEPORT', dist: 50, target: 'SELF' });
+        break;
+
       case 10: // Teleport
         ops.push({ op: EFFECT_OP_TYPES.DISPLACE, mode: 'TELEPORT', dist: 100, target: 'SELF' });
+        break;
+
+      case 11: // Word of Recall
+        ops.push({ op: EFFECT_OP_TYPES.DISPLACE, mode: 'RECALL', target: 'SELF' });
         break;
 
       case 13: // Identify
@@ -422,13 +446,32 @@ export class ItemSchemaInterpreter {
         ops.push({ op: EFFECT_OP_TYPES.MUTATE_INVENTORY, action: 'RECHARGE' });
         break;
 
+      case 24: // Light
+        ops.push({ op: EFFECT_OP_TYPES.ALTER_MAP, action: 'LIGHT_AREA', radius: 6 });
+        break;
+
       case 25: // Magic Mapping
         ops.push({ op: EFFECT_OP_TYPES.ALTER_MAP, action: 'REVEAL_ALL' });
         break;
 
       case 26: // Treasure Detection
+        ops.push({ op: EFFECT_OP_TYPES.ALTER_MAP, action: 'DETECT_TREASURE' });
+        break;
+
       case 27: // Object Detection
         ops.push({ op: EFFECT_OP_TYPES.ALTER_MAP, action: 'DETECT_ITEMS' });
+        break;
+
+      case 28: // Trap Detection
+        ops.push({ op: EFFECT_OP_TYPES.ALTER_MAP, action: 'DETECT_TRAPS' });
+        break;
+
+      case 29: // Door/Stair Location
+        ops.push({ op: EFFECT_OP_TYPES.ALTER_MAP, action: 'DETECT_DOORS_STAIRS' });
+        break;
+
+      case 30: // Detect Invisible
+        ops.push({ op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'SEE_INVIS', duration: 50, target: 'SELF' });
         break;
 
       case 31: // Divination
@@ -482,8 +525,14 @@ export class ItemSchemaInterpreter {
         ops.push({ op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'SURROUND', radius: 10, element: 'LIGHT', flat: 100, slayTags: ['UNDEAD'] });
         break;
 
+      case 44: // Genocide
       case 45: // Mass Genocide
         ops.push({ op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'SURROUND', radius: 20, element: 'MAGIC', flat: 1000 });
+        break;
+
+      case 46: // Acquirement
+      case 47: // *Acquirement*
+        ops.push({ op: EFFECT_OP_TYPES.MUTATE_INVENTORY, action: 'ACQUIREMENT' });
         break;
 
       case 49: // Ice
@@ -494,8 +543,15 @@ export class ItemSchemaInterpreter {
         ops.push({ op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'BALL', radius: 4, element: 'CHAOS', flat: 80 });
         break;
 
+      case 51: // Rumour
+        ops.push({ op: EFFECT_OP_TYPES.MUTATE_INVENTORY, action: 'RUMOUR' });
+        break;
+
+      case 52: // Artifact Creation
+        ops.push({ op: EFFECT_OP_TYPES.MUTATE_INVENTORY, action: 'ENCHANT_WEAPON' });
+        break;
+
       default:
-        ops.push({ op: EFFECT_OP_TYPES.ALTER_MAP, action: 'LIGHT_AREA', radius: 4 });
         break;
     }
 
