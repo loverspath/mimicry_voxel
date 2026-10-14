@@ -11,6 +11,9 @@ import { TVAL } from './TomeEquipmentEngine.js';
 import { TOME_KINDS_DATA } from '../entities/TomeKindsData.js';
 import { TomeIdentificationEngine } from './TomeIdentificationEngine.js';
 import { TomeTagSystem } from './TomeTagSystem.js';
+import { StatusEffectEngine } from './StatusEffectEngine.js';
+import { EffectVM } from './EffectVM.js';
+import { LootSystem } from '../core/LootSystem.js';
 
 // 고속 베이스명 정확 일치 색인 맵
 const KINDS_BY_NAME = {};
@@ -33,8 +36,12 @@ const KOREAN_KIND_ALIASES = Object.freeze({
   '생명력의 성장 영약': { tval: TVAL.POTION, sval: 52 },
   '지능의 성장 영약': { tval: TVAL.POTION, sval: 49 },
   '전능의 성장 영약': { tval: TVAL.POTION, sval: 55 },
-  '가속의 물약': { tval: TVAL.POTION, sval: 18 },
-  '신속의 물약': { tval: TVAL.POTION, sval: 18 },
+  '순진함의 물약': { tval: TVAL.POTION, sval: 18 },
+  '소박함의 물약': { tval: TVAL.POTION, sval: 18 },
+  'Potion of Naivety': { tval: TVAL.POTION, sval: 18 },
+  'Naivety': { tval: TVAL.POTION, sval: 18 },
+  '가속의 물약': { tval: TVAL.POTION, sval: 29 },
+  '신속의 물약': { tval: TVAL.POTION, sval: 29 },
   '영웅의 물약': { tval: TVAL.POTION, sval: 32 },
   '광폭화의 물약': { tval: TVAL.POTION, sval: 33 },
   '무적의 물약': { tval: TVAL.POTION, sval: 62 },
@@ -162,14 +169,26 @@ export class TomeConsumableEngine {
         player.stats.hp = Math.min(player.stats.maxHp, player.stats.hp + amount);
       }
       const actualHealed = player.stats.hp - oldHp;
-      if (cureDebuffs && player.debuffs) {
-        player.debuffs.poison = 0;
-        player.debuffs.frost = 0;
-        if (player.debuffs.magicVulnerability !== undefined) player.debuffs.magicVulnerability = 0;
-        if (player.debuffs.paralyzed !== undefined) player.debuffs.paralyzed = false;
+      if (cureDebuffs) {
+        StatusEffectEngine.cureStatus(player, 'ALL_NEGATIVE');
+        if (player.debuffs) {
+          player.debuffs.poison = 0;
+          player.debuffs.frost = 0;
+          if (player.debuffs.magicVulnerability !== undefined) player.debuffs.magicVulnerability = 0;
+          if (player.debuffs.paralyzed !== undefined) player.debuffs.paralyzed = false;
+        }
       }
       log(`[Potion] 🧪 [${item.name}]을(를) 마셨습니다! 체력이 +${actualHealed} 회복되었습니다. (HP: ${player.stats.hp}/${player.stats.maxHp})`, 'loot');
     };
+
+    // 레거시 가속 물약 호환성 보장
+    if ((item.name && item.name.includes('가속')) || sval === 29) {
+      StatusEffectEngine.applyStatus(player, 'HASTE', 15);
+      player.speedBuffTurns = (player.speedBuffTurns || 0) + 15;
+      log(`[Potion] ⚡ 가속의 물약을 마셨습니다! 15턴 동안 이동 및 공격 속도가 2배 빨라집니다!`, 'loot');
+      this._consumeItem(item, player);
+      return true;
+    }
 
     switch (sval) {
       // 1. 과즙 및 음료
@@ -188,27 +207,32 @@ export class TomeConsumableEngine {
 
       // 3. 디버프 물약 (음용 시 부정적 효과)
       case 4: // Slowness
+        StatusEffectEngine.applyStatus(player, 'SLOW', 10);
         player.slowTurns = (player.slowTurns || 0) + 10;
         log(`[Potion] ⚠️ 몸이 천근만근 무거워지며 감속 상태가 되었습니다!`, 'combat');
         used = true;
         break;
       case 6: // Poison
+        StatusEffectEngine.applyStatus(player, 'POISON', 15, 2);
         if (player.debuffs) player.debuffs.poison = (player.debuffs.poison || 0) + 15;
         log(`[Potion] ☠️ 맹독성 물약을 마셔 극심한 중독 상태에 빠졌습니다!`, 'combat');
         used = true;
         break;
       case 7: // Blindness
+        StatusEffectEngine.applyStatus(player, 'BLIND', 12);
         player.blindTurns = (player.blindTurns || 0) + 12;
         log(`[Potion] 👁️ 시야가 완전히 차단되어 아무것도 보이지 않습니다!`, 'combat');
         used = true;
         break;
       case 9: // Booze
+        StatusEffectEngine.applyStatus(player, 'CONFUSE', 10);
         player.confusedTurns = (player.confusedTurns || 0) + 10;
         healHp(10);
         log(`[Potion] 🍺 독한 술기운이 퍼지며 혼란에 빠졌지만 체력이 약간 회복되었습니다.`, 'loot');
         used = true;
         break;
       case 11: // Sleep
+        StatusEffectEngine.applyStatus(player, 'PARALYZE', 5);
         if (player.debuffs) player.debuffs.paralyzed = true;
         log(`[Potion] 💤 극도의 졸음이 몰려와 깊은 잠에 빠져듭니다!`, 'combat');
         used = true;
@@ -218,13 +242,21 @@ export class TomeConsumableEngine {
         log(`[Potion] 💥 파멸의 독약이 몸을 파괴하여 50의 피해를 입었습니다!`, 'combat');
         used = true;
         break;
-      case 18: // Speed / Haste
-        player.speedBuffTurns = (player.speedBuffTurns || 0) + 15;
-        log(`[Potion] ⚡ 가속의 물약을 마셨습니다! 15턴 동안 이동 및 공격 속도가 2배 빨라집니다!`, 'loot');
+
+      // [CRITICAL FIX] Potion of Naivety -> reduces Wisdom / applies WEAKEN, NOT Speed/Haste!
+      case 18: // Naivety
+        if (!player.baseStats) player.baseStats = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
+        player.baseStats.wis = Math.max(1, (player.baseStats.wis || 10) - 1);
+        if (player.stats && player.stats.wis !== undefined) player.stats.wis = Math.max(1, player.stats.wis - 1);
+        StatusEffectEngine.applyStatus(player, 'WEAKEN', 10);
+        if (typeof player.markDirty === 'function') player.markDirty('스탯 감소: wis');
+        log(`[Potion] 🌀 순진함의 물약(Potion of Naivety)을 마셨습니다! 지혜가 영구히 -1 감소하고 신체가 약화되었습니다.`, 'combat');
         used = true;
         break;
+
       case 22: // Detonations
         player.stats.hp = Math.max(1, player.stats.hp - 30);
+        StatusEffectEngine.applyStatus(player, 'STUN', 5);
         log(`[Potion] 💣 물약이 뱃속에서 폭발하여 30의 피해를 입었습니다!`, 'combat');
         used = true;
         break;
@@ -254,11 +286,13 @@ export class TomeConsumableEngine {
 
       // 5. 투시 / 감지 / 시야
       case 24: // Infra-vision
+        StatusEffectEngine.applyStatus(player, 'INFRA', 50);
         player.infravisionTurns = (player.infravisionTurns || 0) + 50;
         log(`[Potion] 👁️ 적외선 시야가 활성화되어 어둠 속의 온혈 생물을 감지합니다!`, 'loot');
         used = true;
         break;
       case 25: // Detect Invisible
+        StatusEffectEngine.applyStatus(player, 'SEE_INVIS', 50);
         player.seeInvisTurns = (player.seeInvisTurns || 0) + 50;
         log(`[Potion] 🔮 투명체 감지 능력이 생겨 은신한 몬스터를 꿰뚫어 봅니다!`, 'loot');
         used = true;
@@ -278,6 +312,8 @@ export class TomeConsumableEngine {
             }
           }
         }
+        StatusEffectEngine.applyStatus(player, 'SEE_INVIS', 100);
+        StatusEffectEngine.applyStatus(player, 'ESP', 100);
         player.seeInvisTurns = (player.seeInvisTurns || 0) + 100;
         log(`[Potion] 🌟 전지전능의 영약(*Enlightenment*)으로 이번 층의 전체 지형과 보이지 않는 존재가 명료하게 드러납니다!`, 'loot');
         used = true;
@@ -285,6 +321,7 @@ export class TomeConsumableEngine {
 
       // 6. 해독 및 저항
       case 26: // Slow Poison
+        StatusEffectEngine.cureStatus(player, 'POISON');
         if (player.debuffs && player.debuffs.poison > 0) {
           player.debuffs.poison = Math.floor(player.debuffs.poison / 2);
         }
@@ -292,21 +329,25 @@ export class TomeConsumableEngine {
         used = true;
         break;
       case 27: // Neutralise Poison
+        StatusEffectEngine.cureStatus(player, 'POISON');
         if (player.debuffs) player.debuffs.poison = 0;
         log(`[Potion] 🌿 완전 해독제를 마셔 체내의 모든 독소가 정화되었습니다!`, 'loot');
         used = true;
         break;
       case 28: // Boldness
+        StatusEffectEngine.cureStatus(player, 'FEAR');
         player.fearTurns = 0;
         log(`[Potion] 🛡️ 용기의 비약으로 공포가 눈 녹듯 사라졌습니다!`, 'loot');
         used = true;
         break;
-      case 30: // Resist Heat
+      case 30: // Resist Heat -> RES_FIRE
+        StatusEffectEngine.applyStatus(player, 'RES_FIRE', 30);
         player.fireResistTurns = (player.fireResistTurns || 0) + 30;
         log(`[Potion] 🔥 화염 저항의 물약을 마셨습니다! 30턴 동안 화염 피해를 경감합니다.`, 'loot');
         used = true;
         break;
-      case 31: // Resist Cold
+      case 31: // Resist Cold -> RES_COLD
+        StatusEffectEngine.applyStatus(player, 'RES_COLD', 30);
         player.coldResistTurns = (player.coldResistTurns || 0) + 30;
         log(`[Potion] ❄️ 냉기 저항의 물약을 마셨습니다! 30턴 동안 동결 및 냉기 피해를 경감합니다.`, 'loot');
         used = true;
@@ -314,49 +355,61 @@ export class TomeConsumableEngine {
 
       // 7. 버프 계열 (가속, 영웅심, 광폭화, 무적)
       case 32: // Heroism
+        StatusEffectEngine.applyStatus(player, 'HEROISM', 25);
+        StatusEffectEngine.cureStatus(player, 'FEAR');
         player.heroismTurns = (player.heroismTurns || 0) + 25;
+        player.fearTurns = 0;
         healHp(10);
         log(`[Potion] ⚔️ 영웅의 비약을 마셨습니다! 25턴 동안 공포 면역과 공격력 증폭이 부여됩니다!`, 'loot');
         used = true;
         break;
       case 33: // Berserk Strength
+        StatusEffectEngine.applyStatus(player, 'BERSERK', 35);
+        StatusEffectEngine.cureStatus(player, 'FEAR');
         player.heroismTurns = (player.heroismTurns || 0) + 35;
+        player.fearTurns = 0;
         healHp(30);
         log(`[Potion] 🩸 광폭화의 영약을 마셨습니다! 35턴 동안 저지 불가 광폭 상태에 돌입합니다!`, 'loot');
         used = true;
         break;
       case 62: // Invulnerability
+        StatusEffectEngine.applyStatus(player, 'INVULN', 10);
         player.invulnerableTurns = (player.invulnerableTurns || 0) + 10;
-        log(`[Potion] 🛡️ 절대 무적의 영약(Invulnerability)을 마셨습니다! 10턴 동안 모든 피해를 100% 무효화합니다!`, 'loot');
+        log(`[Potion] 🛡️ 절대 무적의 영약(Invulnerability)을 마셨습니다! 10턴 동안 모든 피해를 90% 감쇄하고 방어력이 +100 증가합니다!`, 'loot');
         used = true;
         break;
 
       // 8. 6단계 체력 치유 포션
       case 34: // Cure Light Wounds
         healHp(20);
+        StatusEffectEngine.cureStatus(player, 'BLEED');
         used = true;
         break;
       case 35: // Cure Serious Wounds
         healHp(50, true);
+        StatusEffectEngine.cureStatus(player, ['BLEED', 'BLIND', 'CONFUSE']);
         used = true;
         break;
       case 36: // Cure Critical Wounds
         healHp(100, true);
+        StatusEffectEngine.cureStatus(player, ['BLEED', 'BLIND', 'CONFUSE', 'POISON', 'STUN']);
         used = true;
         break;
       case 38: // *Healing*
         healHp(300, true);
+        StatusEffectEngine.cureStatus(player, ['BLEED', 'BLIND', 'CONFUSE', 'POISON', 'STUN']);
         used = true;
         break;
       case 39: // Life
         boostStat('con', '생명력(CON)');
         healHp(player.stats.maxHp, true, true);
+        StatusEffectEngine.cureStatus(player, 'ALL_NEGATIVE');
         used = true;
         break;
 
       // 9. 마나 및 레벨 복원
       case 40: // Restore Mana
-        if (player.stats && player.stats.mp !== undefined) player.stats.mp = player.stats.maxMp || 50;
+        if (player.stats && player.stats.mp !== undefined) player.stats.mp = player.stats.maxMp || 100;
         player.manaShield = Math.max(player.manaShield || 0, 50);
         player.manaShieldDuration = Math.max(player.manaShieldDuration || 0, 20);
         log(`[Potion] 🔷 마나 회복 영약으로 마력과 보호막이 완전히 충전되었습니다!`, 'loot');
@@ -365,6 +418,7 @@ export class TomeConsumableEngine {
       case 41: // Restore Life Levels
         log(`[Potion] 🕊️ 생명 복원의 비약으로 상실된 생명력이 온전히 회복되었습니다!`, 'loot');
         healHp(50, true);
+        if (typeof player.gainXp === 'function') player.gainXp(1000);
         used = true;
         break;
 
@@ -374,11 +428,17 @@ export class TomeConsumableEngine {
       case 44: // Restore Wisdom
       case 45: // Restore Dexterity
       case 46: // Restore Constitution
-      case 47: // Restore Charisma
-        if (typeof player.markDirty === 'function') player.markDirty('스탯 복원');
-        log(`[Potion] 💧 신체 정화 영약으로 약화되었던 능력치가 본래 수치로 복구되었습니다.`, 'loot');
+      case 47: { // Restore Charisma
+        const sKeys = ['str', 'int', 'wis', 'dex', 'con', 'chr'];
+        const sKey = sKeys[sval - 42];
+        if (player.baseStats && player.stats) {
+          player.stats[sKey] = Math.max(player.stats[sKey] || 10, player.baseStats[sKey] || 10);
+        }
+        if (typeof player.markDirty === 'function') player.markDirty(`스탯 복원: ${sKey}`);
+        log(`[Potion] 💧 신체 정화 영약으로 약화되었던 ${sKey.toUpperCase()} 능력치가 본래 수치로 복구되었습니다.`, 'loot');
         used = true;
         break;
+      }
 
       // 11. 스탯 영구 성장 영약 (Permanent Stat Boost)
       case 48: // Strength
@@ -406,12 +466,23 @@ export class TomeConsumableEngine {
         boostStat('dex', '민첩');
         boostStat('con', '생명력');
         boostStat('int', '지능');
+        boostStat('wis', '지혜');
+        boostStat('cha', '매력');
         log(`[Potion] 👑 전능의 영약(Augmentation)이 발동하여 모든 핵심 능력치가 영구히 상승했습니다!`, 'loot');
         used = true;
         break;
 
       case 63: // New Life
-        healHp(player.stats.maxHp, true);
+        if (player.baseStats && player.stats) {
+          for (const s of ['str', 'dex', 'con', 'int', 'wis', 'cha', 'chr']) {
+            if (player.baseStats[s] && player.stats[s]) {
+              player.stats[s] = Math.max(player.stats[s], player.baseStats[s]);
+            }
+          }
+        }
+        if (player.stats && player.stats.mp !== undefined) player.stats.mp = player.stats.maxMp || 100;
+        healHp(player.stats.maxHp, true, true);
+        StatusEffectEngine.cureStatus(player, 'ALL_NEGATIVE');
         log(`[Potion] 🌅 신생의 비약(New Life)으로 몸과 마음이 완전히 정화되었습니다!`, 'loot');
         used = true;
         break;
@@ -642,12 +713,27 @@ export class TomeConsumableEngine {
           let killed = 0;
           for (let i = game.monsters.length - 1; i >= 0; i--) {
             const m = game.monsters[i];
+            if (!m || (m.stats && m.stats.hp <= 0)) continue;
             const dist = Math.hypot(m.x - player.x, m.y - player.y);
             if (dist <= 15) {
-              m.stats.hp -= 100;
+              m.stats.hp -= 9999;
               if (m.stats.hp <= 0) {
-                game.monsters.splice(i, 1);
                 killed++;
+                if (game?.bossPhaseEngine?.checkPhaseTransition) {
+                  game.bossPhaseEngine.checkPhaseTransition(m, game);
+                  if (m.stats && m.stats.hp > 0) continue;
+                }
+                if (typeof game?.handleMonsterDeath === 'function') {
+                  game.handleMonsterDeath(m, '대파괴 주문서');
+                } else {
+                  try {
+                    LootSystem.processMonsterDeath(m, game);
+                  } catch (_) {}
+                  try {
+                    if (game && player) LootSystem.processMonsterDeath(game, player, m, '대파괴 주문서');
+                  } catch (_) {}
+                  EffectVM._handleMonsterDeath(m, { game, player });
+                }
               }
             }
           }
@@ -660,10 +746,29 @@ export class TomeConsumableEngine {
       case 42:
         if (game && Array.isArray(game.monsters)) {
           let count = 0;
-          for (const m of game.monsters) {
-            if (m.type === 'UNDEAD' || (m.flags && m.flags.includes('UNDEAD'))) {
+          for (let i = game.monsters.length - 1; i >= 0; i--) {
+            const m = game.monsters[i];
+            if (!m || (m.stats && m.stats.hp <= 0)) continue;
+            if (m.type === 'UNDEAD' || (m.flags && (Array.isArray(m.flags) ? m.flags.includes('UNDEAD') : m.flags.has?.('UNDEAD')))) {
               m.stats.hp -= 80;
               count++;
+              if (m.stats.hp <= 0) {
+                if (game?.bossPhaseEngine?.checkPhaseTransition) {
+                  game.bossPhaseEngine.checkPhaseTransition(m, game);
+                  if (m.stats && m.stats.hp > 0) continue;
+                }
+                if (typeof game?.handleMonsterDeath === 'function') {
+                  game.handleMonsterDeath(m, '언데드 퇴치');
+                } else {
+                  try {
+                    LootSystem.processMonsterDeath(m, game);
+                  } catch (_) {}
+                  try {
+                    if (game && player) LootSystem.processMonsterDeath(game, player, m, '언데드 퇴치');
+                  } catch (_) {}
+                  EffectVM._handleMonsterDeath(m, { game, player });
+                }
+              }
             }
           }
           log(`[Scroll] ☀️ 신성한 광휘(Dispel Undead)가 던전 전역의 언데드 ${count}체에 큰 타격을 입혔습니다!`, 'loot');
@@ -731,12 +836,135 @@ export class TomeConsumableEngine {
   }
 
   /**
-   * 음식(TV_FOOD: 80) 먹기 처리 (더미화)
+   * 음식 및 마법 버섯(TV_FOOD: 80) 먹기 처리
    */
   static useFood(item, player, game, log, sval = null) {
-    log(`[Food] 🍞 이 음식은 아무런 맛도 느껴지지 않습니다.`, 'system');
-    this._consumeItem(item, player);
-    return true;
+    if (sval === null || sval === undefined) sval = item.sval;
+    let used = false;
+
+    // Helper: 체력 치유
+    const healHp = (amount) => {
+      if (player.stats) {
+        const oldHp = player.stats.hp;
+        player.stats.maxHp = player.stats.maxHp || (player.getMaxHp ? player.getMaxHp() : 20);
+        player.stats.hp = Math.min(player.stats.maxHp, player.stats.hp + amount);
+        const actual = player.stats.hp - oldHp;
+        log(`[Food] 🍞 [${item.name}]을(를) 먹었습니다! 체력이 +${actual} 회복되었습니다. (HP: ${player.stats.hp}/${player.stats.maxHp})`, 'loot');
+      }
+    };
+
+    // 식별 처리 및 플레이버 인식
+    item.identified = true;
+    if (TomeIdentificationEngine.identifyFlavor) {
+      TomeIdentificationEngine.identifyFlavor(item);
+    }
+
+    if (sval >= 32) {
+      // 일반 음식 및 음료 (Rations, Biscuits, Venison, Slime Mold, Pints of Ale/Wine, Athelas)
+      if (player.food !== undefined) {
+        player.food = Math.min(player.maxFood || 10000, (player.food || 5000) + 3000);
+      }
+      if (sval === 40) { // Sprig of Athelas
+        healHp(50);
+        StatusEffectEngine.cureStatus(player, 'ALL_NEGATIVE', log);
+        log(`[Food] 🌿 아델라스의 잎(Sprig of Athelas)의 은은한 향기로 온몸의 상처와 부정적 상태가 치유되었습니다!`, 'loot');
+      } else if (sval === 38 || sval === 39) { // Fine Ale / Fine Wine
+        healHp(5);
+        StatusEffectEngine.applyStatus(player, 'CONFUSE', 5, 1, null, log);
+        log(`[Food] 🍷 향긋한 술을 들이켜 약간의 취기와 혼란이 찾아왔습니다.`, 'loot');
+      } else {
+        healHp(10);
+        log(`[Food] 🍞 든든한 식사로 허기를 달래고 원기를 보충했습니다.`, 'loot');
+      }
+      used = true;
+    } else {
+      // 마법 버섯 (Magic Mushrooms: sval 1..19)
+      switch (sval) {
+        case 1: // Blindness
+          StatusEffectEngine.applyStatus(player, 'BLIND', 10, 1, null, log);
+          break;
+        case 2: // Paranoia
+          StatusEffectEngine.applyStatus(player, 'FEAR', 10, 1, null, log);
+          break;
+        case 3: // Confusion
+          StatusEffectEngine.applyStatus(player, 'CONFUSE', 10, 1, null, log);
+          break;
+        case 4: // Hallucination
+          StatusEffectEngine.applyStatus(player, 'HALLU', 15, 1, null, log);
+          break;
+        case 5: // Paralysis
+          StatusEffectEngine.applyStatus(player, 'PARALYZE', 5, 1, null, log);
+          break;
+        case 6: // Weakness
+          StatusEffectEngine.applyStatus(player, 'WEAKEN', 15, 1, null, log);
+          if (player.stats && player.stats.str) player.stats.str = Math.max(1, player.stats.str - 1);
+          break;
+        case 7: // Sickness
+          StatusEffectEngine.applyStatus(player, 'DISEASE', 15, 1, null, log);
+          if (player.stats && player.stats.con) player.stats.con = Math.max(1, player.stats.con - 1);
+          break;
+        case 8: // Stupidity
+          if (player.stats && player.stats.int) player.stats.int = Math.max(1, player.stats.int - 1);
+          log(`[Food] 🍄 우둔함의 버섯으로 지능이 1 감소했습니다!`, 'combat');
+          break;
+        case 9: // Naivety
+          if (player.stats && player.stats.wis) player.stats.wis = Math.max(1, player.stats.wis - 1);
+          log(`[Food] 🍄 순진함의 버섯으로 지혜가 1 감소했습니다!`, 'combat');
+          break;
+        case 10: // Unhealth
+          if (player.stats) player.stats.hp = Math.max(1, player.stats.hp - 20);
+          StatusEffectEngine.applyStatus(player, 'DISEASE', 20, 1, null, log);
+          break;
+        case 11: // Disease
+          StatusEffectEngine.applyStatus(player, 'DISEASE', 25, 1, null, log);
+          break;
+        case 12: // Cure Poison
+          StatusEffectEngine.cureStatus(player, 'POISON', log);
+          break;
+        case 13: // Cure Blindness
+          StatusEffectEngine.cureStatus(player, 'BLIND', log);
+          break;
+        case 14: // Cure Paranoia
+          StatusEffectEngine.cureStatus(player, 'FEAR', log);
+          break;
+        case 15: // Cure Confusion
+          StatusEffectEngine.cureStatus(player, 'CONFUSE', log);
+          break;
+        case 16: // Cure Serious
+          healHp(50);
+          StatusEffectEngine.cureStatus(player, ['BLEED', 'BLIND', 'CONFUSE'], log);
+          break;
+        case 17: // Restore Str
+          if (player.baseStats && player.stats) player.stats.str = Math.max(player.stats.str, player.baseStats.str);
+          log(`[Food] 🍄 근력 회복 버섯으로 근력이 복원되었습니다!`, 'loot');
+          break;
+        case 18: // Restore Con
+          if (player.baseStats && player.stats) player.stats.con = Math.max(player.stats.con, player.baseStats.con);
+          log(`[Food] 🍄 체질 회복 버섯으로 생명력이 복원되었습니다!`, 'loot');
+          break;
+        case 19: // Restoring
+          if (player.baseStats && player.stats) {
+            for (const s of ['str', 'dex', 'con', 'int', 'wis', 'cha', 'chr']) {
+              if (player.baseStats[s] && player.stats[s]) {
+                player.stats[s] = Math.max(player.stats[s], player.baseStats[s]);
+              }
+            }
+          }
+          healHp(100);
+          StatusEffectEngine.cureStatus(player, 'ALL_NEGATIVE', log);
+          log(`[Food] 🍄 전능 회복 버섯으로 모든 스탯과 상태가 복원되었습니다!`, 'loot');
+          break;
+        default:
+          healHp(10);
+          break;
+      }
+      used = true;
+    }
+
+    if (used) {
+      this._consumeItem(item, player);
+    }
+    return used;
   }
 
   /**
@@ -778,7 +1006,14 @@ export class TomeConsumableEngine {
   static _consumeItem(item, player) {
     item.count = (item.count || 1) - 1;
     if (item.count <= 0 && player.inventory) {
-      player.removeItem(item);
+      if (typeof player.removeItem === 'function') {
+        player.removeItem(item);
+      } else if (Array.isArray(player.inventory)) {
+        const idx = player.inventory.indexOf(item);
+        if (idx !== -1) {
+          player.inventory.splice(idx, 1);
+        }
+      }
     }
   }
 }

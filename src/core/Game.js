@@ -55,11 +55,14 @@ import { saveGraveyardRecord, AscensionModalView, serializeCombatStats, serializ
 import { bossPhaseEngine } from "../systems/BossPhaseEngine.js";
 import { uniqueMonsterManager } from "../systems/UniqueMonsterManager.js";
 import { TomeDeviceEngine } from "../systems/TomeDeviceEngine.js";
+import { TomeConsumableEngine } from "../systems/TomeConsumableEngine.js";
 import { DungeonValueBudgetEngine } from "../systems/DungeonValueBudgetEngine.js";
 import { LootSystem } from "./LootSystem.js";
 import { TomeIdentificationEngine } from "../systems/TomeIdentificationEngine.js";
 import { TomeTagSystem } from "../systems/TomeTagSystem.js";
 import { combatVFXEngine } from "../systems/CombatVFXEngine.js";
+import { ArtifactActivationEngine } from "../systems/ArtifactActivationEngine.js";
+import { ItemSchemaInterpreter } from "../systems/ItemSchemaInterpreter.js";
 
 const getConfigByName = (name) =>
   Object.values(MONSTER_SPECIES).find((c) => c.name === name) ||
@@ -475,12 +478,9 @@ export class Game {
         this.input.isActionActive(`MOVE_NW`) && ((e = -1), (t = -1));
       }
       if (e !== 0 || t !== 0) {
-        let r = this.player.x + e,
-          i = this.player.y + t,
-          a = this.monsters.find((e) => e.x === r && e.y === i);
-        a
-          ? (this.attackMonster(this.player, a), (n = !0))
-          : (n = this.player.move(e, t, this.map));
+        this.movePlayer(e, t);
+        this.input.clear();
+        return;
       } else if (this.input.isActionActive(`SKILL_1`)) {
         n = this.player.castActiveSkill(1, this);
         this.input.clear();
@@ -493,14 +493,45 @@ export class Game {
       } else if (this.input.isActionActive(`SKILL_4`)) {
         n = this.player.castActiveSkill(4, this);
         this.input.clear();
-      } else if (this.input.isActionActive(`WAIT`)) {
+      } else if (this.input.isActionActive(`CAMERA_LEFT`) || this.input.isActionActive(`TURN_LEFT`)) {
+        this.rotateFirstPerson(-Math.PI / 2);
+        this.input.clear();
+        return;
+      } else if (this.input.isActionActive(`CAMERA_RIGHT`) || this.input.isActionActive(`TURN_RIGHT`)) {
+        this.rotateFirstPerson(Math.PI / 2);
+        this.input.clear();
+        return;
+      } else if (this.input.isActionActive(`STAIRS_DOWN`)) {
+        this.input.clear();
+        const currentTile = this.map ? this.map.getTile(this.player.x, this.player.y) : null;
+        if (this.standingStairs || (currentTile && (currentTile.type === 'STAIRS_DOWN' || currentTile.char === '>'))) {
+          this.nextFloor();
+          n = !0;
+        } else {
+          this.addLogEntry(`[Dungeon] 아래로 내려가는 계단이 없습니다.`, `system`);
+        }
+      } else if (this.input.isActionActive(`STAIRS_UP`)) {
+        this.input.clear();
+        const currentTile = this.map ? this.map.getTile(this.player.x, this.player.y) : null;
+        if (this.standingUpStairs || (currentTile && (currentTile.type === 'STAIRS_UP' || currentTile.char === '<'))) {
+          this.prevFloor();
+          n = !0;
+        } else {
+          this.addLogEntry(`[Dungeon] 위로 올라가는 계단이 없습니다.`, `system`);
+        }
+      } else if (this.input.isActionActive(`FIRE`) || this.input.isActionActive(`RANGED_FIRE`)) {
+        this.input.clear();
+        CombatSystem.tryAutoRangedAttack(this, this.player);
         n = !0;
+      } else if (this.input.isActionActive(`REST`) || this.input.isActionActive(`WAIT`)) {
+        n = !0;
+        this.input.clear();
         if (this.player.stats.hp < this.player.stats.maxHp) {
           let waitHealAmt = 0;
           let logs = [];
           
-          const activeTags = this.player.compileActiveTags();
-          const conVal = this.player.getEffectiveStat('con');
+          const activeTags = this.player.compileActiveTags ? this.player.compileActiveTags() : {};
+          const conVal = this.player.getEffectiveStat ? this.player.getEffectiveStat('con') : (this.player.stats?.con || 10);
           const conMod = Math.floor(conVal / 10);
           
           // WAIT_HEAL (대기 재생 가산 스택)
@@ -539,48 +570,51 @@ export class Game {
       }
       if (n) {
         // REGEN_UNIT (턴당 자연 재생)
-        const activeTags = this.player.compileActiveTags();
+        const activeTags = this.player.compileActiveTags ? this.player.compileActiveTags() : {};
         const regenStacks = activeTags["REGEN_UNIT"] || 0;
         if (regenStacks > 0 && this.player.stats.hp < this.player.stats.maxHp) {
-          const conVal = this.player.getEffectiveStat('con');
+          const conVal = this.player.getEffectiveStat ? this.player.getEffectiveStat('con') : (this.player.stats?.con || 10);
           const conMod = Math.floor(conVal / 10);
           const regenAmt = regenStacks * (1 + Math.floor(conMod * 0.1));
           this.player.stats.hp = Math.min(this.player.stats.maxHp, this.player.stats.hp + regenAmt);
           this.addLogEntry(`[Skill] 자연 재생(REGEN_UNIT x${regenStacks}) 효과로 체력이 +${regenAmt} 자동 회복되었습니다. (HP: ${this.player.stats.hp}/${this.player.stats.maxHp})`, `loot`);
         }
 
-        if (
-          (CombatSystem.checkAndCastAutoSkills(this, this.player),
-          CombatSystem.tryAutoRangedAttack(this, this.player),
-          this.triggerActiveSkills(),
-          this.checkItemCollision(),
-          (this.player.energy -= 100),
-          (this.playerTurn = !1),
-          (this.moveCooldown = 150),
-          TomeDeviceEngine.tickTimeouts(this.player.inventory),
-          TomeIdentificationEngine.processTurnSense(this.player, (item, slot) => {
-            this.addLogEntry(`[Sense] 👁️ 장착 중인 [${item.displayName}]의 숨겨진 기운이 감지되었습니다!`, 'loot');
-          }),
-          TomeTagSystem.processTurnTicks(this.player, this, (msg, type) => {
-            this.addLogEntry(msg, type);
-          }),
-          this.player.tickOverload((e, t) => this.addLogEntry(e, t)))
-        ) {
+        if (this.player.isAutoCastEnabled === true) {
+          CombatSystem.checkAndCastAutoSkills(this, this.player);
+          CombatSystem.tryAutoRangedAttack(this, this.player);
+          if (typeof this.player.tryAutoCastInnateSkills === 'function') {
+            this.player.tryAutoCastInnateSkills(this);
+          }
+        }
+        this.checkItemCollision();
+        this.player.energy = (this.player.energy || 100) - 100;
+        this.playerTurn = !1;
+        this.moveCooldown = 150;
+        TomeIdentificationEngine.processTurnSense(this.player, (item, slot) => {
+          this.addLogEntry(`[Sense] 👁️ 장착 중인 [${item.displayName}]의 숨겨진 기운이 감지되었습니다!`, 'loot');
+        });
+        TomeTagSystem.processTurnTicks(this.player, this, (msg, type) => {
+          this.addLogEntry(msg, type);
+        });
+        if (this.player.tickOverload && this.player.tickOverload((e, t) => this.addLogEntry(e, t))) {
           this.handlePlayerDeath();
           return;
         }
         if (
-          (this.player.manaShield &&
-            this.player.manaShield > 0 &&
-            (this.player.manaShieldDuration--,
-            this.player.manaShieldDuration <= 0 &&
-              ((this.player.manaShield = 0),
-              this.addLogEntry(
-                `[Skill] 👼 나의 마나 실드가 지속시간 만료로 소멸했습니다.`,
-                `system`,
-              ))),
-          this.player.tickDebuffs((e, t) => this.addLogEntry(e, t)))
+          this.player.manaShield &&
+          this.player.manaShield > 0 &&
+          (this.player.manaShieldDuration--,
+          this.player.manaShieldDuration <= 0 &&
+            ((this.player.manaShield = 0),
+            this.addLogEntry(
+              `[Skill] 👼 나의 마나 실드가 지속시간 만료로 소멸했습니다.`,
+              `system`,
+            )))
         ) {
+          // mana shield ended
+        }
+        if (this.player.tickDebuffs && this.player.tickDebuffs((e, t) => this.addLogEntry(e, t))) {
           this.handlePlayerDeath();
           return;
         }
@@ -617,6 +651,23 @@ export class Game {
     this._cachedLightRange = undefined;
     for (let m of this.monsters) {
       m._cachedSpeed = undefined;
+    }
+    // Tick device timeouts, artifact cooldowns, and skill cooldowns once per turn
+    if (this.player) {
+      TomeDeviceEngine.tickTimeouts(this.player.inventory);
+      if (this.player.equipment) {
+        TomeDeviceEngine.tickTimeouts(this.player.equipment);
+      }
+      ArtifactActivationEngine.tickCooldowns(this.player);
+      const innateSkills = (typeof this.player.getInnateSkills === 'function') ? this.player.getInnateSkills() : [];
+      for (const skill of innateSkills) {
+        if (typeof this.player.decrementCooldown === 'function') {
+          this.player.decrementCooldown(skill.id);
+        }
+      }
+      if (this.player.rangedCooldownTracker > 0) {
+        this.player.rangedCooldownTracker--;
+      }
     }
     this._loopState = { e: 0, globalTicks: 0, monsterActCount: 0 };
     this._runTurnLoopChunk();
@@ -748,17 +799,195 @@ export class Game {
       }
     }
   }
-  isMonsterAt(e, t) {
-    return this.monsters.some((n) => n.x === e && n.y === t);
+  movePlayer(dx, dy) {
+    if (this.isGameOver || this._isHandlingDeath || !this.player) return false;
+
+    const targetX = this.player.x + dx;
+    const targetY = this.player.y + dy;
+
+    let tookAction = false;
+
+    // 1. Monster combat check
+    const monster = this.monsters.find((m) => m.x === targetX && m.y === targetY);
+    if (monster) {
+      this.attackMonster(this.player, monster);
+      tookAction = true;
+    } else {
+      // 2. Door handling
+      const destTile = this.map ? (typeof this.map.getTile === 'function' ? this.map.getTile(targetX, targetY) : (this.map.tiles && this.map.tiles[targetY] ? this.map.tiles[targetY][targetX] : null)) : null;
+      if (destTile && (destTile.type === 'CLOSED_DOOR' || (destTile.type === 'DOOR' && destTile.char === '+') || destTile.char === '+' || destTile.isClosedDoor)) {
+        destTile.type = 'OPEN_DOOR';
+        destTile.char = "'";
+        destTile.isWalkable = true;
+        destTile.blocksVision = false;
+        if (destTile.isClosedDoor !== undefined) destTile.isClosedDoor = false;
+        this.addLogEntry(`[Dungeon] 🚪 닫힌 문을 열었습니다.`, `system`);
+        tookAction = true;
+      } else {
+        // 3. Move player
+        tookAction = this.player.move(dx, dy, this.map);
+      }
+    }
+
+    if (tookAction) {
+      // 4. Trap check at player's current position
+      const currentTile = this.map ? (typeof this.map.getTile === 'function' ? this.map.getTile(this.player.x, this.player.y) : (this.map.tiles && this.map.tiles[this.player.y] ? this.map.tiles[this.player.y][this.player.x] : null)) : null;
+      if (currentTile && (currentTile.isTrap || currentTile.type === 'TRAP' || currentTile.char === '^')) {
+        const dex = (typeof this.player.getEffectiveStat === 'function') 
+          ? this.player.getEffectiveStat('dex') 
+          : (this.player.stats?.dex || 10);
+        const disarmChance = Math.min(0.9, Math.max(0.1, dex / 30));
+        if (Math.random() < disarmChance) {
+          currentTile.isTrap = false;
+          currentTile.isDisarmed = true;
+          currentTile.type = 'FLOOR';
+          currentTile.char = '.';
+          this.addLogEntry(`[Trap] ⚠️ 함정을 민첩하게 감지하여 해체했습니다!`, `system`);
+        } else {
+          const trapDmg = Math.floor(Math.random() * 10) + 5;
+          this.player.stats.hp = Math.max(0, this.player.stats.hp - trapDmg);
+          this.addLogEntry(`[Trap] 💥 함정을 밟았습니다! ${trapDmg}의 피해를 입었습니다! (HP: ${this.player.stats.hp}/${this.player.stats.maxHp})`, `combat`);
+          if (this.player.stats.hp <= 0) {
+            this.handlePlayerDeath();
+            return true;
+          }
+        }
+      }
+
+      this.checkItemCollision();
+
+      // REGEN_UNIT (턴당 자연 재생)
+      if (typeof this.player.compileActiveTags === 'function') {
+        const activeTags = this.player.compileActiveTags();
+        const regenStacks = activeTags["REGEN_UNIT"] || 0;
+        if (regenStacks > 0 && this.player.stats.hp < this.player.stats.maxHp) {
+          const conVal = this.player.getEffectiveStat ? this.player.getEffectiveStat('con') : (this.player.stats?.con || 10);
+          const conMod = Math.floor(conVal / 10);
+          const regenAmt = regenStacks * (1 + Math.floor(conMod * 0.1));
+          this.player.stats.hp = Math.min(this.player.stats.maxHp, this.player.stats.hp + regenAmt);
+          this.addLogEntry(`[Skill] 자연 재생(REGEN_UNIT x${regenStacks}) 효과로 체력이 +${regenAmt} 자동 회복되었습니다. (HP: ${this.player.stats.hp}/${this.player.stats.maxHp})`, `loot`);
+        }
+      }
+
+      // Auto-cast ONLY when player.isAutoCastEnabled === true
+      if (this.player.isAutoCastEnabled === true) {
+        CombatSystem.checkAndCastAutoSkills(this, this.player);
+        CombatSystem.tryAutoRangedAttack(this, this.player);
+        if (typeof this.player.tryAutoCastInnateSkills === 'function') {
+          this.player.tryAutoCastInnateSkills(this);
+        }
+      }
+
+      // Overload check
+      if (typeof this.player.tickOverload === 'function' && this.player.tickOverload((msg, type) => this.addLogEntry(msg, type))) {
+        this.handlePlayerDeath();
+        return true;
+      }
+
+      // Mana shield and Debuffs
+      if (this.player.manaShield && this.player.manaShield > 0) {
+        this.player.manaShieldDuration--;
+        if (this.player.manaShieldDuration <= 0) {
+          this.player.manaShield = 0;
+          this.addLogEntry(`[Skill] 👼 나의 마나 실드가 지속시간 만료로 소멸했습니다.`, `system`);
+        }
+      }
+      if (typeof this.player.tickDebuffs === 'function' && this.player.tickDebuffs((msg, type) => this.addLogEntry(msg, type))) {
+        this.handlePlayerDeath();
+        return true;
+      }
+
+      // Sense & Tag ticks
+      TomeIdentificationEngine.processTurnSense(this.player, (item, slot) => {
+        this.addLogEntry(`[Sense] 👁️ 장착 중인 [${item.displayName}]의 숨겨진 기운이 감지되었습니다!`, 'loot');
+      });
+      TomeTagSystem.processTurnTicks(this.player, this, (msg, type) => {
+        this.addLogEntry(msg, type);
+      });
+
+      // Deduct 100 energy and advance turn loop
+      this.player.energy = (this.player.energy || 100) - 100;
+      this.playerTurn = false;
+      this.moveCooldown = 150;
+
+      if (typeof this.saveGame === 'function') {
+        this.saveGame(true);
+      }
+      if (typeof this.runTurnLoop === 'function') {
+        this.runTurnLoop();
+      }
+      if (typeof this.updateFOV === 'function') {
+        this.updateFOV();
+      }
+      this.updateUI();
+      if (typeof this.render === 'function') {
+        this.render();
+      }
+      return true;
+    }
+
+    return false;
   }
-  killMonster(monster, source = "스킬 공격") {
+
+  castActiveSkill(slotIndex, target = null) {
+    if (!this.player || typeof this.player.castActiveSkill !== 'function') return false;
+    return this.player.castActiveSkill(slotIndex, this, target);
+  }
+
+  activateItem(item) {
+    return this.activateArtifact(item);
+  }
+
+  activateArtifact(item) {
+    if (!item || !this.player) return false;
+    const result = ArtifactActivationEngine.activateArtifact(item, this.player, this);
+    if (result && result.success) {
+      this.player.energy = (this.player.energy || 100) - 100;
+      this.playerTurn = false;
+      this.selectedItem = null;
+      if (typeof this.runTurnLoop === 'function') {
+        this.runTurnLoop();
+      }
+      if (typeof this.updateFOV === 'function') {
+        this.updateFOV();
+      }
+      if (typeof this.renderInventoryList === 'function') {
+        this.renderInventoryList();
+      }
+      if (typeof this.updateUI === 'function') {
+        this.updateUI();
+      }
+      if (typeof this.render === 'function') {
+        this.render();
+      }
+      return true;
+    }
+    return false;
+  }
+
+  handleMonsterDeath(monster, source = "주문/효과") {
     if (!monster) return;
-    monster.stats.hp = 0;
+    if (this.bossPhaseEngine && typeof this.bossPhaseEngine.checkPhaseTransition === 'function') {
+      this.bossPhaseEngine.checkPhaseTransition(monster, this);
+      if (monster.stats && monster.stats.hp > 0) return;
+    }
     const idx = this.monsters.indexOf(monster);
     if (idx !== -1) {
       this.monsters.splice(idx, 1);
     }
-    LootSystem.processMonsterDeath(this, this.player, monster, source);
+    try {
+      LootSystem.processMonsterDeath(monster, this);
+    } catch (_) {}
+    if (typeof LootSystem?.processMonsterDeath === 'function') {
+      try {
+        LootSystem.processMonsterDeath(this, this.player, monster, source);
+      } catch (_) {}
+    }
+  }
+
+  killMonster(monster, source = "스킬 공격") {
+    if (!monster) return;
+    this.handleMonsterDeath(monster, source);
   }
   handleMonsterBuffsAndHeals(monster) {
     if (monster.stats.hp <= 0) return;
@@ -923,7 +1152,7 @@ export class Game {
       this.logHistory.push({ text: e, type: t }),
       this.logHistory.length > 200 && this.logHistory.shift(),
       this.isLogModalOpen && this.renderLogModalList(),
-      !this.combatLog)
+      !this.combatLog || typeof this.combatLog.appendChild !== 'function')
     )
       return;
     let n = document.createElement(`p`);
@@ -1700,6 +1929,7 @@ export class Game {
         setClick(`eat-core-btn`, () => this.eatCore(e));
         setClick(`sub-core1-btn`, () => this.toggleSubCore1(e));
         setClick(`sub-core2-btn`, () => this.toggleSubCore2(e));
+        setClick(`detail-activate-btn`, () => this.activateArtifact(e));
         setClick(`detail-drop-btn`, () => this.dropItem(e));
       } else if (
         e.type === `SCROLL` || e.type === `POTION` || e.type === `WAND` ||
@@ -1707,9 +1937,11 @@ export class Game {
         e.type === `FLASK` || e.tval === 71 || e.tval === 70 || e.tval === 77 ||
         e.tval === 80 || e.tval === 65 || e.tval === 55 || e.tval === 66
       ) {
+        setClick(`detail-activate-btn`, () => this.activateArtifact(e));
         setClick(`detail-use-btn`, () => this.useItem(e));
         setClick(`detail-drop-btn`, () => this.dropItem(e));
       } else {
+        setClick(`detail-activate-btn`, () => this.activateArtifact(e));
         setClick(`detail-equip-btn`, () => this.toggleEquip(e));
         setClick(`detail-drop-btn`, () => this.dropItem(e));
       }
@@ -1911,10 +2143,69 @@ export class Game {
       this.updateUI());
   }
   useItem(e) {
-    (e.applyUseEffect(this.player, (msg, type) => this.addLogEntry(msg, type), this),
-      (this.selectedItem = null),
-      this.renderInventoryList(),
-      this.updateUI());
+    if (!e || !this.player) return false;
+
+    // Check if item is an activatable artifact and not a standard consumable or device
+    const isDeviceOrConsumable = e.type === 'SCROLL' || e.type === 'POTION' || e.type === 'WAND' || 
+                                 e.type === 'STAFF' || e.type === 'ROD' || e.type === 'FOOD' || 
+                                 e.type === 'FLASK' || e.tval === 71 || e.tval === 70 || 
+                                 e.tval === 77 || e.tval === 80 || e.tval === 65 || 
+                                 e.tval === 55 || e.tval === 66 || e.tval === 67;
+
+    const isActivable = Boolean(
+      e.activate ||
+      (e.flags && (Array.isArray(e.flags) ? e.flags.includes('ACTIVATE') : e.flags.has?.('ACTIVATE'))) ||
+      (e.specialTags && e.specialTags.includes('ACTIVATE')) ||
+      ArtifactActivationEngine.resolveArtifactActivation(e)
+    );
+
+    let used = false;
+    if (!isDeviceOrConsumable && isActivable) {
+      return this.activateArtifact(e);
+    }
+
+    if (typeof e.applyUseEffect === 'function') {
+      used = e.applyUseEffect(this.player, (msg, type) => this.addLogEntry(msg, type), this);
+    } else if (typeof e.use === 'function') {
+      used = e.use(this.player, this, (msg, type) => this.addLogEntry(msg, type));
+    } else if (
+      e.tval === 65 || e.tval === 55 || e.tval === 66 || e.tval === 67 ||
+      e.type === 'WAND' || e.type === 'STAFF' || e.type === 'ROD'
+    ) {
+      used = TomeDeviceEngine.useDevice(e, this.player, this, (msg, type) => this.addLogEntry(msg, type));
+    } else {
+      used = TomeConsumableEngine.useConsumable(e, this.player, this, (msg, type) => this.addLogEntry(msg, type));
+    }
+
+    if (used) {
+      this.player.energy = (this.player.energy || 100) - 100;
+      this.playerTurn = false;
+      this.selectedItem = null;
+      if (typeof this.runTurnLoop === 'function') {
+        this.runTurnLoop();
+      }
+      if (typeof this.updateFOV === 'function') {
+        this.updateFOV();
+      }
+      if (typeof this.renderInventoryList === 'function') {
+        this.renderInventoryList();
+      }
+      if (typeof this.updateUI === 'function') {
+        this.updateUI();
+      }
+      if (typeof this.render === 'function') {
+        this.render();
+      }
+      return true;
+    }
+
+    if (typeof this.renderInventoryList === 'function') {
+      this.renderInventoryList();
+    }
+    if (typeof this.updateUI === 'function') {
+      this.updateUI();
+    }
+    return false;
   }
   openContextMenu(e, t) {
     (e.preventDefault(), (this.contextItem = t));

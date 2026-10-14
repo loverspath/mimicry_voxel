@@ -25,7 +25,11 @@ export class Input {
       'Numpad6': 'MOVE_E',
       'Numpad7': 'MOVE_NW',
       'Numpad8': 'MOVE_N',
-      'Numpad9': 'MOVE_NE'
+      'Numpad9': 'MOVE_NE',
+      'KeyQ': 'CAMERA_LEFT',
+      'KeyE': 'CAMERA_RIGHT',
+      'KeyR': 'REST',
+      'KeyF': 'FIRE',
     };
 
     // Key mapping to abstract actions
@@ -46,7 +50,7 @@ export class Input {
       'a': 'MOVE_W',
       'A': 'MOVE_W',
 
-      // Vi keys (8-way)
+      // Vi keys (8-way: y, u, h, j, k, l, b, n)
       'k': 'MOVE_N',
       'K': 'MOVE_N',
       'u': 'MOVE_NE',
@@ -63,38 +67,68 @@ export class Input {
       'H': 'MOVE_W',
       'y': 'MOVE_NW',
       'Y': 'MOVE_NW',
-      'q': 'MOVE_NW',
-      'Q': 'MOVE_NW',
+
+      // Camera turns
+      'q': 'CAMERA_LEFT',
+      'Q': 'CAMERA_LEFT',
+      'e': 'CAMERA_RIGHT',
+      'E': 'CAMERA_RIGHT',
+
+      // Rest & Wait
       '.': 'WAIT',
+      'r': 'REST',
+      'R': 'REST',
+
+      // Stairs
+      '>': 'STAIRS_DOWN',
+      '<': 'STAIRS_UP',
+      'Period': 'STAIRS_DOWN',
+      'Comma': 'STAIRS_UP',
+
+      // Ranged Fire
+      'f': 'FIRE',
+      'F': 'FIRE',
+      't': 'AUTOFIRE',
+      'T': 'AUTOFIRE',
 
       // Other actions
       'i': 'INVENTORY',
       'I': 'INVENTORY',
       'c': 'COMBAT_LOG',
       'C': 'COMBAT_LOG',
-      'e': 'INTERACT',
-      'E': 'INTERACT',
       'Enter': 'INTERACT',
-      't': 'AUTOFIRE',
-      'T': 'AUTOFIRE',
       'F8': 'TOGGLE_RENDER_MODE'
     };
 
     if (typeof window !== 'undefined') {
       window.addEventListener('keydown', (e) => {
-        const action = (e.code && this.codeMap[e.code]) || this.keyMap[e.key];
+        const action = this.resolveAction(e);
         if (action) {
           this.activeActions.add(action);
         }
       });
 
       window.addEventListener('keyup', (e) => {
-        const action = (e.code && this.codeMap[e.code]) || this.keyMap[e.key];
+        const action = this.resolveAction(e);
         if (action) {
           this.activeActions.delete(action);
         }
       });
     }
+  }
+
+  resolveAction(e) {
+    if (!e) return null;
+    if (e.key === '>' || e.key === 'Period') return 'STAIRS_DOWN';
+    if (e.key === '<' || e.key === 'Comma') return 'STAIRS_UP';
+    if (e.key === '.') return 'WAIT';
+    if (e.code === 'Period' && e.shiftKey) return 'STAIRS_DOWN';
+    if (e.code === 'Comma' && e.shiftKey) return 'STAIRS_UP';
+    if (e.code && this.codeMap[e.code]) return this.codeMap[e.code];
+    if (e.key && this.keyMap[e.key]) return this.keyMap[e.key];
+    if (e.code === 'Period') return 'STAIRS_DOWN';
+    if (e.code === 'Comma') return 'STAIRS_UP';
+    return null;
   }
 
   // Called by VirtualController
@@ -107,7 +141,15 @@ export class Input {
   }
 
   isActionActive(action) {
-    return this.activeActions.has(action);
+    if (this.activeActions.has(action)) return true;
+    if ((action === 'TURN_LEFT' || action === 'CAMERA_LEFT') && (this.activeActions.has('CAMERA_LEFT') || this.activeActions.has('TURN_LEFT'))) return true;
+    if ((action === 'TURN_RIGHT' || action === 'CAMERA_RIGHT') && (this.activeActions.has('CAMERA_RIGHT') || this.activeActions.has('TURN_RIGHT'))) return true;
+    if ((action === 'RANGED_FIRE' || action === 'FIRE') && (this.activeActions.has('FIRE') || this.activeActions.has('RANGED_FIRE'))) return true;
+    if (action === 'REST' && this.activeActions.has('REST')) return true;
+    if (action === 'WAIT' && this.activeActions.has('WAIT')) return true;
+    if (action === 'STAIRS_DOWN' && this.activeActions.has('STAIRS_DOWN')) return true;
+    if (action === 'STAIRS_UP' && this.activeActions.has('STAIRS_UP')) return true;
+    return false;
   }
 
   clear() {

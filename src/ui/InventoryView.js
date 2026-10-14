@@ -12,6 +12,7 @@ import { getSpeciesConfig, MONSTER_GROWTH_PATTERNS } from '../entities/MonsterRe
 import { MONSTER_PERKS } from '../entities/Perks.js';
 import { TomeSpellEngine } from '../systems/TomeSpellEngine.js';
 import { MonsterSpellFactory } from '../systems/MonsterSpellFactory.js';
+import { ArtifactActivationEngine } from '../systems/ArtifactActivationEngine.js';
 
 /** 장비 슬롯 배지 메타 데이터 (슬롯명 → 표시 텍스트, 색상) */
 export const EQUIP_BADGE_STYLES = {
@@ -408,6 +409,17 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
       </div>
     ` : '';
 
+    const isActivable = Boolean(
+      item.activate ||
+      (item.flags && (Array.isArray(item.flags) ? item.flags.includes('ACTIVATE') : item.flags.has?.('ACTIVATE'))) ||
+      (item.specialTags && item.specialTags.includes('ACTIVATE')) ||
+      ArtifactActivationEngine.resolveArtifactActivation(item)
+    );
+    const activationEffect = isActivable ? ArtifactActivationEngine.resolveArtifactActivation(item) : null;
+    if (activationEffect && activationEffect.desc) {
+      flagItems.push(`<li>• <span style="color: #fbbf24; font-weight: bold;">⚡ [유물 발동]</span>: <span style="color: #fde68a;">${activationEffect.desc}</span></li>`);
+    }
+
     return `
       <div class="detail-header" style="text-align: left; display: flex; flex-direction: column; gap: 0.2rem;">
         <span class="detail-type" style="font-size: 0.68rem; color: ${badgeColor}; font-weight: bold; text-transform: uppercase;">[${badgeLabel}]</span>
@@ -421,6 +433,11 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
         ${consumableFlavorHTML}
       </div>
       <div class="detail-actions" style="margin-top: auto; display: flex; flex-direction: column; gap: 0.4rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.5rem;">
+        ${isActivable ? `
+          <button class="modal-btn" id="detail-activate-btn" style="background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.5); color: #fbbf24; font-weight: bold; cursor: pointer;">
+            ${(item.timeout && item.timeout > 0) ? `⏳ 유물 재충전 중 (${item.timeout}턴)` : `⚡ 유물 발동 (Activate)`}
+          </button>
+        ` : ''}
         <button class="modal-btn primary" id="detail-use-btn" style="background: rgba(56,189,248,0.18); border-color: rgba(56,189,248,0.4); color: ${badgeColor}; font-weight: bold;">
           ${actionBtnLabel}
         </button>
@@ -432,6 +449,14 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
   // =========================================================================
   // 🛡️ ToME 정통 장착 장비 상세 인스펙터 (Detailed Gear Inspector)
   // =========================================================================
+
+  const isActivable = Boolean(
+    item.activate ||
+    (item.flags && (Array.isArray(item.flags) ? item.flags.includes('ACTIVATE') : item.flags.has?.('ACTIVATE'))) ||
+    (item.specialTags && item.specialTags.includes('ACTIVATE')) ||
+    ArtifactActivationEngine.resolveArtifactActivation(item)
+  );
+  const activationEffect = isActivable ? ArtifactActivationEngine.resolveArtifactActivation(item) : null;
 
   const isArtifact = item.specialTags?.includes('ARTIFACT') || item.color === '#ffd700' || (item.name && item.name.includes('유물'));
   const isEgo = (item.prefixes && item.prefixes.length > 0) || (item.suffixes && item.suffixes.length > 0);
@@ -560,6 +585,10 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
 
   // 3. ToME 고유 플래그 & 에고 / 슬레이 목록
   const flagItems = [];
+  if (activationEffect && activationEffect.desc) {
+    flagItems.push(`<li>• <span style="color: #fbbf24; font-weight: bold;">⚡ [유물 발동]</span>: <span style="color: #fde68a;">${activationEffect.desc}</span></li>`);
+  }
+
   if (item.flags && Array.isArray(item.flags)) {
     for (let f of item.flags) {
       const info = TOME_FLAG_TRANSLATIONS[f];
@@ -667,6 +696,11 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
         <div style="background: rgba(220, 38, 38, 0.18); border: 1px solid rgba(239, 68, 68, 0.45); border-radius: 6px; padding: 0.4rem 0.6rem; color: #fca5a5; font-size: 0.72rem; text-align: center; font-weight: bold; line-height: 1.4;">
           ☠️ 사악한 저주가 몸에 결속되어 있습니다!<br>'저주 해제 주문서'로 정화하기 전까지 벗을 수 없습니다.
         </div>
+      ` : ''}
+      ${isActivable ? `
+        <button class="modal-btn" id="detail-activate-btn" style="background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.5); color: #fbbf24; font-weight: bold; cursor: pointer;">
+          ${(item.timeout && item.timeout > 0) ? `⏳ 유물 재충전 중 (${item.timeout}턴)` : `⚡ 유물 발동 (Activate)`}
+        </button>
       ` : ''}
       <button class="modal-btn primary" id="detail-equip-btn" style="${isEquipped ? (isCursedItem ? 'background: rgba(127,29,29,0.3); border-color: rgba(239,68,68,0.5); color: #fca5a5; cursor: not-allowed;' : 'background: rgba(244,63,94,0.15); border-color: rgba(244,63,94,0.3); color: #f43f5e;') : 'background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.3); color: #10b981;'} font-weight: bold;">
         ${isEquipped ? (isCursedItem ? `🔒 [ ☠️ 저주 결속 (해제 불가) ]` : `장착 해제 (${slotNameKor})`) : `${slotNameKor} 장착하기`}

@@ -11,6 +11,8 @@
 
 import { TOME_ARTIFACTS_DATA } from '../entities/TomeArtifactsData.js';
 import { UnifiedTraitEngine } from './UnifiedTraitEngine.js';
+import { EffectVM } from './EffectVM.js';
+import { LootSystem } from '../core/LootSystem.js';
 
 // 78종 ToME 정통 발동 주문 메타데이터 카탈로그
 export const TOME_ARTIFACT_ACTIVATIONS = Object.freeze({
@@ -106,7 +108,22 @@ export const TOME_ARTIFACT_ACTIVATIONS = Object.freeze({
   'ROHAN': { name: '로한의 기마 질주 (Rohan Cavalier Haste)', cooldown: 100, type: 'BUFF', speed: 7, turns: 30, desc: '30턴 동안 속도를 +7 증가시킵니다.' },
   'SKULLCLEAVER': { name: '스컬클리버 파쇄격 (Skullcleaver Strike)', cooldown: 75, type: 'BOLT', element: 'PHYSICAL', dice: '200', desc: '200의 묵직한 물리 파쇄 피해를 가합니다.' },
   'UMBAR': { name: '움바르의 암습 (Umbar Shadow Strike)', cooldown: 70, type: 'HYBRID', dice: '100', desc: '100의 암습 피해를 입히고 단거리 점멸합니다.' },
-  'AXE_GOTHMOG': { name: '고스모그의 화염 도끼 (Axe of Gothmog)', cooldown: 200, type: 'AOE', element: 'FIRE', dice: '300', desc: '300의 지옥불과 혼돈의 참격을 가합니다.' }
+  'AXE_GOTHMOG': { name: '고스모그의 화염 도끼 (Axe of Gothmog)', cooldown: 200, type: 'AOE', element: 'FIRE', dice: '300', desc: '300의 지옥불과 혼돈의 참격을 가합니다.' },
+
+  // 표준 원소 및 유틸리티 발동
+  'FIRE_BALL': { name: '화염구 폭발 (Fire Ball)', cooldown: 50, type: 'AOE', element: 'FIRE', dice: '72', desc: '반경 내 적들에게 72의 화염구 폭발을 일으킵니다.' },
+  'FROST_BALL': { name: '빙결구 폭발 (Frost Ball)', cooldown: 40, type: 'AOE', element: 'COLD', dice: '48', desc: '반경 내 적들에게 48의 냉기 폭발을 일으킵니다.' },
+  'LIGHTNING_BALL': { name: '대뇌격구 폭발 (Lightning Ball)', cooldown: 80, type: 'AOE', element: 'ELEC', dice: '100', desc: '반경 내 적들에게 100의 상급 전격 폭발을 일으킵니다.' },
+  'ACID_BOLT': { name: '산성 볼트 (Acid Bolt)', cooldown: 10, type: 'BOLT', element: 'ACID', dice: '3d8+10', desc: '강력한 산성 볼트를 투사합니다.' },
+  'STINKING_CLOUD': { name: '악취 구름 (Stinking Cloud)', cooldown: 20, type: 'AOE', element: 'POISON', dice: '12', desc: '독가스 구름을 피워 지속 피해를 줍니다.' },
+  'PHASE_DOOR': { name: '차원 도약 (Phase Door)', cooldown: 30, type: 'TELEPORT', range: 10, desc: '단거리 차원 도약을 실행합니다.' },
+  'ILLUMINATION': { name: '주변 조명 (Illumination)', cooldown: 15, type: 'LIGHT', dice: '50', desc: '주변을 환하게 밝힙니다.' },
+  'CURE_CRITICAL': { name: '치명상 치료 (Cure Critical Wounds)', cooldown: 30, type: 'HEAL', healAmount: 150, desc: '150 HP를 회복하고 상태이상을 치료합니다.' },
+  'RESTORATION': { name: '전 스탯 복구 (Restoration)', cooldown: 150, type: 'RESTORATION', desc: '저하된 모든 스탯을 원상 복구합니다.' },
+  'HASTE_SELF': { name: '가속 (Haste Self)', cooldown: 100, type: 'BUFF', speed: 5, turns: 30, desc: '30턴 동안 속도를 증가시킵니다.' },
+  'DETECTION': { name: '만물 탐지 (Detection)', cooldown: 50, type: 'DETECT', desc: '주변의 존재를 탐지합니다.' },
+  'ELEMENTAL_BOLT': { name: '원소 볼트 (Elemental Bolt)', cooldown: 25, type: 'BOLT', element: 'FIRE', dice: '100', desc: '강력한 원소 볼트를 발사합니다.' },
+  'HEAL_AND_SHIELD': { name: '수호와 치유 (Heal and Shield)', cooldown: 80, type: 'HEAL', healAmount: 200, desc: '200 HP를 회복하고 보호막을 생성합니다.' }
 });
 
 // ToME 정통 183종 유물 Key -> 발동 키 1:1 매핑 테이블
@@ -166,30 +183,70 @@ export class ArtifactActivationEngine {
 
     let artKey = null;
     let actKey = null;
+    let activateObj = null;
 
     if (typeof itemOrKey === 'string') {
       if (TOME_ARTIFACT_ACTIVATIONS[itemOrKey]) {
         return { key: itemOrKey, spec: TOME_ARTIFACT_ACTIVATIONS[itemOrKey] };
       }
       artKey = itemOrKey;
+      if (TOME_ARTIFACTS_DATA[artKey]?.activate) {
+        activateObj = TOME_ARTIFACTS_DATA[artKey].activate;
+        actKey = activateObj.effectKey;
+      }
     } else if (typeof itemOrKey === 'object') {
-      actKey = itemOrKey.activate || itemOrKey.activation;
+      // 1. Read item.activate?.effectKey first
+      if (itemOrKey.activate && typeof itemOrKey.activate === 'object') {
+        activateObj = itemOrKey.activate;
+        actKey = itemOrKey.activate.effectKey;
+      } else if (typeof itemOrKey.activate === 'string') {
+        actKey = itemOrKey.activate;
+      } else if (itemOrKey.activation) {
+        actKey = itemOrKey.activation;
+      }
+
       artKey = itemOrKey.artifactKey || itemOrKey.key;
+      if (!actKey && artKey && TOME_ARTIFACTS_DATA[artKey]?.activate) {
+        activateObj = TOME_ARTIFACTS_DATA[artKey].activate;
+        actKey = activateObj.effectKey;
+      }
     }
 
+    // 2. Fall back to dictionary if not defined on item.activate
     if (!actKey && artKey) {
       actKey = ARTIFACT_KEY_TO_ACTIVATION[artKey];
     }
 
     if (actKey) {
       const cleanKey = actKey.startsWith('ACT_') ? actKey.slice(4) : actKey;
-      const spec = TOME_ARTIFACT_ACTIVATIONS[cleanKey] || TOME_ARTIFACT_ACTIVATIONS[actKey] || TOME_ARTIFACT_ACTIVATIONS[`ACT_${cleanKey}`];
-      if (spec) {
+      const baseSpec = TOME_ARTIFACT_ACTIVATIONS[cleanKey] || 
+                       TOME_ARTIFACT_ACTIVATIONS[actKey] || 
+                       TOME_ARTIFACT_ACTIVATIONS[`ACT_${cleanKey}`];
+      if (baseSpec) {
+        const spec = { ...baseSpec };
+        if (activateObj && typeof activateObj.cooldown === 'number') {
+          spec.cooldown = activateObj.cooldown;
+        }
+        if (activateObj && activateObj.desc) {
+          spec.desc = activateObj.desc;
+        }
         return { key: cleanKey, spec };
+      }
+
+      if (activateObj) {
+        return {
+          key: cleanKey,
+          spec: {
+            name: activateObj.desc || cleanKey,
+            cooldown: activateObj.cooldown || 50,
+            desc: activateObj.desc || cleanKey,
+            type: 'SPECIAL'
+          }
+        };
       }
     }
 
-    // TOME_ARTIFACTS_DATA 연동
+    // 3. Fallback for ACTIVATE flag
     if (artKey && TOME_ARTIFACTS_DATA[artKey]) {
       const artData = TOME_ARTIFACTS_DATA[artKey];
       if (artData.flags && artData.flags.includes('ACTIVATE')) {
@@ -249,7 +306,26 @@ export class ArtifactActivationEngine {
    * @param {Object} [params.game]
    * @returns {{ success: boolean, activationName: string, cooldownSet: number, damage: number, heal: number, message: string }}
    */
-  static activateArtifact({ item, player, target = null, game = null }) {
+  static activateArtifact(itemOrOptions, maybePlayer = null, maybeGameOrTarget = null, maybeTarget = null) {
+    let item, player, target = null, game = null;
+
+    if (itemOrOptions && typeof itemOrOptions === 'object' && itemOrOptions.item && (itemOrOptions.player || itemOrOptions.game)) {
+      item = itemOrOptions.item;
+      player = itemOrOptions.player;
+      target = itemOrOptions.target || null;
+      game = itemOrOptions.game || null;
+    } else {
+      item = itemOrOptions;
+      player = maybePlayer;
+      if (maybeGameOrTarget && (maybeGameOrTarget.monsters || maybeGameOrTarget.map || maybeGameOrTarget.addLogEntry || maybeGameOrTarget.player)) {
+        game = maybeGameOrTarget;
+        target = maybeTarget;
+      } else {
+        target = maybeGameOrTarget;
+        game = maybeTarget;
+      }
+    }
+
     if (!item || !player) {
       return { success: false, activationName: 'None', cooldownSet: 0, damage: 0, heal: 0, message: 'Invalid arguments' };
     }
@@ -290,6 +366,24 @@ export class ArtifactActivationEngine {
         const tFlags = target.flags ? new Set(target.flags) : new Set();
         dealtDmg = spec.element ? UnifiedTraitEngine.applyResistanceToDamage(rawDmg, spec.element, tFlags) : rawDmg;
         target.stats.hp = Math.max(0, target.stats.hp - dealtDmg);
+        if (target.stats.hp <= 0) {
+          if (game?.bossPhaseEngine?.checkPhaseTransition) {
+            game.bossPhaseEngine.checkPhaseTransition(target, game);
+          }
+          if (target.stats && target.stats.hp <= 0) {
+            if (typeof game?.handleMonsterDeath === 'function') {
+              game.handleMonsterDeath(target, itemName);
+            } else {
+              try {
+                LootSystem.processMonsterDeath(target, game);
+              } catch (_) {}
+              try {
+                if (game && player) LootSystem.processMonsterDeath(game, player, target, itemName);
+              } catch (_) {}
+              EffectVM._handleMonsterDeath(target, { game, player });
+            }
+          }
+        }
       } else {
         dealtDmg = rawDmg;
       }
@@ -313,6 +407,7 @@ export class ArtifactActivationEngine {
       player.artifactCooldowns[artKey] = finalCd;
     }
     item.currentCooldown = finalCd;
+    item.timeout = finalCd;
 
     const logMsg = `🌟 [유물 발동] <b>${itemName}</b>의 <b>${spec.name}</b>! ${spec.desc}`;
     if (game && game.addLogEntry) {
@@ -330,7 +425,7 @@ export class ArtifactActivationEngine {
   }
 
   /**
-   * 매 턴마다 등록된 유물 쿨다운을 1씩 차감합니다.
+   * 매 턴마다 등록된 유물 쿨다운 및 로드/유물 타임아웃을 1씩 차감합니다.
    * @param {Object} player
    */
   static tickCooldowns(player) {
@@ -340,6 +435,16 @@ export class ArtifactActivationEngine {
         if (player.artifactCooldowns[k] > 0) {
           player.artifactCooldowns[k] -= 1;
         }
+      }
+    }
+    const allItems = [...(player.inventory || []), ...Object.values(player.equipment || {})];
+    for (const item of allItems) {
+      const isRod = item && (item.tval === 66 || item.tval === 67 || item.type === 'ROD');
+      if (item && !isRod && item.timeout && item.timeout > 0) {
+        item.timeout -= 1;
+      }
+      if (item && item.currentCooldown && item.currentCooldown > 0) {
+        item.currentCooldown -= 1;
       }
     }
   }

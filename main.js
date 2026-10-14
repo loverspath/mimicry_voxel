@@ -5,7 +5,7 @@
  *              동적 밸런스 프리셋 엔진, 4대 액티브 스킬 플로팅 핫바, HUD 실시간 상태이상/버프 칩 바,
  *              위기 비네팅 펄스 및 플레이어 아이덴티티 특성/저항 매트릭스 모달을 통합 오케스트레이션합니다.
  * @dependencies Game.js, VirtualController.js, SkillHotbarView.js, GameStartPresetModalView.js, PlayerIdentityModalView.js, BalanceModifierManager.js, EventBus.js, GameEvents.js
- * @exports mainInit, experimentalInit
+ * @exports mainInit
  */
 
 import { Game } from './src/core/Game.js';
@@ -76,17 +76,31 @@ export function mainInit() {
     skillHotbar.init(document.getElementById('game-container') || document.body);
 
     // 스킬 원터치 격발 콜백
-    skillHotbar.setOnSkillTrigger((slotNum) => {
+    const handleSkillTrigger = (slotNum) => {
       if (!game.player || game.isMainMenuOpen || game.isGameOver) return;
-      const castSuccess = game.player.castActiveSkill(slotNum, game);
+      const castSuccess = (typeof game.castActiveSkill === 'function')
+        ? game.castActiveSkill(slotNum)
+        : game.player.castActiveSkill(slotNum, game);
       if (castSuccess) {
         // 턴 진행 및 몬스터 턴 시뮬레이션
+        game.player.energy = (game.player.energy || 100) - 100;
         game.playerTurn = false;
-        game.update();
-        game.updateUI();
-        game.render();
+        if (typeof game.runTurnLoop === 'function') {
+          game.runTurnLoop();
+        }
+        if (typeof game.updateFOV === 'function') {
+          game.updateFOV();
+        }
+        if (typeof game.updateUI === 'function') {
+          game.updateUI();
+        }
+        if (typeof game.render === 'function') {
+          game.render();
+        }
       }
-    });
+    };
+    skillHotbar.setOnSkillTrigger(handleSkillTrigger);
+    skillHotbar.onSkillClick = handleSkillTrigger;
 
     // 2. 동적 밸런스 프리셋 모달 뷰 초기화
     const presetModal = new GameStartPresetModalView('game-start-preset-modal-root');
@@ -252,9 +266,6 @@ export function mainInit() {
     showCrashBanner(err.message, err.fileName || 'main.js', err.lineNumber || 0, 0, err);
   }
 }
-
-// 하위 호환성용 별칭
-export const experimentalInit = mainInit;
 
 // 브라우저 로드 시 자동 기동
 if (typeof window !== 'undefined') {

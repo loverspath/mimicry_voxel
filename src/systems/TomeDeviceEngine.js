@@ -8,6 +8,8 @@
 
 import { TVAL } from './TomeEquipmentEngine.js';
 import { TOME_KINDS_DATA } from '../entities/TomeKindsData.js';
+import { EffectVM } from './EffectVM.js';
+import { LootSystem } from '../core/LootSystem.js';
 
 // 고속 베이스명 정확 일치 색인 맵
 const KINDS_BY_NAME = {};
@@ -324,12 +326,13 @@ export class TomeDeviceEngine {
   }
 
   /**
-   * 매 턴 플레이어 인벤토리의 모든 로드 timeout 쿨다운을 1씩 감소시킵니다.
-   * @param {Array<Object>} inventory 
+   * 매 턴 플레이어 인벤토리 및 장비의 모든 로드 timeout 쿨다운을 1씩 감소시킵니다.
+   * @param {Array<Object>|Object} inventory 
    */
   static tickTimeouts(inventory) {
-    if (!Array.isArray(inventory)) return;
-    for (const item of inventory) {
+    if (!inventory) return;
+    const items = Array.isArray(inventory) ? inventory : Object.values(inventory);
+    for (const item of items) {
       if (item && item.timeout && item.timeout > 0) {
         item.timeout -= 1;
       }
@@ -355,14 +358,12 @@ export class TomeDeviceEngine {
     return closest;
   }
 
-  static _dealDamage(target, amount, element, game, log, deviceName) {
+  static _dealDamage(target, amount, element, game, log, deviceName, player = null) {
     if (!target) return;
     target.stats.hp -= amount;
     log(`[Combat] 🎯 [${deviceName}]의 공격이 ${target.displayName || target.name}에게 ${amount} (${element}) 피해를 입혔습니다!`, 'combat');
-    if (target.stats.hp <= 0 && game && Array.isArray(game.monsters)) {
-      const idx = game.monsters.indexOf(target);
-      if (idx !== -1) game.monsters.splice(idx, 1);
-      log(`[Combat] 💀 ${target.displayName || target.name}가 처치되었습니다!`, 'system');
+    if (target.stats.hp <= 0) {
+      this._handleDeviceKill(target, game, player || game?.player, deviceName);
     }
   }
 
@@ -375,10 +376,34 @@ export class TomeDeviceEngine {
       if (d <= radius) {
         m.stats.hp -= amount;
         if (m.stats.hp <= 0) {
-          game.monsters.splice(i, 1);
+          this._handleDeviceKill(m, game, player || game?.player, '광역 마법');
           log(`[Combat] 💀 광역 마법에 휩쓸린 ${m.displayName || m.name}가 소멸했습니다!`, 'system');
         }
       }
+    }
+  }
+
+  static _handleDeviceKill(monster, game, player = null, source = '마법 디바이스') {
+    if (!monster) return;
+    const p = player || game?.player;
+    if (game?.bossPhaseEngine?.checkPhaseTransition) {
+      game.bossPhaseEngine.checkPhaseTransition(monster, game);
+      if (monster.stats && monster.stats.hp > 0) return;
+    }
+    monster._deathProcessed = true;
+
+    if (typeof game?.handleMonsterDeath === 'function') {
+      game.handleMonsterDeath(monster, source);
+    } else {
+      if (typeof LootSystem?.processMonsterDeath === 'function') {
+        try {
+          LootSystem.processMonsterDeath(monster, game);
+        } catch (_) {}
+        try {
+          if (game && p) LootSystem.processMonsterDeath(game, p, monster, source);
+        } catch (_) {}
+      }
+      EffectVM._handleMonsterDeath(monster, { game, player: p });
     }
   }
 
