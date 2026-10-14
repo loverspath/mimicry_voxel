@@ -4,8 +4,8 @@
  */
 
 import { Item } from '../src/entities/Item.js';
-import { createTomeItem, TOME_ARTIFACTS } from '../src/entities/ItemRegistry.js';
-import { TOME_ARTIFACTS_DATA } from '../src/entities/TomeArtifactsData.js';
+import { createTomeItem } from '../src/systems/TomeLootGenerator.js';
+import { TOME_ARTIFACTS_DATA, TOME_ARTIFACTS_DATA as TOME_ARTIFACTS } from '../src/entities/TomeArtifactsData.js';
 import { UniqueMonsterManager } from '../src/systems/UniqueMonsterManager.js';
 import { TomeLootGenerator } from '../src/systems/TomeLootGenerator.js';
 import { BossPhaseEngine } from '../src/systems/BossPhaseEngine.js';

@@ -7,6 +7,7 @@
  */
 import { getSpeciesConfig, getSpeciesKeyByName } from '../entities/MonsterRegistry.js';
 import { TomeSpellEngine, TOME_CANONICAL_SPELLS } from '../systems/TomeSpellEngine.js';
+import { ProceduralSkillSynthesizer } from '../systems/ProceduralSkillSynthesizer.js';
 
 // Base static definitions for UI fallbacks
 export const BASE_SKILL_TREES = {
@@ -88,104 +89,8 @@ export const BASE_SKILL_TREES = {
  * @returns {Array<Object>}
  */
 export function generateDynamicSkillTree(speciesIdentifier) {
-  const config = getSpeciesConfig(speciesIdentifier);
-  if (!config) return BASE_SKILL_TREES["인간 여행자"];
-
-  const spells = TomeSpellEngine.resolveMonsterSpells(config.coreType || speciesIdentifier);
-  const attacks = TomeSpellEngine.resolveMonsterAttacks(config.coreType || speciesIdentifier);
-
-  const tree = [];
-  const gType = config.growthType || 'BALANCED';
-  const statTag = gType === 'TANK' ? 'CON_BOOST' : (gType === 'MAGE' ? 'INT_BOOST' : (gType === 'SPEEDY' ? 'DEX_BOOST' : 'STR_BOOST'));
-  tree.push({
-    pt: 1,
-    name: `${config.name}의 혈통`,
-    desc: `기본 능력치(${statTag.replace('_BOOST', '')}) +10% 증폭`,
-    type: "PASSIVE",
-    isIntScaled: false,
-    synergyTags: [statTag]
-  });
-
-  if (spells.length > 0 && spells[0].spec) {
-    const sp = spells[0];
-    tree.push({
-      pt: 3,
-      name: sp.spec.name,
-      desc: `${sp.spec.name} 투사 (${sp.spec.dice || '2d6'}, 원소: ${sp.spec.element || 'MANA'})`,
-      type: "ACTIVE",
-      isIntScaled: sp.spec.type === 'PROJECTILE' || sp.spec.type === 'AOE',
-      tags: ["MAGIC", sp.spec.type],
-      synergyTags: [sp.spec.element ? `${sp.spec.element}_MELEE` : "MAGIC_BOOST"]
-    });
-  } else if (attacks.length > 0) {
-    const atk = attacks[0];
-    tree.push({
-      pt: 3,
-      name: `${atk.method} 타격`,
-      desc: `${atk.method}(${atk.effect}) 공격 기술을 사용합니다. (${atk.damage || '1d6'})`,
-      type: "PASSIVE",
-      isIntScaled: false,
-      synergyTags: [atk.effect === 'POISON' ? 'ACID_MELEE' : 'PHYS_MELEE']
-    });
-  } else {
-    tree.push({
-      pt: 3,
-      name: "강한 공격",
-      desc: "매 3타째 공격 시 1.5배 피해",
-      type: "PASSIVE",
-      isIntScaled: false,
-      synergyTags: ["STRONG_ATTACK"]
-    });
-  }
-
-  const perks = config.perks || [];
-  const resTags = [];
-  if (perks.includes('IM_FIRE') || perks.includes('RES_FIRE')) resTags.push('FIRE_RESIST');
-  if (perks.includes('IM_COLD') || perks.includes('RES_COLD')) resTags.push('COLD_RESIST');
-  if (perks.includes('IM_ELEC') || perks.includes('RES_ELEC')) resTags.push('LIGHTNING_RESIST');
-  if (perks.includes('IM_ACID') || perks.includes('RES_ACID')) resTags.push('ACID_RESIST');
-
-  tree.push({
-    pt: 5,
-    name: `${config.name}의 외피`,
-    desc: resTags.length > 0 ? `${resTags.length}종 원소 저항력 획득` : "물리 피해 고정 감쇄 획득",
-    type: "PASSIVE",
-    isIntScaled: false,
-    synergyTags: resTags.length > 0 ? resTags : ["PHYS_RESIST"]
-  });
-
-  tree.push({
-    pt: 7,
-    name: "야성의 질주",
-    desc: "행동 속도를 충전해 주는 가속(HASTE_UNIT)을 획득합니다.",
-    type: "PASSIVE",
-    isIntScaled: false,
-    synergyTags: ["HASTE_UNIT"]
-  });
-
-  if (spells.length > 1 && spells[1].spec) {
-    const sp = spells[1];
-    tree.push({
-      pt: 10,
-      name: `[궁극기] ${sp.spec.name}`,
-      desc: `${sp.spec.name}을(를) 방출하여 광역 파멸 피해를 입힙니다.`,
-      type: "ACTIVE",
-      isIntScaled: true,
-      tags: ["MAGIC", sp.spec.type],
-      synergyTags: ["ELEMENTAL_BOOST"]
-    });
-  } else {
-    tree.push({
-      pt: 10,
-      name: "[궁극기] 파멸의 일격",
-      desc: "치명적인 강타 공격을 가합니다.",
-      type: "PASSIVE",
-      isIntScaled: false,
-      synergyTags: ["BERSERK_RAGE"]
-    });
-  }
-
-  return tree;
+  if (!speciesIdentifier) return BASE_SKILL_TREES["인간 여행자"];
+  return ProceduralSkillSynthesizer.synthesizePassiveTree(speciesIdentifier);
 }
 
 export const CORE_SKILL_TREES = new Proxy(BASE_SKILL_TREES, {

@@ -4,7 +4,7 @@
  */
 
 import { renderItemDetailHTML } from '../src/ui/InventoryView.js';
-import { createTomeItem } from '../src/entities/ItemRegistry.js';
+import { createTomeItem } from '../src/systems/TomeLootGenerator.js';
 import { Player } from '../src/entities/Player.js';
 import { Item } from '../src/entities/Item.js';
 

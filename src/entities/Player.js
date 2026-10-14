@@ -130,6 +130,7 @@ export class Player {
   }
 
   get lightRange() {
+    if (StatusEffectEngine.hasStatus(this, 'BLIND')) return 1;
     return this._lightRange !== undefined ? this._lightRange : UnifiedTraitEngine.calculateLightRadius(this, 1);
   }
 
@@ -254,7 +255,18 @@ export class Player {
   }
 
   getResistancePercent(element) {
-    return UnifiedTraitEngine.getElementalTrait(this, element).resistancePercent / 100;
+    StatusEffectEngine.syncLegacyFields(this);
+    const mods = StatusEffectEngine.getAggregatedModifiers(this);
+    const elemUpper = String(element).toUpperCase();
+    let tempBonus = 0;
+    if (elemUpper === 'FIRE') tempBonus = mods.tempResistances.FIRE || 0;
+    else if (elemUpper === 'COLD') tempBonus = mods.tempResistances.COLD || 0;
+    else if (elemUpper === 'LIGHTNING' || elemUpper === 'ELEC') tempBonus = mods.tempResistances.LIGHTNING || 0;
+    else if (elemUpper === 'ACID') tempBonus = mods.tempResistances.ACID || 0;
+    else if (elemUpper === 'POISON' || elemUpper === 'POIS') tempBonus = mods.tempResistances.POISON || 0;
+
+    const baseRes = UnifiedTraitEngine.getElementalTrait(this, element).resistancePercent / 100;
+    return Math.min(1.0, baseRes + tempBonus);
   }
 
   getFlatDamageReduction(activeTags = null) {
@@ -437,6 +449,7 @@ export class Player {
     } else {
       this.stats.hp = this.stats.maxHp;
     }
+    this.activeSkills = this.getInnateSkills();
   }
 
   unequipSubCore1() {
@@ -449,6 +462,7 @@ export class Player {
     } else {
       this.stats.hp = this.stats.maxHp;
     }
+    this.activeSkills = this.getInnateSkills();
   }
 
   equipSubCore2(item) {
@@ -461,6 +475,7 @@ export class Player {
     } else {
       this.stats.hp = this.stats.maxHp;
     }
+    this.activeSkills = this.getInnateSkills();
   }
 
   unequipSubCore2() {
@@ -473,6 +488,7 @@ export class Player {
     } else {
       this.stats.hp = this.stats.maxHp;
     }
+    this.activeSkills = this.getInnateSkills();
   }
 
   unequipItem(item) {
@@ -528,35 +544,121 @@ export class Player {
   }
 
   getTotalAC() {
-    let totalAC = 10;
-    if (this.mimicCore) {
-      const configKey = this.mimicCore.coreType || this.mimicCore.name;
-      const config = getSpeciesConfig(configKey);
-      if (config && typeof config.baseAC === 'number') {
-        totalAC = config.baseAC;
+    return PlayerStatCalculator.calculateTotalAC(this);
+  }
+
+  // ==========================================
+  // [Legacy Turn Properties (Synced to StatusEffectEngine)]
+  // ==========================================
+  get speedBuffTurns() { return this.statuses?.HASTE?.duration || 0; }
+  set speedBuffTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'HASTE', v); else StatusEffectEngine.removeStatus(this, 'HASTE'); }
+
+  get invulnerableTurns() { return this.statuses?.INVULN?.duration || 0; }
+  set invulnerableTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'INVULN', v); else StatusEffectEngine.removeStatus(this, 'INVULN'); }
+
+  get heroismTurns() { return this.statuses?.HEROISM?.duration || 0; }
+  set heroismTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'HEROISM', v); else StatusEffectEngine.removeStatus(this, 'HEROISM'); }
+
+  get berserkTurns() { return this.statuses?.BERSERK?.duration || 0; }
+  set berserkTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'BERSERK', v); else StatusEffectEngine.removeStatus(this, 'BERSERK'); }
+
+  get shieldBuffTurns() { return this.statuses?.SHIELD?.duration || 0; }
+  set shieldBuffTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'SHIELD', v); else StatusEffectEngine.removeStatus(this, 'SHIELD'); }
+
+  get protectPrayerTurns() { return this.statuses?.PROT_EVIL?.duration || 0; }
+  set protectPrayerTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'PROT_EVIL', v); else StatusEffectEngine.removeStatus(this, 'PROT_EVIL'); }
+
+  get blindTurns() { return this.statuses?.BLIND?.duration || 0; }
+  set blindTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'BLIND', v); else StatusEffectEngine.removeStatus(this, 'BLIND'); }
+
+  get confusedTurns() { return this.statuses?.CONFUSE?.duration || 0; }
+  set confusedTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'CONFUSE', v); else StatusEffectEngine.removeStatus(this, 'CONFUSE'); }
+  get confuseTurns() { return this.confusedTurns; }
+  set confuseTurns(v) { this.confusedTurns = v; }
+
+  get paralyzedTurns() { return this.statuses?.PARALYZE?.duration || 0; }
+  set paralyzedTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'PARALYZE', v); else StatusEffectEngine.removeStatus(this, 'PARALYZE'); }
+  get paralyzeTurns() { return this.paralyzedTurns; }
+  set paralyzeTurns(v) { this.paralyzedTurns = v; }
+
+  get afraidTurns() { return this.statuses?.FEAR?.duration || 0; }
+  set afraidTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'FEAR', v); else StatusEffectEngine.removeStatus(this, 'FEAR'); }
+  get fearTurns() { return this.afraidTurns; }
+  set fearTurns(v) { this.afraidTurns = v; }
+
+  get slowTurns() { return this.statuses?.SLOW?.duration || 0; }
+  set slowTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'SLOW', v); else StatusEffectEngine.removeStatus(this, 'SLOW'); }
+
+  get poisonTurns() { return this.statuses?.POISON?.duration || 0; }
+  set poisonTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'POISON', v); else StatusEffectEngine.removeStatus(this, 'POISON'); }
+
+  get cutTurns() { return this.statuses?.BLEED?.duration || 0; }
+  set cutTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'BLEED', v); else StatusEffectEngine.removeStatus(this, 'BLEED'); }
+  get bleedTurns() { return this.cutTurns; }
+  set bleedTurns(v) { this.cutTurns = v; }
+
+  get tempResFireTurns() { return this.statuses?.RES_FIRE?.duration || 0; }
+  set tempResFireTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'RES_FIRE', v); else StatusEffectEngine.removeStatus(this, 'RES_FIRE'); }
+
+  get tempResColdTurns() { return this.statuses?.RES_COLD?.duration || 0; }
+  set tempResColdTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'RES_COLD', v); else StatusEffectEngine.removeStatus(this, 'RES_COLD'); }
+
+  get tempResElecTurns() { return this.statuses?.RES_ELEC?.duration || 0; }
+  set tempResElecTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'RES_ELEC', v); else StatusEffectEngine.removeStatus(this, 'RES_ELEC'); }
+
+  get tempResAcidTurns() { return this.statuses?.RES_ACID?.duration || 0; }
+  set tempResAcidTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'RES_ACID', v); else StatusEffectEngine.removeStatus(this, 'RES_ACID'); }
+
+  get tempResPoisTurns() { return this.statuses?.RES_POIS?.duration || 0; }
+  set tempResPoisTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'RES_POIS', v); else StatusEffectEngine.removeStatus(this, 'RES_POIS'); }
+
+  get espTurns() { return this.statuses?.ESP?.duration || 0; }
+  set espTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'ESP', v); else StatusEffectEngine.removeStatus(this, 'ESP'); }
+
+  get infraTurns() { return this.statuses?.INFRA?.duration || 0; }
+  set infraTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'INFRA', v); else StatusEffectEngine.removeStatus(this, 'INFRA'); }
+
+  get wraithformTurns() { return this.statuses?.PASS_WALL?.duration || 0; }
+  set wraithformTurns(v) { if (v > 0) StatusEffectEngine.applyStatus(this, 'PASS_WALL', v); else StatusEffectEngine.removeStatus(this, 'PASS_WALL'); }
+
+  /**
+   * 환생 (Reincarnation): 레벨 1로 리셋되며 영구 보존 스탯(legacyStats)을 기본 스탯에 합성합니다.
+   * 무한 스탯 인플레이션 방지를 위해 기본 스탯(baseStats)을 표준 값으로 우선 초기화한 후 legacyStats를 합산합니다.
+   */
+  reincarnate(newCore = null) {
+    this.reincarnationCount = (this.reincarnationCount || 0) + 1;
+
+    // Reset baseStats to standard baseline BEFORE adding legacyStats
+    this.baseStats = { str: 10, dex: 10, con: 10, int: 10, wis: 10, chr: 10, maxHp: 50, ac: 0, speed: 110 };
+    if (this.baseStats.cha === undefined) this.baseStats.cha = this.baseStats.chr;
+    if (this.body) {
+      this.body.baseStats = this.baseStats;
+    }
+
+    if (this.legacyStats) {
+      for (const key of Object.keys(this.legacyStats)) {
+        if (this.baseStats[key] !== undefined) {
+          this.baseStats[key] += (this.legacyStats[key] || 0);
+        }
       }
     }
 
-    totalAC += (this.dexMod || 0);
+    this.level = 1;
+    this.xp = 0;
+    this.xpNeeded = 50;
 
-    const activeTags = this.compileActiveTags ? this.compileActiveTags() : {};
-    totalAC += (activeTags["EVASION_BOOST"] || 0);
-    totalAC += (activeTags["DEFENSE_BOOST"] || 0);
-
-    for (const key in this.equipment) {
-      if (key === 'subCore1' || key === 'subCore2') continue;
-      const gear = this.equipment[key];
-      if (gear) {
-        if (typeof gear.baseAC === 'number') {
-          totalAC += gear.baseAC;
-        }
-        if (typeof gear.upgradeLevel === 'number') {
-          totalAC += gear.upgradeLevel;
-        }
-      }
+    if (newCore && typeof this.doSwapMainCore === 'function') {
+      this.doSwapMainCore(newCore, () => {});
     }
 
-    return Math.max(1, totalAC);
+    if (!this.stats) this.stats = {};
+    this.stats.maxHp = this.getMaxHp ? this.getMaxHp() : (this.baseStats.maxHp || 50);
+    this.stats.hp = this.stats.maxHp;
+
+    if (typeof this.markDirty === 'function') {
+      this.markDirty("환생");
+    }
+    return this;
   }
 
   getBaseToHitScore() {
@@ -712,7 +814,11 @@ export class Player {
 
   getInnateSkills() {
     const coreKey = this.mimicCore?.coreType || this.mimicCore?.name || 'MON_NOVICE_WARRIOR';
-    return MonsterSpellFactory.createInnateSkills(coreKey);
+    const subCores = [
+      this.equipment?.subCore1?.coreType || this.equipment?.subCore1?.baseName || this.equipment?.subCore1?.name,
+      this.equipment?.subCore2?.coreType || this.equipment?.subCore2?.baseName || this.equipment?.subCore2?.name
+    ].filter(Boolean);
+    return MonsterSpellFactory.getSkillsForCore(coreKey, subCores);
   }
 
   castActiveSkill(slotNumber, game, target = null) {

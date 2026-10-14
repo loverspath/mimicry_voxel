@@ -1,7 +1,7 @@
 /**
  * @module TomeArtifactsData
  * @category entities
- * @description ToME 2.3.5 정통 190종 전설 유물(Artifacts) 정적 데이터셋.
+ * @description ToME 2.3.5 정통 183종 전설 유물(Artifacts) 정적 데이터셋.
  * @exports TOME_ARTIFACTS_DATA
  */
 
@@ -30,7 +30,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "LITE3",
       "LUCK"
     ],
-    "flavorText": "A small crystal phial, with the light of Earendil's Star contained inside. Its light is imperishable, and near it darkness cannot endure."
+    "flavorText": "A small crystal phial, with the light of Earendil's Star contained inside. Its light is imperishable, and near it darkness cannot endure.",
+    "activate": {
+      "effectKey": "LIGHT",
+      "cooldown": 10,
+      "desc": "주변을 환하게 밝히고 빛 피해를 입힙니다."
+    }
   },
   "ART_OF_ELENDIL": {
     "key": "ART_OF_ELENDIL",
@@ -59,7 +64,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SEE_INVIS",
       "SPEED"
     ],
-    "flavorText": "The shining Star of the West, a famed heirloom of Elendil's house."
+    "flavorText": "The shining Star of the West, a famed heirloom of Elendil's house.",
+    "activate": {
+      "effectKey": "MAP_LIGHT",
+      "cooldown": 20,
+      "desc": "현재 층의 지형과 구조를 감지하여 맵을 밝힙니다."
+    }
   },
   "ART_OF_THRAIN": {
     "key": "ART_OF_THRAIN",
@@ -92,7 +102,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SEE_INVIS",
       "SPEED"
     ],
-    "flavorText": "A great globe seemingly filled with moonlight, the famed Heart of the Mountain, which splinters the light that falls upon it into a thousand glowing shards."
+    "flavorText": "A great globe seemingly filled with moonlight, the famed Heart of the Mountain, which splinters the light that falls upon it into a thousand glowing shards.",
+    "activate": {
+      "effectKey": "THRAIN",
+      "cooldown": 150,
+      "desc": "투시경, 주변 조명, 500 HP 치유 및 모든 저하된 스탯을 완전히 회복합니다."
+    }
   },
   "ART_OF_CARLAMMAS": {
     "key": "ART_OF_CARLAMMAS",
@@ -118,7 +133,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "INSTA_ART",
       "RES_FIRE"
     ],
-    "flavorText": "A fiery circle of bronze, with mighty spells to ward off evil."
+    "flavorText": "A fiery circle of bronze, with mighty spells to ward off evil.",
+    "activate": {
+      "effectKey": "PROT_EVIL",
+      "cooldown": 100,
+      "desc": "사악한 몬스터의 접근과 공격을 막아내는 신성 결계를 형성합니다."
+    }
   },
   "ART_OF_INGWE": {
     "key": "ART_OF_INGWE",
@@ -151,7 +171,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SEE_INVIS",
       "WIS"
     ],
-    "flavorText": "The ancient heirloom of Ingwe, high lord of the Vanyar, against whom nothing of evil could stand."
+    "flavorText": "The ancient heirloom of Ingwe, high lord of the Vanyar, against whom nothing of evil could stand.",
+    "activate": {
+      "effectKey": "DISP_EVIL",
+      "cooldown": 300,
+      "desc": "시야 내 모든 사악한 존재에게 500의 신성 파멸 피해를 가합니다."
+    }
   },
   "ART_NAUGLAMIR": {
     "key": "ART_NAUGLAMIR",
@@ -215,7 +240,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SEE_INVIS",
       "STR"
     ],
-    "flavorText": "The mighty ring of the Thunderlord Flare that makes the wearer strong and healthy.  Once a ring of power, it was given to Flare by Celegorm when he arrived on Middle-earth with a full nest of Thunderlords."
+    "flavorText": "The mighty ring of the Thunderlord Flare that makes the wearer strong and healthy.  Once a ring of power, it was given to Flare by Celegorm when he arrived on Middle-earth with a full nest of Thunderlords.",
+    "activate": {
+      "effectKey": "DIM_DOOR",
+      "cooldown": 50,
+      "desc": "원하는 안전한 지점으로 단거리 차원 도약을 실행합니다."
+    }
   },
   "ART_OF_BARAHIR": {
     "key": "ART_OF_BARAHIR",
@@ -249,7 +279,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STR",
       "WIS"
     ],
-    "flavorText": "A ring shaped into twinned serpents with eyes of emerald meeting beneath a crown of flowers, an ancient treasure of Isildur's house."
+    "flavorText": "A ring shaped into twinned serpents with eyes of emerald meeting beneath a crown of flowers, an ancient treasure of Isildur's house.",
+    "activate": {
+      "effectKey": "BARAHIR",
+      "cooldown": 100,
+      "desc": "300 HP를 즉시 회복하고 모든 스탯을 원상 복구합니다."
+    }
   },
   "ART_OF_TULKAS": {
     "key": "ART_OF_TULKAS",
@@ -278,7 +313,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SPEED",
       "STR"
     ],
-    "flavorText": "The treasure of Tulkas, most fleet and wrathful of the Valar."
+    "flavorText": "The treasure of Tulkas, most fleet and wrathful of the Valar.",
+    "activate": {
+      "effectKey": "TULKAS",
+      "cooldown": 150,
+      "desc": "50턴 동안 속도를 +10 증가시킵니다."
+    }
   },
   "ART_OF_POWER_NARYA": {
     "key": "ART_OF_POWER_NARYA",
@@ -321,7 +361,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SUST_WIS",
       "WIS"
     ],
-    "flavorText": "The Ring of Fire, set with a ruby that glows like flame.  Narya is one of the three Rings of Power created by the Elves and hidden by them from Sauron."
+    "flavorText": "The Ring of Fire, set with a ruby that glows like flame.  Narya is one of the three Rings of Power created by the Elves and hidden by them from Sauron.",
+    "activate": {
+      "effectKey": "NARYA",
+      "cooldown": 200,
+      "desc": "200의 화염 폭풍구를 투사하고 50턴간 가속합니다."
+    }
   },
   "ART_OF_POWER_NENYA": {
     "key": "ART_OF_POWER_NENYA",
@@ -364,7 +409,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SUST_WIS",
       "WIS"
     ],
-    "flavorText": "The Ring of Adamant, with a pure white stone as centrepiece.  Nenya is one of the three Rings of Power created by the Elves and hidden by them from Sauron."
+    "flavorText": "The Ring of Adamant, with a pure white stone as centrepiece.  Nenya is one of the three Rings of Power created by the Elves and hidden by them from Sauron.",
+    "activate": {
+      "effectKey": "NENYA",
+      "cooldown": 200,
+      "desc": "200의 빙결 폭풍구를 투사하고 300 HP를 회복합니다."
+    }
   },
   "ART_OF_POWER_VILYA": {
     "key": "ART_OF_POWER_VILYA",
@@ -409,7 +459,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SUST_STR",
       "WIS"
     ],
-    "flavorText": "The Ring of Sapphire, with clear blue gems that shine like stars, glittering untouchable despite all that Sauron ever wrought.  Vilya is one of the three Rings of Power created by the Elves and hidden by them from Sauron."
+    "flavorText": "The Ring of Sapphire, with clear blue gems that shine like stars, glittering untouchable despite all that Sauron ever wrought.  Vilya is one of the three Rings of Power created by the Elves and hidden by them from Sauron.",
+    "activate": {
+      "effectKey": "VILYA",
+      "cooldown": 200,
+      "desc": "250의 뇌격 폭풍구를 방출하고 지도를 탐지합니다."
+    }
   },
   "ART_OF_POWER_THE_ONE_RING": {
     "key": "ART_OF_POWER_THE_ONE_RING",
@@ -471,7 +526,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SUST_WIS",
       "WIS"
     ],
-    "flavorText": "\"Ash nazg durbatuluk, ash nazg gimbatul, ash nazg thrakatuluk agh burzum-ishi krimpatul\". Unadorned, made of massive gold, set with runes in the foul speech of Mordor, with power so great that it inevitably twists and masters any earthly being who wears it."
+    "flavorText": "\"Ash nazg durbatuluk, ash nazg gimbatul, ash nazg thrakatuluk agh burzum-ishi krimpatul\". Unadorned, made of massive gold, set with runes in the foul speech of Mordor, with power so great that it inevitably twists and masters any earthly being who wears it.",
+    "activate": {
+      "effectKey": "POWER",
+      "cooldown": 400,
+      "desc": "모든 주변 적에게 600의 절대 파멸 피해를 가하고 스탯을 극대화합니다."
+    }
   },
   "ART_OF_SPACE_TIME": {
     "key": "ART_OF_SPACE_TIME",
@@ -528,7 +588,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SEE_INVIS",
       "SPECIAL_GENE"
     ],
-    "flavorText": "A massive suit of heavy dragon scales deeply saturated with many colours. It throbs with angry energies, and you feel the raw elemental might of untamed Lightning as you put it on."
+    "flavorText": "A massive suit of heavy dragon scales deeply saturated with many colours. It throbs with angry energies, and you feel the raw elemental might of untamed Lightning as you put it on.",
+    "activate": {
+      "effectKey": "RAZORBACK",
+      "cooldown": 120,
+      "desc": "8방향으로 150의 광휘 및 전격 레이저를 방출합니다."
+    }
   },
   "ART_OF_ETERNITY": {
     "key": "ART_OF_ETERNITY",
@@ -650,7 +715,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "RES_NEXUS",
       "SUST_CON"
     ],
-    "flavorText": "A suit of imperishable adamant, with unconquerable strength to endure evil and disruptive magics, that protects the life force of its wearer as nothing else can."
+    "flavorText": "A suit of imperishable adamant, with unconquerable strength to endure evil and disruptive magics, that protects the life force of its wearer as nothing else can.",
+    "activate": {
+      "effectKey": "CURE_1000",
+      "cooldown": 200,
+      "desc": "1000 HP를 즉시 회복하고 모든 상태이상을 완전 정화합니다."
+    }
   },
   "ART_OF_ISILDUR": {
     "key": "ART_OF_ISILDUR",
@@ -746,7 +816,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STEALTH",
       "WIS"
     ],
-    "flavorText": "This wondrous suit of fine-linked chain shimmers as though of pure silver. It stands untouched amidst the fury of the elements, and a power of concealment rests within."
+    "flavorText": "This wondrous suit of fine-linked chain shimmers as though of pure silver. It stands untouched amidst the fury of the elements, and a power of concealment rests within.",
+    "activate": {
+      "effectKey": "BELEGENNON",
+      "cooldown": 40,
+      "desc": "120의 뇌격 전기를 투사합니다."
+    }
   },
   "ART_OF_CELEBORN": {
     "key": "ART_OF_CELEBORN",
@@ -779,7 +854,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "RES_FIRE",
       "STR"
     ],
-    "flavorText": "A shimmering suit of true-silver, forged long ago by dwarven smiths of legend.  It gleams with purest white as you gaze upon it, and mighty are its powers to protect and banish."
+    "flavorText": "A shimmering suit of true-silver, forged long ago by dwarven smiths of legend.  It gleams with purest white as you gaze upon it, and mighty are its powers to protect and banish.",
+    "activate": {
+      "effectKey": "GENOCIDE",
+      "cooldown": 300,
+      "desc": "지정한 몬스터 종족을 현재 층에서 완전히 소멸시킵니다."
+    }
   },
   "ART_OF_ARVEDUI": {
     "key": "ART_OF_ARVEDUI",
@@ -840,7 +920,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "RES_POIS",
       "WIS"
     ],
-    "flavorText": "A hauberk, leggings, and sleeves of interlocking steel rings, strategically reinforced at vital locations with a second layer of chain.  Magics to enhance body and mind lie within, and no door can hope to resist the wearer."
+    "flavorText": "A hauberk, leggings, and sleeves of interlocking steel rings, strategically reinforced at vital locations with a second layer of chain.  Magics to enhance body and mind lie within, and no door can hope to resist the wearer.",
+    "activate": {
+      "effectKey": "DEST_DOOR",
+      "cooldown": 15,
+      "desc": "인접한 잠긴 문과 위험한 함정을 즉시 파괴합니다."
+    }
   },
   "ART_OF_MARDA": {
     "key": "ART_OF_MARDA",
@@ -1105,7 +1190,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SLAY_TROLL",
       "STR"
     ],
-    "flavorText": "Wielded by Hurin Thalion in the Fifth Battle of Beleriand, this troll-bane smoked in the black blood of Gothmog's guards."
+    "flavorText": "Wielded by Hurin Thalion in the Fifth Battle of Beleriand, this troll-bane smoked in the black blood of Gothmog's guards.",
+    "activate": {
+      "effectKey": "HURIN",
+      "cooldown": 80,
+      "desc": "영웅심을 고취하여 공격력 +10, 최대 체력 +20, 공포 면역을 얻습니다."
+    }
   },
   "ART_OF_MORGOTH": {
     "key": "ART_OF_MORGOTH",
@@ -1312,7 +1402,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SEE_INVIS",
       "STR"
     ],
-    "flavorText": "The legendary dragon helm of Turin Turambar, an object of dread to the servants of Morgoth."
+    "flavorText": "The legendary dragon helm of Turin Turambar, an object of dread to the servants of Morgoth.",
+    "activate": {
+      "effectKey": "GORLIM",
+      "cooldown": 100,
+      "desc": "그림자 속으로 몸을 숨겨 투명 상태를 얻습니다."
+    }
   },
   "ART_HOLHENNETH": {
     "key": "ART_HOLHENNETH",
@@ -1339,7 +1434,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SEE_INVIS",
       "WIS"
     ],
-    "flavorText": "A famous helm of forged iron granting extraordinary powers of mind and awareness."
+    "flavorText": "A famous helm of forged iron granting extraordinary powers of mind and awareness.",
+    "activate": {
+      "effectKey": "DETECTION",
+      "cooldown": 60,
+      "desc": "현재 층의 모든 존재를 탐지합니다."
+    }
   },
   "ART_OF_GORLIM": {
     "key": "ART_OF_GORLIM",
@@ -1379,7 +1479,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "TY_CURSE",
       "WIS"
     ],
-    "flavorText": "A headpiece, gaudy and barbaric, that betrayed a warrior when he most needed succor."
+    "flavorText": "A headpiece, gaudy and barbaric, that betrayed a warrior when he most needed succor.",
+    "activate": {
+      "effectKey": "GORLIM",
+      "cooldown": 100,
+      "desc": "그림자 속으로 몸을 숨겨 투명 상태를 얻습니다."
+    }
   },
   "ART_OF_GONDOR": {
     "key": "ART_OF_GONDOR",
@@ -1466,7 +1571,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "RES_FIRE",
       "RES_POIS"
     ],
-    "flavorText": "A cape worn by a hero from Valinor, a land utterly beyond the strife of Elements."
+    "flavorText": "A cape worn by a hero from Valinor, a land utterly beyond the strife of Elements.",
+    "activate": {
+      "effectKey": "COLLUIN",
+      "cooldown": 120,
+      "desc": "30턴 동안 모든 원소 저항 결계를 생성합니다."
+    }
   },
   "ART_HOLCOLLETH": {
     "key": "ART_HOLCOLLETH",
@@ -1494,7 +1604,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STEALTH",
       "WIS"
     ],
-    "flavorText": "This elven-grey mantle possesses great powers of tranquility and of concealment, and grants the wearer the knowledge and understanding of the Sindar."
+    "flavorText": "This elven-grey mantle possesses great powers of tranquility and of concealment, and grants the wearer the knowledge and understanding of the Sindar.",
+    "activate": {
+      "effectKey": "CURE_CRITICAL",
+      "cooldown": 20,
+      "desc": "체력을 회복합니다."
+    }
   },
   "ART_OF_THINGOL": {
     "key": "ART_OF_THINGOL",
@@ -1524,7 +1639,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "RES_COLD",
       "RES_FIRE"
     ],
-    "flavorText": "A sable-hued cloak, with glowing elven-runes to restore magic showing calm and clear as moonlight on still water."
+    "flavorText": "A sable-hued cloak, with glowing elven-runes to restore magic showing calm and clear as moonlight on still water.",
+    "activate": {
+      "effectKey": "RESTORATION",
+      "cooldown": 70,
+      "desc": "마력을 재충전하고 스탯을 복구합니다."
+    }
   },
   "ART_OF_THORONGIL": {
     "key": "ART_OF_THORONGIL",
@@ -1575,7 +1695,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SPEED",
       "STEALTH"
     ],
-    "flavorText": "A crystal-blue cape of fine silk worn by a silent messenger of the forces of Law. Somehow, its wearer is always able to escape trouble."
+    "flavorText": "A crystal-blue cape of fine silk worn by a silent messenger of the forces of Law. Somehow, its wearer is always able to escape trouble.",
+    "activate": {
+      "effectKey": "PHASE_DOOR",
+      "cooldown": 45,
+      "desc": "차원 도약을 실행합니다."
+    }
   },
   "ART_OF_LUTHIEN": {
     "key": "ART_OF_LUTHIEN",
@@ -1612,7 +1737,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "WIELD_CAST",
       "WIS"
     ],
-    "flavorText": "The opaque midnight folds, inset with a multitude of tiny diamonds, of this cloak swirl around you and you feel a hint, a fragment of the knowledge and power to restore that lay in Luthien, the most beautiful being that ever knew death."
+    "flavorText": "The opaque midnight folds, inset with a multitude of tiny diamonds, of this cloak swirl around you and you feel a hint, a fragment of the knowledge and power to restore that lay in Luthien, the most beautiful being that ever knew death.",
+    "activate": {
+      "effectKey": "RESTORATION",
+      "cooldown": 150,
+      "desc": "생명력과 스탯을 원상 복구합니다."
+    }
   },
   "ART_OF_TUOR": {
     "key": "ART_OF_TUOR",
@@ -1695,7 +1825,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SPECIAL_GENE",
       "SUST_CON"
     ],
-    "flavorText": "These gloves glow so brightly as to light the way for their owner and cast magical bolts with great frequency."
+    "flavorText": "These gloves glow so brightly as to light the way for their owner and cast magical bolts with great frequency.",
+    "activate": {
+      "effectKey": "BO_MISS_1",
+      "cooldown": 5,
+      "desc": "비전 마법 미사일을 발사합니다."
+    }
   },
   "ART_PAURHACH": {
     "key": "ART_PAURHACH",
@@ -1720,7 +1855,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SPELL_CONTAIN",
       "WIELD_CAST"
     ],
-    "flavorText": "A fiery set of gauntlets that can even shoot fire from the user's hands."
+    "flavorText": "A fiery set of gauntlets that can even shoot fire from the user's hands.",
+    "activate": {
+      "effectKey": "FIRE_BALL",
+      "cooldown": 10,
+      "desc": "화염 볼트를 투사합니다."
+    }
   },
   "ART_PAURNIMMEN": {
     "key": "ART_PAURNIMMEN",
@@ -1748,7 +1888,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SUST_CON",
       "WIELD_CAST"
     ],
-    "flavorText": "A set of handgear so icy as to be able to fire frost bolts."
+    "flavorText": "A set of handgear so icy as to be able to fire frost bolts.",
+    "activate": {
+      "effectKey": "FROST_BALL",
+      "cooldown": 10,
+      "desc": "냉기 볼트를 투사합니다."
+    }
   },
   "ART_PAURAEGEN": {
     "key": "ART_PAURAEGEN",
@@ -1773,7 +1918,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SPELL_CONTAIN",
       "WIELD_CAST"
     ],
-    "flavorText": "A set of handgear with sparks surrounding it, able to fire bolts of electricity."
+    "flavorText": "A set of handgear with sparks surrounding it, able to fire bolts of electricity.",
+    "activate": {
+      "effectKey": "LIGHTNING_BALL",
+      "cooldown": 10,
+      "desc": "번개 볼트를 투사합니다."
+    }
   },
   "ART_PAURNEN": {
     "key": "ART_PAURNEN",
@@ -1798,7 +1948,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SPELL_CONTAIN",
       "WIELD_CAST"
     ],
-    "flavorText": "A set of handgear so corrosive that it may fire bolts of acid."
+    "flavorText": "A set of handgear so corrosive that it may fire bolts of acid.",
+    "activate": {
+      "effectKey": "ACID_BOLT",
+      "cooldown": 10,
+      "desc": "산성 볼트를 투사합니다."
+    }
   },
   "ART_CAMLOST": {
     "key": "ART_CAMLOST",
@@ -1864,7 +2019,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "RES_ACID",
       "SHOW_MODS"
     ],
-    "flavorText": "The hand-sheathing of Fingolfin, warrior-king of Elves and Men, who gave Morgoth seven mighty wounds and pain that will last forever."
+    "flavorText": "The hand-sheathing of Fingolfin, warrior-king of Elves and Men, who gave Morgoth seven mighty wounds and pain that will last forever.",
+    "activate": {
+      "effectKey": "SPEED",
+      "cooldown": 100,
+      "desc": "30턴 동안 속도를 +5 증가시킵니다."
+    }
   },
   "ART_OF_FEANOR": {
     "key": "ART_OF_FEANOR",
@@ -1929,7 +2089,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SUST_CHR",
       "SUST_CON"
     ],
-    "flavorText": "A pair of high-laced shoes, strong against the powers of corruption and withering, that grant the wearer extraordinary agility."
+    "flavorText": "A pair of high-laced shoes, strong against the powers of corruption and withering, that grant the wearer extraordinary agility.",
+    "activate": {
+      "effectKey": "HEAL_AND_SHIELD",
+      "cooldown": 100,
+      "desc": "사악한 존재를 물리치고 체력을 회복합니다."
+    }
   },
   "ART_OF_THROR": {
     "key": "ART_OF_THROR",
@@ -2079,7 +2244,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "RES_FIRE",
       "SHOW_MODS"
     ],
-    "flavorText": "A fiery dagger finely balanced for deadly throws."
+    "flavorText": "A fiery dagger finely balanced for deadly throws.",
+    "activate": {
+      "effectKey": "FIRE_BALL",
+      "cooldown": 15,
+      "desc": "화염구 폭발을 일으킵니다."
+    }
   },
   "ART_NIMTHANC": {
     "key": "ART_NIMTHANC",
@@ -2106,7 +2276,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "RES_COLD",
       "SHOW_MODS"
     ],
-    "flavorText": "A frosty dagger finely balanced for deadly throws."
+    "flavorText": "A frosty dagger finely balanced for deadly throws.",
+    "activate": {
+      "effectKey": "FROST_BALL",
+      "cooldown": 15,
+      "desc": "냉기 폭발을 일으킵니다."
+    }
   },
   "ART_DETHANC": {
     "key": "ART_DETHANC",
@@ -2133,7 +2308,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "RES_ELEC",
       "SHOW_MODS"
     ],
-    "flavorText": "A dagger covered in sparks and finely balanced for deadly throws."
+    "flavorText": "A dagger covered in sparks and finely balanced for deadly throws.",
+    "activate": {
+      "effectKey": "LIGHTNING_BALL",
+      "cooldown": 15,
+      "desc": "번개 폭발을 일으킵니다."
+    }
   },
   "ART_OF_RILIA": {
     "key": "ART_OF_RILIA",
@@ -2160,7 +2340,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SHOW_MODS",
       "SLAY_ORC"
     ],
-    "flavorText": "A large stiletto dagger that glistens with odourless poison, to which the wearer seems oddly immune."
+    "flavorText": "A large stiletto dagger that glistens with odourless poison, to which the wearer seems oddly immune.",
+    "activate": {
+      "effectKey": "STINKING_CLOUD",
+      "cooldown": 20,
+      "desc": "독가스 구름을 피워 지속 피해를 줍니다."
+    }
   },
   "ART_BELANGIL": {
     "key": "ART_BELANGIL",
@@ -2193,7 +2378,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SLOW_DIGEST",
       "SPEED"
     ],
-    "flavorText": "A frosty dagger surrounded in a nimbus of ice with a hilt of elk horn and an edge to wound the wind."
+    "flavorText": "A frosty dagger surrounded in a nimbus of ice with a hilt of elk horn and an edge to wound the wind.",
+    "activate": {
+      "effectKey": "BELANGIL",
+      "cooldown": 30,
+      "desc": "100의 서리 빙결 화살을 투사합니다."
+    }
   },
   "ART_CALRIS": {
     "key": "ART_CALRIS",
@@ -2634,7 +2824,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SLOW_DIGEST",
       "SPEED"
     ],
-    "flavorText": "The weapon of Fingolfin, High King of the Noldor; it shines like a column of ice lit by light unquenchable.  Morgoth came but unwillingly to meet it of old; his lame foot will remind him of its might should he meet it again."
+    "flavorText": "The weapon of Fingolfin, High King of the Noldor; it shines like a column of ice lit by light unquenchable.  Morgoth came but unwillingly to meet it of old; his lame foot will remind him of its might should he meet it again.",
+    "activate": {
+      "effectKey": "BO_COLD_1",
+      "cooldown": 10,
+      "desc": "냉기 서리 볼트를 투사합니다."
+    }
   },
   "ART_ANDURIL": {
     "key": "ART_ANDURIL",
@@ -2676,7 +2871,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STR",
       "SUST_DEX"
     ],
-    "flavorText": "The famed \"Flame of the West\", the sword that was broken and is forged again.  It glows with the essence of fire, its wearer is mighty in combat, and no creature of Sauron can withstand it.  It will never be stained or broken even in defeat."
+    "flavorText": "The famed \"Flame of the West\", the sword that was broken and is forged again.  It glows with the essence of fire, its wearer is mighty in combat, and no creature of Sauron can withstand it.  It will never be stained or broken even in defeat.",
+    "activate": {
+      "effectKey": "FIRE_BALL",
+      "cooldown": 50,
+      "desc": "72의 화염구 폭발을 일으킵니다."
+    }
   },
   "ART_ANGUIREL": {
     "key": "ART_ANGUIREL",
@@ -3012,7 +3212,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SLOW_DIGEST",
       "WIS"
     ],
-    "flavorText": "The narrow axe head of this weapon, finely balanced by a crow's beak, would pierce even the armour of Smaug, and its wielder becomes aware of the minds of their enemies."
+    "flavorText": "The narrow axe head of this weapon, finely balanced by a crow's beak, would pierce even the armour of Smaug, and its wielder becomes aware of the minds of their enemies.",
+    "activate": {
+      "effectKey": "RESTORATION",
+      "cooldown": 100,
+      "desc": "모든 스탯을 원상 복구합니다."
+    }
   },
   "ART_OF_PAIN": {
     "key": "ART_OF_PAIN",
@@ -3144,7 +3349,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SLOW_DIGEST",
       "WIS"
     ],
-    "flavorText": "The mighty spear of Gil-galad, famed as \"Snow-point\" in the songs of Elves, against which all the foul corruptions of Sauron dashed in vain."
+    "flavorText": "The mighty spear of Gil-galad, famed as \"Snow-point\" in the songs of Elves, against which all the foul corruptions of Sauron dashed in vain.",
+    "activate": {
+      "effectKey": "FROST_BALL",
+      "cooldown": 40,
+      "desc": "서리 빙결 폭풍구를 투사합니다."
+    }
   },
   "ART_OF_OROME": {
     "key": "ART_OF_OROME",
@@ -3187,7 +3397,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "TUNNEL",
       "WIS"
     ],
-    "flavorText": "The thrusting spear of wise Orome the Vala, strong against giants of frost, which can melt rock or flesh with ease."
+    "flavorText": "The thrusting spear of wise Orome the Vala, strong against giants of frost, which can melt rock or flesh with ease.",
+    "activate": {
+      "effectKey": "HASTE_SELF",
+      "cooldown": 100,
+      "desc": "30턴 동안 가속 상태를 얻습니다."
+    }
   },
   "ART_NIMLOTH": {
     "key": "ART_NIMLOTH",
@@ -3331,7 +3546,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STR",
       "WIS"
     ],
-    "flavorText": "The axe of Eonwe, leader of the Hosts of the West before the gates of Thangorodrim, strikes with icy wrath at the undead, disperses hosts of evil at a word, and grants Maia-like powers of body and mind."
+    "flavorText": "The axe of Eonwe, leader of the Hosts of the West before the gates of Thangorodrim, strikes with icy wrath at the undead, disperses hosts of evil at a word, and grants Maia-like powers of body and mind.",
+    "activate": {
+      "effectKey": "DISP_EVIL",
+      "cooldown": 80,
+      "desc": "시야 내 사악한 존재에게 신성 파멸 피해를 가합니다."
+    }
   },
   "ART_OF_BALLI_STONEHAND": {
     "key": "ART_OF_BALLI_STONEHAND",
@@ -3399,7 +3619,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SLAY_TROLL",
       "STR"
     ],
-    "flavorText": "A superbly crafted double-bladed axe that slays the creatures of earth and allows rapid recovery from their blows."
+    "flavorText": "A superbly crafted double-bladed axe that slays the creatures of earth and allows rapid recovery from their blows.",
+    "activate": {
+      "effectKey": "CURE_CRITICAL",
+      "cooldown": 20,
+      "desc": "체력을 회복하고 출혈을 치료합니다."
+    }
   },
   "ART_OF_THE_DWARVES": {
     "key": "ART_OF_THE_DWARVES",
@@ -3532,7 +3757,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SLOW_DIGEST",
       "WATER_BREATH"
     ],
-    "flavorText": "The awesome weapon of the Vala Ulmo, Lord of Waters.  Mightiest of all the powers of good save Manwe himself, Ulmo laughs in scorn at the dread powers of the undead, and is utterly in command of the element of water."
+    "flavorText": "The awesome weapon of the Vala Ulmo, Lord of Waters.  Mightiest of all the powers of good save Manwe himself, Ulmo laughs in scorn at the dread powers of the undead, and is utterly in command of the element of water.",
+    "activate": {
+      "effectKey": "RESTORATION",
+      "cooldown": 150,
+      "desc": "저하된 모든 스탯을 원상 복구합니다."
+    }
   },
   "ART_AVAVIR": {
     "key": "ART_AVAVIR",
@@ -3566,7 +3796,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SEE_INVIS",
       "SHOW_MODS"
     ],
-    "flavorText": "With elemental powers whose struggles turn this weapon red and purest white, this shining reaper bears within it a power of going forth and returning."
+    "flavorText": "With elemental powers whose struggles turn this weapon red and purest white, this shining reaper bears within it a power of going forth and returning.",
+    "activate": {
+      "effectKey": "FROST_BALL",
+      "cooldown": 40,
+      "desc": "냉기 폭발을 일으킵니다."
+    }
   },
   "ART_OF_THE_DAWN": {
     "key": "ART_OF_THE_DAWN",
@@ -3607,7 +3842,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SUST_CHR",
       "VORPAL"
     ],
-    "flavorText": "Forged in the farthest East by a race of mighty spellcasters, this shiny pale sword gleams with the rays of rising sun as you invoke its power of commanding legions of powerful immortal warriors..."
+    "flavorText": "Forged in the farthest East by a race of mighty spellcasters, this shiny pale sword gleams with the rays of rising sun as you invoke its power of commanding legions of powerful immortal warriors...",
+    "activate": {
+      "effectKey": "DAWN",
+      "cooldown": 40,
+      "desc": "서광의 빛을 뿜어 80의 빛 피해를 입힙니다."
+    }
   },
   "ART_GROND": {
     "key": "ART_GROND",
@@ -3650,7 +3890,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SLAY_TROLL",
       "SPECIAL_GENE"
     ],
-    "flavorText": "The mighty Hammer of the Underworld, blackened by doomspells of shattering, whose wielder holds the lives of all Morgoth's servants in his hand."
+    "flavorText": "The mighty Hammer of the Underworld, blackened by doomspells of shattering, whose wielder holds the lives of all Morgoth's servants in his hand.",
+    "activate": {
+      "effectKey": "GROND",
+      "cooldown": 250,
+      "desc": "대지를 강타하여 300의 지진 피해를 입히고 벽을 부숩니다."
+    }
   },
   "ART_TOTILA": {
     "key": "ART_TOTILA",
@@ -3680,7 +3925,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SLAY_EVIL",
       "STEALTH"
     ],
-    "flavorText": "A flail whose head befuddles those who stare as you whirl it around, and becomes a fiery comet as you bring it down."
+    "flavorText": "A flail whose head befuddles those who stare as you whirl it around, and becomes a fiery comet as you bring it down.",
+    "activate": {
+      "effectKey": "CONFUSE",
+      "cooldown": 45,
+      "desc": "적에게 혼란을 유발합니다."
+    }
   },
   "ART_THUNDERFIST": {
     "key": "ART_THUNDERFIST",
@@ -3771,7 +4021,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "LITE1",
       "SHOW_MODS"
     ],
-    "flavorText": "A famed battle-lord of old, with a ruddy head, coloured as embers are that can yet rise up in wrath."
+    "flavorText": "A famed battle-lord of old, with a ruddy head, coloured as embers are that can yet rise up in wrath.",
+    "activate": {
+      "effectKey": "FIRESTAR",
+      "cooldown": 50,
+      "desc": "100의 화염구 폭발을 일으킵니다."
+    }
   },
   "ART_TARATOL": {
     "key": "ART_TARATOL",
@@ -3798,7 +4053,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "KILL_DRAGON",
       "SHOW_MODS"
     ],
-    "flavorText": "A great ridged mace that calls around you a nimbus of living lightning; you remain utterly untouched even as fat sparks arc around your fingers and eyebrows."
+    "flavorText": "A great ridged mace that calls around you a nimbus of living lightning; you remain utterly untouched even as fat sparks arc around your fingers and eyebrows.",
+    "activate": {
+      "effectKey": "LIGHTNING_BALL",
+      "cooldown": 80,
+      "desc": "상급 전격 폭발을 일으킵니다."
+    }
   },
   "ART_OF_AULE": {
     "key": "ART_OF_AULE",
@@ -3899,7 +4159,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "WIELD_CAST",
       "WIS"
     ],
-    "flavorText": "The radiant golden staff of an Istari of legend, this wizard's companion grants keen sight and the knowledge of many hidden things."
+    "flavorText": "The radiant golden staff of an Istari of legend, this wizard's companion grants keen sight and the knowledge of many hidden things.",
+    "activate": {
+      "effectKey": "ILLUMINATION",
+      "cooldown": 20,
+      "desc": "주변을 환하게 밝힙니다."
+    }
   },
   "ART_OF_OLORIN": {
     "key": "ART_OF_OLORIN",
@@ -3938,7 +4203,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "WIELD_CAST",
       "WIS"
     ],
-    "flavorText": "A staff tall and sturdy, with rough-hewn runes that invoke the element of Earth, and which strikes down all creatures who live in the shadow of mountains."
+    "flavorText": "A staff tall and sturdy, with rough-hewn runes that invoke the element of Earth, and which strikes down all creatures who live in the shadow of mountains.",
+    "activate": {
+      "effectKey": "FIRE_BALL",
+      "cooldown": 50,
+      "desc": "100의 화염구 폭발을 일으킵니다."
+    }
   },
   "ART_DEATHWREAKER": {
     "key": "ART_DEATHWREAKER",
@@ -4014,7 +4284,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SLAY_ORC",
       "WIS"
     ],
-    "flavorText": "Wielded by the High Priest of Meneltarma, this great mace gleams coldly as though moonlit, and it can strike as mighty a blow spiritually as physically."
+    "flavorText": "Wielded by the High Priest of Meneltarma, this great mace gleams coldly as though moonlit, and it can strike as mighty a blow spiritually as physically.",
+    "activate": {
+      "effectKey": "TURMIL",
+      "cooldown": 70,
+      "desc": "방어력 +10, 명중률 +10의 신성 축복을 받습니다."
+    }
   },
   "ART_OF_GOTHMOG": {
     "key": "ART_OF_GOTHMOG",
@@ -4098,7 +4373,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SHOW_MODS",
       "SPEED"
     ],
-    "flavorText": "A crossbow that grants fiery speed to he who finds it, and from which shoot bolts that blaze with flame unquenchable."
+    "flavorText": "A crossbow that grants fiery speed to he who finds it, and from which shoot bolts that blaze with flame unquenchable.",
+    "activate": {
+      "effectKey": "CUBRAGOL",
+      "cooldown": 30,
+      "desc": "100의 작열하는 화염 화살을 투사합니다."
+    }
   },
   "ART_OF_BEOR": {
     "key": "ART_OF_BEOR",
@@ -4443,7 +4723,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SUST_STR",
       "TUNNEL"
     ],
-    "flavorText": "A pick that provides a magical light by which to see while tunnelling."
+    "flavorText": "A pick that provides a magical light by which to see while tunnelling.",
+    "activate": {
+      "effectKey": "EREBOR",
+      "cooldown": 90,
+      "desc": "암석을 진흙으로 바꾸고 견고한 방어벽을 구축합니다."
+    }
   },
   "ART_OF_THE_DRUEDAIN": {
     "key": "ART_OF_THE_DRUEDAIN",
@@ -4470,7 +4755,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STEALTH",
       "WIELD_CAST"
     ],
-    "flavorText": "The fabled Drum of the Druedain that will protect those who play it from darkness and poison attacks.  It also aids in the seeing of warm-blooded creatures."
+    "flavorText": "The fabled Drum of the Druedain that will protect those who play it from darkness and poison attacks.  It also aids in the seeing of warm-blooded creatures.",
+    "activate": {
+      "effectKey": "DRUEDAIN",
+      "cooldown": 60,
+      "desc": "자연과 동화되어 회복력을 극대화합니다."
+    }
   },
   "ART_OF_ROHAN": {
     "key": "ART_OF_ROHAN",
@@ -4496,7 +4786,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "WIELD_CAST",
       "WIS"
     ],
-    "flavorText": "A horn carved from the bones of the Dragon of Ered-Mithrin, this heirloom of the House of Eorl bestows to its user the gifts of courage and command."
+    "flavorText": "A horn carved from the bones of the Dragon of Ered-Mithrin, this heirloom of the House of Eorl bestows to its user the gifts of courage and command.",
+    "activate": {
+      "effectKey": "ROHAN",
+      "cooldown": 100,
+      "desc": "30턴 동안 속도를 +7 증가시킵니다."
+    }
   },
   "ART_OF_HELM": {
     "key": "ART_OF_HELM",
@@ -4524,7 +4819,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STR",
       "WIELD_CAST"
     ],
-    "flavorText": "Heedless of cold, fearless of darkness -- besiegers fled at the wind of the solitary coming of King Helm Hammerhand, proclaimed by a single horn-blast in the dead of winter."
+    "flavorText": "Heedless of cold, fearless of darkness -- besiegers fled at the wind of the solitary coming of King Helm Hammerhand, proclaimed by a single horn-blast in the dead of winter.",
+    "activate": {
+      "effectKey": "HELM",
+      "cooldown": 100,
+      "desc": "텔레파시와 정신 방어막을 부여합니다."
+    }
   },
   "ART_OF_BOROMIR": {
     "key": "ART_OF_BOROMIR",
@@ -4552,7 +4852,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STR",
       "WIELD_CAST"
     ],
-    "flavorText": "Boromir's horn gives courage and endurance to the wearer, provided he does not wish to travel in secrecy: for it must always sound when its wielder sets forth on a journey.  \"Loud and clear it sounds in the valleys of the hills... and then let all the foes of Gondor flee!\""
+    "flavorText": "Boromir's horn gives courage and endurance to the wearer, provided he does not wish to travel in secrecy: for it must always sound when its wielder sets forth on a journey.  \"Loud and clear it sounds in the valleys of the hills... and then let all the foes of Gondor flee!\"",
+    "activate": {
+      "effectKey": "BOROMIR",
+      "cooldown": 60,
+      "desc": "주변 모든 적을 공포에 떨게 하고 3턴간 기절시킵니다."
+    }
   },
   "ART_OF_GREAT_LUCK": {
     "key": "ART_OF_GREAT_LUCK",
@@ -4605,7 +4910,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SPECIAL_GENE",
       "XTRA_SHOTS"
     ],
-    "flavorText": "This ordinary seeming leather sling has been raised to legendary status amongst generations of hobbit children.  Farmer Maggot's ability to notice and strike any mushroom thief anywhere within his patch almost keeps young poachers at bay, but once they get within range they soon flee for less painful pastures, frequently with rounded pebbles stinging their backsides..."
+    "flavorText": "This ordinary seeming leather sling has been raised to legendary status amongst generations of hobbit children.  Farmer Maggot's ability to notice and strike any mushroom thief anywhere within his patch almost keeps young poachers at bay, but once they get within range they soon flee for less painful pastures, frequently with rounded pebbles stinging their backsides...",
+    "activate": {
+      "effectKey": "MAGGOT",
+      "cooldown": 120,
+      "desc": "충성스러운 사냥개 2마리를 아군으로 소환합니다."
+    }
   },
   "ART_OF_ANGMAR": {
     "key": "ART_OF_ANGMAR",
@@ -4758,7 +5068,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SHOW_MODS",
       "SLAY_ORC"
     ],
-    "flavorText": "Forged by the dwarves of Khazad-dum in a time of desperation, this axe turned many a battle against the invading orcs."
+    "flavorText": "Forged by the dwarves of Khazad-dum in a time of desperation, this axe turned many a battle against the invading orcs.",
+    "activate": {
+      "effectKey": "SLEEP",
+      "cooldown": 60,
+      "desc": "오크 및 주변 적들을 잠재웁니다."
+    }
   },
   "ART_OF_THE_NIGHT": {
     "key": "ART_OF_THE_NIGHT",
@@ -4789,7 +5104,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STEALTH",
       "VAMPIRIC"
     ],
-    "flavorText": "Found on an unmarked grave after a violent storm, this hatchet has a sinister aura of darkness and decay."
+    "flavorText": "Found on an unmarked grave after a violent storm, this hatchet has a sinister aura of darkness and decay.",
+    "activate": {
+      "effectKey": "NIGHT",
+      "cooldown": 60,
+      "desc": "암흑의 폭풍을 일으켜 적들을 실명시킵니다."
+    }
   },
   "ART_NATUREBANE": {
     "key": "ART_NATUREBANE",
@@ -4820,7 +5140,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STR",
       "SUST_STR"
     ],
-    "flavorText": "Used by the orcs in their battle at Dagor Bragollach against the elves, this axe has a bloodthirst for nature."
+    "flavorText": "Used by the orcs in their battle at Dagor Bragollach against the elves, this axe has a bloodthirst for nature.",
+    "activate": {
+      "effectKey": "NATUREBANE",
+      "cooldown": 90,
+      "desc": "100의 자연 충격파를 방출합니다."
+    }
   },
   "ART_OF_ICE": {
     "key": "ART_OF_ICE",
@@ -4900,7 +5225,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "ACTIVATE",
       "EASY_USE"
     ],
-    "flavorText": "With the Helm 'Lebohaum' your head is safe!"
+    "flavorText": "With the Helm 'Lebohaum' your head is safe!",
+    "activate": {
+      "effectKey": "LEBOHAUM",
+      "cooldown": 80,
+      "desc": "용족에 대한 절대 공포 면역과 방어력을 얻습니다."
+    }
   },
   "ART_MEDIATOR": {
     "key": "ART_MEDIATOR",
@@ -4937,7 +5267,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "RES_SHARDS",
       "RES_SOUND"
     ],
-    "flavorText": "A mighty suit of dragon armour, set with the scales of dragons of both Law and Chaos, and with power over both."
+    "flavorText": "A mighty suit of dragon armour, set with the scales of dragons of both Law and Chaos, and with power over both.",
+    "activate": {
+      "effectKey": "MEDIATOR",
+      "cooldown": 90,
+      "desc": "적들의 적대감을 가라앉히고 진정시킵니다."
+    }
   },
   "ART_OF_HIMRING": {
     "key": "ART_OF_HIMRING",
@@ -4962,7 +5297,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "RES_NETHER",
       "RES_POIS"
     ],
-    "flavorText": "Contained within this studded cuirass of pliable leather is the memory of unvanquished Himring, defiant fortress surrounded by the legions of Morgoth."
+    "flavorText": "Contained within this studded cuirass of pliable leather is the memory of unvanquished Himring, defiant fortress surrounded by the legions of Morgoth.",
+    "activate": {
+      "effectKey": "HEAL_AND_SHIELD",
+      "cooldown": 100,
+      "desc": "신성한 수호 결계를 생성합니다."
+    }
   },
   "ART_HITHLOMIR": {
     "key": "ART_HITHLOMIR",
@@ -5024,7 +5364,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SUST_WIS",
       "WIS"
     ],
-    "flavorText": "The legendary shield of Gil-Galad, who fought his way to the gates of the Dark Tower, and with whom came light even to Gorgoroth."
+    "flavorText": "The legendary shield of Gil-Galad, who fought his way to the gates of the Dark Tower, and with whom came light even to Gorgoroth.",
+    "activate": {
+      "effectKey": "GILGALAD",
+      "cooldown": 80,
+      "desc": "150의 순수 별빛 광선을 투사합니다."
+    }
   },
   "ART_OF_CELEBRIMBOR": {
     "key": "ART_OF_CELEBRIMBOR",
@@ -5054,7 +5399,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "RES_SHARDS",
       "SPELL"
     ],
-    "flavorText": "This once belonged to Celebrimbor, maker of the Rings of Power.  One who knows both fire and acid, from the business of forging and engraving, will fear neither: nor have his enchantments ever faded.  Celebrimbor was even aware of Sauron before Sauron became aware of him, when Sauron put on the One Ring for the first time."
+    "flavorText": "This once belonged to Celebrimbor, maker of the Rings of Power.  One who knows both fire and acid, from the business of forging and engraving, will fear neither: nor have his enchantments ever faded.  Celebrimbor was even aware of Sauron before Sauron became aware of him, when Sauron put on the One Ring for the first time.",
+    "activate": {
+      "effectKey": "CELEBRIMBOR",
+      "cooldown": 120,
+      "desc": "모든 지팡이와 완드의 마력을 완충하고 마나를 회복합니다."
+    }
   },
   "ART_OF_UMBAR": {
     "key": "ART_OF_UMBAR",
@@ -5086,7 +5436,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STR",
       "XTRA_MIGHT"
     ],
-    "flavorText": "A great brazen arbalest with arms of gleaming steel, shooting quarrels with speed and power for those brave enough to risk betrayal."
+    "flavorText": "A great brazen arbalest with arms of gleaming steel, shooting quarrels with speed and power for those brave enough to risk betrayal.",
+    "activate": {
+      "effectKey": "UMBAR",
+      "cooldown": 70,
+      "desc": "100의 암습 피해를 입히고 단거리 점멸합니다."
+    }
   },
   "ART_OF_AMROD": {
     "key": "ART_OF_AMROD",
@@ -5180,7 +5535,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STR",
       "TUNNEL"
     ],
-    "flavorText": "Wielded by Nain of the Iron Hills at the Battle of Azanulbizar, this great mattock brought victory to the Dwarves over Azog's Orcs - though Nain himself fell at the last, even with victory already assured."
+    "flavorText": "Wielded by Nain of the Iron Hills at the Battle of Azanulbizar, this great mattock brought victory to the Dwarves over Azog's Orcs - though Nain himself fell at the last, even with victory already assured.",
+    "activate": {
+      "effectKey": "ACID_BOLT",
+      "cooldown": 10,
+      "desc": "강력한 산성 볼트를 투사합니다."
+    }
   },
   "ART_OF_FUNDIN_BLUECLOAK": {
     "key": "ART_OF_FUNDIN_BLUECLOAK",
@@ -5215,7 +5575,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STR",
       "WIS"
     ],
-    "flavorText": "The weapon of one of the great dwarven priests, with powers to preserve body, soul and enchantments, and the bane of those who seek life beyond death."
+    "flavorText": "The weapon of one of the great dwarven priests, with powers to preserve body, soul and enchantments, and the bane of those who seek life beyond death.",
+    "activate": {
+      "effectKey": "FUNDIN",
+      "cooldown": 50,
+      "desc": "석재 투시 시야와 광원을 제공합니다."
+    }
   },
   "ART_OF_THE_HARADRIM": {
     "key": "ART_OF_THE_HARADRIM",
@@ -5246,7 +5611,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SUST_CON",
       "SUST_STR"
     ],
-    "flavorText": "A great shield from the far lands of the South, whose wielder will go charging into battle heedless of danger, with the strength and endurance of a madman.  Nor will he fear poison, for the Southron barbarians handle poisoned darts naturally."
+    "flavorText": "A great shield from the far lands of the South, whose wielder will go charging into battle heedless of danger, with the strength and endurance of a madman.  Nor will he fear poison, for the Southron barbarians handle poisoned darts naturally.",
+    "activate": {
+      "effectKey": "HARADRIM",
+      "cooldown": 60,
+      "desc": "80의 모래 독풍 피해를 입힙니다."
+    }
   },
   "ART_SKULLCLEAVER": {
     "key": "ART_SKULLCLEAVER",
@@ -5283,7 +5653,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STR",
       "TUNNEL"
     ],
-    "flavorText": "This mighty bludgeon brings destruction to all around it, and is the bane of dragons and magic."
+    "flavorText": "This mighty bludgeon brings destruction to all around it, and is the bane of dragons and magic.",
+    "activate": {
+      "effectKey": "SKULLCLEAVER",
+      "cooldown": 75,
+      "desc": "200의 묵직한 물리 파쇄 피해를 가합니다."
+    }
   },
   "ART_OF_EOL": {
     "key": "ART_OF_EOL",
@@ -5315,7 +5690,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SPELL_CONTAIN",
       "WIELD_CAST"
     ],
-    "flavorText": "The iron-shod gauntlets of the Dark Elven smith Eol, tingling with magics that he could channel in battle."
+    "flavorText": "The iron-shod gauntlets of the Dark Elven smith Eol, tingling with magics that he could channel in battle.",
+    "activate": {
+      "effectKey": "EOL",
+      "cooldown": 80,
+      "desc": "120의 암흑 볼트를 발사하고 마나를 소진시킵니다."
+    }
   },
   "ART_OF_NEVRAST": {
     "key": "ART_OF_NEVRAST",
@@ -5401,7 +5781,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STR",
       "WIS"
     ],
-    "flavorText": "It appears like the Phial of Galadriel at first - but wait! It is a cursed phial created by an evil wizard to lure adventurers into wielding it unknowingly."
+    "flavorText": "It appears like the Phial of Galadriel at first - but wait! It is a cursed phial created by an evil wizard to lure adventurers into wielding it unknowingly.",
+    "activate": {
+      "effectKey": "UNDEATH",
+      "cooldown": 120,
+      "desc": "150의 사령 피해를 입히고 체력을 흡수합니다."
+    }
   },
   "ART_": {
     "key": "ART_",
@@ -5457,7 +5842,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SEE_INVIS",
       "WIS"
     ],
-    "flavorText": "A shining white ball of unbreakable crystal, the ancient Palantiri were used by kings of Numenor and later by the Exiles for rapid communication between distant lands.  Nothing is hidden from one who gazes into a Palantir, but the observed will also be aware of the observer, as was Sauron when Saruman tried to spy on him with this particular Palantir."
+    "flavorText": "A shining white ball of unbreakable crystal, the ancient Palantiri were used by kings of Numenor and later by the Exiles for rapid communication between distant lands.  Nothing is hidden from one who gazes into a Palantir, but the observed will also be aware of the observer, as was Sauron when Saruman tried to spy on him with this particular Palantir.",
+    "activate": {
+      "effectKey": "DETECTION",
+      "cooldown": 60,
+      "desc": "현재 층의 모든 비밀을 탐지합니다."
+    }
   },
   "ART_OF_PHASING": {
     "key": "ART_OF_PHASING",
@@ -5565,7 +5955,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "STR",
       "WIS"
     ],
-    "flavorText": "This green gem glows with inner light.  Aragorn son of Arathorn wore it at the Battle of the Pelennor Fields, and he was himself given the name of 'Elessar' by the people of Gondor because of this."
+    "flavorText": "This green gem glows with inner light.  Aragorn son of Arathorn wore it at the Battle of the Pelennor Fields, and he was himself given the name of 'Elessar' by the people of Gondor because of this.",
+    "activate": {
+      "effectKey": "ELESSAR",
+      "cooldown": 150,
+      "desc": "400 HP 회복 및 모든 저주를 정화합니다."
+    }
   },
   "ART_EVENSTAR": {
     "key": "ART_EVENSTAR",
@@ -5598,7 +5993,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "SUST_INT",
       "SUST_WIS"
     ],
-    "flavorText": "A pure white jewel, the last gift of Queen Arwen Undomiel to Frodo Baggins, intended to be worn around his neck on the chain that had once borne the One Ring."
+    "flavorText": "A pure white jewel, the last gift of Queen Arwen Undomiel to Frodo Baggins, intended to be worn around his neck on the chain that had once borne the One Ring.",
+    "activate": {
+      "effectKey": "RESTORATION",
+      "cooldown": 100,
+      "desc": "생명력과 스탯을 원상 복구합니다."
+    }
   },
   "ART_OF_MINAS_ITHIL": {
     "key": "ART_OF_MINAS_ITHIL",
@@ -5633,7 +6033,12 @@ export const TOME_ARTIFACTS_DATA = Object.freeze({
       "TY_CURSE",
       "WIS"
     ],
-    "flavorText": "A shining white ball of unbreakable crystal, the ancient Palantiri were used by kings of Numenor and later by the Exiles for rapid communication between distant lands.  This Palantir, however, was taken by Sauron long ago, and mastered to his evil uses, to the destruction of all others who would gaze into it."
+    "flavorText": "A shining white ball of unbreakable crystal, the ancient Palantiri were used by kings of Numenor and later by the Exiles for rapid communication between distant lands.  This Palantir, however, was taken by Sauron long ago, and mastered to his evil uses, to the destruction of all others who would gaze into it.",
+    "activate": {
+      "effectKey": "DETECTION",
+      "cooldown": 60,
+      "desc": "천리안과 만물 탐지를 실행합니다."
+    }
   },
   "ART_BALEFIRE": {
     "key": "ART_BALEFIRE",

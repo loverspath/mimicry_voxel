@@ -8,8 +8,8 @@ import { Player } from '../src/entities/Player.js';
 import { Monster } from '../src/entities/Monster.js';
 import { Spawner } from '../src/core/Spawner.js';
 import { Map } from '../src/map/Map.js';
-import { TOME_BASE_ITEMS, createTomeItem } from '../src/entities/ItemRegistry.js';
-import { TomeLootGenerator } from '../src/systems/TomeLootGenerator.js';
+import { TOME_KINDS_DATA } from '../src/entities/TomeKindsData.js';
+import { TomeLootGenerator, createTomeItem } from '../src/systems/TomeLootGenerator.js';
 
 console.log("==================================================");
 console.log("🔍 TOME 2.3.5 ITEM SYMBOL INTEGRITY TEST");
@@ -99,12 +99,12 @@ for (let d = 1; d <= 10; d++) {
   assertSymbol(amulet, `Spawner.rollAmulet(danger=${d})`);
 }
 
-// 4. Check ItemRegistry Sampled Items
-console.log("\n--- 4. Testing ItemRegistry Base Items ---");
-for (const key in TOME_BASE_ITEMS) {
+// 4. Check TomeKindsData Base Items
+console.log("\n--- 4. Testing TomeKindsData Base Items ---");
+for (const key in TOME_KINDS_DATA) {
   const it = createTomeItem(key, 0, 0);
   if (it) {
-    assertSymbol(it, `ItemRegistry item: ${key}`);
+    assertSymbol(it, `TomeKinds item: ${key}`);
   }
 }
 

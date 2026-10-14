@@ -540,7 +540,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 0,
     "baseAC": 8,
     "coreBaseHp": 10,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 10,
@@ -1109,7 +1109,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2,
     "baseAC": 30,
     "coreBaseHp": 10,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 11,
@@ -1474,7 +1474,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3,
     "baseAC": 35,
     "coreBaseHp": 14,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 14,
@@ -1633,7 +1633,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2,
     "baseAC": 8,
     "coreBaseHp": 10,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "MAGE",
     "coreBase": {
       "str": 10,
@@ -1650,7 +1650,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 7
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CRAWL",
@@ -1675,7 +1675,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "It is a large slimy mass of worms.",
-    "description": "It is a large slimy mass of worms."
+    "description": "It is a large slimy mass of worms.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_FLOATING_EYE": {
     "key": "MON_FLOATING_EYE",
@@ -1883,7 +1886,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1,
     "baseAC": 8,
     "coreBaseHp": 5,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 9,
@@ -1932,7 +1935,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1,
     "baseAC": 8,
     "coreBaseHp": 5,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 11,
@@ -1989,7 +1992,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2500,
     "baseAC": 8,
     "coreBaseHp": 757,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 14,
@@ -2134,7 +2137,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 8
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CRAWL",
@@ -2169,7 +2172,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a smallish, slimy, icky, hungry creature.",
-    "description": "It is a smallish, slimy, icky, hungry creature."
+    "description": "It is a smallish, slimy, icky, hungry creature.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_METALLIC_GREEN_CENTIPEDE": {
     "key": "MON_METALLIC_GREEN_CENTIPEDE",
@@ -2182,7 +2188,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 5,
     "baseAC": 8,
     "coreBaseHp": 10,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 11,
@@ -2516,7 +2522,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10,
     "baseAC": 8,
     "coreBaseHp": 36,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 11,
@@ -2533,7 +2539,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 8
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "TOUCH",
@@ -2555,7 +2561,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It's a large pile of white flesh.",
-    "description": "It's a large pile of white flesh."
+    "description": "It's a large pile of white flesh.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_GIANT_BLACK_ANT": {
     "key": "MON_GIANT_BLACK_ANT",
@@ -2636,7 +2645,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 8
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "BITE",
@@ -2657,7 +2666,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A small black and orange lizard.",
-    "description": "A small black and orange lizard."
+    "description": "A small black and orange lizard.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_WHITE_HARPY": {
     "key": "MON_WHITE_HARPY",
@@ -2780,7 +2792,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 30,
     "baseAC": 30,
     "coreBaseHp": 21,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 13,
@@ -2830,7 +2842,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 30,
     "baseAC": 30,
     "coreBaseHp": 21,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 13,
@@ -2880,7 +2892,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 30,
     "baseAC": 30,
     "coreBaseHp": 21,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 13,
@@ -2979,7 +2991,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3,
     "baseAC": 8,
     "coreBaseHp": 15,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "MAGE",
     "coreBase": {
       "str": 11,
@@ -2996,7 +3008,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 8
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "CRAWL",
@@ -3021,7 +3033,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "It is a large slimy mass of worms.",
-    "description": "It is a large slimy mass of worms."
+    "description": "It is a large slimy mass of worms.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_LARGE_YELLOW_SNAKE": {
     "key": "MON_LARGE_YELLOW_SNAKE",
@@ -3034,7 +3049,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 9,
     "baseAC": 38,
     "coreBaseHp": 18,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 16,
@@ -3090,7 +3105,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 7,
     "baseAC": 16,
     "coreBaseHp": 7,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 12,
@@ -3141,7 +3156,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 8,
     "baseAC": 12,
     "coreBaseHp": 9,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 14,
@@ -3195,7 +3210,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 8,
     "baseAC": 12,
     "coreBaseHp": 9,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 14,
@@ -3311,7 +3326,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 4,
     "baseAC": 16,
     "coreBaseHp": 7,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 12,
@@ -3328,7 +3343,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 9
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "CRAWL",
@@ -3352,7 +3367,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It's green and it's oozing.",
-    "description": "It's green and it's oozing."
+    "description": "It's green and it's oozing.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_POLTERGEIST": {
     "key": "MON_POLTERGEIST",
@@ -3427,7 +3445,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12,
     "baseAC": 8,
     "coreBaseHp": 45,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 12,
@@ -3444,7 +3462,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 9
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "TOUCH",
@@ -3469,7 +3487,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "DRAIN_MANA"
     ],
     "flavorText": "It's a large pile of yellow flesh.",
-    "description": "It's a large pile of yellow flesh."
+    "description": "It's a large pile of yellow flesh.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_METALLIC_BLUE_CENTIPEDE": {
     "key": "MON_METALLIC_BLUE_CENTIPEDE",
@@ -3482,7 +3503,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 6,
     "baseAC": 8,
     "coreBaseHp": 12,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 13,
@@ -3531,7 +3552,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 8,
     "baseAC": 12,
     "coreBaseHp": 12,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 16,
@@ -3585,7 +3606,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1,
     "baseAC": 8,
     "coreBaseHp": 5,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 11,
@@ -3756,7 +3777,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 9
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "SPORE",
@@ -3777,7 +3798,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "Yum!  It looks quite tasty.",
-    "description": "Yum!  It looks quite tasty."
+    "description": "Yum!  It looks quite tasty.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_SILVER_JELLY": {
     "key": "MON_SILVER_JELLY",
@@ -3790,7 +3814,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12,
     "baseAC": 8,
     "coreBaseHp": 45,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 14,
@@ -4005,7 +4029,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10,
     "baseAC": 9,
     "coreBaseHp": 18,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 16,
@@ -4054,7 +4078,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 4,
     "baseAC": 8,
     "coreBaseHp": 18,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "MAGE",
     "coreBase": {
       "str": 12,
@@ -4108,7 +4132,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 4,
     "baseAC": 8,
     "coreBaseHp": 10,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "MAGE",
     "coreBase": {
       "str": 11,
@@ -4125,7 +4149,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 9
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CRAWL",
@@ -4152,7 +4176,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "It is a disgusting mass of poisonous worms.",
-    "description": "It is a disgusting mass of poisonous worms."
+    "description": "It is a disgusting mass of poisonous worms.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_RADIATION_EYE": {
     "key": "MON_RADIATION_EYE",
@@ -4216,7 +4243,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 4,
     "baseAC": 12,
     "coreBaseHp": 7,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 12,
@@ -4391,7 +4418,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 11
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "TOUCH",
@@ -4415,7 +4442,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It's a large pile of pulsing blue flesh.",
-    "description": "It's a large pile of pulsing blue flesh."
+    "description": "It's a large pile of pulsing blue flesh.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_CREEPING_COPPER_COINS": {
     "key": "MON_CREEPING_COPPER_COINS",
@@ -4428,7 +4458,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 9,
     "baseAC": 24,
     "coreBaseHp": 31,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 19,
@@ -4445,7 +4475,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 11
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "HIT",
@@ -4473,7 +4503,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It appears to be a pile of copper coins, until it starts crawling towards you on tiny legs.",
-    "description": "It appears to be a pile of copper coins, until it starts crawling towards you on tiny legs."
+    "description": "It appears to be a pile of copper coins, until it starts crawling towards you on tiny legs.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_GIANT_WHITE_RAT": {
     "key": "MON_GIANT_WHITE_RAT",
@@ -4503,7 +4536,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 11
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -4520,7 +4553,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "It is a very vicious rodent.",
-    "description": "It is a very vicious rodent."
+    "description": "It is a very vicious rodent.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_SNOTLING": {
     "key": "MON_SNOTLING",
@@ -4590,7 +4626,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 15,
     "baseAC": 10,
     "coreBaseHp": 16,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "BALANCED",
     "coreBase": {
       "str": 18,
@@ -4642,7 +4678,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 5,
     "baseAC": 12,
     "coreBaseHp": 22,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "MAGE",
     "coreBase": {
       "str": 13,
@@ -4659,7 +4695,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 11
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "CRAWL",
@@ -4686,7 +4722,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "It is a large slimy mass of worms.",
-    "description": "It is a large slimy mass of worms."
+    "description": "It is a large slimy mass of worms.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_LARGE_GREY_SNAKE": {
     "key": "MON_LARGE_GREY_SNAKE",
@@ -4699,7 +4738,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 14,
     "baseAC": 41,
     "coreBaseHp": 27,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 19,
@@ -4809,7 +4848,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20,
     "baseAC": 10,
     "coreBaseHp": 9,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 22,
@@ -4885,7 +4924,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 12
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "CRUSH",
@@ -4914,7 +4953,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A large green serpent with a female torso. Her green skin glistens with acid.",
-    "description": "A large green serpent with a female torso. Her green skin glistens with acid."
+    "description": "A large green serpent with a female torso. Her green skin glistens with acid.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_GIANT_LEECH": {
     "key": "MON_GIANT_LEECH",
@@ -4927,7 +4969,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20,
     "baseAC": 20,
     "coreBaseHp": 27,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "BALANCED",
     "coreBase": {
       "str": 18,
@@ -4978,7 +5020,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 30,
     "baseAC": 45,
     "coreBaseHp": 27,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 24,
@@ -5110,7 +5152,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 12
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "CRAWL",
@@ -5134,7 +5176,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It's blue and it's oozing.",
-    "description": "It's blue and it's oozing."
+    "description": "It's blue and it's oozing.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_GREEN_GLUTTON_GHOST": {
     "key": "MON_GREEN_GLUTTON_GHOST",
@@ -5202,7 +5247,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 18,
     "baseAC": 8,
     "coreBaseHp": 99,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 13,
@@ -5219,7 +5264,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 12
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "TOUCH",
@@ -5241,7 +5286,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a large pile of pulsing green flesh.",
-    "description": "It is a large pile of pulsing green flesh."
+    "description": "It is a large pile of pulsing green flesh.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_LARGE_KOBOLD": {
     "key": "MON_LARGE_KOBOLD",
@@ -5351,7 +5399,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20,
     "baseAC": 10,
     "coreBaseHp": 31,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "MAGE",
     "coreBase": {
       "str": 13,
@@ -5404,7 +5452,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 6,
     "baseAC": 12,
     "coreBaseHp": 22,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "MAGE",
     "coreBase": {
       "str": 15,
@@ -5421,7 +5469,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 12
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "CRAWL",
@@ -5448,7 +5496,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "It is a large slimy mass of worms.",
-    "description": "It is a large slimy mass of worms."
+    "description": "It is a large slimy mass of worms.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_COPPERHEAD_SNAKE": {
     "key": "MON_COPPERHEAD_SNAKE",
@@ -5478,7 +5529,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 12
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -5500,7 +5551,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It has a copper head and sharp venomous fangs.",
-    "description": "It has a copper head and sharp venomous fangs."
+    "description": "It has a copper head and sharp venomous fangs.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_DEATH_SWORD": {
     "key": "MON_DEATH_SWORD",
@@ -5751,7 +5805,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 18,
     "baseAC": 30,
     "coreBaseHp": 54,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 24,
@@ -5768,7 +5822,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 13
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "HIT",
@@ -5797,7 +5851,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It appears to be a pile of silver coins, until it starts crawling towards you on tiny legs.",
-    "description": "It appears to be a pile of silver coins, until it starts crawling towards you on tiny legs."
+    "description": "It appears to be a pile of silver coins, until it starts crawling towards you on tiny legs.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_SNAGA": {
     "key": "MON_SNAGA",
@@ -5882,7 +5939,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 13
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -5904,7 +5961,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is recognised by the hard-scaled end of its body that is often rattled to frighten its prey.",
-    "description": "It is recognised by the hard-scaled end of its body that is often rattled to frighten its prey."
+    "description": "It is recognised by the hard-scaled end of its body that is often rattled to frighten its prey.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_GIANT_SLUG": {
     "key": "MON_GIANT_SLUG",
@@ -5917,7 +5977,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 25,
     "baseAC": 25,
     "coreBaseHp": 60,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 26,
@@ -5962,7 +6022,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_ACID"
     ],
     "flavorText": "It is slowly making its way towards you, eating everything in its path...",
-    "description": "It is slowly making its way towards you, eating everything in its path..."
+    "description": "It is slowly making its way towards you, eating everything in its path...",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_GIANT_PINK_FROG": {
     "key": "MON_GIANT_PINK_FROG",
@@ -6162,7 +6225,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 15
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -6201,7 +6264,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_UNDEAD"
     ],
     "flavorText": "A frightening skeletal figure in a black robe.",
-    "description": "A frightening skeletal figure in a black robe."
+    "description": "A frightening skeletal figure in a black robe.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_ROTTING_CORPSE": {
     "key": "MON_ROTTING_CORPSE",
@@ -6231,7 +6297,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 16
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -6261,7 +6327,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "Corpses awakened from their sleep by dark sorcery.",
-    "description": "Corpses awakened from their sleep by dark sorcery."
+    "description": "Corpses awakened from their sleep by dark sorcery.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_CAVE_ORC": {
     "key": "MON_CAVE_ORC",
@@ -6328,7 +6397,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 15,
     "baseAC": 16,
     "coreBaseHp": 10,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 18,
@@ -6345,7 +6414,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 15
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -6372,7 +6441,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It scuttles towards you.",
-    "description": "It scuttles towards you."
+    "description": "It scuttles towards you.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_MANES": {
     "key": "MON_MANES",
@@ -6611,7 +6683,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 15
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "TOUCH",
@@ -6628,7 +6700,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a smallish, slimy, icky, acidic creature.",
-    "description": "It is a smallish, slimy, icky, acidic creature."
+    "description": "It is a smallish, slimy, icky, acidic creature.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_LOST_SOUL": {
     "key": "MON_LOST_SOUL",
@@ -6900,7 +6975,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 30
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "HIT",
@@ -6950,7 +7025,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "He's been spying for Saruman. He is a snivelling wretch with no morals.",
-    "description": "He's been spying for Saruman. He is a snivelling wretch with no morals."
+    "description": "He's been spying for Saruman. He is a snivelling wretch with no morals.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_LAGDUF_THE_SNAGA": {
     "key": "MON_LAGDUF_THE_SNAGA",
@@ -7126,7 +7204,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_FIRE"
     ],
     "flavorText": "A large black and yellow lizard. You'd better run away!",
-    "description": "A large black and yellow lizard. You'd better run away!"
+    "description": "A large black and yellow lizard. You'd better run away!",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_SPACE_MONSTER": {
     "key": "MON_SPACE_MONSTER",
@@ -7403,7 +7484,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 22,
     "baseAC": 25,
     "coreBaseHp": 36,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 21,
@@ -7597,7 +7678,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 17
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "TOUCH",
@@ -7622,7 +7703,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "DRAIN_MANA"
     ],
     "flavorText": "It is a strange, slimy, icky creature.",
-    "description": "It is a strange, slimy, icky creature."
+    "description": "It is a strange, slimy, icky creature.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_GIANT_GREY_RAT": {
     "key": "MON_GIANT_GREY_RAT",
@@ -7652,7 +7736,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 17
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -7670,7 +7754,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "It is a rodent of unusual size.",
-    "description": "It is a rodent of unusual size."
+    "description": "It is a rodent of unusual size.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_BLACK_HARPY": {
     "key": "MON_BLACK_HARPY",
@@ -7683,7 +7770,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 19,
     "baseAC": 22,
     "coreBaseHp": 13,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "BALANCED",
     "coreBase": {
       "str": 20,
@@ -8047,7 +8134,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_ELEC"
     ],
     "flavorText": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a pale blue.",
-    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a pale blue."
+    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a pale blue.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_BABY_WHITE_DRAGON": {
     "key": "MON_BABY_WHITE_DRAGON",
@@ -8119,7 +8209,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_COLD"
     ],
     "flavorText": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a pale white.",
-    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a pale white."
+    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a pale white.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_BABY_GREEN_DRAGON": {
     "key": "MON_BABY_GREEN_DRAGON",
@@ -8149,7 +8242,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 17
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -8189,7 +8282,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_POIS"
     ],
     "flavorText": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a sickly green.",
-    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a sickly green."
+    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a sickly green.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_BABY_BLACK_DRAGON": {
     "key": "MON_BABY_BLACK_DRAGON",
@@ -8259,7 +8355,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_ACID"
     ],
     "flavorText": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a dull black.",
-    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a dull black."
+    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a dull black.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_BABY_RED_DRAGON": {
     "key": "MON_BABY_RED_DRAGON",
@@ -8331,7 +8430,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_FIRE"
     ],
     "flavorText": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a pale red.",
-    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a pale red."
+    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a pale red.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_GIANT_RED_ANT": {
     "key": "MON_GIANT_RED_ANT",
@@ -8470,7 +8572,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 30,
     "baseAC": 30,
     "coreBaseHp": 28,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 29,
@@ -8543,7 +8645,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 17
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "SPIT",
@@ -8571,7 +8673,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a large snake with a hooded face.",
-    "description": "It is a large snake with a hooded face."
+    "description": "It is a large snake with a hooded face.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_EAGLE": {
     "key": "MON_EAGLE",
@@ -8584,7 +8689,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 22,
     "baseAC": 25,
     "coreBaseHp": 45,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 25,
@@ -8704,7 +8809,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 22,
     "baseAC": 34,
     "coreBaseHp": 5,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "BALANCED",
     "coreBase": {
       "str": 20,
@@ -8721,7 +8826,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 17
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "STING",
@@ -8744,7 +8849,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is poisonous and aggressive.",
-    "description": "It is poisonous and aggressive."
+    "description": "It is poisonous and aggressive.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_GIANT_SPIDER": {
     "key": "MON_GIANT_SPIDER",
@@ -8774,7 +8882,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 19
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -8809,7 +8917,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a vast spider whose bulbous body is bloated with poison.",
-    "description": "It is a vast spider whose bulbous body is bloated with poison."
+    "description": "It is a vast spider whose bulbous body is bloated with poison.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_GIANT_WHITE_TICK": {
     "key": "MON_GIANT_WHITE_TICK",
@@ -8822,7 +8933,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 27,
     "baseAC": 40,
     "coreBaseHp": 54,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 23,
@@ -8839,7 +8950,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 19
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -8857,7 +8968,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is moving slowly towards you.",
-    "description": "It is moving slowly towards you."
+    "description": "It is moving slowly towards you.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_DARK_ELVEN_MAGE": {
     "key": "MON_DARK_ELVEN_MAGE",
@@ -8870,7 +8984,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 50,
     "baseAC": 16,
     "coreBaseHp": 38,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 23,
@@ -8887,7 +9001,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 19
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "HIT",
@@ -8923,7 +9037,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MISSILE"
     ],
     "flavorText": "A dark elven figure, dressed all in black, hurling spells at you.",
-    "description": "A dark elven figure, dressed all in black, hurling spells at you."
+    "description": "A dark elven figure, dressed all in black, hurling spells at you.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_ORFAX_SON_OF_BOLDOR": {
     "key": "MON_ORFAX_SON_OF_BOLDOR",
@@ -8936,7 +9053,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 80,
     "baseAC": 20,
     "coreBaseHp": 77,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 31,
@@ -9078,7 +9195,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3,
     "baseAC": 8,
     "coreBaseHp": 5,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 16,
@@ -9133,7 +9250,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3,
     "baseAC": 8,
     "coreBaseHp": 5,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 16,
@@ -9401,7 +9518,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 19
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "SPORE",
@@ -9422,7 +9539,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a strange hairy growth on the dungeon floor.",
-    "description": "It is a strange hairy growth on the dungeon floor."
+    "description": "It is a strange hairy growth on the dungeon floor.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_GRIZZLY_BEAR": {
     "key": "MON_GRIZZLY_BEAR",
@@ -9611,7 +9731,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A small relative of the dragon that inhabits dark caves.",
-    "description": "A small relative of the dragon that inhabits dark caves."
+    "description": "A small relative of the dragon that inhabits dark caves.",
+    "breathElements": [
+      "DARK",
+      "LIGHT"
+    ]
   },
   "MON_TENGU": {
     "key": "MON_TENGU",
@@ -9624,7 +9748,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 40,
     "baseAC": 32,
     "coreBaseHp": 80,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 20,
@@ -9680,7 +9804,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 32,
     "baseAC": 36,
     "coreBaseHp": 81,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 33,
@@ -9697,7 +9821,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 19
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "HIT",
@@ -9724,7 +9848,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It appears to be a pile of gold coins, until it starts crawling towards you on tiny legs.",
-    "description": "It appears to be a pile of gold coins, until it starts crawling towards you on tiny legs."
+    "description": "It appears to be a pile of gold coins, until it starts crawling towards you on tiny legs.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_WOLF": {
     "key": "MON_WOLF",
@@ -9737,7 +9864,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 30,
     "baseAC": 30,
     "coreBaseHp": 21,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 19,
@@ -9789,7 +9916,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 4,
     "baseAC": 14,
     "coreBaseHp": 5,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 16,
@@ -9839,7 +9966,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 25,
     "baseAC": 30,
     "coreBaseHp": 45,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 25,
@@ -9950,7 +10077,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 45,
     "baseAC": 30,
     "coreBaseHp": 66,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 34,
@@ -10138,7 +10265,14 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_POIS"
     ],
     "flavorText": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales shimmering with a hint of colour.",
-    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales shimmering with a hint of colour."
+    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales shimmering with a hint of colour.",
+    "breathElements": [
+      "ACID",
+      "COLD",
+      "LIGHTNING",
+      "FIRE",
+      "POISON"
+    ]
   },
   "MON_OLD_MAN_WILLOW": {
     "key": "MON_OLD_MAN_WILLOW",
@@ -10396,7 +10530,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 40,
     "baseAC": 32,
     "coreBaseHp": 45,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 28,
@@ -10413,7 +10547,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 21
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -10437,7 +10571,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It has glistening black skin, a sleek body, and highly venomous fangs.",
-    "description": "It has glistening black skin, a sleek body, and highly venomous fangs."
+    "description": "It has glistening black skin, a sleek body, and highly venomous fangs.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_WHITE_WOLF": {
     "key": "MON_WHITE_WOLF",
@@ -10450,7 +10587,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 30,
     "baseAC": 30,
     "coreBaseHp": 28,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 21,
@@ -10563,7 +10700,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 6,
     "baseAC": 15,
     "coreBaseHp": 22,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "MAGE",
     "coreBase": {
       "str": 18,
@@ -10769,7 +10906,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 17
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CONFUSION",
     "attacks": [
       {
         "method": "CLAW",
@@ -10809,7 +10946,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_CONF"
     ],
     "flavorText": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a dull bronze.",
-    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a dull bronze."
+    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a dull bronze.",
+    "breathElements": [
+      "CONFUSION"
+    ]
   },
   "MON_BABY_GOLD_DRAGON": {
     "key": "MON_BABY_GOLD_DRAGON",
@@ -10839,7 +10979,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 17
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SOUND",
     "attacks": [
       {
         "method": "CLAW",
@@ -10880,7 +11020,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_SOUN"
     ],
     "flavorText": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a pale gold.",
-    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a pale gold."
+    "description": "This hatchling dragon is still soft, its eyes unaccustomed to light and its scales a pale gold.",
+    "breathElements": [
+      "SOUND"
+    ]
   },
   "MON_EVIL_EYE": {
     "key": "MON_EVIL_EYE",
@@ -10968,7 +11111,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 21
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "HIT",
@@ -10997,7 +11140,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "A small humanoid that radiates some power.",
-    "description": "A small humanoid that radiates some power."
+    "description": "A small humanoid that radiates some power.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_PRIEST": {
     "key": "MON_PRIEST",
@@ -11074,7 +11220,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 50,
     "baseAC": 30,
     "coreBaseHp": 38,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 29,
@@ -11310,7 +11456,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 40,
     "baseAC": 40,
     "coreBaseHp": 66,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 31,
@@ -11371,7 +11517,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 44,
     "baseAC": 20,
     "coreBaseHp": 22,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 23,
@@ -11436,7 +11582,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 40,
     "baseAC": 30,
     "coreBaseHp": 58,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 34,
@@ -11493,7 +11639,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 33,
     "baseAC": 18,
     "coreBaseHp": 58,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 39,
@@ -11510,7 +11656,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 21
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "TOUCH",
@@ -11544,7 +11690,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A strange jelly thing, covered in discoloured blotches.",
-    "description": "A strange jelly thing, covered in discoloured blotches."
+    "description": "A strange jelly thing, covered in discoloured blotches.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_DRIDER": {
     "key": "MON_DRIDER",
@@ -11574,7 +11723,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 22
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "HIT",
@@ -11610,7 +11759,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MISSILE"
     ],
     "flavorText": "A dark elven torso merged with the bloated form of a giant spider.",
-    "description": "A dark elven torso merged with the bloated form of a giant spider."
+    "description": "A dark elven torso merged with the bloated form of a giant spider.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_MONGBAT": {
     "key": "MON_MONGBAT",
@@ -11640,7 +11792,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 22
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -11673,7 +11825,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "Devil-bats, notoriously difficult to kill.",
-    "description": "Devil-bats, notoriously difficult to kill."
+    "description": "Devil-bats, notoriously difficult to kill.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_KILLER_BROWN_BEETLE": {
     "key": "MON_KILLER_BROWN_BEETLE",
@@ -11734,7 +11889,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 200,
     "baseAC": 24,
     "coreBaseHp": 110,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 36,
@@ -11885,7 +12040,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 22
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "HIT",
@@ -11914,7 +12069,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It appears to be a pile of sentient mithril coins that doesn't like being picked up.",
-    "description": "It appears to be a pile of sentient mithril coins that doesn't like being picked up."
+    "description": "It appears to be a pile of sentient mithril coins that doesn't like being picked up.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_ILLUSIONIST": {
     "key": "MON_ILLUSIONIST",
@@ -12007,7 +12165,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 22
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "LIGHTNING",
     "attacks": [
       {
         "method": "HIT",
@@ -12047,7 +12205,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_ANIMAL"
     ],
     "flavorText": "A priest devoted to Nature.",
-    "description": "A priest devoted to Nature."
+    "description": "A priest devoted to Nature.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_CLOAKER": {
     "key": "MON_CLOAKER",
@@ -12184,7 +12345,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 40,
     "baseAC": 18,
     "coreBaseHp": 58,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 40,
@@ -12201,7 +12362,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 22
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "TOUCH",
@@ -12236,7 +12397,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A fast moving highly acidic jelly thing, that is eating away the floor it rests on.",
-    "description": "A fast moving highly acidic jelly thing, that is eating away the floor it rests on."
+    "description": "A fast moving highly acidic jelly thing, that is eating away the floor it rests on.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_SOFTWARE_BUG": {
     "key": "MON_SOFTWARE_BUG",
@@ -12249,7 +12413,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 4,
     "baseAC": 25,
     "coreBaseHp": 5,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 19,
@@ -12359,7 +12523,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10,
     "baseAC": 8,
     "coreBaseHp": 15,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 18,
@@ -12467,7 +12631,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_COLD"
     ],
     "flavorText": "It is a large fly that drips frost.",
-    "description": "It is a large fly that drips frost."
+    "description": "It is a large fly that drips frost.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_BLUE_ICKY_THING": {
     "key": "MON_BLUE_ICKY_THING",
@@ -12480,7 +12647,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20,
     "baseAC": 20,
     "coreBaseHp": 35,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "MAGE",
     "coreBase": {
       "str": 28,
@@ -12497,7 +12664,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 24
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CRAWL",
@@ -12538,7 +12705,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "It is a strange, slimy, icky creature, with rudimentary intelligence, but evil cunning. It hungers for food, and you look tasty.",
-    "description": "It is a strange, slimy, icky creature, with rudimentary intelligence, but evil cunning. It hungers for food, and you look tasty."
+    "description": "It is a strange, slimy, icky creature, with rudimentary intelligence, but evil cunning. It hungers for food, and you look tasty.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_GIBBERING_MOUTHER": {
     "key": "MON_GIBBERING_MOUTHER",
@@ -12568,7 +12738,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 24
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "LIGHT",
     "attacks": [
       {
         "method": "CRAWL",
@@ -12593,7 +12763,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A chaotic mass of pulsating flesh, mouths and eyes.",
-    "description": "A chaotic mass of pulsating flesh, mouths and eyes."
+    "description": "A chaotic mass of pulsating flesh, mouths and eyes.",
+    "breathElements": [
+      "LIGHT"
+    ]
   },
   "MON_HILL_GIANT": {
     "key": "MON_HILL_GIANT",
@@ -12723,7 +12896,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 40,
     "baseAC": 20,
     "coreBaseHp": 36,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 27,
@@ -12781,7 +12954,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3,
     "baseAC": 8,
     "coreBaseHp": 5,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 19,
@@ -13099,7 +13272,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 25
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "STING",
@@ -13137,7 +13310,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "HOLD"
     ],
     "flavorText": "A giant snake-like figure with a woman's torso, talented in magic.",
-    "description": "A giant snake-like figure with a woman's torso, talented in magic."
+    "description": "A giant snake-like figure with a woman's torso, talented in magic.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_POISON_IVY": {
     "key": "MON_POISON_IVY",
@@ -13150,7 +13326,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10,
     "baseAC": 8,
     "coreBaseHp": 15,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 22,
@@ -13167,7 +13343,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 19
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "HIT",
@@ -13204,7 +13380,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "A mass of vegetation.  It seems to be growing...",
-    "description": "A mass of vegetation.  It seems to be growing..."
+    "description": "A mass of vegetation.  It seems to be growing...",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_MAGIC_MUSHROOM_PATCH": {
     "key": "MON_MAGIC_MUSHROOM_PATCH",
@@ -13217,7 +13396,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10,
     "baseAC": 10,
     "coreBaseHp": 5,
-    "speed": 10.0,
+    "speed": 10,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 25,
@@ -13368,7 +13547,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 25
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -13406,7 +13585,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_KIN"
     ],
     "flavorText": "A large rat with glowing red eyes, which can also assume human form. The wererat is a disgusting creature, relishing in filth and disease.",
-    "description": "A large rat with glowing red eyes, which can also assume human form. The wererat is a disgusting creature, relishing in filth and disease."
+    "description": "A large rat with glowing red eyes, which can also assume human form. The wererat is a disgusting creature, relishing in filth and disease.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_LIGHT_HOUND": {
     "key": "MON_LIGHT_HOUND",
@@ -13436,7 +13618,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 25
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "LIGHT",
     "attacks": [
       {
         "method": "CLAW",
@@ -13468,7 +13650,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_LITE"
     ],
     "flavorText": "A brilliant canine form whose light hurts your eyes, even at this distance.",
-    "description": "A brilliant canine form whose light hurts your eyes, even at this distance."
+    "description": "A brilliant canine form whose light hurts your eyes, even at this distance.",
+    "breathElements": [
+      "LIGHT"
+    ]
   },
   "MON_DARK_HOUND": {
     "key": "MON_DARK_HOUND",
@@ -13530,7 +13715,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_DARK"
     ],
     "flavorText": "A hole in the air in the shape of a huge hound. No light falls upon its form.",
-    "description": "A hole in the air in the shape of a huge hound. No light falls upon its form."
+    "description": "A hole in the air in the shape of a huge hound. No light falls upon its form.",
+    "breathElements": [
+      "DARK"
+    ]
   },
   "MON_FLYING_SKULL": {
     "key": "MON_FLYING_SKULL",
@@ -13560,7 +13748,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 25
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -13591,7 +13779,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A pack of skulls animated by necromantic spells.",
-    "description": "A pack of skulls animated by necromantic spells."
+    "description": "A pack of skulls animated by necromantic spells.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_GIANT_TARANTULA": {
     "key": "MON_GIANT_TARANTULA",
@@ -13604,7 +13795,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 70,
     "baseAC": 32,
     "coreBaseHp": 80,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 31,
@@ -13621,7 +13812,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 25
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -13651,7 +13842,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A giant spider with hairy black and red legs.",
-    "description": "A giant spider with hairy black and red legs."
+    "description": "A giant spider with hairy black and red legs.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_GIANT_CLEAR_CENTIPEDE": {
     "key": "MON_GIANT_CLEAR_CENTIPEDE",
@@ -13719,7 +13913,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 25,
     "baseAC": 25,
     "coreBaseHp": 40,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 32,
@@ -13736,7 +13930,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 25
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -13770,7 +13964,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A strong and powerful spider from Mirkwood forest. Cunning and evil, it seeks to taste your juicy insides.",
-    "description": "A strong and powerful spider from Mirkwood forest. Cunning and evil, it seeks to taste your juicy insides."
+    "description": "A strong and powerful spider from Mirkwood forest. Cunning and evil, it seeks to taste your juicy insides.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_FROST_GIANT": {
     "key": "MON_FROST_GIANT",
@@ -13800,7 +13997,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 42
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "HIT",
@@ -13833,7 +14030,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A twelve foot tall giant covered in furs.",
-    "description": "A twelve foot tall giant covered in furs."
+    "description": "A twelve foot tall giant covered in furs.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_GRIFFON": {
     "key": "MON_GRIFFON",
@@ -13975,7 +14175,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 25
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "HIT",
@@ -14003,7 +14203,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_MONSTER"
     ],
     "flavorText": "A mage of short stature.",
-    "description": "A mage of short stature."
+    "description": "A mage of short stature.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_CLEAR_HOUND": {
     "key": "MON_CLEAR_HOUND",
@@ -14162,7 +14365,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 26
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "TOUCH",
@@ -14197,7 +14400,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a weird, small animal with two antennae popping forth from its forehead. It looks hungry.",
-    "description": "It is a weird, small animal with two antennae popping forth from its forehead. It looks hungry."
+    "description": "It is a weird, small animal with two antennae popping forth from its forehead. It looks hungry.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_OGRILLON": {
     "key": "MON_OGRILLON",
@@ -14284,7 +14490,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 26
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "TOUCH",
@@ -14325,7 +14531,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a strange, vast gelatinous structure that assumes cubic proportions as it lines all four walls of the corridors it patrols. Through its transparent jelly structure you can see treasures it has engulfed, and a few corpses as well.",
-    "description": "It is a strange, vast gelatinous structure that assumes cubic proportions as it lines all four walls of the corridors it patrols. Through its transparent jelly structure you can see treasures it has engulfed, and a few corpses as well."
+    "description": "It is a strange, vast gelatinous structure that assumes cubic proportions as it lines all four walls of the corridors it patrols. Through its transparent jelly structure you can see treasures it has engulfed, and a few corpses as well.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_GIANT_GREEN_DRAGON_FLY": {
     "key": "MON_GIANT_GREEN_DRAGON_FLY",
@@ -14355,7 +14564,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 26
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -14380,7 +14589,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_POIS"
     ],
     "flavorText": "A vast, foul-smelling dragonfly.",
-    "description": "A vast, foul-smelling dragonfly."
+    "description": "A vast, foul-smelling dragonfly.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_FIRE_GIANT": {
     "key": "MON_FIRE_GIANT",
@@ -14410,7 +14622,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 45
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -14442,7 +14654,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A glowing fourteen foot tall giant. Flames drip from its red skin.",
-    "description": "A glowing fourteen foot tall giant. Flames drip from its red skin."
+    "description": "A glowing fourteen foot tall giant. Flames drip from its red skin.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_HUMMERHORN": {
     "key": "MON_HUMMERHORN",
@@ -14455,7 +14670,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 4,
     "baseAC": 14,
     "coreBaseHp": 5,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 22,
@@ -14636,7 +14851,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20,
     "baseAC": 12,
     "coreBaseHp": 9,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 25,
@@ -14701,7 +14916,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2500,
     "baseAC": 45,
     "coreBaseHp": 780,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 140,
@@ -14920,7 +15135,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 28
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -14961,7 +15176,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "The lawful evil master's favourite pet.",
-    "description": "The lawful evil master's favourite pet."
+    "description": "The lawful evil master's favourite pet.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_FOREST_TROLL": {
     "key": "MON_FOREST_TROLL",
@@ -15040,7 +15258,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 50,
     "baseAC": 30,
     "coreBaseHp": 21,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 63,
@@ -15057,7 +15275,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 28
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "EXPLODE",
@@ -15083,7 +15301,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A semi-sentient snowball, hurling itself at targets at random.",
-    "description": "A semi-sentient snowball, hurling itself at targets at random."
+    "description": "A semi-sentient snowball, hurling itself at targets at random.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_JUMPING_FIREBALL": {
     "key": "MON_JUMPING_FIREBALL",
@@ -15096,7 +15317,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 50,
     "baseAC": 30,
     "coreBaseHp": 21,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 63,
@@ -15113,7 +15334,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 28
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "EXPLODE",
@@ -15139,7 +15360,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A semi-sentient fireball that moves around randomly.",
-    "description": "A semi-sentient fireball that moves around randomly."
+    "description": "A semi-sentient fireball that moves around randomly.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_BALL_LIGHTNING": {
     "key": "MON_BALL_LIGHTNING",
@@ -15152,7 +15376,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 50,
     "baseAC": 30,
     "coreBaseHp": 21,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 63,
@@ -15169,7 +15393,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 28
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "LIGHTNING",
     "attacks": [
       {
         "method": "EXPLODE",
@@ -15194,7 +15418,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A crackling ball of energy, zooming about seemingly at random.",
-    "description": "A crackling ball of energy, zooming about seemingly at random."
+    "description": "A crackling ball of energy, zooming about seemingly at random.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_2_HEADED_HYDRA": {
     "key": "MON_2_HEADED_HYDRA",
@@ -15324,7 +15551,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 58,
     "baseAC": 28,
     "coreBaseHp": 40,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 31,
@@ -15435,7 +15662,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 64,
     "baseAC": 40,
     "coreBaseHp": 58,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 30,
@@ -15496,7 +15723,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 75,
     "baseAC": 30,
     "coreBaseHp": 50,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 37,
@@ -15513,7 +15740,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 29
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -15545,7 +15772,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A whirlwind of sentient flame.",
-    "description": "A whirlwind of sentient flame."
+    "description": "A whirlwind of sentient flame.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_FIRE_HOUND": {
     "key": "MON_FIRE_HOUND",
@@ -15610,7 +15840,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_FIRE"
     ],
     "flavorText": "Flames lick at its feet and its tongue is a blade of fire. You can feel a furnace heat radiating from the creature.",
-    "description": "Flames lick at its feet and its tongue is a blade of fire. You can feel a furnace heat radiating from the creature."
+    "description": "Flames lick at its feet and its tongue is a blade of fire. You can feel a furnace heat radiating from the creature.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_COLD_HOUND": {
     "key": "MON_COLD_HOUND",
@@ -15674,7 +15907,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_COLD"
     ],
     "flavorText": "A hound as tall as a man, this creature appears to be composed of angular planes of ice. Cold radiates from it and freezes your breath in the air.",
-    "description": "A hound as tall as a man, this creature appears to be composed of angular planes of ice. Cold radiates from it and freezes your breath in the air."
+    "description": "A hound as tall as a man, this creature appears to be composed of angular planes of ice. Cold radiates from it and freezes your breath in the air.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_ENERGY_HOUND": {
     "key": "MON_ENERGY_HOUND",
@@ -15738,7 +15974,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_ELEC"
     ],
     "flavorText": "Saint Elmo's Fire forms a ghostly halo around this hound, and sparks sting your fingers as energy builds up in the air around you.",
-    "description": "Saint Elmo's Fire forms a ghostly halo around this hound, and sparks sting your fingers as energy builds up in the air around you."
+    "description": "Saint Elmo's Fire forms a ghostly halo around this hound, and sparks sting your fingers as energy builds up in the air around you.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_LESSER_MIMIC": {
     "key": "MON_LESSER_MIMIC",
@@ -15768,7 +16007,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 29
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "HIT",
@@ -15807,7 +16046,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A strange creature that disguises itself as some object to lure unsuspecting adventurers within reach of its venomous claws.",
-    "description": "A strange creature that disguises itself as some object to lure unsuspecting adventurers within reach of its venomous claws."
+    "description": "A strange creature that disguises itself as some object to lure unsuspecting adventurers within reach of its venomous claws.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_DOOR_MIMIC": {
     "key": "MON_DOOR_MIMIC",
@@ -15837,7 +16079,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 29
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "HIT",
@@ -15875,7 +16117,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A strange creature that disguises itself as a door to lure unsuspecting adventurers within reach of its venomous claws.",
-    "description": "A strange creature that disguises itself as a door to lure unsuspecting adventurers within reach of its venomous claws."
+    "description": "A strange creature that disguises itself as a door to lure unsuspecting adventurers within reach of its venomous claws.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_BLINK_DOG": {
     "key": "MON_BLINK_DOG",
@@ -15888,7 +16133,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 50,
     "baseAC": 20,
     "coreBaseHp": 36,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 26,
@@ -16216,7 +16461,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 30,
     "baseAC": 8,
     "coreBaseHp": 55,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 40,
@@ -16278,7 +16523,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 80,
     "baseAC": 20,
     "coreBaseHp": 13,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 24,
@@ -16295,7 +16540,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 29
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CONFUSION",
     "attacks": [
       {
         "method": "BITE",
@@ -16322,7 +16567,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_CONF"
     ],
     "flavorText": "This vast gleaming bronze fly has wings which beat mesmerically fast.",
-    "description": "This vast gleaming bronze fly has wings which beat mesmerically fast."
+    "description": "This vast gleaming bronze fly has wings which beat mesmerically fast.",
+    "breathElements": [
+      "CONFUSION"
+    ]
   },
   "MON_STONE_GIANT": {
     "key": "MON_STONE_GIANT",
@@ -16394,7 +16642,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 70,
     "baseAC": 20,
     "coreBaseHp": 13,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 26,
@@ -16436,7 +16684,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_ACID"
     ],
     "flavorText": "The size of a large bird, this fly drips caustic acid.",
-    "description": "The size of a large bird, this fly drips caustic acid."
+    "description": "The size of a large bird, this fly drips caustic acid.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_STONE_GOLEM": {
     "key": "MON_STONE_GOLEM",
@@ -16449,7 +16700,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 100,
     "baseAC": 45,
     "coreBaseHp": 126,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "TANK",
     "coreBase": {
       "str": 34,
@@ -16526,7 +16777,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 30
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "SPORE",
@@ -16549,7 +16800,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a strange red growth on the dungeon floor; it seems to burn with flame.",
-    "description": "It is a strange red growth on the dungeon floor; it seems to burn with flame."
+    "description": "It is a strange red growth on the dungeon floor; it seems to burn with flame.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_GIANT_GOLD_DRAGON_FLY": {
     "key": "MON_GIANT_GOLD_DRAGON_FLY",
@@ -16562,7 +16816,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 75,
     "baseAC": 20,
     "coreBaseHp": 13,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 27,
@@ -16579,7 +16833,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 34
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SOUND",
     "attacks": [
       {
         "method": "BITE",
@@ -16605,7 +16859,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_SOUN"
     ],
     "flavorText": "Large beating wings support this dazzling insect. A loud buzzing noise pervades the air.",
-    "description": "Large beating wings support this dazzling insect. A loud buzzing noise pervades the air."
+    "description": "Large beating wings support this dazzling insect. A loud buzzing noise pervades the air.",
+    "breathElements": [
+      "SOUND"
+    ]
   },
   "MON_GHAST": {
     "key": "MON_GHAST",
@@ -16618,7 +16875,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 130,
     "baseAC": 40,
     "coreBaseHp": 165,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 53,
@@ -16689,7 +16946,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 4,
     "baseAC": 18,
     "coreBaseHp": 5,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 24,
@@ -16706,7 +16963,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 30
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -16729,7 +16986,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SHRIEK"
     ],
     "flavorText": "Believed to be an evil relative of the cricket, this creature gets its name from its incessant squeaking, which can best be described as \"neek-breek, neek-breek\".  The noise can drive people frantic, and worse still, can be heard for quite some distance, alerting other monsters to your presence.",
-    "description": "Believed to be an evil relative of the cricket, this creature gets its name from its incessant squeaking, which can best be described as \"neek-breek, neek-breek\".  The noise can drive people frantic, and worse still, can be heard for quite some distance, alerting other monsters to your presence."
+    "description": "Believed to be an evil relative of the cricket, this creature gets its name from its incessant squeaking, which can best be described as \"neek-breek, neek-breek\".  The noise can drive people frantic, and worse still, can be heard for quite some distance, alerting other monsters to your presence.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_HUORN": {
     "key": "MON_HUORN",
@@ -16815,7 +17075,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 800,
     "baseAC": 45,
     "coreBaseHp": 286,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 79,
@@ -16890,7 +17150,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 60,
     "baseAC": 25,
     "coreBaseHp": 27,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "BALANCED",
     "coreBase": {
       "str": 35,
@@ -16907,7 +17167,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 32
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -16945,7 +17205,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "A spider that never seems quite there. Everywhere you look it is just half-seen in the corner of one eye.",
-    "description": "A spider that never seems quite there. Everywhere you look it is just half-seen in the corner of one eye."
+    "description": "A spider that never seems quite there. Everywhere you look it is just half-seen in the corner of one eye.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_LIZARD_KING": {
     "key": "MON_LIZARD_KING",
@@ -16958,7 +17221,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 150,
     "baseAC": 40,
     "coreBaseHp": 108,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 59,
@@ -17079,7 +17342,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 250,
     "baseAC": 45,
     "coreBaseHp": 300,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 52,
@@ -17096,7 +17359,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 34
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -17141,7 +17404,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A fast-moving and deadly draconian animal. Beware its poisonous sting!",
-    "description": "A fast-moving and deadly draconian animal. Beware its poisonous sting!"
+    "description": "A fast-moving and deadly draconian animal. Beware its poisonous sting!",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_GREAT_EAGLE": {
     "key": "MON_GREAT_EAGLE",
@@ -17154,7 +17420,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 150,
     "baseAC": 45,
     "coreBaseHp": 300,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 63,
@@ -17296,7 +17562,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 32
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SHARDS",
     "attacks": [
       {
         "method": "BITE",
@@ -17334,7 +17600,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_SHAR"
     ],
     "flavorText": "A beautiful crystalline shape does not disguise the danger this hound clearly presents. Your flesh tingles as it approaches.",
-    "description": "A beautiful crystalline shape does not disguise the danger this hound clearly presents. Your flesh tingles as it approaches."
+    "description": "A beautiful crystalline shape does not disguise the danger this hound clearly presents. Your flesh tingles as it approaches.",
+    "breathElements": [
+      "SHARDS"
+    ]
   },
   "MON_AIR_HOUND": {
     "key": "MON_AIR_HOUND",
@@ -17364,7 +17633,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 32
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -17403,7 +17672,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_POIS"
     ],
     "flavorText": "Swirling vapours surround this beast as it floats towards you, seemingly walking on air. Noxious gases sting your throat.",
-    "description": "Swirling vapours surround this beast as it floats towards you, seemingly walking on air. Noxious gases sting your throat."
+    "description": "Swirling vapours surround this beast as it floats towards you, seemingly walking on air. Noxious gases sting your throat.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_SABRE_TOOTH_TIGER": {
     "key": "MON_SABRE_TOOTH_TIGER",
@@ -17416,7 +17688,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 120,
     "baseAC": 45,
     "coreBaseHp": 150,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 48,
@@ -17537,7 +17809,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_ACID"
     ],
     "flavorText": "Footprints are burned in the ground behind this hound as it pads around the dungeon. An acrid smell of acid rises from the dog's pelt.",
-    "description": "Footprints are burned in the ground behind this hound as it pads around the dungeon. An acrid smell of acid rises from the dog's pelt."
+    "description": "Footprints are burned in the ground behind this hound as it pads around the dungeon. An acrid smell of acid rises from the dog's pelt.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_CHIMAERA": {
     "key": "MON_CHIMAERA",
@@ -17602,7 +17877,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_FIRE"
     ],
     "flavorText": "It is a strange concoction of goat, lion and dragon, with the heads of all three beasts.",
-    "description": "It is a strange concoction of goat, lion and dragon, with the heads of all three beasts."
+    "description": "It is a strange concoction of goat, lion and dragon, with the heads of all three beasts.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_QUYLTHULG": {
     "key": "MON_QUYLTHULG",
@@ -17664,7 +17942,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 180,
     "baseAC": 40,
     "coreBaseHp": 200,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 46,
@@ -17744,7 +18022,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 32
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "HIT",
@@ -17778,7 +18056,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_ANIMAL"
     ],
     "flavorText": "A warrior who is at one with nature.  A master of both bow and sword, with minor spellcasting skills.",
-    "description": "A warrior who is at one with nature.  A master of both bow and sword, with minor spellcasting skills."
+    "description": "A warrior who is at one with nature.  A master of both bow and sword, with minor spellcasting skills.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_PALADIN": {
     "key": "MON_PALADIN",
@@ -17915,7 +18196,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 500,
     "baseAC": 40,
     "coreBaseHp": 144,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 49,
@@ -17932,7 +18213,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 32
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "HIT",
@@ -17969,7 +18250,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MISSILE"
     ],
     "flavorText": "A dark elven figure in armour and radiating evil power.",
-    "description": "A dark elven figure in armour and radiating evil power."
+    "description": "A dark elven figure in armour and radiating evil power.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_CLOUD_GIANT": {
     "key": "MON_CLOUD_GIANT",
@@ -17999,7 +18283,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 52
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "LIGHTNING",
     "attacks": [
       {
         "method": "HIT",
@@ -18027,7 +18311,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a twenty foot tall giant wreathed in clouds.",
-    "description": "It is a twenty foot tall giant wreathed in clouds."
+    "description": "It is a twenty foot tall giant wreathed in clouds.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_UGLUK_THE_URUK": {
     "key": "MON_UGLUK_THE_URUK",
@@ -18156,7 +18443,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_ELEC"
     ],
     "flavorText": "It is a glowing blue bat with a sharp tail.",
-    "description": "It is a glowing blue bat with a sharp tail."
+    "description": "It is a glowing blue bat with a sharp tail.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_MIMIC": {
     "key": "MON_MIMIC",
@@ -18186,7 +18476,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 33
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -18231,7 +18521,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_MONSTER"
     ],
     "flavorText": "A strange creature that disguises itself as an object to lure unsuspecting adventurers within reach of its venomous claws.",
-    "description": "A strange creature that disguises itself as an object to lure unsuspecting adventurers within reach of its venomous claws."
+    "description": "A strange creature that disguises itself as an object to lure unsuspecting adventurers within reach of its venomous claws.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_ULTIMATE_MIMIC": {
     "key": "MON_ULTIMATE_MIMIC",
@@ -18261,7 +18554,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 51
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -18305,7 +18598,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_MONSTER"
     ],
     "flavorText": "A strange creature that disguises itself as an object to lure unsuspecting adventurers within reach of its venomous claws.",
-    "description": "A strange creature that disguises itself as an object to lure unsuspecting adventurers within reach of its venomous claws."
+    "description": "A strange creature that disguises itself as an object to lure unsuspecting adventurers within reach of its venomous claws.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_FIRE_VORTEX": {
     "key": "MON_FIRE_VORTEX",
@@ -18367,7 +18663,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_FIRE"
     ],
     "flavorText": "A whirling maelstrom of fire.",
-    "description": "A whirling maelstrom of fire."
+    "description": "A whirling maelstrom of fire.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_ACID_VORTEX": {
     "key": "MON_ACID_VORTEX",
@@ -18424,7 +18723,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_ACID"
     ],
     "flavorText": "A caustic spinning whirlpool of foaming, steaming water.",
-    "description": "A caustic spinning whirlpool of foaming, steaming water."
+    "description": "A caustic spinning whirlpool of foaming, steaming water.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_LUGDUSH_THE_URUK": {
     "key": "MON_LUGDUSH_THE_URUK",
@@ -18558,7 +18860,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_COLD"
     ],
     "flavorText": "A twisting whirlpool of frost.",
-    "description": "A twisting whirlpool of frost."
+    "description": "A twisting whirlpool of frost.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_ENERGY_VORTEX": {
     "key": "MON_ENERGY_VORTEX",
@@ -18617,7 +18922,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_ELEC"
     ],
     "flavorText": "A shimmering tornado of air, sparks crackle along its length.",
-    "description": "A shimmering tornado of air, sparks crackle along its length."
+    "description": "A shimmering tornado of air, sparks crackle along its length.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_GLOBEFISH": {
     "key": "MON_GLOBEFISH",
@@ -18647,7 +18955,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 33
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -18677,7 +18985,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_POIS"
     ],
     "flavorText": "This fish is among the most poisonous creatures there are.",
-    "description": "This fish is among the most poisonous creatures there are."
+    "description": "This fish is among the most poisonous creatures there are.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_GIANT_FIREFLY": {
     "key": "MON_GIANT_FIREFLY",
@@ -18690,7 +19001,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 4,
     "baseAC": 18,
     "coreBaseHp": 5,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 26,
@@ -18800,7 +19111,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 120,
     "baseAC": 20,
     "coreBaseHp": 253,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 58,
@@ -19047,7 +19358,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 230,
     "baseAC": 45,
     "coreBaseHp": 455,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 45,
@@ -19136,7 +19447,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 34
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -19159,7 +19470,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a giant scorpion with a sharp stinger.",
-    "description": "It is a giant scorpion with a sharp stinger."
+    "description": "It is a giant scorpion with a sharp stinger.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_BLACK_OOZE": {
     "key": "MON_BLACK_OOZE",
@@ -19189,7 +19503,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 35
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "TOUCH",
@@ -19218,7 +19532,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "It is a strangely moving puddle.",
-    "description": "It is a strangely moving puddle."
+    "description": "It is a strangely moving puddle.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_HARDENED_WARRIOR": {
     "key": "MON_HARDENED_WARRIOR",
@@ -19288,7 +19605,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1111,
     "baseAC": 45,
     "coreBaseHp": 517,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 81,
@@ -19359,7 +19676,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 75,
     "baseAC": 16,
     "coreBaseHp": 38,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 32,
@@ -19425,7 +19742,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 110,
     "baseAC": 30,
     "coreBaseHp": 75,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 57,
@@ -19529,7 +19846,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_FIRE"
     ],
     "flavorText": "It is a sharp-tailed bat, wreathed in fire.",
-    "description": "It is a sharp-tailed bat, wreathed in fire."
+    "description": "It is a sharp-tailed bat, wreathed in fire.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_KILLER_WHITE_BEETLE": {
     "key": "MON_KILLER_WHITE_BEETLE",
@@ -19609,7 +19929,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 35
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "CLAW",
@@ -19640,7 +19960,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a skeleton covered in frost.",
-    "description": "It is a skeleton covered in frost."
+    "description": "It is a skeleton covered in frost.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_ANGAMAITE_OF_UMBAR": {
     "key": "MON_ANGAMAITE_OF_UMBAR",
@@ -19821,7 +20144,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 57
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -19870,7 +20193,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "One of the last of the Petty-Dwarves. Khim is a tricky sorcerous little being, full of mischief.",
-    "description": "One of the last of the Petty-Dwarves. Khim is a tricky sorcerous little being, full of mischief."
+    "description": "One of the last of the Petty-Dwarves. Khim is a tricky sorcerous little being, full of mischief.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_IBUN_SON_OF_MIM": {
     "key": "MON_IBUN_SON_OF_MIM",
@@ -19900,7 +20226,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 57
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -19949,7 +20275,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "One of the last of the Petty-Dwarves. Ibun is a tricky sorcerous little being, full of mischief.",
-    "description": "One of the last of the Petty-Dwarves. Ibun is a tricky sorcerous little being, full of mischief."
+    "description": "One of the last of the Petty-Dwarves. Ibun is a tricky sorcerous little being, full of mischief.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_MENELDOR_THE_SWIFT": {
     "key": "MON_MENELDOR_THE_SWIFT",
@@ -19962,7 +20291,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 360,
     "baseAC": 45,
     "coreBaseHp": 440,
-    "speed": 10.0,
+    "speed": 10,
     "growthType": "TANK",
     "coreBase": {
       "str": 72,
@@ -20099,7 +20428,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 35
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "BITE",
@@ -20119,7 +20448,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A giant silver ant with a caustic bite.",
-    "description": "A giant silver ant with a caustic bite."
+    "description": "A giant silver ant with a caustic bite.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_4_HEADED_HYDRA": {
     "key": "MON_4_HEADED_HYDRA",
@@ -20132,7 +20464,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 450,
     "baseAC": 45,
     "coreBaseHp": 350,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 58,
@@ -20339,7 +20671,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 150,
     "baseAC": 40,
     "coreBaseHp": 49,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 30,
@@ -20478,7 +20810,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 60,
     "baseAC": 24,
     "coreBaseHp": 27,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 28,
@@ -20701,7 +21033,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 38
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "HIT",
@@ -20736,7 +21068,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "A stumpy figure carved from stone, with glittering eyes.",
-    "description": "A stumpy figure carved from stone, with glittering eyes."
+    "description": "A stumpy figure carved from stone, with glittering eyes.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_DARK_ELVEN_DRUID": {
     "key": "MON_DARK_ELVEN_DRUID",
@@ -20749,7 +21084,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 500,
     "baseAC": 45,
     "coreBaseHp": 210,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 51,
@@ -20972,7 +21307,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 38
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "GAZE",
@@ -21007,7 +21342,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A huge wormlike shape dripping acid, twisted by evil sorcery into a foul monster that breeds on death.",
-    "description": "A huge wormlike shape dripping acid, twisted by evil sorcery into a foul monster that breeds on death."
+    "description": "A huge wormlike shape dripping acid, twisted by evil sorcery into a foul monster that breeds on death.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_KILLER_RED_BEETLE": {
     "key": "MON_KILLER_RED_BEETLE",
@@ -21340,7 +21678,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 39
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "BITE",
@@ -21361,7 +21699,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is smoking and burning with great heat.",
-    "description": "It is smoking and burning with great heat."
+    "description": "It is smoking and burning with great heat.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_DISPLACER_BEAST": {
     "key": "MON_DISPLACER_BEAST",
@@ -21846,7 +22187,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1000,
     "baseAC": 45,
     "coreBaseHp": 583,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 104,
@@ -21920,7 +22261,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "The last of his race, Mim is a Petty-Dwarf.  Petty-Dwarves are strange creatures, powerful in sorcery and originating in the East.  They have been hunted nearly to extinction by the High Elves.",
-    "description": "The last of his race, Mim is a Petty-Dwarf.  Petty-Dwarves are strange creatures, powerful in sorcery and originating in the East.  They have been hunted nearly to extinction by the High Elves."
+    "description": "The last of his race, Mim is a Petty-Dwarf.  Petty-Dwarves are strange creatures, powerful in sorcery and originating in the East.  They have been hunted nearly to extinction by the High Elves.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_HELLBLADE": {
     "key": "MON_HELLBLADE",
@@ -21933,7 +22277,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 130,
     "baseAC": 40,
     "coreBaseHp": 91,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 60,
@@ -22013,7 +22357,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 41
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "BITE",
@@ -22041,7 +22385,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a giant beetle wreathed in flames.",
-    "description": "It is a giant beetle wreathed in flames."
+    "description": "It is a giant beetle wreathed in flames.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_CREEPING_ADAMANTITE_COINS": {
     "key": "MON_CREEPING_ADAMANTITE_COINS",
@@ -22054,7 +22401,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 60,
     "baseAC": 45,
     "coreBaseHp": 260,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 62,
@@ -22071,7 +22418,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 41
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -22110,7 +22457,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It appears to be a pile of coins made of precious adamant, slithering toward you on lots of tiny legs.",
-    "description": "It appears to be a pile of coins made of precious adamant, slithering toward you on lots of tiny legs."
+    "description": "It appears to be a pile of coins made of precious adamant, slithering toward you on lots of tiny legs.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_ALGROTH": {
     "key": "MON_ALGROTH",
@@ -22140,7 +22490,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 41
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -22173,7 +22523,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A powerful troll form. Venom drips from its needlelike claws.",
-    "description": "A powerful troll form. Venom drips from its needlelike claws."
+    "description": "A powerful troll form. Venom drips from its needlelike claws.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_ROPER": {
     "key": "MON_ROPER",
@@ -22255,7 +22608,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SHRIEK"
     ],
     "flavorText": "This creature look like a pillar of rock. However, a closer inspection reveals a glaring eye and powerful tentacles, which crush its prey and feed it to the creature's hungry mouth.",
-    "description": "This creature look like a pillar of rock. However, a closer inspection reveals a glaring eye and powerful tentacles, which crush its prey and feed it to the creature's hungry mouth."
+    "description": "This creature look like a pillar of rock. However, a closer inspection reveals a glaring eye and powerful tentacles, which crush its prey and feed it to the creature's hungry mouth.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_VIBRATION_HOUND": {
     "key": "MON_VIBRATION_HOUND",
@@ -22285,7 +22641,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 41
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SOUND",
     "attacks": [
       {
         "method": "BITE",
@@ -22324,7 +22680,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_SOUN"
     ],
     "flavorText": "A blurry canine form which seems to be moving as fast as the eye can follow. You can feel the earth resonating beneath your feet.",
-    "description": "A blurry canine form which seems to be moving as fast as the eye can follow. You can feel the earth resonating beneath your feet."
+    "description": "A blurry canine form which seems to be moving as fast as the eye can follow. You can feel the earth resonating beneath your feet.",
+    "breathElements": [
+      "SOUND"
+    ]
   },
   "MON_NEXUS_HOUND": {
     "key": "MON_NEXUS_HOUND",
@@ -22354,7 +22713,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 41
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "NEXUS",
     "attacks": [
       {
         "method": "BITE",
@@ -22394,7 +22753,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_NEXU"
     ],
     "flavorText": "A locus of conflicting points coalesce to form the vague shape of a huge hound. Or is it just your imagination?",
-    "description": "A locus of conflicting points coalesce to form the vague shape of a huge hound. Or is it just your imagination?"
+    "description": "A locus of conflicting points coalesce to form the vague shape of a huge hound. Or is it just your imagination?",
+    "breathElements": [
+      "NEXUS"
+    ]
   },
   "MON_HALF_OGRE": {
     "key": "MON_HALF_OGRE",
@@ -22464,7 +22826,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1500,
     "baseAC": 45,
     "coreBaseHp": 780,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 116,
@@ -22666,7 +23028,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_FIRE"
     ],
     "flavorText": "The result of evil experiments, this travesty of nature should never be alive.  It has three heads - goat, dragon and gorgon - all attached to a lion's body.",
-    "description": "The result of evil experiments, this travesty of nature should never be alive.  It has three heads - goat, dragon and gorgon - all attached to a lion's body."
+    "description": "The result of evil experiments, this travesty of nature should never be alive.  It has three heads - goat, dragon and gorgon - all attached to a lion's body.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_COLBRAN": {
     "key": "MON_COLBRAN",
@@ -22679,7 +23044,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 900,
     "baseAC": 45,
     "coreBaseHp": 520,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 59,
@@ -22696,7 +23061,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 41
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "LIGHTNING",
     "attacks": [
       {
         "method": "HIT",
@@ -22730,7 +23095,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_ELEC"
     ],
     "flavorText": "A man-shaped form of living lightning, sparks and shocks crackle all over this madly capering figure, as it leaps and whirls around and about you.",
-    "description": "A man-shaped form of living lightning, sparks and shocks crackle all over this madly capering figure, as it leaps and whirls around and about you."
+    "description": "A man-shaped form of living lightning, sparks and shocks crackle all over this madly capering figure, as it leaps and whirls around and about you.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_SPIRIT_NAGA": {
     "key": "MON_SPIRIT_NAGA",
@@ -22820,7 +23188,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 125,
     "baseAC": 40,
     "coreBaseHp": 67,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 34,
@@ -22899,7 +23267,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 650,
     "baseAC": 45,
     "coreBaseHp": 450,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 75,
@@ -22916,7 +23284,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 42
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -22961,7 +23329,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A strange reptilian creature with five heads dripping venom.",
-    "description": "A strange reptilian creature with five heads dripping venom."
+    "description": "A strange reptilian creature with five heads dripping venom.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_BARNEY_THE_DINOSAUR": {
     "key": "MON_BARNEY_THE_DINOSAUR",
@@ -22974,7 +23345,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 500,
     "baseAC": 45,
     "coreBaseHp": 550,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 35,
@@ -22991,7 +23362,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 66
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "CHAOS",
     "attacks": [
       {
         "method": "SHOW",
@@ -23050,7 +23421,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_HYDRA"
     ],
     "flavorText": "The lovable purple reptile is making a guest appearance here.",
-    "description": "The lovable purple reptile is making a guest appearance here."
+    "description": "The lovable purple reptile is making a guest appearance here.",
+    "breathElements": [
+      "CHAOS",
+      "NUKE"
+    ]
   },
   "MON_BLACK_KNIGHT": {
     "key": "MON_BLACK_KNIGHT",
@@ -23063,7 +23438,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 240,
     "baseAC": 45,
     "coreBaseHp": 165,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 81,
@@ -23131,7 +23506,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 360,
     "baseAC": 45,
     "coreBaseHp": 444,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 70,
@@ -23148,7 +23523,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 42
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "BITE",
@@ -23187,7 +23562,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_WATE"
     ],
     "flavorText": "Your mind is filled with admiration as you view this wondrous, magical seahorse.",
-    "description": "Your mind is filled with admiration as you view this wondrous, magical seahorse."
+    "description": "Your mind is filled with admiration as you view this wondrous, magical seahorse.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_CYCLOPS": {
     "key": "MON_CYCLOPS",
@@ -23200,7 +23578,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1500,
     "baseAC": 45,
     "coreBaseHp": 630,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 147,
@@ -23268,7 +23646,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 250,
     "baseAC": 45,
     "coreBaseHp": 137,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 63,
@@ -23351,7 +23729,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 43
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "HIT",
@@ -23380,7 +23758,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a massive worm form, many feet in length. Its vast maw drips acid and poison.",
-    "description": "It is a massive worm form, many feet in length. Its vast maw drips acid and poison."
+    "description": "It is a massive worm form, many feet in length. Its vast maw drips acid and poison.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_CATOBLEPAS": {
     "key": "MON_CATOBLEPAS",
@@ -23547,7 +23928,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 42
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "HIT",
@@ -23587,7 +23968,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "A fat mage with glasses.  And considerable power, too - as you can tell from the size of his hat.",
-    "description": "A fat mage with glasses.  And considerable power, too - as you can tell from the size of his hat."
+    "description": "A fat mage with glasses.  And considerable power, too - as you can tell from the size of his hat.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_MIND_FLAYER": {
     "key": "MON_MIND_FLAYER",
@@ -23667,7 +24051,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 555,
     "baseAC": 45,
     "coreBaseHp": 455,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 80,
@@ -23744,7 +24128,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 350,
     "baseAC": 45,
     "coreBaseHp": 310,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 76,
@@ -23761,7 +24145,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 42
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "GAZE",
@@ -23805,7 +24189,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_POIS"
     ],
     "flavorText": "An evil reptile that preys on unsuspecting travellers.  Its eyes stare deeply at you and your soul starts to wilt!",
-    "description": "An evil reptile that preys on unsuspecting travellers.  Its eyes stare deeply at you and your soul starts to wilt!"
+    "description": "An evil reptile that preys on unsuspecting travellers.  Its eyes stare deeply at you and your soul starts to wilt!",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_ICE_TROLL": {
     "key": "MON_ICE_TROLL",
@@ -23835,7 +24222,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 42
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "HIT",
@@ -23877,7 +24264,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "He is a white troll with powerful clawed hands.",
-    "description": "He is a white troll with powerful clawed hands."
+    "description": "He is a white troll with powerful clawed hands.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_ARCHANGEL": {
     "key": "MON_ARCHANGEL",
@@ -23973,7 +24363,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 200,
     "baseAC": 45,
     "coreBaseHp": 180,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 64,
@@ -23990,7 +24380,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 43
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "HIT",
@@ -24039,7 +24429,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_MONSTER"
     ],
     "flavorText": "A strange creature that disguises itself as an object to lure unsuspecting adventurers within reach of its venomous claws.",
-    "description": "A strange creature that disguises itself as an object to lure unsuspecting adventurers within reach of its venomous claws."
+    "description": "A strange creature that disguises itself as an object to lure unsuspecting adventurers within reach of its venomous claws.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_YOUNG_BLUE_DRAGON": {
     "key": "MON_YOUNG_BLUE_DRAGON",
@@ -24110,7 +24503,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "It has a form out of legend. Its still-tender scales are a deep blue in hue. Sparks crackle along its length.",
-    "description": "It has a form out of legend. Its still-tender scales are a deep blue in hue. Sparks crackle along its length."
+    "description": "It has a form out of legend. Its still-tender scales are a deep blue in hue. Sparks crackle along its length.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_YOUNG_WHITE_DRAGON": {
     "key": "MON_YOUNG_WHITE_DRAGON",
@@ -24182,7 +24578,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "It has a form out of legend. Its still-tender scales are a frosty white in hue. Icy blasts of cold air come from it as it breathes.",
-    "description": "It has a form out of legend. Its still-tender scales are a frosty white in hue. Icy blasts of cold air come from it as it breathes."
+    "description": "It has a form out of legend. Its still-tender scales are a frosty white in hue. Icy blasts of cold air come from it as it breathes.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_YOUNG_GREEN_DRAGON": {
     "key": "MON_YOUNG_GREEN_DRAGON",
@@ -24212,7 +24611,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 43
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -24251,7 +24650,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "It has a form out of legend. Its still-tender scales are a deep green in hue. Foul gas seeps through its scales.",
-    "description": "It has a form out of legend. Its still-tender scales are a deep green in hue. Foul gas seeps through its scales."
+    "description": "It has a form out of legend. Its still-tender scales are a deep green in hue. Foul gas seeps through its scales.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_YOUNG_BRONZE_DRAGON": {
     "key": "MON_YOUNG_BRONZE_DRAGON",
@@ -24281,7 +24683,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 43
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CONFUSION",
     "attacks": [
       {
         "method": "CLAW",
@@ -24320,7 +24722,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "It has a form out of legend. Its still-tender scales are a rich bronze hue, and its shape masks its true form.",
-    "description": "It has a form out of legend. Its still-tender scales are a rich bronze hue, and its shape masks its true form."
+    "description": "It has a form out of legend. Its still-tender scales are a rich bronze hue, and its shape masks its true form.",
+    "breathElements": [
+      "CONFUSION"
+    ]
   },
   "MON_MITHRIL_GOLEM": {
     "key": "MON_MITHRIL_GOLEM",
@@ -24470,7 +24875,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1000,
     "baseAC": 45,
     "coreBaseHp": 710,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 88,
@@ -24626,7 +25031,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 45
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "LIGHTNING",
     "attacks": [
       {
         "method": "BITE",
@@ -24646,7 +25051,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a giant ant that crackles with energy.",
-    "description": "It is a giant ant that crackles with energy."
+    "description": "It is a giant ant that crackles with energy.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_GRAVE_WIGHT": {
     "key": "MON_GRAVE_WIGHT",
@@ -24749,7 +25157,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 48
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "NETHER",
     "attacks": [
       {
         "method": "CLAW",
@@ -24793,7 +25201,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "It is a dragon-like form wrapped in shadow.  Glowing red eyes shine in the dark, and it is surrounded by an aura of unearthly cold that chills the soul rather than the body.",
-    "description": "It is a dragon-like form wrapped in shadow.  Glowing red eyes shine in the dark, and it is surrounded by an aura of unearthly cold that chills the soul rather than the body."
+    "description": "It is a dragon-like form wrapped in shadow.  Glowing red eyes shine in the dark, and it is surrounded by an aura of unearthly cold that chills the soul rather than the body.",
+    "breathElements": [
+      "NETHER"
+    ]
   },
   "MON_MANTICORE": {
     "key": "MON_MANTICORE",
@@ -24806,7 +25217,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 300,
     "baseAC": 15,
     "coreBaseHp": 137,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 65,
@@ -24875,7 +25286,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 90,
     "baseAC": 40,
     "coreBaseHp": 66,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 44,
@@ -24997,7 +25408,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 46
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BUTT",
@@ -25037,7 +25448,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_POIS"
     ],
     "flavorText": "A bull-like creature whose skin is made of steel plates. Watch out for its deadly breath!",
-    "description": "A bull-like creature whose skin is made of steel plates. Watch out for its deadly breath!"
+    "description": "A bull-like creature whose skin is made of steel plates. Watch out for its deadly breath!",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_GHOST": {
     "key": "MON_GHOST",
@@ -25050,7 +25464,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 350,
     "baseAC": 30,
     "coreBaseHp": 58,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 41,
@@ -25289,7 +25703,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 27000,
     "baseAC": 45,
     "coreBaseHp": 1767,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 136,
@@ -25367,7 +25781,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_SPIDER"
     ],
     "flavorText": "Shelob is an enormous bloated spider, the last daughter of Ungoliant the Unlight.  Her poison is legendary, as is her ego.  She normally guards the pass through Cirith Ungol, but occasionally goes out foraging for food to feed her voracious appetite.",
-    "description": "Shelob is an enormous bloated spider, the last daughter of Ungoliant the Unlight.  Her poison is legendary, as is her ego.  She normally guards the pass through Cirith Ungol, but occasionally goes out foraging for food to feed her voracious appetite."
+    "description": "Shelob is an enormous bloated spider, the last daughter of Ungoliant the Unlight.  Her poison is legendary, as is her ego.  She normally guards the pass through Cirith Ungol, but occasionally goes out foraging for food to feed her voracious appetite.",
+    "breathElements": [
+      "DARK",
+      "POISON"
+    ]
   },
   "MON_GIANT_SQUID": {
     "key": "MON_GIANT_SQUID",
@@ -25434,7 +25852,12 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_POIS"
     ],
     "flavorText": "Besides being capable of dragging whole ships underwater, this creature can also harm you with ranged attacks.",
-    "description": "Besides being capable of dragging whole ships underwater, this creature can also harm you with ranged attacks."
+    "description": "Besides being capable of dragging whole ships underwater, this creature can also harm you with ranged attacks.",
+    "breathElements": [
+      "ACID",
+      "LIGHTNING",
+      "POISON"
+    ]
   },
   "MON_GHOULKING": {
     "key": "MON_GHOULKING",
@@ -25447,7 +25870,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 340,
     "baseAC": 45,
     "coreBaseHp": 260,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 68,
@@ -25528,7 +25951,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 250,
     "baseAC": 45,
     "coreBaseHp": 180,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 75,
@@ -25545,7 +25968,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 47
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "BITE",
@@ -25576,7 +25999,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a fast moving creature of chaos, a gigantic black bat surrounded by flickering bright red flames.",
-    "description": "It is a fast moving creature of chaos, a gigantic black bat surrounded by flickering bright red flames."
+    "description": "It is a fast moving creature of chaos, a gigantic black bat surrounded by flickering bright red flames.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_NINJA": {
     "key": "MON_NINJA",
@@ -25589,7 +26015,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 300,
     "baseAC": 45,
     "coreBaseHp": 84,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 57,
@@ -25606,7 +26032,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 47
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "HIT",
@@ -25639,7 +26065,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A humanoid clothed in black who moves with blinding speed.",
-    "description": "A humanoid clothed in black who moves with blinding speed."
+    "description": "A humanoid clothed in black who moves with blinding speed.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_MEMORY_MOSS": {
     "key": "MON_MEMORY_MOSS",
@@ -25770,7 +26199,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "It is a twenty-five foot tall giant wreathed in lightning.",
-    "description": "It is a twenty-five foot tall giant wreathed in lightning."
+    "description": "It is a twenty-five foot tall giant wreathed in lightning.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_SPECTATOR": {
     "key": "MON_SPECTATOR",
@@ -25920,7 +26352,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2000,
     "baseAC": 45,
     "coreBaseHp": 555,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 102,
@@ -25996,7 +26428,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2000,
     "baseAC": 45,
     "coreBaseHp": 555,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 102,
@@ -26072,7 +26504,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2000,
     "baseAC": 45,
     "coreBaseHp": 555,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 102,
@@ -26379,7 +26811,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 48
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CHAOS",
     "attacks": [
       {
         "method": "CLAW",
@@ -26425,7 +26857,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "A dragon twisted by the forces of chaos. It seems first ugly, then fair, as its form shimmers and changes in front of your eyes.",
-    "description": "A dragon twisted by the forces of chaos. It seems first ugly, then fair, as its form shimmers and changes in front of your eyes."
+    "description": "A dragon twisted by the forces of chaos. It seems first ugly, then fair, as its form shimmers and changes in front of your eyes.",
+    "breathElements": [
+      "CHAOS",
+      "DISENCHANT"
+    ]
   },
   "MON_LAW_DRAKE": {
     "key": "MON_LAW_DRAKE",
@@ -26455,7 +26891,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 48
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SHARDS",
     "attacks": [
       {
         "method": "CLAW",
@@ -26500,7 +26936,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "This dragon is clever and cunning. It laughs at your puny efforts to disturb it.",
-    "description": "This dragon is clever and cunning. It laughs at your puny efforts to disturb it."
+    "description": "This dragon is clever and cunning. It laughs at your puny efforts to disturb it.",
+    "breathElements": [
+      "SHARDS",
+      "SOUND"
+    ]
   },
   "MON_BALANCE_DRAKE": {
     "key": "MON_BALANCE_DRAKE",
@@ -26530,7 +26970,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 48
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CHAOS",
     "attacks": [
       {
         "method": "CLAW",
@@ -26579,7 +27019,13 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "A mighty dragon, the balance drake seeks to maintain the Cosmic Balance, and despises your feeble efforts to destroy evil.",
-    "description": "A mighty dragon, the balance drake seeks to maintain the Cosmic Balance, and despises your feeble efforts to destroy evil."
+    "description": "A mighty dragon, the balance drake seeks to maintain the Cosmic Balance, and despises your feeble efforts to destroy evil.",
+    "breathElements": [
+      "CHAOS",
+      "DISENCHANT",
+      "SHARDS",
+      "SOUND"
+    ]
   },
   "MON_ETHEREAL_DRAKE": {
     "key": "MON_ETHEREAL_DRAKE",
@@ -26609,7 +27055,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 48
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CONFUSION",
     "attacks": [
       {
         "method": "CLAW",
@@ -26651,7 +27097,12 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "A dragon of great power with control over light and dark, the ethereal drake's eyes glare with white hatred from the shadows.",
-    "description": "A dragon of great power with control over light and dark, the ethereal drake's eyes glare with white hatred from the shadows."
+    "description": "A dragon of great power with control over light and dark, the ethereal drake's eyes glare with white hatred from the shadows.",
+    "breathElements": [
+      "CONFUSION",
+      "DARK",
+      "LIGHT"
+    ]
   },
   "MON_FASOLT_THE_GIANT": {
     "key": "MON_FASOLT_THE_GIANT",
@@ -26734,7 +27185,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 350,
     "baseAC": 30,
     "coreBaseHp": 147,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 41,
@@ -26809,7 +27260,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 350,
     "baseAC": 30,
     "coreBaseHp": 147,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 52,
@@ -26974,7 +27425,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 48
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -27014,7 +27465,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_FIRE"
     ],
     "flavorText": "It is a towering inferno of flames.",
-    "description": "It is a towering inferno of flames."
+    "description": "It is a towering inferno of flames.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_CHERUB": {
     "key": "MON_CHERUB",
@@ -27027,7 +27481,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2700,
     "baseAC": 45,
     "coreBaseHp": 550,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 86,
@@ -27044,7 +27498,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 56
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -27104,7 +27558,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_MONSTERS"
     ],
     "flavorText": "It is an angel moving very quickly, wielding a holy war hammer and casting a volley of powerful spells in your direction.",
-    "description": "It is an angel moving very quickly, wielding a holy war hammer and casting a volley of powerful spells in your direction."
+    "description": "It is an angel moving very quickly, wielding a holy war hammer and casting a volley of powerful spells in your direction.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_WATER_ELEMENTAL": {
     "key": "MON_WATER_ELEMENTAL",
@@ -27134,7 +27591,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 48
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "HIT",
@@ -27176,7 +27633,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_COLD"
     ],
     "flavorText": "It is a towering tempest of water.",
-    "description": "It is a towering tempest of water."
+    "description": "It is a towering tempest of water.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_MULTI_HUED_HOUND": {
     "key": "MON_MULTI_HUED_HOUND",
@@ -27256,7 +27716,14 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_POIS"
     ],
     "flavorText": "Shimmering in rainbow hues, this hound is beautiful and deadly.",
-    "description": "Shimmering in rainbow hues, this hound is beautiful and deadly."
+    "description": "Shimmering in rainbow hues, this hound is beautiful and deadly.",
+    "breathElements": [
+      "ACID",
+      "COLD",
+      "LIGHTNING",
+      "FIRE",
+      "POISON"
+    ]
   },
   "MON_INVISIBLE_STALKER": {
     "key": "MON_INVISIBLE_STALKER",
@@ -27409,7 +27876,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12000,
     "baseAC": 45,
     "coreBaseHp": 1363,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 169,
@@ -27426,7 +27893,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 95
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CRUSH",
@@ -27478,7 +27945,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "A vile creature which seems to consist mostly of tentacles, it seeks to drag people to their doom in the water.  Few have ever escaped its grasp.",
-    "description": "A vile creature which seems to consist mostly of tentacles, it seeks to drag people to their doom in the water.  Few have ever escaped its grasp."
+    "description": "A vile creature which seems to consist mostly of tentacles, it seeks to drag people to their doom in the water.  Few have ever escaped its grasp.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_LICH": {
     "key": "MON_LICH",
@@ -27879,7 +28349,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_UNDEAD"
     ],
     "flavorText": "Once a powerful ruler, now an even more powerful undead menace.",
-    "description": "Once a powerful ruler, now an even more powerful undead menace."
+    "description": "Once a powerful ruler, now an even more powerful undead menace.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_GIANT_GREY_SCORPION": {
     "key": "MON_GIANT_GREY_SCORPION",
@@ -27892,7 +28365,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 275,
     "baseAC": 45,
     "coreBaseHp": 189,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 39,
@@ -27909,7 +28382,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 50
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -27932,7 +28405,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a giant grey scorpion. It looks poisonous.",
-    "description": "It is a giant grey scorpion. It looks poisonous."
+    "description": "It is a giant grey scorpion. It looks poisonous.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_EARTH_ELEMENTAL": {
     "key": "MON_EARTH_ELEMENTAL",
@@ -27945,7 +28421,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 375,
     "baseAC": 45,
     "coreBaseHp": 165,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 82,
@@ -27962,7 +28438,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 50
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "HIT",
@@ -28003,7 +28479,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_ACID"
     ],
     "flavorText": "It is a towering form composed of rock with fists of awesome power.",
-    "description": "It is a towering form composed of rock with fists of awesome power."
+    "description": "It is a towering form composed of rock with fists of awesome power.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_AIR_ELEMENTAL": {
     "key": "MON_AIR_ELEMENTAL",
@@ -28016,7 +28495,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 390,
     "baseAC": 45,
     "coreBaseHp": 90,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 48,
@@ -28033,7 +28512,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 50
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "LIGHTNING",
     "attacks": [
       {
         "method": "HIT",
@@ -28075,7 +28554,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_ELEC"
     ],
     "flavorText": "It is a towering tornado of winds.",
-    "description": "It is a towering tornado of winds."
+    "description": "It is a towering tornado of winds.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_SHIMMERING_MOLD": {
     "key": "MON_SHIMMERING_MOLD",
@@ -28105,7 +28587,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 41
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "LIGHTNING",
     "attacks": [
       {
         "method": "SPORE",
@@ -28132,7 +28614,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a strange growth on the dungeon floor, glowing and crackling with sparks.",
-    "description": "It is a strange growth on the dungeon floor, glowing and crackling with sparks."
+    "description": "It is a strange growth on the dungeon floor, glowing and crackling with sparks.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_GARGOYLE": {
     "key": "MON_GARGOYLE",
@@ -28204,7 +28689,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_FIRE"
     ],
     "flavorText": "A weird demon creature with a stone-like skin.",
-    "description": "A weird demon creature with a stone-like skin."
+    "description": "A weird demon creature with a stone-like skin.",
+    "breathElements": [
+      "LIGHTNING",
+      "FIRE"
+    ]
   },
   "MON_MALICIOUS_LEPRECHAUN": {
     "key": "MON_MALICIOUS_LEPRECHAUN",
@@ -28217,7 +28706,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 85,
     "baseAC": 13,
     "coreBaseHp": 12,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 36,
@@ -28280,7 +28769,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1200,
     "baseAC": 45,
     "coreBaseHp": 1050,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "TANK",
     "coreBase": {
       "str": 149,
@@ -28352,7 +28841,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 200,
     "baseAC": 45,
     "coreBaseHp": 78,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -28412,7 +28901,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 500,
     "baseAC": 45,
     "coreBaseHp": 169,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 68,
@@ -28429,7 +28918,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 51
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "HIT",
@@ -28467,7 +28956,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A human warrior, moving with lightning speed.",
-    "description": "A human warrior, moving with lightning speed."
+    "description": "A human warrior, moving with lightning speed.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_HEADLESS_GHOST": {
     "key": "MON_HEADLESS_GHOST",
@@ -28480,7 +28972,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 550,
     "baseAC": 30,
     "coreBaseHp": 260,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 72,
@@ -28497,7 +28989,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 51
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "TOUCH",
@@ -28547,7 +29039,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A phantasmal apparition with no head.",
-    "description": "A phantasmal apparition with no head."
+    "description": "A phantasmal apparition with no head.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_DREAD": {
     "key": "MON_DREAD",
@@ -28560,7 +29055,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 600,
     "baseAC": 30,
     "coreBaseHp": 262,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 96,
@@ -28695,7 +29190,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_AWAY"
     ],
     "flavorText": "Another lesser relative of the beholder, this six-eyed creature feeds on magic.",
-    "description": "Another lesser relative of the beholder, this six-eyed creature feeds on magic."
+    "description": "Another lesser relative of the beholder, this six-eyed creature feeds on magic.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_SMOKE_ELEMENTAL": {
     "key": "MON_SMOKE_ELEMENTAL",
@@ -28708,7 +29206,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 375,
     "baseAC": 45,
     "coreBaseHp": 82,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 50,
@@ -28725,7 +29223,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 52
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "ENGULF",
@@ -28761,7 +29259,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "DARKNESS"
     ],
     "flavorText": "It is a towering blackened form, crackling with heat.",
-    "description": "It is a towering blackened form, crackling with heat."
+    "description": "It is a towering blackened form, crackling with heat.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_OLOG": {
     "key": "MON_OLOG",
@@ -28923,7 +29424,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 51
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "GRAVITY",
     "attacks": [
       {
         "method": "CLAW",
@@ -28962,7 +29463,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_GRAV"
     ],
     "flavorText": "Unfettered by the usual constraints of gravity, these unnatural creatures are walking on the walls and even the ceiling!  The earth suddenly feels rather less solid as you see gravity warp all around these monsters.",
-    "description": "Unfettered by the usual constraints of gravity, these unnatural creatures are walking on the walls and even the ceiling!  The earth suddenly feels rather less solid as you see gravity warp all around these monsters."
+    "description": "Unfettered by the usual constraints of gravity, these unnatural creatures are walking on the walls and even the ceiling!  The earth suddenly feels rather less solid as you see gravity warp all around these monsters.",
+    "breathElements": [
+      "GRAVITY"
+    ]
   },
   "MON_ACIDIC_CYTOPLASM": {
     "key": "MON_ACIDIC_CYTOPLASM",
@@ -28975,7 +29479,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 180,
     "baseAC": 18,
     "coreBaseHp": 220,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 58,
@@ -28992,7 +29496,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 51
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "TOUCH",
@@ -29038,7 +29542,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A disgusting animated blob of destruction. Flee its gruesome hunger!",
-    "description": "A disgusting animated blob of destruction. Flee its gruesome hunger!"
+    "description": "A disgusting animated blob of destruction. Flee its gruesome hunger!",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_INERTIA_HOUND": {
     "key": "MON_INERTIA_HOUND",
@@ -29068,7 +29575,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 51
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "INERTIA",
     "attacks": [
       {
         "method": "CLAW",
@@ -29107,7 +29614,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_INER"
     ],
     "flavorText": "Bizarrely, this hound seems to be hardly moving at all, yet it approaches you with deadly menace. It makes you tired just to look at it.",
-    "description": "Bizarrely, this hound seems to be hardly moving at all, yet it approaches you with deadly menace. It makes you tired just to look at it."
+    "description": "Bizarrely, this hound seems to be hardly moving at all, yet it approaches you with deadly menace. It makes you tired just to look at it.",
+    "breathElements": [
+      "INERTIA"
+    ]
   },
   "MON_IMPACT_HOUND": {
     "key": "MON_IMPACT_HOUND",
@@ -29137,7 +29647,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 51
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "FORCE",
     "attacks": [
       {
         "method": "CLAW",
@@ -29176,7 +29686,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_WALL"
     ],
     "flavorText": "A deep brown shape is visible before you, its canine form striking you with an almost physical force. The dungeon floor buckles as if struck by a powerful blow as it stalks towards you.",
-    "description": "A deep brown shape is visible before you, its canine form striking you with an almost physical force. The dungeon floor buckles as if struck by a powerful blow as it stalks towards you."
+    "description": "A deep brown shape is visible before you, its canine form striking you with an almost physical force. The dungeon floor buckles as if struck by a powerful blow as it stalks towards you.",
+    "breathElements": [
+      "FORCE"
+    ]
   },
   "MON_SHARDSTORM": {
     "key": "MON_SHARDSTORM",
@@ -29189,7 +29702,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 800,
     "baseAC": 12,
     "coreBaseHp": 176,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 59,
@@ -29206,7 +29719,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 54
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SHARDS",
     "attacks": [
       {
         "method": "ENGULF",
@@ -29232,7 +29745,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_SHAR"
     ],
     "flavorText": "A howling blast of razor-sharp mountain fragments, kept intact by perilous magics.",
-    "description": "A howling blast of razor-sharp mountain fragments, kept intact by perilous magics."
+    "description": "A howling blast of razor-sharp mountain fragments, kept intact by perilous magics.",
+    "breathElements": [
+      "SHARDS"
+    ]
   },
   "MON_OOZE_ELEMENTAL": {
     "key": "MON_OOZE_ELEMENTAL",
@@ -29306,7 +29822,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_ACID"
     ],
     "flavorText": "It is a towering mass of filth, an eyesore of ooze.",
-    "description": "It is a towering mass of filth, an eyesore of ooze."
+    "description": "It is a towering mass of filth, an eyesore of ooze.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_YOUNG_BLACK_DRAGON": {
     "key": "MON_YOUNG_BLACK_DRAGON",
@@ -29374,7 +29893,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "It has a form out of legend. Its still-tender scales are a darkest black hue. Acid drips from its body.",
-    "description": "It has a form out of legend. Its still-tender scales are a darkest black hue. Acid drips from its body."
+    "description": "It has a form out of legend. Its still-tender scales are a darkest black hue. Acid drips from its body.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_MUMAK": {
     "key": "MON_MUMAK",
@@ -29461,7 +29983,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 51
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "BITE",
@@ -29488,7 +30010,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A giant ant covered in shaggy fur. Its powerful jaws glow with heat.",
-    "description": "A giant ant covered in shaggy fur. Its powerful jaws glow with heat."
+    "description": "A giant ant covered in shaggy fur. Its powerful jaws glow with heat.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_MATURE_WHITE_DRAGON": {
     "key": "MON_MATURE_WHITE_DRAGON",
@@ -29562,7 +30087,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A large dragon, scales gleaming bright white.",
-    "description": "A large dragon, scales gleaming bright white."
+    "description": "A large dragon, scales gleaming bright white.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_XORN": {
     "key": "MON_XORN",
@@ -29645,7 +30173,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 5000,
     "baseAC": 45,
     "coreBaseHp": 757,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 142,
@@ -29662,7 +30190,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 87
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "HIT",
@@ -29706,7 +30234,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A massive and cruel troll of great power, drool slides caustically down his muscular frame. Despite his bulk, he strikes with stunning speed.",
-    "description": "A massive and cruel troll of great power, drool slides caustically down his muscular frame. Despite his bulk, he strikes with stunning speed."
+    "description": "A massive and cruel troll of great power, drool slides caustically down his muscular frame. Despite his bulk, he strikes with stunning speed.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_PHANTOM": {
     "key": "MON_PHANTOM",
@@ -29719,7 +30250,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 400,
     "baseAC": 30,
     "coreBaseHp": 260,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 50,
@@ -30013,7 +30544,14 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "It has a form out of legend. Beautiful scales of shimmering and magical colours cover it.",
-    "description": "It has a form out of legend. Beautiful scales of shimmering and magical colours cover it."
+    "description": "It has a form out of legend. Beautiful scales of shimmering and magical colours cover it.",
+    "breathElements": [
+      "ACID",
+      "COLD",
+      "LIGHTNING",
+      "FIRE",
+      "POISON"
+    ]
   },
   "MON_COLOSSUS": {
     "key": "MON_COLOSSUS",
@@ -30118,7 +30656,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 46
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SOUND",
     "attacks": [
       {
         "method": "CLAW",
@@ -30158,7 +30696,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "It has a form out of legend. Its still-tender scales are a tarnished gold hue, and light is reflected from its form.",
-    "description": "It has a form out of legend. Its still-tender scales are a tarnished gold hue, and light is reflected from its form."
+    "description": "It has a form out of legend. Its still-tender scales are a tarnished gold hue, and light is reflected from its form.",
+    "breathElements": [
+      "SOUND"
+    ]
   },
   "MON_MATURE_BLUE_DRAGON": {
     "key": "MON_MATURE_BLUE_DRAGON",
@@ -30230,7 +30771,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A large dragon, scales tinted deep blue.",
-    "description": "A large dragon, scales tinted deep blue."
+    "description": "A large dragon, scales tinted deep blue.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_MATURE_GREEN_DRAGON": {
     "key": "MON_MATURE_GREEN_DRAGON",
@@ -30260,7 +30804,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 50
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -30302,7 +30846,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A large dragon, scales tinted deep green.",
-    "description": "A large dragon, scales tinted deep green."
+    "description": "A large dragon, scales tinted deep green.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_MATURE_BRONZE_DRAGON": {
     "key": "MON_MATURE_BRONZE_DRAGON",
@@ -30332,7 +30879,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 50
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CONFUSION",
     "attacks": [
       {
         "method": "CLAW",
@@ -30373,7 +30920,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A large dragon with scales of rich bronze.",
-    "description": "A large dragon with scales of rich bronze."
+    "description": "A large dragon with scales of rich bronze.",
+    "breathElements": [
+      "CONFUSION"
+    ]
   },
   "MON_YOUNG_RED_DRAGON": {
     "key": "MON_YOUNG_RED_DRAGON",
@@ -30445,7 +30995,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "It has a form out of legend. Its still-tender scales are a deepest red hue. Heat radiates from its form.",
-    "description": "It has a form out of legend. Its still-tender scales are a deepest red hue. Heat radiates from its form."
+    "description": "It has a form out of legend. Its still-tender scales are a deepest red hue. Heat radiates from its form.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_TRAPPER": {
     "key": "MON_TRAPPER",
@@ -30458,7 +31011,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 580,
     "baseAC": 45,
     "coreBaseHp": 330,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 101,
@@ -30584,7 +31137,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_DEMON"
     ],
     "flavorText": "It is a humanoid form composed of flames and hatred.",
-    "description": "It is a humanoid form composed of flames and hatred."
+    "description": "It is a humanoid form composed of flames and hatred.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_TIME_BOMB": {
     "key": "MON_TIME_BOMB",
@@ -30777,7 +31333,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_ICEE"
     ],
     "flavorText": "It is a towering glacier of ice.",
-    "description": "It is a towering glacier of ice."
+    "description": "It is a towering glacier of ice.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_NECROMANCER": {
     "key": "MON_NECROMANCER",
@@ -30862,7 +31421,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2500,
     "baseAC": 45,
     "coreBaseHp": 950,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 162,
@@ -30879,7 +31438,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 78
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "GAZE",
@@ -30955,7 +31514,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "This unholy abomination will crush you too. Flee while you can!",
-    "description": "This unholy abomination will crush you too. Flee while you can!"
+    "description": "This unholy abomination will crush you too. Flee while you can!",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_LORGAN_CHIEF_OF_THE_EASTERLINGS": {
     "key": "MON_LORGAN_CHIEF_OF_THE_EASTERLINGS",
@@ -30968,7 +31530,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1200,
     "baseAC": 45,
     "coreBaseHp": 909,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 116,
@@ -31125,7 +31687,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 74
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "DISENCHANT",
     "attacks": [
       {
         "method": "ENGULF",
@@ -31170,7 +31732,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_TIME"
     ],
     "flavorText": "Howling through the disintegrating dungeon, this awesome whirlpool of Unmagic rips the enchantments from everything it touches.",
-    "description": "Howling through the disintegrating dungeon, this awesome whirlpool of Unmagic rips the enchantments from everything it touches."
+    "description": "Howling through the disintegrating dungeon, this awesome whirlpool of Unmagic rips the enchantments from everything it touches.",
+    "breathElements": [
+      "DISENCHANT",
+      "TIME"
+    ]
   },
   "MON_CRYPT_THING": {
     "key": "MON_CRYPT_THING",
@@ -31183,7 +31749,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2500,
     "baseAC": 45,
     "coreBaseHp": 440,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 63,
@@ -31265,7 +31831,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1000,
     "baseAC": 45,
     "coreBaseHp": 757,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 86,
@@ -31487,7 +32053,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_PLAS"
     ],
     "flavorText": "It is a towering glowing form of molten rock.",
-    "description": "It is a towering glowing form of molten rock."
+    "description": "It is a towering glowing form of molten rock.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_BLACK_PUDDING": {
     "key": "MON_BLACK_PUDDING",
@@ -31517,7 +32086,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 54
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "TOUCH",
@@ -31565,7 +32134,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A lump of rotting black flesh that slurrrrrrrps across the dungeon floor.",
-    "description": "A lump of rotting black flesh that slurrrrrrrps across the dungeon floor."
+    "description": "A lump of rotting black flesh that slurrrrrrrps across the dungeon floor.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_KILLER_IRIDESCENT_BEETLE": {
     "key": "MON_KILLER_IRIDESCENT_BEETLE",
@@ -31595,7 +32167,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 54
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "LIGHTNING",
     "attacks": [
       {
         "method": "CLAW",
@@ -31628,7 +32200,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is a giant beetle, whose carapace shimmers with vibrant energies.",
-    "description": "It is a giant beetle, whose carapace shimmers with vibrant energies."
+    "description": "It is a giant beetle, whose carapace shimmers with vibrant energies.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_NEXUS_VORTEX": {
     "key": "MON_NEXUS_VORTEX",
@@ -31641,7 +32216,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 800,
     "baseAC": 40,
     "coreBaseHp": 176,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 51,
@@ -31658,7 +32233,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 54
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "NEXUS",
     "attacks": [
       {
         "method": "ENGULF",
@@ -31688,7 +32263,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_NEXU"
     ],
     "flavorText": "A maelstrom of potent magical energy.",
-    "description": "A maelstrom of potent magical energy."
+    "description": "A maelstrom of potent magical energy.",
+    "breathElements": [
+      "NEXUS"
+    ]
   },
   "MON_PLASMA_VORTEX": {
     "key": "MON_PLASMA_VORTEX",
@@ -31701,7 +32279,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 800,
     "baseAC": 40,
     "coreBaseHp": 176,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 77,
@@ -31718,7 +32296,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 54
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "PLASMA",
     "attacks": [
       {
         "method": "ENGULF",
@@ -31756,7 +32334,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_PLAS"
     ],
     "flavorText": "A whirlpool of intense flame, charring the stones at your feet.",
-    "description": "A whirlpool of intense flame, charring the stones at your feet."
+    "description": "A whirlpool of intense flame, charring the stones at your feet.",
+    "breathElements": [
+      "PLASMA"
+    ]
   },
   "MON_MATURE_RED_DRAGON": {
     "key": "MON_MATURE_RED_DRAGON",
@@ -31831,7 +32412,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A large dragon, scales tinted deep red.",
-    "description": "A large dragon, scales tinted deep red."
+    "description": "A large dragon, scales tinted deep red.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_MATURE_GOLD_DRAGON": {
     "key": "MON_MATURE_GOLD_DRAGON",
@@ -31861,7 +32445,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 52
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SOUND",
     "attacks": [
       {
         "method": "CLAW",
@@ -31903,7 +32487,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A large dragon with scales of gleaming gold.",
-    "description": "A large dragon with scales of gleaming gold."
+    "description": "A large dragon with scales of gleaming gold.",
+    "breathElements": [
+      "SOUND"
+    ]
   },
   "MON_CRYSTAL_DRAKE": {
     "key": "MON_CRYSTAL_DRAKE",
@@ -31933,7 +32520,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 48
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SHARDS",
     "attacks": [
       {
         "method": "CLAW",
@@ -31978,7 +32565,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "A dragon of strange crystalline form. Light shines through it, dazzling your eyes with spectrums of colour.",
-    "description": "A dragon of strange crystalline form. Light shines through it, dazzling your eyes with spectrums of colour."
+    "description": "A dragon of strange crystalline form. Light shines through it, dazzling your eyes with spectrums of colour.",
+    "breathElements": [
+      "SHARDS"
+    ]
   },
   "MON_MATURE_BLACK_DRAGON": {
     "key": "MON_MATURE_BLACK_DRAGON",
@@ -32049,7 +32639,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A large dragon, with scales of deepest black.",
-    "description": "A large dragon, with scales of deepest black."
+    "description": "A large dragon, with scales of deepest black.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_MATURE_MULTI_HUED_DRAGON": {
     "key": "MON_MATURE_MULTI_HUED_DRAGON",
@@ -32130,7 +32723,14 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A large dragon, scales shimmering many colours.",
-    "description": "A large dragon, scales shimmering many colours."
+    "description": "A large dragon, scales shimmering many colours.",
+    "breathElements": [
+      "ACID",
+      "COLD",
+      "LIGHTNING",
+      "FIRE",
+      "POISON"
+    ]
   },
   "MON_DRAEBOR_THE_IMP": {
     "key": "MON_DRAEBOR_THE_IMP",
@@ -32143,7 +32743,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3250,
     "baseAC": 45,
     "coreBaseHp": 950,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 127,
@@ -32160,7 +32760,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 82
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -32222,7 +32822,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "An intensely irritating git of a monster.",
-    "description": "An intensely irritating git of a monster."
+    "description": "An intensely irritating git of a monster.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_DEATH_KNIGHT": {
     "key": "MON_DEATH_KNIGHT",
@@ -32235,7 +32838,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1111,
     "baseAC": 45,
     "coreBaseHp": 330,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 95,
@@ -32308,7 +32911,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1600,
     "baseAC": 45,
     "coreBaseHp": 484,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 106,
@@ -32325,7 +32928,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 82
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "HIT",
@@ -32372,7 +32975,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "HEAL"
     ],
     "flavorText": "A Black Numenorean who usurped the throne of Gondor, he is treacherous and evil.",
-    "description": "A Black Numenorean who usurped the throne of Gondor, he is treacherous and evil."
+    "description": "A Black Numenorean who usurped the throne of Gondor, he is treacherous and evil.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_TIME_VORTEX": {
     "key": "MON_TIME_VORTEX",
@@ -32402,7 +33008,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 55
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "TIME",
     "attacks": [
       {
         "method": "ENGULF",
@@ -32429,7 +33035,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_TIME"
     ],
     "flavorText": "You haven't seen it yet.",
-    "description": "You haven't seen it yet."
+    "description": "You haven't seen it yet.",
+    "breathElements": [
+      "TIME"
+    ]
   },
   "MON_SHIMMERING_VORTEX": {
     "key": "MON_SHIMMERING_VORTEX",
@@ -32442,7 +33051,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 800,
     "baseAC": 40,
     "coreBaseHp": 176,
-    "speed": 10.0,
+    "speed": 10,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 58,
@@ -32459,7 +33068,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 55
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "LIGHT",
     "attacks": [
       {
         "method": "ENGULF",
@@ -32494,7 +33103,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SHRIEK"
     ],
     "flavorText": "A strange pillar of shining light that hurts your eyes. Its shape changes constantly as it cuts through the air towards you. It is like a beacon, waking monsters from their slumber.",
-    "description": "A strange pillar of shining light that hurts your eyes. Its shape changes constantly as it cuts through the air towards you. It is like a beacon, waking monsters from their slumber."
+    "description": "A strange pillar of shining light that hurts your eyes. Its shape changes constantly as it cuts through the air towards you. It is like a beacon, waking monsters from their slumber.",
+    "breathElements": [
+      "LIGHT"
+    ]
   },
   "MON_ANCIENT_BLUE_DRAGON": {
     "key": "MON_ANCIENT_BLUE_DRAGON",
@@ -32507,7 +33119,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2000,
     "baseAC": 45,
     "coreBaseHp": 396,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 117,
@@ -32569,7 +33181,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A huge draconic form. Lightning crackles along its length.",
-    "description": "A huge draconic form. Lightning crackles along its length."
+    "description": "A huge draconic form. Lightning crackles along its length.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_ANCIENT_BRONZE_DRAGON": {
     "key": "MON_ANCIENT_BRONZE_DRAGON",
@@ -32582,7 +33197,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2000,
     "baseAC": 45,
     "coreBaseHp": 396,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 117,
@@ -32599,7 +33214,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 58
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CONFUSION",
     "attacks": [
       {
         "method": "CLAW",
@@ -32643,7 +33258,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A huge draconic form enveloped in a cascade of colour.",
-    "description": "A huge draconic form enveloped in a cascade of colour."
+    "description": "A huge draconic form enveloped in a cascade of colour.",
+    "breathElements": [
+      "CONFUSION"
+    ]
   },
   "MON_BEHOLDER": {
     "key": "MON_BEHOLDER",
@@ -32656,7 +33274,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 6000,
     "baseAC": 45,
     "coreBaseHp": 808,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 86,
@@ -32673,7 +33291,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 58
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "GAZE",
@@ -32724,7 +33342,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "A vile creature with one huge central eye, twelve smaller eyes on stalks, and a huge mouth filled with sharp teeth.",
-    "description": "A vile creature with one huge central eye, twelve smaller eyes on stalks, and a huge mouth filled with sharp teeth."
+    "description": "A vile creature with one huge central eye, twelve smaller eyes on stalks, and a huge mouth filled with sharp teeth.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_EMPEROR_WIGHT": {
     "key": "MON_EMPEROR_WIGHT",
@@ -32737,7 +33358,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1600,
     "baseAC": 40,
     "coreBaseHp": 209,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 53,
@@ -32817,7 +33438,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 5000,
     "baseAC": 45,
     "coreBaseHp": 825,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 109,
@@ -32909,7 +33530,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 4000,
     "baseAC": 45,
     "coreBaseHp": 1212,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 138,
@@ -32980,7 +33601,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_PLAS"
     ],
     "flavorText": "A towering fire elemental, Vargo burns everything beyond recognition.",
-    "description": "A towering fire elemental, Vargo burns everything beyond recognition."
+    "description": "A towering fire elemental, Vargo burns everything beyond recognition.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_BLACK_WRAITH": {
     "key": "MON_BLACK_WRAITH",
@@ -32993,7 +33617,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1700,
     "baseAC": 45,
     "coreBaseHp": 275,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 53,
@@ -33074,7 +33698,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 5000,
     "baseAC": 45,
     "coreBaseHp": 606,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 107,
@@ -33161,7 +33785,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1700,
     "baseAC": 45,
     "coreBaseHp": 264,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 54,
@@ -33243,7 +33867,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 600,
     "baseAC": 45,
     "coreBaseHp": 264,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 102,
@@ -33298,7 +33922,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_FIRE"
     ],
     "flavorText": "It is a giant dog that glows with heat. Flames pour from its nostrils.",
-    "description": "It is a giant dog that glows with heat. Flames pour from its nostrils."
+    "description": "It is a giant dog that glows with heat. Flames pour from its nostrils.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_7_HEADED_HYDRA": {
     "key": "MON_7_HEADED_HYDRA",
@@ -33311,7 +33938,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2000,
     "baseAC": 45,
     "coreBaseHp": 550,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 91,
@@ -33328,7 +33955,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 56
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -33373,7 +34000,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A strange reptilian creature with seven heads dripping venom.",
-    "description": "A strange reptilian creature with seven heads dripping venom."
+    "description": "A strange reptilian creature with seven heads dripping venom.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_WALDERN_KING_OF_WATER": {
     "key": "MON_WALDERN_KING_OF_WATER",
@@ -33453,7 +34083,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_WATE"
     ],
     "flavorText": "A towering water elemental, Waldern is master of all things liquid. Wave after wave drowns your frail body.",
-    "description": "A towering water elemental, Waldern is master of all things liquid. Wave after wave drowns your frail body."
+    "description": "A towering water elemental, Waldern is master of all things liquid. Wave after wave drowns your frail body.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_KAVLAX_THE_MANY_HEADED": {
     "key": "MON_KAVLAX_THE_MANY_HEADED",
@@ -33466,7 +34099,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3000,
     "baseAC": 45,
     "coreBaseHp": 656,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 97,
@@ -33544,7 +34177,18 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_SOUN"
     ],
     "flavorText": "A large dragon with a selection of heads, all shouting and arguing as they look for prey, but each with its own deadly breath weapon.",
-    "description": "A large dragon with a selection of heads, all shouting and arguing as they look for prey, but each with its own deadly breath weapon."
+    "description": "A large dragon with a selection of heads, all shouting and arguing as they look for prey, but each with its own deadly breath weapon.",
+    "breathElements": [
+      "ACID",
+      "COLD",
+      "CONFUSION",
+      "LIGHTNING",
+      "FIRE",
+      "GRAVITY",
+      "NEXUS",
+      "SHARDS",
+      "SOUND"
+    ]
   },
   "MON_ANCIENT_WHITE_DRAGON": {
     "key": "MON_ANCIENT_WHITE_DRAGON",
@@ -33557,7 +34201,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2000,
     "baseAC": 45,
     "coreBaseHp": 396,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 117,
@@ -33620,7 +34264,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A huge draconic form. Frost covers it from head to tail.",
-    "description": "A huge draconic form. Frost covers it from head to tail."
+    "description": "A huge draconic form. Frost covers it from head to tail.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_ANCIENT_GREEN_DRAGON": {
     "key": "MON_ANCIENT_GREEN_DRAGON",
@@ -33633,7 +34280,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2000,
     "baseAC": 45,
     "coreBaseHp": 396,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 117,
@@ -33650,7 +34297,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 58
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -33695,7 +34342,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A huge draconic form enveloped in clouds of poisonous vapour.",
-    "description": "A huge draconic form enveloped in clouds of poisonous vapour."
+    "description": "A huge draconic form enveloped in clouds of poisonous vapour.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_ELDRAK": {
     "key": "MON_ELDRAK",
@@ -33854,7 +34504,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2900,
     "baseAC": 45,
     "coreBaseHp": 757,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 101,
@@ -33926,7 +34576,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1800,
     "baseAC": 45,
     "coreBaseHp": 1010,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 96,
@@ -34012,7 +34662,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2500,
     "baseAC": 45,
     "coreBaseHp": 505,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 126,
@@ -34073,7 +34723,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A huge draconic form. Pools of acid melt the floor around it.",
-    "description": "A huge draconic form. Pools of acid melt the floor around it."
+    "description": "A huge draconic form. Pools of acid melt the floor around it.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_FAT_MAN": {
     "key": "MON_FAT_MAN",
@@ -34086,7 +34739,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 200,
     "baseAC": 45,
     "coreBaseHp": 105,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -34277,7 +34930,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 800,
     "baseAC": 45,
     "coreBaseHp": 275,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 93,
@@ -34349,7 +35002,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 30,
     "baseAC": 8,
     "coreBaseHp": 45,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "MAGE",
     "coreBase": {
       "str": 39,
@@ -34404,7 +35057,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3000,
     "baseAC": 8,
     "coreBaseHp": 264,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 39,
@@ -34455,7 +35108,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 6000,
     "baseAC": 45,
     "coreBaseHp": 1212,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -34532,7 +35185,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3000,
     "baseAC": 45,
     "coreBaseHp": 650,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 115,
@@ -34595,7 +35248,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A strange reptilian creature with nine smouldering heads.",
-    "description": "A strange reptilian creature with nine smouldering heads."
+    "description": "A strange reptilian creature with nine smouldering heads.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_ENCHANTRESS": {
     "key": "MON_ENCHANTRESS",
@@ -34679,7 +35335,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1800,
     "baseAC": 45,
     "coreBaseHp": 525,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 90,
@@ -34752,7 +35408,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_MONSTERS"
     ],
     "flavorText": "A chieftain among the Rangers.  His understanding of nature gives him powerful elemental spells to use against you, in addition to his skills as an archer and a warrior.  Furthermore, he is a master of camouflage, so you will need magically enhanced seeing to spot him.",
-    "description": "A chieftain among the Rangers.  His understanding of nature gives him powerful elemental spells to use against you, in addition to his skills as an archer and a warrior.  Furthermore, he is a master of camouflage, so you will need magically enhanced seeing to spot him."
+    "description": "A chieftain among the Rangers.  His understanding of nature gives him powerful elemental spells to use against you, in addition to his skills as an archer and a warrior.  Furthermore, he is a master of camouflage, so you will need magically enhanced seeing to spot him.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_SORCERER": {
     "key": "MON_SORCERER",
@@ -34832,7 +35491,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "A human figure in robes, he moves with magically improved speed, and his hands are ablur with spell casting.",
-    "description": "A human figure in robes, he moves with magically improved speed, and his hands are ablur with spell casting."
+    "description": "A human figure in robes, he moves with magically improved speed, and his hands are ablur with spell casting.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_XAREN": {
     "key": "MON_XAREN",
@@ -34845,7 +35507,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1200,
     "baseAC": 45,
     "coreBaseHp": 176,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 72,
@@ -34935,7 +35597,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 58
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "LIGHTNING",
     "attacks": [
       {
         "method": "CRUSH",
@@ -34967,7 +35629,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "A vast legendary bird, its iron talons rake the most impenetrable of surfaces and its screech echoes through the many winding dungeon corridors.",
-    "description": "A vast legendary bird, its iron talons rake the most impenetrable of surfaces and its screech echoes through the many winding dungeon corridors."
+    "description": "A vast legendary bird, its iron talons rake the most impenetrable of surfaces and its screech echoes through the many winding dungeon corridors.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_MINOTAUR": {
     "key": "MON_MINOTAUR",
@@ -35042,7 +35707,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 9000,
     "baseAC": 45,
     "coreBaseHp": 1212,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 106,
@@ -35113,7 +35778,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_KIN"
     ],
     "flavorText": "One of the original three ugly sisters. Her face could sink a thousand ships. Her scales rattle as she slithers towards you, venom dripping from her ghastly mouth.",
-    "description": "One of the original three ugly sisters. Her face could sink a thousand ships. Her scales rattle as she slithers towards you, venom dripping from her ghastly mouth."
+    "description": "One of the original three ugly sisters. Her face could sink a thousand ships. Her scales rattle as she slithers towards you, venom dripping from her ghastly mouth.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_DEATH_DRAKE": {
     "key": "MON_DEATH_DRAKE",
@@ -35126,7 +35794,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10000,
     "baseAC": 45,
     "coreBaseHp": 1060,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 138,
@@ -35143,7 +35811,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 64
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "NETHER",
     "attacks": [
       {
         "method": "CLAW",
@@ -35190,7 +35858,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "It is a dragon-like form wrapped in darkness. You cannot make out its true form but you sense its evil.",
-    "description": "It is a dragon-like form wrapped in darkness. You cannot make out its true form but you sense its evil."
+    "description": "It is a dragon-like form wrapped in darkness. You cannot make out its true form but you sense its evil.",
+    "breathElements": [
+      "NETHER"
+    ]
   },
   "MON_ANCIENT_RED_DRAGON": {
     "key": "MON_ANCIENT_RED_DRAGON",
@@ -35203,7 +35874,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2500,
     "baseAC": 45,
     "coreBaseHp": 505,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 126,
@@ -35266,7 +35937,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A huge draconic form. Wisps of smoke steam from its nostrils and the extreme heat surrounding it makes you gasp for breath.",
-    "description": "A huge draconic form. Wisps of smoke steam from its nostrils and the extreme heat surrounding it makes you gasp for breath."
+    "description": "A huge draconic form. Wisps of smoke steam from its nostrils and the extreme heat surrounding it makes you gasp for breath.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_ANCIENT_GOLD_DRAGON": {
     "key": "MON_ANCIENT_GOLD_DRAGON",
@@ -35279,7 +35953,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2500,
     "baseAC": 45,
     "coreBaseHp": 505,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 126,
@@ -35296,7 +35970,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 59
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SOUND",
     "attacks": [
       {
         "method": "CLAW",
@@ -35340,7 +36014,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A huge draconic form wreathed in a nimbus of light. Its roar stuns and deafens you.",
-    "description": "A huge draconic form wreathed in a nimbus of light. Its roar stuns and deafens you."
+    "description": "A huge draconic form wreathed in a nimbus of light. Its roar stuns and deafens you.",
+    "breathElements": [
+      "SOUND"
+    ]
   },
   "MON_GREAT_CRYSTAL_DRAKE": {
     "key": "MON_GREAT_CRYSTAL_DRAKE",
@@ -35353,7 +36030,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10000,
     "baseAC": 45,
     "coreBaseHp": 1060,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 138,
@@ -35370,7 +36047,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 64
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SHARDS",
     "attacks": [
       {
         "method": "CLAW",
@@ -35418,7 +36095,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "A huge crystalline dragon. Its claws could cut you to shreds and its teeth are razor sharp. Strange colours ripple through it as it moves in the light.",
-    "description": "A huge crystalline dragon. Its claws could cut you to shreds and its teeth are razor sharp. Strange colours ripple through it as it moves in the light."
+    "description": "A huge crystalline dragon. Its claws could cut you to shreds and its teeth are razor sharp. Strange colours ripple through it as it moves in the light.",
+    "breathElements": [
+      "SHARDS"
+    ]
   },
   "MON_VROCK": {
     "key": "MON_VROCK",
@@ -35668,7 +36348,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12000,
     "baseAC": 45,
     "coreBaseHp": 909,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 76,
@@ -35751,7 +36431,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "One of the Dark Judges, he has come to punish your crime of living. He looks like a skeleton enveloped in flames.",
-    "description": "One of the Dark Judges, he has come to punish your crime of living. He looks like a skeleton enveloped in flames."
+    "description": "One of the Dark Judges, he has come to punish your crime of living. He looks like a skeleton enveloped in flames.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_JUDGE_MORTIS": {
     "key": "MON_JUDGE_MORTIS",
@@ -35764,7 +36447,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 13000,
     "baseAC": 45,
     "coreBaseHp": 909,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 76,
@@ -35781,7 +36464,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 87
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "NETHER",
     "attacks": [
       {
         "method": "HIT",
@@ -35844,7 +36527,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "Another Dark Judge, he is a rotting humanoid with a cow's skull as his head.",
-    "description": "Another Dark Judge, he is a rotting humanoid with a cow's skull as his head."
+    "description": "Another Dark Judge, he is a rotting humanoid with a cow's skull as his head.",
+    "breathElements": [
+      "NETHER",
+      "POISON"
+    ]
   },
   "MON_DARK_ELVEN_SORCERER": {
     "key": "MON_DARK_ELVEN_SORCERER",
@@ -35928,7 +36615,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "A dark elven figure, dressed in deepest black. Power seems to crackle from his slender frame.",
-    "description": "A dark elven figure, dressed in deepest black. Power seems to crackle from his slender frame."
+    "description": "A dark elven figure, dressed in deepest black. Power seems to crackle from his slender frame.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_MASTER_LICH": {
     "key": "MON_MASTER_LICH",
@@ -35941,7 +36631,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 7000,
     "baseAC": 45,
     "coreBaseHp": 909,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 71,
@@ -36108,7 +36798,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "A lord of the Teleri, Eol is a mighty metalsmith, the first one ever to forge weapons of meteorite iron.  His dark countenance glares at you in disdain.",
-    "description": "A lord of the Teleri, Eol is a mighty metalsmith, the first one ever to forge weapons of meteorite iron.  His dark countenance glares at you in disdain."
+    "description": "A lord of the Teleri, Eol is a mighty metalsmith, the first one ever to forge weapons of meteorite iron.  His dark countenance glares at you in disdain.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_ARCHON": {
     "key": "MON_ARCHON",
@@ -36209,7 +36902,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 8000,
     "baseAC": 45,
     "coreBaseHp": 1363,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 106,
@@ -36284,7 +36977,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_UNDEAD"
     ],
     "flavorText": "A beholder which has cheated death.  Black nether storms rage around the bloodshot pupil of its central giant eye, and light seems to bend as it sucks its power from the very air around it.  Your soul chills as it drains your vitality for its evil enchantments.",
-    "description": "A beholder which has cheated death.  Black nether storms rage around the bloodshot pupil of its central giant eye, and light seems to bend as it sucks its power from the very air around it.  Your soul chills as it drains your vitality for its evil enchantments."
+    "description": "A beholder which has cheated death.  Black nether storms rage around the bloodshot pupil of its central giant eye, and light seems to bend as it sucks its power from the very air around it.  Your soul chills as it drains your vitality for its evil enchantments.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_SHADOW": {
     "key": "MON_SHADOW",
@@ -36297,7 +36993,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 400,
     "baseAC": 30,
     "coreBaseHp": 105,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 50,
@@ -36377,7 +37073,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10000,
     "baseAC": 45,
     "coreBaseHp": 1111,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 75,
@@ -36449,7 +37145,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_UNDEAD"
     ],
     "flavorText": "It is a huge, twisted grey skull floating through the air. Its cold eyes burn with hatred towards all who live.",
-    "description": "It is a huge, twisted grey skull floating through the air. Its cold eyes burn with hatred towards all who live."
+    "description": "It is a huge, twisted grey skull floating through the air. Its cold eyes burn with hatred towards all who live.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_GREATER_BASILISK": {
     "key": "MON_GREATER_BASILISK",
@@ -36462,7 +37161,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10000,
     "baseAC": 45,
     "coreBaseHp": 1010,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 115,
@@ -36525,7 +37224,12 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_POIS"
     ],
     "flavorText": "A large basilisk, whose shape resembles that of a great wyrm.",
-    "description": "A large basilisk, whose shape resembles that of a great wyrm."
+    "description": "A large basilisk, whose shape resembles that of a great wyrm.",
+    "breathElements": [
+      "DARK",
+      "NEXUS",
+      "POISON"
+    ]
   },
   "MON_JUDGE_FEAR": {
     "key": "MON_JUDGE_FEAR",
@@ -36538,7 +37242,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12000,
     "baseAC": 45,
     "coreBaseHp": 909,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 68,
@@ -36630,7 +37334,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 13000,
     "baseAC": 45,
     "coreBaseHp": 1060,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 137,
@@ -36703,7 +37407,14 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A huge draconic form. Many colours ripple down its massive frame. Few live to see another.",
-    "description": "A huge draconic form. Many colours ripple down its massive frame. Few live to see another."
+    "description": "A huge draconic form. Many colours ripple down its massive frame. Few live to see another.",
+    "breathElements": [
+      "ACID",
+      "COLD",
+      "LIGHTNING",
+      "FIRE",
+      "POISON"
+    ]
   },
   "MON_ETHEREAL_DRAGON": {
     "key": "MON_ETHEREAL_DRAGON",
@@ -36716,7 +37427,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10000,
     "baseAC": 45,
     "coreBaseHp": 1060,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 138,
@@ -36733,7 +37444,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 64
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CONFUSION",
     "attacks": [
       {
         "method": "CLAW",
@@ -36776,7 +37487,12 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "CONF"
     ],
     "flavorText": "A huge dragon emanating from the ethereal plane, this terrible creature is a master of light and dark. Its form disappears from sight as it cloaks itself in unearthly shadows.",
-    "description": "A huge dragon emanating from the ethereal plane, this terrible creature is a master of light and dark. Its form disappears from sight as it cloaks itself in unearthly shadows."
+    "description": "A huge dragon emanating from the ethereal plane, this terrible creature is a master of light and dark. Its form disappears from sight as it cloaks itself in unearthly shadows.",
+    "breathElements": [
+      "CONFUSION",
+      "DARK",
+      "LIGHT"
+    ]
   },
   "MON_QUAKER_MASTER_OF_EARTH": {
     "key": "MON_QUAKER_MASTER_OF_EARTH",
@@ -36859,7 +37575,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_ACID"
     ],
     "flavorText": "A towering stone elemental stands before you. The walls and ceiling are reduced to rubble as Quaker advances.",
-    "description": "A towering stone elemental stands before you. The walls and ceiling are reduced to rubble as Quaker advances."
+    "description": "A towering stone elemental stands before you. The walls and ceiling are reduced to rubble as Quaker advances.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_JUDGE_DEATH": {
     "key": "MON_JUDGE_DEATH",
@@ -36872,7 +37591,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 14000,
     "baseAC": 45,
     "coreBaseHp": 1147,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 123,
@@ -36952,7 +37671,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_UNDEAD"
     ],
     "flavorText": "The most powerful Dark Judge, whose touch means death.",
-    "description": "The most powerful Dark Judge, whose touch means death."
+    "description": "The most powerful Dark Judge, whose touch means death.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_ARIEL_QUEEN_OF_AIR": {
     "key": "MON_ARIEL_QUEEN_OF_AIR",
@@ -37036,7 +37758,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_ELEC"
     ],
     "flavorText": "A towering air elemental, Ariel the sorceress avoids your blows with her extreme speed.",
-    "description": "A towering air elemental, Ariel the sorceress avoids your blows with her extreme speed."
+    "description": "A towering air elemental, Ariel the sorceress avoids your blows with her extreme speed.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_11_HEADED_HYDRA": {
     "key": "MON_11_HEADED_HYDRA",
@@ -37049,7 +37774,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 6000,
     "baseAC": 45,
     "coreBaseHp": 950,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 132,
@@ -37114,7 +37839,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A strange reptilian hybrid with eleven smouldering heads.",
-    "description": "A strange reptilian hybrid with eleven smouldering heads."
+    "description": "A strange reptilian hybrid with eleven smouldering heads.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_PATRIARCH": {
     "key": "MON_PATRIARCH",
@@ -37127,7 +37855,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1800,
     "baseAC": 45,
     "coreBaseHp": 286,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 64,
@@ -37204,7 +37932,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 8000,
     "baseAC": 45,
     "coreBaseHp": 606,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 107,
@@ -37290,7 +38018,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12000,
     "baseAC": 45,
     "coreBaseHp": 1515,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 144,
@@ -37307,7 +38035,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 63
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -37360,7 +38088,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "A constructed dragon, the drolem has massive strength. Powerful spells weaved during its creation make it a fearsome adversary. Its eyes show little intelligence, but it has been instructed to destroy all it meets.",
-    "description": "A constructed dragon, the drolem has massive strength. Powerful spells weaved during its creation make it a fearsome adversary. Its eyes show little intelligence, but it has been instructed to destroy all it meets."
+    "description": "A constructed dragon, the drolem has massive strength. Powerful spells weaved during its creation make it a fearsome adversary. Its eyes show little intelligence, but it has been instructed to destroy all it meets.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_SCATHA_THE_WORM": {
     "key": "MON_SCATHA_THE_WORM",
@@ -37373,7 +38104,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 17000,
     "baseAC": 45,
     "coreBaseHp": 1111,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 165,
@@ -37441,7 +38172,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "CONF"
     ],
     "flavorText": "An ancient and wise dragon, Scatha has grown clever over the long years. His scales are covered with frost, and his breath sends a shower of ice into the air.",
-    "description": "An ancient and wise dragon, Scatha has grown clever over the long years. His scales are covered with frost, and his breath sends a shower of ice into the air."
+    "description": "An ancient and wise dragon, Scatha has grown clever over the long years. His scales are covered with frost, and his breath sends a shower of ice into the air.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_LESSER_BLACK_REAVER": {
     "key": "MON_LESSER_BLACK_REAVER",
@@ -37454,7 +38188,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12000,
     "baseAC": 45,
     "coreBaseHp": 1262,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 116,
@@ -37471,7 +38205,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 64
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [
       {
         "method": "HIT",
@@ -37612,7 +38346,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 23000,
     "baseAC": 45,
     "coreBaseHp": 1212,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 194,
@@ -37682,7 +38416,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "CONF"
     ],
     "flavorText": "Smaug is one of the Uruloki that still survive, a fire-drake of immense cunning and intelligence.  His speed through air is matched by few other dragons, his dragonfire is legendary, and his hide is armoured with diamonds. He is believed to be the greatest dragon still surviving into the Third Age.",
-    "description": "Smaug is one of the Uruloki that still survive, a fire-drake of immense cunning and intelligence.  His speed through air is matched by few other dragons, his dragonfire is legendary, and his hide is armoured with diamonds. He is believed to be the greatest dragon still surviving into the Third Age."
+    "description": "Smaug is one of the Uruloki that still survive, a fire-drake of immense cunning and intelligence.  His speed through air is matched by few other dragons, his dragonfire is legendary, and his hide is armoured with diamonds. He is believed to be the greatest dragon still surviving into the Third Age.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_KNIGHT_TEMPLAR": {
     "key": "MON_KNIGHT_TEMPLAR",
@@ -37695,7 +38432,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2000,
     "baseAC": 45,
     "coreBaseHp": 630,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 92,
@@ -37781,7 +38518,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 18000,
     "baseAC": 45,
     "coreBaseHp": 1767,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 171,
@@ -37848,7 +38585,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "The skeletal form of a once-great dragon, enchanted by magic most perilous. Its animated form strikes with speed and drains life from its prey to satisfy its hunger.",
-    "description": "The skeletal form of a once-great dragon, enchanted by magic most perilous. Its animated form strikes with speed and drains life from its prey to satisfy its hunger."
+    "description": "The skeletal form of a once-great dragon, enchanted by magic most perilous. Its animated form strikes with speed and drains life from its prey to satisfy its hunger.",
+    "breathElements": [
+      "COLD",
+      "NETHER"
+    ]
   },
   "MON_GREATER_TITAN": {
     "key": "MON_GREATER_TITAN",
@@ -37861,7 +38602,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 23500,
     "baseAC": 45,
     "coreBaseHp": 1919,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -37940,7 +38681,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 18000,
     "baseAC": 45,
     "coreBaseHp": 1767,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 173,
@@ -38009,7 +38750,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A mixture of dragon and basilisk, the dracolisk stares at you with deep piercing eyes, its evil breath burning the ground where it stands.",
-    "description": "A mixture of dragon and basilisk, the dracolisk stares at you with deep piercing eyes, its evil breath burning the ground where it stands."
+    "description": "A mixture of dragon and basilisk, the dracolisk stares at you with deep piercing eyes, its evil breath burning the ground where it stands.",
+    "breathElements": [
+      "FIRE",
+      "NEXUS"
+    ]
   },
   "MON_WINGED_HORROR": {
     "key": "MON_WINGED_HORROR",
@@ -38022,7 +38767,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 4000,
     "baseAC": 45,
     "coreBaseHp": 1012,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 107,
@@ -38081,7 +38826,12 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_POIS"
     ],
     "flavorText": "A terrifying sight:  a winged creature greater than any bird you have ever seen, and with no feathers on its horrid black leathery wings.  Descended from a creature of an older world perhaps, bred by Sauron to be a winged steed for his Ringwraiths.",
-    "description": "A terrifying sight:  a winged creature greater than any bird you have ever seen, and with no feathers on its horrid black leathery wings.  Descended from a creature of an older world perhaps, bred by Sauron to be a winged steed for his Ringwraiths."
+    "description": "A terrifying sight:  a winged creature greater than any bird you have ever seen, and with no feathers on its horrid black leathery wings.  Descended from a creature of an older world perhaps, bred by Sauron to be a winged steed for his Ringwraiths.",
+    "breathElements": [
+      "DARK",
+      "NETHER",
+      "POISON"
+    ]
   },
   "MON_ENT": {
     "key": "MON_ENT",
@@ -38165,7 +38915,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 14500,
     "baseAC": 45,
     "coreBaseHp": 2020,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -38238,7 +38988,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20000,
     "baseAC": 45,
     "coreBaseHp": 1111,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 165,
@@ -38305,7 +39055,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "CONF"
     ],
     "flavorText": "A mighty ancient dragon, Itangast's form scorches your flesh. Wisps of smoke curl up from his nostrils as he regards you with disdain.",
-    "description": "A mighty ancient dragon, Itangast's form scorches your flesh. Wisps of smoke curl up from his nostrils as he regards you with disdain."
+    "description": "A mighty ancient dragon, Itangast's form scorches your flesh. Wisps of smoke curl up from his nostrils as he regards you with disdain.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_DEATH_MOLD": {
     "key": "MON_DEATH_MOLD",
@@ -38318,7 +39071,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1000,
     "baseAC": 45,
     "coreBaseHp": 1050,
-    "speed": 10.0,
+    "speed": 10,
     "growthType": "TANK",
     "coreBase": {
       "str": 159,
@@ -38388,7 +39141,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 13500,
     "baseAC": 45,
     "coreBaseHp": 2020,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -38537,7 +39290,12 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_HI_DRAGON"
     ],
     "flavorText": "Glaurung is the father of all dragons, and was for a long time the most powerful.  Though this is no longer so, he still has full command over his brood and can command them to appear whenever he so wishes.  He is the definition of dragonfire.",
-    "description": "Glaurung is the father of all dragons, and was for a long time the most powerful.  Though this is no longer so, he still has full command over his brood and can command them to appear whenever he so wishes.  He is the definition of dragonfire."
+    "description": "Glaurung is the father of all dragons, and was for a long time the most powerful.  Though this is no longer so, he still has full command over his brood and can command them to appear whenever he so wishes.  He is the definition of dragonfire.",
+    "breathElements": [
+      "FIRE",
+      "POISON",
+      "SOUND"
+    ]
   },
   "MON_BEHEMOTH": {
     "key": "MON_BEHEMOTH",
@@ -38550,7 +39308,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 16000,
     "baseAC": 45,
     "coreBaseHp": 2525,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 153,
@@ -38611,7 +39369,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_FIRE"
     ],
     "flavorText": "A great water-beast, with an almost impenetrable skin.",
-    "description": "A great water-beast, with an almost impenetrable skin."
+    "description": "A great water-beast, with an almost impenetrable skin.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_GREATER_WALL_MONSTER": {
     "key": "MON_GREATER_WALL_MONSTER",
@@ -38624,7 +39385,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 900,
     "baseAC": 45,
     "coreBaseHp": 307,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 76,
@@ -38696,7 +39457,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10000,
     "baseAC": 45,
     "coreBaseHp": 1450,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 121,
@@ -38713,7 +39474,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 72
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "NETHER",
     "attacks": [
       {
         "method": "TOUCH",
@@ -38767,7 +39528,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_DEMON"
     ],
     "flavorText": "A loathsome, sturdy, winged, horned demon, with talons that could tear a stone wall down.",
-    "description": "A loathsome, sturdy, winged, horned demon, with talons that could tear a stone wall down."
+    "description": "A loathsome, sturdy, winged, horned demon, with talons that could tear a stone wall down.",
+    "breathElements": [
+      "NETHER"
+    ]
   },
   "MON_BARBAZU": {
     "key": "MON_BARBAZU",
@@ -38780,7 +39544,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3000,
     "baseAC": 45,
     "coreBaseHp": 660,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 135,
@@ -38797,7 +39561,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 77
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "HIT",
@@ -38842,7 +39606,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_DEMON"
     ],
     "flavorText": "A foul, humanoid creature with a long tail, clawed hands and feet, and a disgusting, wiry, snaky beard.  They are the elite shock troops of the hells, capable of a terrifying berserk fury.",
-    "description": "A foul, humanoid creature with a long tail, clawed hands and feet, and a disgusting, wiry, snaky beard.  They are the elite shock troops of the hells, capable of a terrifying berserk fury."
+    "description": "A foul, humanoid creature with a long tail, clawed hands and feet, and a disgusting, wiry, snaky beard.  They are the elite shock troops of the hells, capable of a terrifying berserk fury.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_NIGHTWING": {
     "key": "MON_NIGHTWING",
@@ -38855,7 +39622,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10000,
     "baseAC": 45,
     "coreBaseHp": 1830,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 158,
@@ -38872,7 +39639,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 85
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "TOUCH",
@@ -38928,7 +39695,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_UNDEAD"
     ],
     "flavorText": "Everywhere colours seem paler and the air chiller. At the centre of the cold stands a mighty figure. Its wings envelop you in the chill of death as the nightwing reaches out to draw you into oblivion. Your muscles sag and your mind loses all will to fight as you stand in awe of this mighty being.",
-    "description": "Everywhere colours seem paler and the air chiller. At the centre of the cold stands a mighty figure. Its wings envelop you in the chill of death as the nightwing reaches out to draw you into oblivion. Your muscles sag and your mind loses all will to fight as you stand in awe of this mighty being."
+    "description": "Everywhere colours seem paler and the air chiller. At the centre of the cold stands a mighty figure. Its wings envelop you in the chill of death as the nightwing reaches out to draw you into oblivion. Your muscles sag and your mind loses all will to fight as you stand in awe of this mighty being.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_MAULOTAUR": {
     "key": "MON_MAULOTAUR",
@@ -39001,7 +39771,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_PLAS"
     ],
     "flavorText": "It is a belligerent minotaur with a destructive magical arsenal, armed with a hammer.",
-    "description": "It is a belligerent minotaur with a destructive magical arsenal, armed with a hammer."
+    "description": "It is a belligerent minotaur with a destructive magical arsenal, armed with a hammer.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_NETHER_HOUND": {
     "key": "MON_NETHER_HOUND",
@@ -39014,7 +39787,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 5000,
     "baseAC": 45,
     "coreBaseHp": 330,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 106,
@@ -39031,7 +39804,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 72
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "NETHER",
     "attacks": [
       {
         "method": "CLAW",
@@ -39073,7 +39846,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_NETH"
     ],
     "flavorText": "You feel a soul-tearing chill upon viewing this beast, a ghostly form of darkness in the shape of a large dog.",
-    "description": "You feel a soul-tearing chill upon viewing this beast, a ghostly form of darkness in the shape of a large dog."
+    "description": "You feel a soul-tearing chill upon viewing this beast, a ghostly form of darkness in the shape of a large dog.",
+    "breathElements": [
+      "NETHER"
+    ]
   },
   "MON_TIME_HOUND": {
     "key": "MON_TIME_HOUND",
@@ -39103,7 +39879,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 72
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "TIME",
     "attacks": [
       {
         "method": "CLAW",
@@ -39143,7 +39919,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_TIME"
     ],
     "flavorText": "You get a terrible sense of deja vu, or is it a premonition?  All at once you see a little puppy and a toothless old dog. Perhaps you should give up and go to bed.",
-    "description": "You get a terrible sense of deja vu, or is it a premonition?  All at once you see a little puppy and a toothless old dog. Perhaps you should give up and go to bed."
+    "description": "You get a terrible sense of deja vu, or is it a premonition?  All at once you see a little puppy and a toothless old dog. Perhaps you should give up and go to bed.",
+    "breathElements": [
+      "TIME"
+    ]
   },
   "MON_PLASMA_HOUND": {
     "key": "MON_PLASMA_HOUND",
@@ -39156,7 +39935,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 5000,
     "baseAC": 45,
     "coreBaseHp": 330,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 106,
@@ -39173,7 +39952,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 72
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "PLASMA",
     "attacks": [
       {
         "method": "CLAW",
@@ -39218,7 +39997,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_PLAS"
     ],
     "flavorText": "The very air warps as pure elemental energy stalks towards you in the shape of a giant hound. Your hair stands on end and your palms itch as you sense trouble.",
-    "description": "The very air warps as pure elemental energy stalks towards you in the shape of a giant hound. Your hair stands on end and your palms itch as you sense trouble."
+    "description": "The very air warps as pure elemental energy stalks towards you in the shape of a giant hound. Your hair stands on end and your palms itch as you sense trouble.",
+    "breathElements": [
+      "PLASMA"
+    ]
   },
   "MON_DEMONIC_QUYLTHULG": {
     "key": "MON_DEMONIC_QUYLTHULG",
@@ -39231,7 +40013,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3000,
     "baseAC": 8,
     "coreBaseHp": 264,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 39,
@@ -39282,7 +40064,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20000,
     "baseAC": 45,
     "coreBaseHp": 2020,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -39352,7 +40134,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A vast dragon of power. Storms and lightning crash around its titanic form. Deep blue scales reflect the flashes and highlight the creature's great muscles. It regards you with contempt.",
-    "description": "A vast dragon of power. Storms and lightning crash around its titanic form. Deep blue scales reflect the flashes and highlight the creature's great muscles. It regards you with contempt."
+    "description": "A vast dragon of power. Storms and lightning crash around its titanic form. Deep blue scales reflect the flashes and highlight the creature's great muscles. It regards you with contempt.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_ULIK_THE_TROLL": {
     "key": "MON_ULIK_THE_TROLL",
@@ -39382,7 +40167,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 105
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "HIT",
@@ -39428,7 +40213,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "Ulik is the strongest troll who has ever lived. He could challenge the immortals and pound them to dust with his great strength.",
-    "description": "Ulik is the strongest troll who has ever lived. He could challenge the immortals and pound them to dust with his great strength."
+    "description": "Ulik is the strongest troll who has ever lived. He could challenge the immortals and pound them to dust with his great strength.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_BAPHOMET_THE_MINOTAUR_LORD": {
     "key": "MON_BAPHOMET_THE_MINOTAUR_LORD",
@@ -39458,7 +40246,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 118
     },
     "aiPattern": "BREATH",
-    "breathElement": "LIGHTNING",
+    "breathElement": "FORCE",
     "attacks": [
       {
         "method": "BUTT",
@@ -39508,7 +40296,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "A fearsome bull-headed monster, Baphomet swings a mighty axe as he curses all that defy him.",
-    "description": "A fearsome bull-headed monster, Baphomet swings a mighty axe as he curses all that defy him."
+    "description": "A fearsome bull-headed monster, Baphomet swings a mighty axe as he curses all that defy him.",
+    "breathElements": [
+      "FORCE"
+    ]
   },
   "MON_HELL_KNIGHT": {
     "key": "MON_HELL_KNIGHT",
@@ -39521,7 +40312,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10000,
     "baseAC": 45,
     "coreBaseHp": 757,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 188,
@@ -39594,7 +40385,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_MONSTERS"
     ],
     "flavorText": "It is a humanoid form dressed in armour of ancient style. From beneath its helmet, eyes glow with hellfire.",
-    "description": "It is a humanoid form dressed in armour of ancient style. From beneath its helmet, eyes glow with hellfire."
+    "description": "It is a humanoid form dressed in armour of ancient style. From beneath its helmet, eyes glow with hellfire.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_BULL_GATES": {
     "key": "MON_BULL_GATES",
@@ -39607,7 +40401,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20000,
     "baseAC": 45,
     "coreBaseHp": 1262,
-    "speed": 10.0,
+    "speed": 10,
     "growthType": "TANK",
     "coreBase": {
       "str": 145,
@@ -39704,7 +40498,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 107
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [
       {
         "method": "HIT",
@@ -39850,7 +40644,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "A human figure in robes, he moves with magically improved speed, and his hands are ablur with spell casting. You stagger at the mighty sound of his spells as they echo hollowly through the dungeon.",
-    "description": "A human figure in robes, he moves with magically improved speed, and his hands are ablur with spell casting. You stagger at the mighty sound of his spells as they echo hollowly through the dungeon."
+    "description": "A human figure in robes, he moves with magically improved speed, and his hands are ablur with spell casting. You stagger at the mighty sound of his spells as they echo hollowly through the dungeon.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_ETHEREAL_HOUND": {
     "key": "MON_ETHEREAL_HOUND",
@@ -39863,7 +40660,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 6000,
     "baseAC": 45,
     "coreBaseHp": 480,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 108,
@@ -39880,7 +40677,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 77
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "NETHER",
     "attacks": [
       {
         "method": "BITE",
@@ -39918,7 +40715,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_NETH"
     ],
     "flavorText": "A pale green hound. Pulsing red lines and strange fluorescent light hint at internal organs best left to the imagination.",
-    "description": "A pale green hound. Pulsing red lines and strange fluorescent light hint at internal organs best left to the imagination."
+    "description": "A pale green hound. Pulsing red lines and strange fluorescent light hint at internal organs best left to the imagination.",
+    "breathElements": [
+      "NETHER"
+    ]
   },
   "MON_LESSER_KRAKEN": {
     "key": "MON_LESSER_KRAKEN",
@@ -39931,7 +40731,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20000,
     "baseAC": 45,
     "coreBaseHp": 1515,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -40006,7 +40806,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "An enormously fearsome and powerful inhabitant of the depths. It resembles a gargantuan octopus and its evil is almost tangible.",
-    "description": "An enormously fearsome and powerful inhabitant of the depths. It resembles a gargantuan octopus and its evil is almost tangible."
+    "description": "An enormously fearsome and powerful inhabitant of the depths. It resembles a gargantuan octopus and its evil is almost tangible.",
+    "breathElements": [
+      "DARK"
+    ]
   },
   "MON_GREAT_ICE_WYRM": {
     "key": "MON_GREAT_ICE_WYRM",
@@ -40019,7 +40822,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20000,
     "baseAC": 45,
     "coreBaseHp": 2020,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -40090,7 +40893,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "An immense dragon capable of awesome destruction. You have never felt such extreme cold, or witnessed such an icy stare. Begone quickly or feel its wrath!",
-    "description": "An immense dragon capable of awesome destruction. You have never felt such extreme cold, or witnessed such an icy stare. Begone quickly or feel its wrath!"
+    "description": "An immense dragon capable of awesome destruction. You have never felt such extreme cold, or witnessed such an icy stare. Begone quickly or feel its wrath!",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_DEMILICH": {
     "key": "MON_DEMILICH",
@@ -40103,7 +40909,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12500,
     "baseAC": 45,
     "coreBaseHp": 1767,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 111,
@@ -40197,7 +41003,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 40000,
     "baseAC": 45,
     "coreBaseHp": 1818,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -40271,7 +41077,12 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_PLAS"
     ],
     "flavorText": "A massive glowing eagle bathed in flames. The searing heat chars your skin and melts your armour.",
-    "description": "A massive glowing eagle bathed in flames. The searing heat chars your skin and melts your armour."
+    "description": "A massive glowing eagle bathed in flames. The searing heat chars your skin and melts your armour.",
+    "breathElements": [
+      "FIRE",
+      "LIGHT",
+      "PLASMA"
+    ]
   },
   "MON_NIGHTCRAWLER": {
     "key": "MON_NIGHTCRAWLER",
@@ -40284,7 +41095,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1500,
     "baseAC": 45,
     "coreBaseHp": 2440,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -40301,7 +41112,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 95
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "NETHER",
     "attacks": [
       {
         "method": "STING",
@@ -40360,7 +41171,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_UNDEAD"
     ],
     "flavorText": "This intensely evil creature bears the form of a gargantuan black worm. Its gaping maw is a void of blackness, and acid drips from its steely hide. It is like nothing you have ever seen before, and a terrible chill runs down your spine as you face it.",
-    "description": "This intensely evil creature bears the form of a gargantuan black worm. Its gaping maw is a void of blackness, and acid drips from its steely hide. It is like nothing you have ever seen before, and a terrible chill runs down your spine as you face it."
+    "description": "This intensely evil creature bears the form of a gargantuan black worm. Its gaping maw is a void of blackness, and acid drips from its steely hide. It is like nothing you have ever seen before, and a terrible chill runs down your spine as you face it.",
+    "breathElements": [
+      "NETHER"
+    ]
   },
   "MON_HAND_DRUJ": {
     "key": "MON_HAND_DRUJ",
@@ -40390,7 +41204,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 80
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [],
     "flags": [
       "CAN_SWIM",
@@ -40425,7 +41239,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_AWAY"
     ],
     "flavorText": "A skeletal hand floating in the air, motionless except for its flexing fingers.",
-    "description": "A skeletal hand floating in the air, motionless except for its flexing fingers."
+    "description": "A skeletal hand floating in the air, motionless except for its flexing fingers.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_EYE_DRUJ": {
     "key": "MON_EYE_DRUJ",
@@ -40455,7 +41272,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 81
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [],
     "flags": [
       "CAN_SWIM",
@@ -40515,7 +41332,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 82
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [],
     "flags": [
       "CAN_SWIM",
@@ -40560,7 +41377,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 4000,
     "baseAC": 45,
     "coreBaseHp": 336,
-    "speed": 10.0,
+    "speed": 10,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 117,
@@ -40577,7 +41394,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 74
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CHAOS",
     "attacks": [
       {
         "method": "ENGULF",
@@ -40621,7 +41438,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_CHAO"
     ],
     "flavorText": "Void, nothingness, spinning destructively.",
-    "description": "Void, nothingness, spinning destructively."
+    "description": "Void, nothingness, spinning destructively.",
+    "breathElements": [
+      "CHAOS"
+    ]
   },
   "MON_AETHER_VORTEX": {
     "key": "MON_AETHER_VORTEX",
@@ -40725,7 +41545,27 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_WALL"
     ],
     "flavorText": "An awesome vortex of pure magic, power radiates from its frame.",
-    "description": "An awesome vortex of pure magic, power radiates from its frame."
+    "description": "An awesome vortex of pure magic, power radiates from its frame.",
+    "breathElements": [
+      "ACID",
+      "CHAOS",
+      "COLD",
+      "CONFUSION",
+      "DARK",
+      "LIGHTNING",
+      "FIRE",
+      "GRAVITY",
+      "INERTIA",
+      "LIGHT",
+      "NETHER",
+      "NEXUS",
+      "PLASMA",
+      "POISON",
+      "SHARDS",
+      "SOUND",
+      "TIME",
+      "FORCE"
+    ]
   },
   "MON_THE_LERNAEAN_HYDRA": {
     "key": "MON_THE_LERNAEAN_HYDRA",
@@ -40738,7 +41578,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20000,
     "baseAC": 45,
     "coreBaseHp": 2272,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -40816,7 +41656,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_KIN"
     ],
     "flavorText": "A massive legendary hydra. It has twelve powerful heads. Its many eyes stare at you as clouds of smoke and poisonous vapour rise from its seething form.  It grows new heads as fast as you chop them off.",
-    "description": "A massive legendary hydra. It has twelve powerful heads. Its many eyes stare at you as clouds of smoke and poisonous vapour rise from its seething form.  It grows new heads as fast as you chop them off."
+    "description": "A massive legendary hydra. It has twelve powerful heads. Its many eyes stare at you as clouds of smoke and poisonous vapour rise from its seething form.  It grows new heads as fast as you chop them off.",
+    "breathElements": [
+      "FIRE",
+      "POISON"
+    ]
   },
   "MON_THURINGWETHIL_THE_VAMPIRE_MESSENGER": {
     "key": "MON_THURINGWETHIL_THE_VAMPIRE_MESSENGER",
@@ -40846,7 +41690,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 134
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [
       {
         "method": "BITE",
@@ -40925,7 +41769,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 23000,
     "baseAC": 45,
     "coreBaseHp": 2525,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -40996,7 +41840,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A vast dragon of immense power. Fire leaps continuously from its huge form. The air around it scalds you. Its slightest glance burns you, and you realise how truly insignificant you are.",
-    "description": "A vast dragon of immense power. Fire leaps continuously from its huge form. The air around it scalds you. Its slightest glance burns you, and you realise how truly insignificant you are."
+    "description": "A vast dragon of immense power. Fire leaps continuously from its huge form. The air around it scalds you. Its slightest glance burns you, and you realise how truly insignificant you are.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_DRACONIC_QUYLTHULG": {
     "key": "MON_DRACONIC_QUYLTHULG",
@@ -41009,7 +41856,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3000,
     "baseAC": 8,
     "coreBaseHp": 264,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 39,
@@ -41151,7 +41998,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12000,
     "baseAC": 45,
     "coreBaseHp": 1767,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -41217,7 +42064,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_DEMON"
     ],
     "flavorText": "It's big.  It's fat.  It's red.  It's ugly.  It's got a severe attack of highly poisonous flatulence.  And its insides are corrosive.  All of which go together to make the single most repulsive sight - and smell - you have ever experienced.",
-    "description": "It's big.  It's fat.  It's red.  It's ugly.  It's got a severe attack of highly poisonous flatulence.  And its insides are corrosive.  All of which go together to make the single most repulsive sight - and smell - you have ever experienced."
+    "description": "It's big.  It's fat.  It's red.  It's ugly.  It's got a severe attack of highly poisonous flatulence.  And its insides are corrosive.  All of which go together to make the single most repulsive sight - and smell - you have ever experienced.",
+    "breathElements": [
+      "ACID",
+      "POISON"
+    ]
   },
   "MON_URIEL_ANGEL_OF_FIRE": {
     "key": "MON_URIEL_ANGEL_OF_FIRE",
@@ -41312,7 +42163,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "A creature of godly appearance. You dare not challenge Uriel's supremacy. Those who stood against him before are but a memory, cremated by his mastery of elemental fire.",
-    "description": "A creature of godly appearance. You dare not challenge Uriel's supremacy. Those who stood against him before are but a memory, cremated by his mastery of elemental fire."
+    "description": "A creature of godly appearance. You dare not challenge Uriel's supremacy. Those who stood against him before are but a memory, cremated by his mastery of elemental fire.",
+    "breathElements": [
+      "FIRE",
+      "PLASMA"
+    ]
   },
   "MON_AZRIEL_ANGEL_OF_DEATH": {
     "key": "MON_AZRIEL_ANGEL_OF_DEATH",
@@ -41342,7 +42197,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 125
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "NETHER",
     "attacks": [
       {
         "method": "HIT",
@@ -41408,7 +42263,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "Azriel commands awesome power, his visage holy enough to shrivel your soul. You shriek with disbelief as his mastery of death draws you to your grave. It is truly beyond all but the mightiest of warriors to stand against him and live.",
-    "description": "Azriel commands awesome power, his visage holy enough to shrivel your soul. You shriek with disbelief as his mastery of death draws you to your grave. It is truly beyond all but the mightiest of warriors to stand against him and live."
+    "description": "Azriel commands awesome power, his visage holy enough to shrivel your soul. You shriek with disbelief as his mastery of death draws you to your grave. It is truly beyond all but the mightiest of warriors to stand against him and live.",
+    "breathElements": [
+      "NETHER"
+    ]
   },
   "MON_ANCALAGON_THE_BLACK": {
     "key": "MON_ANCALAGON_THE_BLACK",
@@ -41421,7 +42279,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 60000,
     "baseAC": 45,
     "coreBaseHp": 9090,
-    "speed": 10.0,
+    "speed": 10,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -41500,7 +42358,14 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_KIN"
     ],
     "flavorText": "\"Rushing Jaws\" is his name, and death is his game; the greatest and most terrible of all dragonkind, his power dismayed even the Valar for a time.",
-    "description": "\"Rushing Jaws\" is his name, and death is his game; the greatest and most terrible of all dragonkind, his power dismayed even the Valar for a time."
+    "description": "\"Rushing Jaws\" is his name, and death is his game; the greatest and most terrible of all dragonkind, his power dismayed even the Valar for a time.",
+    "breathElements": [
+      "ACID",
+      "DISINTEGRATE",
+      "FIRE",
+      "TIME",
+      "FORCE"
+    ]
   },
   "MON_NIGHTWALKER": {
     "key": "MON_NIGHTWALKER",
@@ -41530,7 +42395,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 100
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [
       {
         "method": "HIT",
@@ -41617,7 +42482,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 129
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -41681,7 +42546,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "Commanding a legion of angels, Gabriel will destroy you for your sins. He will crush you like the pitiful insignificant being he sees you to be. Your very soul will be taken into judgement by his supreme authority as he cleanses the world of evil.",
-    "description": "Commanding a legion of angels, Gabriel will destroy you for your sins. He will crush you like the pitiful insignificant being he sees you to be. Your very soul will be taken into judgement by his supreme authority as he cleanses the world of evil."
+    "description": "Commanding a legion of angels, Gabriel will destroy you for your sins. He will crush you like the pitiful insignificant being he sees you to be. Your very soul will be taken into judgement by his supreme authority as he cleanses the world of evil.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_SARUMAN_OF_MANY_COLOURS": {
     "key": "MON_SARUMAN_OF_MANY_COLOURS",
@@ -41694,7 +42562,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 35000,
     "baseAC": 45,
     "coreBaseHp": 3535,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 150,
@@ -41785,7 +42653,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "Originally known as the White, Saruman fell prey to Sauron's wiles. He searches forever for the One Ring, to become a mighty Sorcerer-King of the world.",
-    "description": "Originally known as the White, Saruman fell prey to Sauron's wiles. He searches forever for the One Ring, to become a mighty Sorcerer-King of the world."
+    "description": "Originally known as the White, Saruman fell prey to Sauron's wiles. He searches forever for the One Ring, to become a mighty Sorcerer-King of the world.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_HAROWEN_THE_BLACK_HAND": {
     "key": "MON_HAROWEN_THE_BLACK_HAND",
@@ -41798,7 +42669,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20000,
     "baseAC": 36,
     "coreBaseHp": 1262,
-    "speed": 10.0,
+    "speed": 10,
     "growthType": "TANK",
     "coreBase": {
       "str": 144,
@@ -41815,7 +42686,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 105
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "TOUCH",
@@ -41860,7 +42731,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "He is a master of disguise, an expert of stealth, a genius at traps, and moves with blinding speed. Check your pockets!",
-    "description": "He is a master of disguise, an expert of stealth, a genius at traps, and moves with blinding speed. Check your pockets!"
+    "description": "He is a master of disguise, an expert of stealth, a genius at traps, and moves with blinding speed. Check your pockets!",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_OSYLUTH": {
     "key": "MON_OSYLUTH",
@@ -41945,7 +42819,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_DEMON"
     ],
     "flavorText": "It is a demon made almost entirely out of bones.  It is humanoid, but with a large tail similar to that of a giant scorpion, and emits a foul smell of decay and rot.  They are despised even in the hells.",
-    "description": "It is a demon made almost entirely out of bones.  It is humanoid, but with a large tail similar to that of a giant scorpion, and emits a foul smell of decay and rot.  They are despised even in the hells."
+    "description": "It is a demon made almost entirely out of bones.  It is humanoid, but with a large tail similar to that of a giant scorpion, and emits a foul smell of decay and rot.  They are despised even in the hells.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_DREADLORD": {
     "key": "MON_DREADLORD",
@@ -41958,7 +42835,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20000,
     "baseAC": 45,
     "coreBaseHp": 1515,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 135,
@@ -41975,7 +42852,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 86
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [
       {
         "method": "HIT",
@@ -42047,7 +42924,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 25000,
     "baseAC": 45,
     "coreBaseHp": 2020,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -42064,7 +42941,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 84
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "CRUSH",
@@ -42125,7 +43002,12 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "An enormously fearsome and powerful inhabitant of the depths. It resembles a gargantuan octopus and its evil is almost tangible.",
-    "description": "An enormously fearsome and powerful inhabitant of the depths. It resembles a gargantuan octopus and its evil is almost tangible."
+    "description": "An enormously fearsome and powerful inhabitant of the depths. It resembles a gargantuan octopus and its evil is almost tangible.",
+    "breathElements": [
+      "ACID",
+      "DARK",
+      "POISON"
+    ]
   },
   "MON_ARCHLICH": {
     "key": "MON_ARCHLICH",
@@ -42138,7 +43020,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20000,
     "baseAC": 45,
     "coreBaseHp": 2272,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 181,
@@ -42155,7 +43037,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 89
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [
       {
         "method": "TOUCH",
@@ -42325,7 +43207,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 94
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CHAOS",
     "attacks": [
       {
         "method": "CLAW",
@@ -42368,7 +43250,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "CAUSE_4"
     ],
     "flavorText": "'Twas brillig, and the slithy toves / Did gyre and gimble in the wabe: / All mimsy were the borogoves, / And the mome raths outgrabe. / \"Beware the Jabberwock, my son! / The jaws that bite, the claws that catch!\"",
-    "description": "'Twas brillig, and the slithy toves / Did gyre and gimble in the wabe: / All mimsy were the borogoves, / And the mome raths outgrabe. / \"Beware the Jabberwock, my son! / The jaws that bite, the claws that catch!\""
+    "description": "'Twas brillig, and the slithy toves / Did gyre and gimble in the wabe: / All mimsy were the borogoves, / And the mome raths outgrabe. / \"Beware the Jabberwock, my son! / The jaws that bite, the claws that catch!\"",
+    "breathElements": [
+      "CHAOS"
+    ]
   },
   "MON_CHAOS_HOUND": {
     "key": "MON_CHAOS_HOUND",
@@ -42381,7 +43266,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10000,
     "baseAC": 45,
     "coreBaseHp": 930,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 115,
@@ -42398,7 +43283,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 90
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CHAOS",
     "attacks": [
       {
         "method": "BITE",
@@ -42438,7 +43323,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_CHAO"
     ],
     "flavorText": "A constantly changing canine form, this hound rushes towards you as if expecting mayhem and chaos ahead. It appears to have an almost kamikaze relish for combat. You suspect all may not be as it seems.",
-    "description": "A constantly changing canine form, this hound rushes towards you as if expecting mayhem and chaos ahead. It appears to have an almost kamikaze relish for combat. You suspect all may not be as it seems."
+    "description": "A constantly changing canine form, this hound rushes towards you as if expecting mayhem and chaos ahead. It appears to have an almost kamikaze relish for combat. You suspect all may not be as it seems.",
+    "breathElements": [
+      "CHAOS"
+    ]
   },
   "MON_BEHOLDER_HIVE_MOTHER": {
     "key": "MON_BEHOLDER_HIVE_MOTHER",
@@ -42451,7 +43339,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 17000,
     "baseAC": 45,
     "coreBaseHp": 2020,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 134,
@@ -42522,7 +43410,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_KIN"
     ],
     "flavorText": "A hive mother of the race of beholders, she can summon her brood to her aid whenever she wishes.",
-    "description": "A hive mother of the race of beholders, she can summon her brood to her aid whenever she wishes."
+    "description": "A hive mother of the race of beholders, she can summon her brood to her aid whenever she wishes.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_LEVIATHAN": {
     "key": "MON_LEVIATHAN",
@@ -42535,7 +43426,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 28000,
     "baseAC": 45,
     "coreBaseHp": 2525,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -42552,7 +43443,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 93
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "BITE",
@@ -42605,7 +43496,13 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_HYDRA"
     ],
     "flavorText": "An enormous, terrible sea-monster, the true master of the ocean.",
-    "description": "An enormous, terrible sea-monster, the true master of the ocean."
+    "description": "An enormous, terrible sea-monster, the true master of the ocean.",
+    "breathElements": [
+      "ACID",
+      "DARK",
+      "FIRE",
+      "POISON"
+    ]
   },
   "MON_GREAT_WYRM_OF_CHAOS": {
     "key": "MON_GREAT_WYRM_OF_CHAOS",
@@ -42618,7 +43515,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 29000,
     "baseAC": 45,
     "coreBaseHp": 3030,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -42635,7 +43532,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 103
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CHAOS",
     "attacks": [
       {
         "method": "CLAW",
@@ -42691,7 +43588,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_HI_DRAGON"
     ],
     "flavorText": "A massive dragon of changing form. As you watch, it appears first fair and then foul. Its body is twisted by chaotic forces as it strives to stay real. Its very existence distorts the universe around it.",
-    "description": "A massive dragon of changing form. As you watch, it appears first fair and then foul. Its body is twisted by chaotic forces as it strives to stay real. Its very existence distorts the universe around it."
+    "description": "A massive dragon of changing form. As you watch, it appears first fair and then foul. Its body is twisted by chaotic forces as it strives to stay real. Its very existence distorts the universe around it.",
+    "breathElements": [
+      "CHAOS",
+      "DISENCHANT"
+    ]
   },
   "MON_GREAT_WYRM_OF_LAW": {
     "key": "MON_GREAT_WYRM_OF_LAW",
@@ -42704,7 +43605,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 29000,
     "baseAC": 45,
     "coreBaseHp": 3030,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -42721,7 +43622,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 103
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SHARDS",
     "attacks": [
       {
         "method": "CLAW",
@@ -42776,7 +43677,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_HI_DRAGON"
     ],
     "flavorText": "A massive dragon of powerful intellect. It seeks to dominate the universe and despises all other life. It sees all who do not obey it as mere insects to be crushed underfoot.",
-    "description": "A massive dragon of powerful intellect. It seeks to dominate the universe and despises all other life. It sees all who do not obey it as mere insects to be crushed underfoot."
+    "description": "A massive dragon of powerful intellect. It seeks to dominate the universe and despises all other life. It sees all who do not obey it as mere insects to be crushed underfoot.",
+    "breathElements": [
+      "SHARDS",
+      "SOUND"
+    ]
   },
   "MON_GREAT_WYRM_OF_BALANCE": {
     "key": "MON_GREAT_WYRM_OF_BALANCE",
@@ -42789,7 +43694,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 31000,
     "baseAC": 45,
     "coreBaseHp": 3535,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -42806,7 +43711,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 110
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CHAOS",
     "attacks": [
       {
         "method": "CLAW",
@@ -42865,7 +43770,13 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_HI_DRAGON"
     ],
     "flavorText": "A massive dragon, it is thousands of years old and seeks to maintain the Cosmic Balance. It sees you as an upstart troublemaker without the wisdom to control your actions.",
-    "description": "A massive dragon, it is thousands of years old and seeks to maintain the Cosmic Balance. It sees you as an upstart troublemaker without the wisdom to control your actions."
+    "description": "A massive dragon, it is thousands of years old and seeks to maintain the Cosmic Balance. It sees you as an upstart troublemaker without the wisdom to control your actions.",
+    "breathElements": [
+      "CHAOS",
+      "DISENCHANT",
+      "SHARDS",
+      "SOUND"
+    ]
   },
   "MON_GELUGON": {
     "key": "MON_GELUGON",
@@ -42948,7 +43859,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_HI_DEMON"
     ],
     "flavorText": "This demon from the ice planes is a truly terrifying sight.  It has an extremely large, insect-like body towering a full twelve feet tall, with great claws on its hands and pincers on its mouth, and its head bulges with great multi-faceted eyes.  Its tail is covered with razor-sharp spikes.",
-    "description": "This demon from the ice planes is a truly terrifying sight.  It has an extremely large, insect-like body towering a full twelve feet tall, with great claws on its hands and pincers on its mouth, and its head bulges with great multi-faceted eyes.  Its tail is covered with razor-sharp spikes."
+    "description": "This demon from the ice planes is a truly terrifying sight.  It has an extremely large, insect-like body towering a full twelve feet tall, with great claws on its hands and pincers on its mouth, and its head bulges with great multi-faceted eyes.  Its tail is covered with razor-sharp spikes.",
+    "breathElements": [
+      "COLD",
+      "SHARDS"
+    ]
   },
   "MON_TRONE_THE_REBEL_THUNDERLORD": {
     "key": "MON_TRONE_THE_REBEL_THUNDERLORD",
@@ -43038,7 +43953,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "As the Thunderlords came from afar to help the elves, Trone and his rebel wing came to defend Morgoth! He is an evil and powerful Thunderlord.",
-    "description": "As the Thunderlords came from afar to help the elves, Trone and his rebel wing came to defend Morgoth! He is an evil and powerful Thunderlord."
+    "description": "As the Thunderlords came from afar to help the elves, Trone and his rebel wing came to defend Morgoth! He is an evil and powerful Thunderlord.",
+    "breathElements": [
+      "FIRE",
+      "TIME"
+    ]
   },
   "MON_GREAT_WYRM_OF_MANY_COLOURS": {
     "key": "MON_GREAT_WYRM_OF_MANY_COLOURS",
@@ -43051,7 +43970,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 31000,
     "baseAC": 45,
     "coreBaseHp": 3535,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -43131,7 +44050,14 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A huge dragon whose scales shimmer in myriad hues.",
-    "description": "A huge dragon whose scales shimmer in myriad hues."
+    "description": "A huge dragon whose scales shimmer in myriad hues.",
+    "breathElements": [
+      "ACID",
+      "COLD",
+      "LIGHTNING",
+      "FIRE",
+      "POISON"
+    ]
   },
   "MON_MARDA_RIDER_OF_GOLD_LARONTH": {
     "key": "MON_MARDA_RIDER_OF_GOLD_LARONTH",
@@ -43161,7 +44087,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 149
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -43225,7 +44151,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "Former leader among the Thunderlords, she and Trone have fallen under the control of Morgoth. Laronth, her eagle, can summon Thunderlords to her aid.",
-    "description": "Former leader among the Thunderlords, she and Trone have fallen under the control of Morgoth. Laronth, her eagle, can summon Thunderlords to her aid."
+    "description": "Former leader among the Thunderlords, she and Trone have fallen under the control of Morgoth. Laronth, her eagle, can summon Thunderlords to her aid.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_TSELAKUS_THE_DREADLORD": {
     "key": "MON_TSELAKUS_THE_DREADLORD",
@@ -43255,7 +44184,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 136
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [
       {
         "method": "HIT",
@@ -43402,7 +44331,12 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_HI_DRAGON"
     ],
     "flavorText": "The mightiest elemental dragon of air, it can destroy you with ease.",
-    "description": "The mightiest elemental dragon of air, it can destroy you with ease."
+    "description": "The mightiest elemental dragon of air, it can destroy you with ease.",
+    "breathElements": [
+      "LIGHTNING",
+      "GRAVITY",
+      "LIGHT"
+    ]
   },
   "MON_HORNED_REAPER": {
     "key": "MON_HORNED_REAPER",
@@ -43500,7 +44434,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 23000,
     "baseAC": 45,
     "coreBaseHp": 2525,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 158,
@@ -43517,7 +44451,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 102
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [
       {
         "method": "HIT",
@@ -43592,7 +44526,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2000,
     "baseAC": 45,
     "coreBaseHp": 440,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 79,
@@ -43664,7 +44598,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "A mindcrafter of the highest order.  Powerful and evil, and a dangerous enemy: a master of mind over matter, of his own mind, and of the minds of others, who slavishly follow him into battle when he calls them.",
-    "description": "A mindcrafter of the highest order.  Powerful and evil, and a dangerous enemy: a master of mind over matter, of his own mind, and of the minds of others, who slavishly follow him into battle when he calls them."
+    "description": "A mindcrafter of the highest order.  Powerful and evil, and a dangerous enemy: a master of mind over matter, of his own mind, and of the minds of others, who slavishly follow him into battle when he calls them.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_GREATER_DEMONIC_QUYLTHULG": {
     "key": "MON_GREATER_DEMONIC_QUYLTHULG",
@@ -43677,7 +44614,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10500,
     "baseAC": 8,
     "coreBaseHp": 757,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 57,
@@ -43729,7 +44666,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10500,
     "baseAC": 8,
     "coreBaseHp": 757,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 57,
@@ -43781,7 +44718,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10500,
     "baseAC": 8,
     "coreBaseHp": 757,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 57,
@@ -43851,7 +44788,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 152
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [
       {
         "method": "TOUCH",
@@ -43999,7 +44936,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_KIN"
     ],
     "flavorText": "A beholder of great size and age, floating in the air.  His gaze seems to shred your soul and his spells crush your will.  He is ancient, his history steeped in forgotten evils, his atrocities numerous and sickening.",
-    "description": "A beholder of great size and age, floating in the air.  His gaze seems to shred your soul and his spells crush your will.  He is ancient, his history steeped in forgotten evils, his atrocities numerous and sickening."
+    "description": "A beholder of great size and age, floating in the air.  His gaze seems to shred your soul and his spells crush your will.  He is ancient, his history steeped in forgotten evils, his atrocities numerous and sickening.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_GREATER_BALROG": {
     "key": "MON_GREATER_BALROG",
@@ -44092,7 +45032,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_UNDEAD"
     ],
     "flavorText": "Originally of the semi-divine Maiar, this evil spirit swore allegiance to Morgoth at the beginning of time and is now one of his most terrible demonic servants.  With its flaming whip and sword it seeks to destroy you.",
-    "description": "Originally of the semi-divine Maiar, this evil spirit swore allegiance to Morgoth at the beginning of time and is now one of his most terrible demonic servants.  With its flaming whip and sword it seeks to destroy you."
+    "description": "Originally of the semi-divine Maiar, this evil spirit swore allegiance to Morgoth at the beginning of time and is now one of his most terrible demonic servants.  With its flaming whip and sword it seeks to destroy you.",
+    "breathElements": [
+      "FIRE",
+      "PLASMA"
+    ]
   },
   "MON_UNGOLIANT_THE_UNLIGHT": {
     "key": "MON_UNGOLIANT_THE_UNLIGHT",
@@ -44179,7 +45123,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_SPIDER"
     ],
     "flavorText": "This enormous, hideous spirit of void is in the form of a spider of immense proportions.  She is surrounded by a cloud of Unlight as she sucks in all living light into her bloated body, and breathes out the blackest of darkness.  She is always ravenously hungry and would even eat herself to avoid starvation.",
-    "description": "This enormous, hideous spirit of void is in the form of a spider of immense proportions.  She is surrounded by a cloud of Unlight as she sucks in all living light into her bloated body, and breathes out the blackest of darkness.  She is always ravenously hungry and would even eat herself to avoid starvation."
+    "description": "This enormous, hideous spirit of void is in the form of a spider of immense proportions.  She is surrounded by a cloud of Unlight as she sucks in all living light into her bloated body, and breathes out the blackest of darkness.  She is always ravenously hungry and would even eat herself to avoid starvation.",
+    "breathElements": [
+      "DARK",
+      "POISON"
+    ]
   },
   "MON_AETHER_HOUND": {
     "key": "MON_AETHER_HOUND",
@@ -44192,7 +45140,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10000,
     "baseAC": 45,
     "coreBaseHp": 1230,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 153,
@@ -44281,7 +45229,28 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_WALL"
     ],
     "flavorText": "A shifting, swirling form. It seems to be all colours and sizes and shapes, though the dominant form is that of a huge dog. You feel very uncertain all of a sudden.",
-    "description": "A shifting, swirling form. It seems to be all colours and sizes and shapes, though the dominant form is that of a huge dog. You feel very uncertain all of a sudden."
+    "description": "A shifting, swirling form. It seems to be all colours and sizes and shapes, though the dominant form is that of a huge dog. You feel very uncertain all of a sudden.",
+    "breathElements": [
+      "ACID",
+      "CHAOS",
+      "COLD",
+      "CONFUSION",
+      "DARK",
+      "DISENCHANT",
+      "LIGHTNING",
+      "FIRE",
+      "GRAVITY",
+      "INERTIA",
+      "LIGHT",
+      "NETHER",
+      "NEXUS",
+      "PLASMA",
+      "POISON",
+      "SHARDS",
+      "SOUND",
+      "TIME",
+      "FORCE"
+    ]
   },
   "MON_PIT_FIEND": {
     "key": "MON_PIT_FIEND",
@@ -44311,7 +45280,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 106
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CHAOS",
     "attacks": [
       {
         "method": "CLAW",
@@ -44368,7 +45337,12 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_HI_DRAGON"
     ],
     "flavorText": "Appearing as a giant, clawed and winged humanoid with a scaly red body and massive fangs dripping a foul green liquid, the Pit Fiend is a dreadful enemy from the lowest depths of the hells.  They are often the commanders of vast demon armies.",
-    "description": "Appearing as a giant, clawed and winged humanoid with a scaly red body and massive fangs dripping a foul green liquid, the Pit Fiend is a dreadful enemy from the lowest depths of the hells.  They are often the commanders of vast demon armies."
+    "description": "Appearing as a giant, clawed and winged humanoid with a scaly red body and massive fangs dripping a foul green liquid, the Pit Fiend is a dreadful enemy from the lowest depths of the hells.  They are often the commanders of vast demon armies.",
+    "breathElements": [
+      "CHAOS",
+      "FIRE",
+      "POISON"
+    ]
   },
   "MON_THE_MOUTH_OF_SAURON": {
     "key": "MON_THE_MOUTH_OF_SAURON",
@@ -44398,7 +45372,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 154
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -44455,7 +45429,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "The Mouth of Sauron is a mighty spell caster. So old that even he cannot remember his own name, his power and evil are undeniable. He believes unshakeably that he is unbeatable and laughs as he weaves his awesome spells.",
-    "description": "The Mouth of Sauron is a mighty spell caster. So old that even he cannot remember his own name, his power and evil are undeniable. He believes unshakeably that he is unbeatable and laughs as he weaves his awesome spells."
+    "description": "The Mouth of Sauron is a mighty spell caster. So old that even he cannot remember his own name, his power and evil are undeniable. He believes unshakeably that he is unbeatable and laughs as he weaves his awesome spells.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_THE_NECROMANCER_OF_DOL_GULDUR": {
     "key": "MON_THE_NECROMANCER_OF_DOL_GULDUR",
@@ -44485,7 +45462,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 149
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -44549,7 +45526,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "The dark master of the terrible fortress of southern Mirkwood.  It is rumoured that this is in fact none other than Sauron in disguise: although if this is so, he has yet to reveal his full power - and perhaps will not do so while his deception lasts, in the hope of keeping it going.",
-    "description": "The dark master of the terrible fortress of southern Mirkwood.  It is rumoured that this is in fact none other than Sauron in disguise: although if this is so, he has yet to reveal his full power - and perhaps will not do so while his deception lasts, in the hope of keeping it going."
+    "description": "The dark master of the terrible fortress of southern Mirkwood.  It is rumoured that this is in fact none other than Sauron in disguise: although if this is so, he has yet to reveal his full power - and perhaps will not do so while his deception lasts, in the hope of keeping it going.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_LISA_RIDER_OF_GOLD_ROMTH": {
     "key": "MON_LISA_RIDER_OF_GOLD_ROMTH",
@@ -44645,7 +45625,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "She came to help you.",
-    "description": "She came to help you."
+    "description": "She came to help you.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_MASTER_QUYLTHULG": {
     "key": "MON_MASTER_QUYLTHULG",
@@ -44658,7 +45641,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 15000,
     "baseAC": 8,
     "coreBaseHp": 1515,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 61,
@@ -44863,7 +45846,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "A leader from afar, he has come with his eagle to help you in your battle. Having already saved his home, he now wants to save Arda!",
-    "description": "A leader from afar, he has come with his eagle to help you in your battle. Having already saved his home, he now wants to save Arda!"
+    "description": "A leader from afar, he has come with his eagle to help you in your battle. Having already saved his home, he now wants to save Arda!",
+    "breathElements": [
+      "FIRE",
+      "TIME"
+    ]
   },
   "MON_MAEGLIN_THE_TRAITOR_OF_GONDOLIN": {
     "key": "MON_MAEGLIN_THE_TRAITOR_OF_GONDOLIN",
@@ -44968,7 +45955,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 30000,
     "baseAC": 45,
     "coreBaseHp": 2777,
-    "speed": 10.0,
+    "speed": 10,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -45039,7 +46026,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_HI_DEMON"
     ],
     "flavorText": "A winged humanoid demon from the Planes of Hell, Pazuzu grins inhumanely at you as he decides your fate.",
-    "description": "A winged humanoid demon from the Planes of Hell, Pazuzu grins inhumanely at you as he decides your fate."
+    "description": "A winged humanoid demon from the Planes of Hell, Pazuzu grins inhumanely at you as he decides your fate.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_GREATER_HELLHOUND": {
     "key": "MON_GREATER_HELLHOUND",
@@ -45052,7 +46042,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 600,
     "baseAC": 45,
     "coreBaseHp": 744,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 179,
@@ -45107,7 +46097,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_FIRE"
     ],
     "flavorText": "It is a giant dog that glows with heat. Flames pour from its nostrils.",
-    "description": "It is a giant dog that glows with heat. Flames pour from its nostrils."
+    "description": "It is a giant dog that glows with heat. Flames pour from its nostrils.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_CANTORAS_THE_SKELETAL_LORD": {
     "key": "MON_CANTORAS_THE_SKELETAL_LORD",
@@ -45120,7 +46113,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 45000,
     "baseAC": 45,
     "coreBaseHp": 3787,
-    "speed": 10.0,
+    "speed": 10,
     "growthType": "TANK",
     "coreBase": {
       "str": 138,
@@ -45137,7 +46130,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 165
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "GAZE",
@@ -45201,7 +46194,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "A legion of evil undead druj animating the skeleton of a once mighty sorcerer. His power is devastating and his speed unmatched in the underworld. Flee his wrath!",
-    "description": "A legion of evil undead druj animating the skeleton of a once mighty sorcerer. His power is devastating and his speed unmatched in the underworld. Flee his wrath!"
+    "description": "A legion of evil undead druj animating the skeleton of a once mighty sorcerer. His power is devastating and his speed unmatched in the underworld. Flee his wrath!",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_GODZILLA": {
     "key": "MON_GODZILLA",
@@ -45287,7 +46283,14 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_POIS"
     ],
     "flavorText": "Godzilla rose from the contaminated sea.  This terrible creature could level whole cities in anger.",
-    "description": "Godzilla rose from the contaminated sea.  This terrible creature could level whole cities in anger."
+    "description": "Godzilla rose from the contaminated sea.  This terrible creature could level whole cities in anger.",
+    "breathElements": [
+      "ACID",
+      "DISENCHANT",
+      "NUKE",
+      "PLASMA",
+      "POISON"
+    ]
   },
   "MON_THE_TARRASQUE": {
     "key": "MON_THE_TARRASQUE",
@@ -45366,7 +46369,12 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_FIRE"
     ],
     "flavorText": "The Tarrasque is a massive reptile of legend, rumoured to be unkillable and immune to magic. Fear its anger, for its devastation is unmatched!",
-    "description": "The Tarrasque is a massive reptile of legend, rumoured to be unkillable and immune to magic. Fear its anger, for its devastation is unmatched!"
+    "description": "The Tarrasque is a massive reptile of legend, rumoured to be unkillable and immune to magic. Fear its anger, for its devastation is unmatched!",
+    "breathElements": [
+      "COLD",
+      "DISENCHANT",
+      "FIRE"
+    ]
   },
   "MON_LUNGORTHIN_THE_BALROG_OF_WHITE_FIRE": {
     "key": "MON_LUNGORTHIN_THE_BALROG_OF_WHITE_FIRE",
@@ -45454,7 +46462,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_UNDEAD"
     ],
     "flavorText": "A massive form cloaked in flame. Lungorthin stares balefully at you with eyes that smoulder red. The dungeon floor where he stands is scorched by the heat of his body.",
-    "description": "A massive form cloaked in flame. Lungorthin stares balefully at you with eyes that smoulder red. The dungeon floor where he stands is scorched by the heat of his body."
+    "description": "A massive form cloaked in flame. Lungorthin stares balefully at you with eyes that smoulder red. The dungeon floor where he stands is scorched by the heat of his body.",
+    "breathElements": [
+      "FIRE",
+      "PLASMA"
+    ]
   },
   "MON_DRAUGLUIN_SIRE_OF_ALL_WEREWOLVES": {
     "key": "MON_DRAUGLUIN_SIRE_OF_ALL_WEREWOLVES",
@@ -45484,7 +46496,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 163
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -45535,7 +46547,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_MONSTERS"
     ],
     "flavorText": "Draugluin provides Sauron with a fearsome personal guard. He is an enormous wolf inhabited by a human spirit. He is chief of all his kind.",
-    "description": "Draugluin provides Sauron with a fearsome personal guard. He is an enormous wolf inhabited by a human spirit. He is chief of all his kind."
+    "description": "Draugluin provides Sauron with a fearsome personal guard. He is an enormous wolf inhabited by a human spirit. He is chief of all his kind.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_OREMORJ_THE_CYBERDEMON_LORD": {
     "key": "MON_OREMORJ_THE_CYBERDEMON_LORD",
@@ -45712,7 +46727,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "The greatest of all undead sorcerers, even the gods once feared him.  This ancient shadow of death wilts every living thing it passes.",
-    "description": "The greatest of all undead sorcerers, even the gods once feared him.  This ancient shadow of death wilts every living thing it passes."
+    "description": "The greatest of all undead sorcerers, even the gods once feared him.  This ancient shadow of death wilts every living thing it passes.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_GREAT_WYRM_OF_POWER": {
     "key": "MON_GREAT_WYRM_OF_POWER",
@@ -45830,7 +46848,30 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_KIN"
     ],
     "flavorText": "The mightiest of all dragonkind, a great wyrm of power is seldom encountered in our world. It can crush stars with its might.",
-    "description": "The mightiest of all dragonkind, a great wyrm of power is seldom encountered in our world. It can crush stars with its might."
+    "description": "The mightiest of all dragonkind, a great wyrm of power is seldom encountered in our world. It can crush stars with its might.",
+    "breathElements": [
+      "ACID",
+      "CHAOS",
+      "COLD",
+      "CONFUSION",
+      "DARK",
+      "DISENCHANT",
+      "DISINTEGRATE",
+      "LIGHTNING",
+      "FIRE",
+      "GRAVITY",
+      "INERTIA",
+      "LIGHT",
+      "MANA",
+      "NETHER",
+      "NEXUS",
+      "PLASMA",
+      "POISON",
+      "SHARDS",
+      "SOUND",
+      "TIME",
+      "FORCE"
+    ]
   },
   "MON_CARCHAROTH_THE_JAWS_OF_THIRST": {
     "key": "MON_CARCHAROTH_THE_JAWS_OF_THIRST",
@@ -45912,7 +46953,13 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_HOUND"
     ],
     "flavorText": "The first guard of Angband, Carcharoth, also known as 'The Red Maw', is the largest wolf to ever walk the earth. He is highly intelligent and a deadly opponent in combat.",
-    "description": "The first guard of Angband, Carcharoth, also known as 'The Red Maw', is the largest wolf to ever walk the earth. He is highly intelligent and a deadly opponent in combat."
+    "description": "The first guard of Angband, Carcharoth, also known as 'The Red Maw', is the largest wolf to ever walk the earth. He is highly intelligent and a deadly opponent in combat.",
+    "breathElements": [
+      "DARK",
+      "FIRE",
+      "NETHER",
+      "POISON"
+    ]
   },
   "MON_HUAN_WOLFHOUND_OF_THE_VALAR": {
     "key": "MON_HUAN_WOLFHOUND_OF_THE_VALAR",
@@ -45994,7 +47041,13 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_SOUN"
     ],
     "flavorText": "The wolfhound of the Valar, Huan has served many masters in his time, from Celegorm son of Feanor to Beren son of Barahir: but now he runs wild and acknowledges no master save himself, as he hunts alone for his nemesis - Carcharoth, the terrible wolf of Angband.",
-    "description": "The wolfhound of the Valar, Huan has served many masters in his time, from Celegorm son of Feanor to Beren son of Barahir: but now he runs wild and acknowledges no master save himself, as he hunts alone for his nemesis - Carcharoth, the terrible wolf of Angband."
+    "description": "The wolfhound of the Valar, Huan has served many masters in his time, from Celegorm son of Feanor to Beren son of Barahir: but now he runs wild and acknowledges no master save himself, as he hunts alone for his nemesis - Carcharoth, the terrible wolf of Angband.",
+    "breathElements": [
+      "COLD",
+      "LIGHT",
+      "SHARDS",
+      "SOUND"
+    ]
   },
   "MON_GOTHMOG_THE_HIGH_CAPTAIN_OF_BALROGS": {
     "key": "MON_GOTHMOG_THE_HIGH_CAPTAIN_OF_BALROGS",
@@ -46086,7 +47139,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_KIN"
     ],
     "flavorText": "Gothmog is the Chief Balrog in Morgoth's personal guard. He is renowned for slaying three High Kings of the Noldor Elves, and he has never been defeated in combat. With his whip of flame and awesome fiery breath he saved his master from Ungoliant's rage.",
-    "description": "Gothmog is the Chief Balrog in Morgoth's personal guard. He is renowned for slaying three High Kings of the Noldor Elves, and he has never been defeated in combat. With his whip of flame and awesome fiery breath he saved his master from Ungoliant's rage."
+    "description": "Gothmog is the Chief Balrog in Morgoth's personal guard. He is renowned for slaying three High Kings of the Noldor Elves, and he has never been defeated in combat. With his whip of flame and awesome fiery breath he saved his master from Ungoliant's rage.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_SARKO_RIDER_OF_GOLD_FORONTH": {
     "key": "MON_SARKO_RIDER_OF_GOLD_FORONTH",
@@ -46185,7 +47241,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "Foronth is the first Eagle queen, and Sarko the first to discover the Firebirds, the ancestor of the Thunderlord eagles. She will try to help you!",
-    "description": "Foronth is the first Eagle queen, and Sarko the first to discover the Firebirds, the ancestor of the Thunderlord eagles. She will try to help you!"
+    "description": "Foronth is the first Eagle queen, and Sarko the first to discover the Firebirds, the ancestor of the Thunderlord eagles. She will try to help you!",
+    "breathElements": [
+      "FIRE",
+      "TIME"
+    ]
   },
   "MON_SAURON_THE_SORCERER": {
     "key": "MON_SAURON_THE_SORCERER",
@@ -46215,7 +47275,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 192
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -46296,7 +47356,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "Mighty in spells and enchantments, he created the One Ring. His eyes glow with power and with his gaze he seeks to destroy your soul. He has many servants, and rarely fights without them.",
-    "description": "Mighty in spells and enchantments, he created the One Ring. His eyes glow with power and with his gaze he seeks to destroy your soul. He has many servants, and rarely fights without them."
+    "description": "Mighty in spells and enchantments, he created the One Ring. His eyes glow with power and with his gaze he seeks to destroy your soul. He has many servants, and rarely fights without them.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_DARKGOD_THE_MIGHTY_CODER_OF_HELL": {
     "key": "MON_DARKGOD_THE_MIGHTY_CODER_OF_HELL",
@@ -46326,7 +47389,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 200
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CHAOS",
     "attacks": [
       {
         "method": "GAZE",
@@ -46421,7 +47484,15 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "He is the master of coding; none can match his skill. He created the Variant Maintainer, the RNGs, and the software bugs. Bull Gates is nothing next to him. Do not think that since he loves the novels of Tolkien he is to be ignored! He wishes to translate your soul into assembler, the one hitch being that he must kill you first. If you encounter him, pray your deity holds you in good stead.",
-    "description": "He is the master of coding; none can match his skill. He created the Variant Maintainer, the RNGs, and the software bugs. Bull Gates is nothing next to him. Do not think that since he loves the novels of Tolkien he is to be ignored! He wishes to translate your soul into assembler, the one hitch being that he must kill you first. If you encounter him, pray your deity holds you in good stead."
+    "description": "He is the master of coding; none can match his skill. He created the Variant Maintainer, the RNGs, and the software bugs. Bull Gates is nothing next to him. Do not think that since he loves the novels of Tolkien he is to be ignored! He wishes to translate your soul into assembler, the one hitch being that he must kill you first. If you encounter him, pray your deity holds you in good stead.",
+    "breathElements": [
+      "CHAOS",
+      "DISINTEGRATE",
+      "MANA",
+      "NETHER",
+      "NUKE",
+      "POISON"
+    ]
   },
   "MON_MORGOTH_LORD_OF_DARKNESS": {
     "key": "MON_MORGOTH_LORD_OF_DARKNESS",
@@ -46434,7 +47505,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 60000,
     "baseAC": 45,
     "coreBaseHp": 15100,
-    "speed": 10.0,
+    "speed": 10,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -46451,7 +47522,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 194
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "DISINTEGRATE",
     "attacks": [
       {
         "method": "HIT",
@@ -46529,7 +47600,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_WRAITH"
     ],
     "flavorText": "He was the most powerful of the Valar, the equal of Manwe. He is the Master of the Pits of Angband. His figure is like a black mountain crowned with Lightning. He rages with everlasting anger, his body scarred by Fingolfin's eight mighty wounds. He can never rest from his pain, but seeks forever to dominate all that is light and good in the world. He is the origin of man's fear of darkness and created many foul creatures with his evil powers. Orcs, Dragons, and Trolls are his most foul corruptions, causing much pain and suffering in the world to please him. His disgusting visage, twisted with evil, is crowned with iron, the two remaining Silmarils forever burning him. Grond, the mighty Hammer of the Underworld, cries defiance as he strides towards you to crush you to a pulp!",
-    "description": "He was the most powerful of the Valar, the equal of Manwe. He is the Master of the Pits of Angband. His figure is like a black mountain crowned with Lightning. He rages with everlasting anger, his body scarred by Fingolfin's eight mighty wounds. He can never rest from his pain, but seeks forever to dominate all that is light and good in the world. He is the origin of man's fear of darkness and created many foul creatures with his evil powers. Orcs, Dragons, and Trolls are his most foul corruptions, causing much pain and suffering in the world to please him. His disgusting visage, twisted with evil, is crowned with iron, the two remaining Silmarils forever burning him. Grond, the mighty Hammer of the Underworld, cries defiance as he strides towards you to crush you to a pulp!"
+    "description": "He was the most powerful of the Valar, the equal of Manwe. He is the Master of the Pits of Angband. His figure is like a black mountain crowned with Lightning. He rages with everlasting anger, his body scarred by Fingolfin's eight mighty wounds. He can never rest from his pain, but seeks forever to dominate all that is light and good in the world. He is the origin of man's fear of darkness and created many foul creatures with his evil powers. Orcs, Dragons, and Trolls are his most foul corruptions, causing much pain and suffering in the world to please him. His disgusting visage, twisted with evil, is crowned with iron, the two remaining Silmarils forever burning him. Grond, the mighty Hammer of the Underworld, cries defiance as he strides towards you to crush you to a pulp!",
+    "breathElements": [
+      "DISINTEGRATE",
+      "NETHER"
+    ]
   },
   "MON_HUMAN_WARRIOR": {
     "key": "MON_HUMAN_WARRIOR",
@@ -46770,7 +47845,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20000,
     "baseAC": 45,
     "coreBaseHp": 2525,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 191,
@@ -46787,7 +47862,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 114
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CHAOS",
     "attacks": [
       {
         "method": "GAZE",
@@ -46842,7 +47917,13 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "She is a feared teacher, mistress of chaos and strangely minded. She wants to take your mind. Fear her and flee while you can.",
-    "description": "She is a feared teacher, mistress of chaos and strangely minded. She wants to take your mind. Fear her and flee while you can."
+    "description": "She is a feared teacher, mistress of chaos and strangely minded. She wants to take your mind. Fear her and flee while you can.",
+    "breathElements": [
+      "CHAOS",
+      "CONFUSION",
+      "SOUND",
+      "TIME"
+    ]
   },
   "MON_THE_VARIANT_MAINTAINER": {
     "key": "MON_THE_VARIANT_MAINTAINER",
@@ -46855,7 +47936,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3000,
     "baseAC": 45,
     "coreBaseHp": 55,
-    "speed": 13.0,
+    "speed": 13,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 27,
@@ -46872,7 +47953,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 32
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CONFUSION",
     "attacks": [
       {
         "method": "INSULT",
@@ -46913,7 +47994,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_RNG"
     ],
     "flavorText": "A deranged programmer, scattering bizarre ideas and bad code everywhere.",
-    "description": "A deranged programmer, scattering bizarre ideas and bad code everywhere."
+    "description": "A deranged programmer, scattering bizarre ideas and bad code everywhere.",
+    "breathElements": [
+      "CONFUSION"
+    ]
   },
   "MON_RANDOM_NUMBER_GENERATOR": {
     "key": "MON_RANDOM_NUMBER_GENERATOR",
@@ -47003,7 +48087,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 71
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "SPORE",
@@ -47029,7 +48113,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "ROCKET"
     ],
     "flavorText": "It was left here to be used against intruders.",
-    "description": "It was left here to be used against intruders."
+    "description": "It was left here to be used against intruders.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_BOUNCING_MINE": {
     "key": "MON_BOUNCING_MINE",
@@ -47042,7 +48129,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 200,
     "baseAC": 8,
     "coreBaseHp": 160,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 93,
@@ -47059,7 +48146,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 97
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CHAOS",
     "attacks": [
       {
         "method": "SPORE",
@@ -47089,7 +48176,12 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "ROCKET"
     ],
     "flavorText": "It was left here to be used against intruders.",
-    "description": "It was left here to be used against intruders."
+    "description": "It was left here to be used against intruders.",
+    "breathElements": [
+      "CHAOS",
+      "NEXUS",
+      "POISON"
+    ]
   },
   "MON_DURIN_S_BANE": {
     "key": "MON_DURIN_S_BANE",
@@ -47179,7 +48271,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_UNDEAD"
     ],
     "flavorText": "A huge Balrog surrounded by raging pillars of fire, this is indeed a terrible opponent. Wielding a great whip of fire and a blazing sword, his fury blisters your skin and melts your flesh!",
-    "description": "A huge Balrog surrounded by raging pillars of fire, this is indeed a terrible opponent. Wielding a great whip of fire and a blazing sword, his fury blisters your skin and melts your flesh!"
+    "description": "A huge Balrog surrounded by raging pillars of fire, this is indeed a terrible opponent. Wielding a great whip of fire and a blazing sword, his fury blisters your skin and melts your flesh!",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_THE_ICKY_QUEEN": {
     "key": "MON_THE_ICKY_QUEEN",
@@ -47192,7 +48287,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 400,
     "baseAC": 45,
     "coreBaseHp": 220,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 61,
@@ -47209,7 +48304,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 50
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CRAWL",
@@ -47265,7 +48360,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_KIN"
     ],
     "flavorText": "And you thought her offspring were icky!",
-    "description": "And you thought her offspring were icky!"
+    "description": "And you thought her offspring were icky!",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_ROT_JELLY": {
     "key": "MON_ROT_JELLY",
@@ -47278,7 +48376,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 15,
     "baseAC": 30,
     "coreBaseHp": 90,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 21,
@@ -47501,7 +48599,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 147
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "TOUCH",
@@ -47550,7 +48648,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_SPIDER"
     ],
     "flavorText": "One of the horsemen of the apocalypse, before you lies Pestilence. At first, it looks like a human, but then you notice ants, worms, and worse peeking out of the flesh. Pestilence rides a purple horse with skin that bulges and occasionally gives hints of the vermin within.",
-    "description": "One of the horsemen of the apocalypse, before you lies Pestilence. At first, it looks like a human, but then you notice ants, worms, and worse peeking out of the flesh. Pestilence rides a purple horse with skin that bulges and occasionally gives hints of the vermin within."
+    "description": "One of the horsemen of the apocalypse, before you lies Pestilence. At first, it looks like a human, but then you notice ants, worms, and worse peeking out of the flesh. Pestilence rides a purple horse with skin that bulges and occasionally gives hints of the vermin within.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_WAR": {
     "key": "MON_WAR",
@@ -47707,7 +48808,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 32
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "LIGHTNING",
     "attacks": [
       {
         "method": "TOUCH",
@@ -47738,7 +48839,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "This serpentine creature can create a deadly voltage.  Better watch out!",
-    "description": "This serpentine creature can create a deadly voltage.  Better watch out!"
+    "description": "This serpentine creature can create a deadly voltage.  Better watch out!",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_GIANT_CRAYFISH": {
     "key": "MON_GIANT_CRAYFISH",
@@ -47858,7 +48962,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 40,
     "baseAC": 20,
     "coreBaseHp": 27,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 27,
@@ -47912,7 +49016,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 8,
     "baseAC": 8,
     "coreBaseHp": 7,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "ROGUE",
     "coreBase": {
       "str": 14,
@@ -48090,7 +49194,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 16
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "HIT",
@@ -48125,7 +49229,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MISSILE"
     ],
     "flavorText": "A leader of a clan of frog-people, he is cloaked in a cloak made of shark skin.",
-    "description": "A leader of a clan of frog-people, he is cloaked in a cloak made of shark skin."
+    "description": "A leader of a clan of frog-people, he is cloaked in a cloak made of shark skin.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_WHALE": {
     "key": "MON_WHALE",
@@ -48209,7 +49316,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 19
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -48237,7 +49344,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "A relative of crabs and shrimp, this is a tiny creature that inhabits sandy bottoms. It has a pair of dangerous-looking claws.",
-    "description": "A relative of crabs and shrimp, this is a tiny creature that inhabits sandy bottoms. It has a pair of dangerous-looking claws."
+    "description": "A relative of crabs and shrimp, this is a tiny creature that inhabits sandy bottoms. It has a pair of dangerous-looking claws.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_OCTOPUS": {
     "key": "MON_OCTOPUS",
@@ -48390,7 +49500,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 6000,
     "baseAC": 20,
     "coreBaseHp": 808,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 86,
@@ -48407,7 +49517,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 58
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "GAZE",
@@ -48459,7 +49569,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "A beholder that inhabits the depths of the sea, sleeping and pondering alien thoughts for centuries. Occasionally, it will float to the surface to wreck the lives of surface dwellers.",
-    "description": "A beholder that inhabits the depths of the sea, sleeping and pondering alien thoughts for centuries. Occasionally, it will float to the surface to wreck the lives of surface dwellers."
+    "description": "A beholder that inhabits the depths of the sea, sleeping and pondering alien thoughts for centuries. Occasionally, it will float to the surface to wreck the lives of surface dwellers.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_MURK_DWELLER": {
     "key": "MON_MURK_DWELLER",
@@ -48489,7 +49602,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 41
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "DARK",
     "attacks": [
       {
         "method": "BITE",
@@ -48538,7 +49651,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "A gigantic aquatic monster, somewhat resembling a cross between a lobster and a spider. It is coated in poisonous slime and noxious parasites. This foul creature hides in the silt of the deep ocean floor, waiting to trap unsuspecting prey.",
-    "description": "A gigantic aquatic monster, somewhat resembling a cross between a lobster and a spider. It is coated in poisonous slime and noxious parasites. This foul creature hides in the silt of the deep ocean floor, waiting to trap unsuspecting prey."
+    "description": "A gigantic aquatic monster, somewhat resembling a cross between a lobster and a spider. It is coated in poisonous slime and noxious parasites. This foul creature hides in the silt of the deep ocean floor, waiting to trap unsuspecting prey.",
+    "breathElements": [
+      "DARK",
+      "POISON"
+    ]
   },
   "MON_DROWNED_SOUL": {
     "key": "MON_DROWNED_SOUL",
@@ -48568,7 +49685,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 20
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "TOUCH",
@@ -48607,7 +49724,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "HOLD"
     ],
     "flavorText": "A ghastly victim of drowning, forever doomed to wander the ocean waters looking for revenge.",
-    "description": "A ghastly victim of drowning, forever doomed to wander the ocean waters looking for revenge."
+    "description": "A ghastly victim of drowning, forever doomed to wander the ocean waters looking for revenge.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_TIGER_SHARK": {
     "key": "MON_TIGER_SHARK",
@@ -48620,7 +49740,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 40,
     "baseAC": 32,
     "coreBaseHp": 30,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 28,
@@ -48725,7 +49845,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 250,
     "baseAC": 45,
     "coreBaseHp": 350,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 75,
@@ -48782,7 +49902,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 100,
     "baseAC": 45,
     "coreBaseHp": 137,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 60,
@@ -48888,7 +50008,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 100,
     "baseAC": 45,
     "coreBaseHp": 165,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 53,
@@ -49018,7 +50138,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 60,
     "baseAC": 25,
     "coreBaseHp": 75,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "MAGE",
     "coreBase": {
       "str": 24,
@@ -49069,7 +50189,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 75,
     "baseAC": 25,
     "coreBaseHp": 110,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "MAGE",
     "coreBase": {
       "str": 31,
@@ -49124,7 +50244,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 55,
     "baseAC": 25,
     "coreBaseHp": 30,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 25,
@@ -49241,7 +50361,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 17
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SOUND",
     "attacks": [
       {
         "method": "CLAW",
@@ -49276,7 +50396,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_SOUN"
     ],
     "flavorText": "A newly-hatched dragon turtle. It still hasn't grown a proper shell.",
-    "description": "A newly-hatched dragon turtle. It still hasn't grown a proper shell."
+    "description": "A newly-hatched dragon turtle. It still hasn't grown a proper shell.",
+    "breathElements": [
+      "SOUND"
+    ]
   },
   "MON_YOUNG_DRAGON_TURTLE": {
     "key": "MON_YOUNG_DRAGON_TURTLE",
@@ -49306,7 +50429,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 46
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SOUND",
     "attacks": [
       {
         "method": "CLAW",
@@ -49340,7 +50463,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A dragon-like creature inhabiting lightless reaches of ocean caves. It has a long neck with a tiny head, and four massive flippers. It has a soft and flexible shell.",
-    "description": "A dragon-like creature inhabiting lightless reaches of ocean caves. It has a long neck with a tiny head, and four massive flippers. It has a soft and flexible shell."
+    "description": "A dragon-like creature inhabiting lightless reaches of ocean caves. It has a long neck with a tiny head, and four massive flippers. It has a soft and flexible shell.",
+    "breathElements": [
+      "SOUND"
+    ]
   },
   "MON_MATURE_DRAGON_TURTLE": {
     "key": "MON_MATURE_DRAGON_TURTLE",
@@ -49370,7 +50496,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 55
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SOUND",
     "attacks": [
       {
         "method": "CLAW",
@@ -49407,7 +50533,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A large dragon turtle, covered with a tough white shell.",
-    "description": "A large dragon turtle, covered with a tough white shell."
+    "description": "A large dragon turtle, covered with a tough white shell.",
+    "breathElements": [
+      "SOUND"
+    ]
   },
   "MON_ANCIENT_DRAGON_TURTLE": {
     "key": "MON_ANCIENT_DRAGON_TURTLE",
@@ -49420,7 +50549,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2500,
     "baseAC": 45,
     "coreBaseHp": 385,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 117,
@@ -49437,7 +50566,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 59
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SOUND",
     "attacks": [
       {
         "method": "CLAW",
@@ -49480,7 +50609,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A huge dragon turtle. You can see many barnacles covering its body.",
-    "description": "A huge dragon turtle. You can see many barnacles covering its body."
+    "description": "A huge dragon turtle. You can see many barnacles covering its body.",
+    "breathElements": [
+      "SOUND"
+    ]
   },
   "MON_FASTITOCALON": {
     "key": "MON_FASTITOCALON",
@@ -49493,7 +50625,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 16000,
     "baseAC": 45,
     "coreBaseHp": 2020,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 138,
@@ -49510,7 +50642,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 73
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "BITE",
@@ -49558,7 +50690,12 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_SOUN"
     ],
     "flavorText": "A huge aquatic dragon-turtle, its shell is as large as a small island.",
-    "description": "A huge aquatic dragon-turtle, its shell is as large as a small island."
+    "description": "A huge aquatic dragon-turtle, its shell is as large as a small island.",
+    "breathElements": [
+      "ACID",
+      "FIRE",
+      "SOUND"
+    ]
   },
   "MON_UNDEAD_STARGAZER": {
     "key": "MON_UNDEAD_STARGAZER",
@@ -49571,7 +50708,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 100,
     "baseAC": 25,
     "coreBaseHp": 90,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "MAGE",
     "coreBase": {
       "str": 29,
@@ -49628,7 +50765,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 85,
     "baseAC": 45,
     "coreBaseHp": 510,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 67,
@@ -49759,7 +50896,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 37
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "CRUSH",
@@ -49802,7 +50939,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "DARKNESS"
     ],
     "flavorText": "A naga adapted to underwater life. She has a fish-like tail and a pair of gills.",
-    "description": "A naga adapted to underwater life. She has a fish-like tail and a pair of gills."
+    "description": "A naga adapted to underwater life. She has a fish-like tail and a pair of gills.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_MOBY_DICK_THE_WHITE_WHALE": {
     "key": "MON_MOBY_DICK_THE_WHITE_WHALE",
@@ -49815,7 +50955,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2500,
     "baseAC": 45,
     "coreBaseHp": 1300,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -49832,7 +50972,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 104
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [
       {
         "method": "CRUSH",
@@ -49906,7 +51046,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 32
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "BITE",
@@ -49937,7 +51077,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_WATE"
     ],
     "flavorText": "A dog with a finned tail and large, muscular flippers for hind legs. It has a rubbery skin instead of fur.",
-    "description": "A dog with a finned tail and large, muscular flippers for hind legs. It has a rubbery skin instead of fur."
+    "description": "A dog with a finned tail and large, muscular flippers for hind legs. It has a rubbery skin instead of fur.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_WATER_DEMON": {
     "key": "MON_WATER_DEMON",
@@ -49967,7 +51110,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 58
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "HIT",
@@ -50007,7 +51150,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_ICEE"
     ],
     "flavorText": "A hideous scaled demon, it is a sleek form with many fins but no visible arms or legs. It has a toothed gaping maw, reminiscent of a caricature of a shark's jaws.",
-    "description": "A hideous scaled demon, it is a sleek form with many fins but no visible arms or legs. It has a toothed gaping maw, reminiscent of a caricature of a shark's jaws."
+    "description": "A hideous scaled demon, it is a sleek form with many fins but no visible arms or legs. It has a toothed gaping maw, reminiscent of a caricature of a shark's jaws.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_IXITXACHITL": {
     "key": "MON_IXITXACHITL",
@@ -50037,7 +51183,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 21
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "STING",
@@ -50061,7 +51207,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "An intelligent devil-ray of the depths.",
-    "description": "An intelligent devil-ray of the depths."
+    "description": "An intelligent devil-ray of the depths.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_IXITXACHITL_PRIEST": {
     "key": "MON_IXITXACHITL_PRIEST",
@@ -50091,7 +51240,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 30
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "STING",
@@ -50123,7 +51272,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "A devil-ray of the depths, with priestly magic.",
-    "description": "A devil-ray of the depths, with priestly magic."
+    "description": "A devil-ray of the depths, with priestly magic.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_VAMPIRIC_IXITXACHITL": {
     "key": "MON_VAMPIRIC_IXITXACHITL",
@@ -50153,7 +51305,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 39
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "STING",
@@ -50185,7 +51337,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A devil-ray of the depths, with vampiric powers.",
-    "description": "A devil-ray of the depths, with vampiric powers."
+    "description": "A devil-ray of the depths, with vampiric powers.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_MATHILDE_THE_SCIENCE_STUDENT": {
     "key": "MON_MATHILDE_THE_SCIENCE_STUDENT",
@@ -50251,7 +51406,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 0,
     "baseAC": 15,
     "coreBaseHp": 15,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 22,
@@ -50310,7 +51465,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 0,
     "baseAC": 15,
     "coreBaseHp": 36,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 43,
@@ -50369,7 +51524,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 0,
     "baseAC": 15,
     "coreBaseHp": 136,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 91,
@@ -50428,7 +51583,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 0,
     "baseAC": 15,
     "coreBaseHp": 171,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 111,
@@ -50487,7 +51642,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 0,
     "baseAC": 15,
     "coreBaseHp": 325,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 162,
@@ -50546,7 +51701,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 15500,
     "baseAC": 45,
     "coreBaseHp": 2525,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -50621,7 +51776,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 35000,
     "baseAC": 45,
     "coreBaseHp": 2499,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 150,
@@ -50709,7 +51864,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "The wizard who opposed Sauron and, in the end, was the only one of the Istari to succeed in his task. Gandalf is very wise and specialises in fire magic.",
-    "description": "The wizard who opposed Sauron and, in the end, was the only one of the Istari to succeed in his task. Gandalf is very wise and specialises in fire magic."
+    "description": "The wizard who opposed Sauron and, in the end, was the only one of the Istari to succeed in his task. Gandalf is very wise and specialises in fire magic.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_NAR_THE_DWARF": {
     "key": "MON_NAR_THE_DWARF",
@@ -50855,7 +52013,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20000,
     "baseAC": 45,
     "coreBaseHp": 2020,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -50872,7 +52030,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 87
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -50924,7 +52082,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A truly enormous dragon with great powers.  The foul gases issuing from the beast nearly make you vomit; and while you may try to hold your breath as you fight it, it sees no reason to do likewise.",
-    "description": "A truly enormous dragon with great powers.  The foul gases issuing from the beast nearly make you vomit; and while you may try to hold your breath as you fight it, it sees no reason to do likewise."
+    "description": "A truly enormous dragon with great powers.  The foul gases issuing from the beast nearly make you vomit; and while you may try to hold your breath as you fight it, it sees no reason to do likewise.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_GREAT_BILE_WYRM": {
     "key": "MON_GREAT_BILE_WYRM",
@@ -50937,7 +52098,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 23000,
     "baseAC": 45,
     "coreBaseHp": 2525,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -51006,7 +52167,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A huge and very powerful dragon.  Great steaming pools of acid drip from its form onto the ground.  You shudder when you see the acid eating away the very stones of the dungeon - what could it do to you?",
-    "description": "A huge and very powerful dragon.  Great steaming pools of acid drip from its form onto the ground.  You shudder when you see the acid eating away the very stones of the dungeon - what could it do to you?"
+    "description": "A huge and very powerful dragon.  Great steaming pools of acid drip from its form onto the ground.  You shudder when you see the acid eating away the very stones of the dungeon - what could it do to you?",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_BLUE_FIREBIRD": {
     "key": "MON_BLUE_FIREBIRD",
@@ -51019,7 +52183,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 0,
     "baseAC": 15,
     "coreBaseHp": 12,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 35,
@@ -51036,7 +52200,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 12
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "CLAW",
@@ -51070,7 +52234,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "The ancestors of the Eagles of the Thunderlords, these are friendly funny flying creatures with power.",
-    "description": "The ancestors of the Eagles of the Thunderlords, these are friendly funny flying creatures with power."
+    "description": "The ancestors of the Eagles of the Thunderlords, these are friendly funny flying creatures with power.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_GREEN_FIREBIRD": {
     "key": "MON_GREEN_FIREBIRD",
@@ -51083,7 +52250,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 0,
     "baseAC": 15,
     "coreBaseHp": 12,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 39,
@@ -51100,7 +52267,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 15
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "CLAW",
@@ -51134,7 +52301,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "The ancestors of the Eagles of the Thunderlords, these are friendly funny flying creatures with power.",
-    "description": "The ancestors of the Eagles of the Thunderlords, these are friendly funny flying creatures with power."
+    "description": "The ancestors of the Eagles of the Thunderlords, these are friendly funny flying creatures with power.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_BROWN_FIREBIRD": {
     "key": "MON_BROWN_FIREBIRD",
@@ -51147,7 +52317,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 0,
     "baseAC": 15,
     "coreBaseHp": 15,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 51,
@@ -51164,7 +52334,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 19
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "CLAW",
@@ -51198,7 +52368,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "The ancestors of the Eagles of the Thunderlords, these are friendly funny flying creatures with power.",
-    "description": "The ancestors of the Eagles of the Thunderlords, these are friendly funny flying creatures with power."
+    "description": "The ancestors of the Eagles of the Thunderlords, these are friendly funny flying creatures with power.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_BRONZE_FIREBIRD": {
     "key": "MON_BRONZE_FIREBIRD",
@@ -51211,7 +52384,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 0,
     "baseAC": 15,
     "coreBaseHp": 18,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 56,
@@ -51228,7 +52401,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 22
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "CLAW",
@@ -51262,7 +52435,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "The ancestors of the Eagles of the Thunderlords, these are friendly funny flying creatures with power.",
-    "description": "The ancestors of the Eagles of the Thunderlords, these are friendly funny flying creatures with power."
+    "description": "The ancestors of the Eagles of the Thunderlords, these are friendly funny flying creatures with power.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_GOLD_FIREBIRD": {
     "key": "MON_GOLD_FIREBIRD",
@@ -51275,7 +52451,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 0,
     "baseAC": 15,
     "coreBaseHp": 18,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 60,
@@ -51292,7 +52468,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 25
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "CLAW",
@@ -51326,7 +52502,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "The ancestors of the Eagles of the Thunderlords, these are friendly funny flying creatures with power.",
-    "description": "The ancestors of the Eagles of the Thunderlords, these are friendly funny flying creatures with power."
+    "description": "The ancestors of the Eagles of the Thunderlords, these are friendly funny flying creatures with power.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_HIGH_ELVEN_RANGER": {
     "key": "MON_HIGH_ELVEN_RANGER",
@@ -51339,7 +52518,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 500,
     "baseAC": 45,
     "coreBaseHp": 775,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 144,
@@ -51404,7 +52583,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10000,
     "baseAC": 45,
     "coreBaseHp": 1212,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 120,
@@ -51482,7 +52661,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 13000,
     "baseAC": 45,
     "coreBaseHp": 1363,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 130,
@@ -51499,7 +52678,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 91
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "ACID",
     "attacks": [
       {
         "method": "HIT",
@@ -51559,7 +52738,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_MONSTER"
     ],
     "flavorText": "A sorceress in life, Adunaphel quickly fell under Sauron's sway and the power of the rings.",
-    "description": "A sorceress in life, Adunaphel quickly fell under Sauron's sway and the power of the rings."
+    "description": "A sorceress in life, Adunaphel quickly fell under Sauron's sway and the power of the rings.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_AKHORAHIL_THE_BLIND": {
     "key": "MON_AKHORAHIL_THE_BLIND",
@@ -51572,7 +52754,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 15000,
     "baseAC": 45,
     "coreBaseHp": 1515,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 148,
@@ -51589,7 +52771,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 95
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "HIT",
@@ -51649,7 +52831,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_MONSTERS"
     ],
     "flavorText": "A mighty sorcerer king, Akhorahil was blind in life. With powerful enchantments, he created jewelled eyes that enabled him to see better than any ordinary man ever could.",
-    "description": "A mighty sorcerer king, Akhorahil was blind in life. With powerful enchantments, he created jewelled eyes that enabled him to see better than any ordinary man ever could."
+    "description": "A mighty sorcerer king, Akhorahil was blind in life. With powerful enchantments, he created jewelled eyes that enabled him to see better than any ordinary man ever could.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_REN_THE_UNCLEAN": {
     "key": "MON_REN_THE_UNCLEAN",
@@ -51662,7 +52847,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 18000,
     "baseAC": 45,
     "coreBaseHp": 1767,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 166,
@@ -51739,7 +52924,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_MONSTER"
     ],
     "flavorText": "Ren was an insane eastern king who believed himself to be the son of a volcano god. At an early age his sanity was destroyed by a plague that wiped out his family, and he never recovered.",
-    "description": "Ren was an insane eastern king who believed himself to be the son of a volcano god. At an early age his sanity was destroyed by a plague that wiped out his family, and he never recovered."
+    "description": "Ren was an insane eastern king who believed himself to be the son of a volcano god. At an early age his sanity was destroyed by a plague that wiped out his family, and he never recovered.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_JI_INDUR_DAWNDEATH": {
     "key": "MON_JI_INDUR_DAWNDEATH",
@@ -51752,7 +52940,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 22000,
     "baseAC": 45,
     "coreBaseHp": 2020,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 178,
@@ -51831,7 +53019,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_UNDEAD"
     ],
     "flavorText": "This Ringwraith was a weak-minded sorcerer-king who fell easily under Sauron's power.",
-    "description": "This Ringwraith was a weak-minded sorcerer-king who fell easily under Sauron's power."
+    "description": "This Ringwraith was a weak-minded sorcerer-king who fell easily under Sauron's power.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_DWAR_DOG_LORD_OF_WAW": {
     "key": "MON_DWAR_DOG_LORD_OF_WAW",
@@ -51844,7 +53035,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 25000,
     "baseAC": 45,
     "coreBaseHp": 2272,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 191,
@@ -51922,7 +53113,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_UNDEAD"
     ],
     "flavorText": "Dwar had a special affinity for dogs in life, and can still command them at will. He howls manically as he reaches out to destroy you.",
-    "description": "Dwar had a special affinity for dogs in life, and can still command them at will. He howls manically as he reaches out to destroy you."
+    "description": "Dwar had a special affinity for dogs in life, and can still command them at will. He howls manically as he reaches out to destroy you.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_HOARMURATH_OF_DIR": {
     "key": "MON_HOARMURATH_OF_DIR",
@@ -52014,7 +53208,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_UNDEAD"
     ],
     "flavorText": "A Ringwraith powerful in fell sorcery, he yearns for the life he has exchanged for an unlife of everlasting torment.",
-    "description": "A Ringwraith powerful in fell sorcery, he yearns for the life he has exchanged for an unlife of everlasting torment."
+    "description": "A Ringwraith powerful in fell sorcery, he yearns for the life he has exchanged for an unlife of everlasting torment.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_KHAMUL_THE_BLACK_EASTERLING": {
     "key": "MON_KHAMUL_THE_BLACK_EASTERLING",
@@ -52112,7 +53309,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_LEVEL"
     ],
     "flavorText": "He was the warrior-king of the East, now a Ringwraith. Khamul is a powerful opponent, his skill in combat awesome and his form twisted by evil cunning.",
-    "description": "He was the warrior-king of the East, now a Ringwraith. Khamul is a powerful opponent, his skill in combat awesome and his form twisted by evil cunning."
+    "description": "He was the warrior-king of the East, now a Ringwraith. Khamul is a powerful opponent, his skill in combat awesome and his form twisted by evil cunning.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_THE_WITCH_KING_OF_ANGMAR": {
     "key": "MON_THE_WITCH_KING_OF_ANGMAR",
@@ -52142,7 +53342,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 158
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [
       {
         "method": "HIT",
@@ -52222,7 +53422,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10000,
     "baseAC": 45,
     "coreBaseHp": 1275,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 96,
@@ -52277,7 +53477,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_AWAY"
     ],
     "flavorText": "A Thunderlord. Among the weaker breeds, but still dangerous.",
-    "description": "A Thunderlord. Among the weaker breeds, but still dangerous."
+    "description": "A Thunderlord. Among the weaker breeds, but still dangerous.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_BLUE_THUNDERLORD": {
     "key": "MON_BLUE_THUNDERLORD",
@@ -52290,7 +53493,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20000,
     "baseAC": 45,
     "coreBaseHp": 1830,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 112,
@@ -52346,7 +53549,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "A Thunderlord. Among the weaker breeds, but still dangerous.",
-    "description": "A Thunderlord. Among the weaker breeds, but still dangerous."
+    "description": "A Thunderlord. Among the weaker breeds, but still dangerous.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_BROWN_THUNDERLORD": {
     "key": "MON_BROWN_THUNDERLORD",
@@ -52415,7 +53621,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "A Thunderlord. Beware its flame.",
-    "description": "A Thunderlord. Beware its flame."
+    "description": "A Thunderlord. Beware its flame.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_BRONZE_THUNDERLORD": {
     "key": "MON_BRONZE_THUNDERLORD",
@@ -52485,7 +53694,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "A Thunderlord, mightiest among the males.",
-    "description": "A Thunderlord, mightiest among the males."
+    "description": "A Thunderlord, mightiest among the males.",
+    "breathElements": [
+      "FIRE",
+      "TIME"
+    ]
   },
   "MON_GOLD_THUNDERLORD": {
     "key": "MON_GOLD_THUNDERLORD",
@@ -52568,7 +53781,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "A Thunderlord, among the queens of their kind.",
-    "description": "A Thunderlord, among the queens of their kind."
+    "description": "A Thunderlord, among the queens of their kind.",
+    "breathElements": [
+      "FIRE",
+      "TIME"
+    ]
   },
   "MON_BLOOD_SPROUT": {
     "key": "MON_BLOOD_SPROUT",
@@ -52581,7 +53798,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3,
     "baseAC": 8,
     "coreBaseHp": 9,
-    "speed": 10.0,
+    "speed": 10,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 158,
@@ -52651,7 +53868,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 7000,
     "baseAC": 45,
     "coreBaseHp": 808,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 168,
@@ -52808,7 +54025,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 250,
     "baseAC": 45,
     "coreBaseHp": 110,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 67,
@@ -52825,7 +54042,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 45
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "CLAW",
@@ -52869,7 +54086,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SLOW"
     ],
     "flavorText": "A red arachnid with legs weaving spells in the air.",
-    "description": "A red arachnid with legs weaving spells in the air."
+    "description": "A red arachnid with legs weaving spells in the air.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_ELDER_ARANEA": {
     "key": "MON_ELDER_ARANEA",
@@ -52882,7 +54102,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 2500,
     "baseAC": 45,
     "coreBaseHp": 315,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 132,
@@ -52948,7 +54168,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_SPIDER"
     ],
     "flavorText": "A vast, bloated arachnid, master of its brood: among the more terrible of Ungoliant's descendants, this is a monster such as those who haunted the dread valley of Nan Dungortheb long ago.",
-    "description": "A vast, bloated arachnid, master of its brood: among the more terrible of Ungoliant's descendants, this is a monster such as those who haunted the dread valley of Nan Dungortheb long ago."
+    "description": "A vast, bloated arachnid, master of its brood: among the more terrible of Ungoliant's descendants, this is a monster such as those who haunted the dread valley of Nan Dungortheb long ago.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_GIANT_BROWN_TICK": {
     "key": "MON_GIANT_BROWN_TICK",
@@ -52978,7 +54201,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 38
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "BITE",
@@ -53001,7 +54224,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     ],
     "spells": [],
     "flavorText": "It is moving slowly towards you.",
-    "description": "It is moving slowly towards you."
+    "description": "It is moving slowly towards you.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_WAVELORD": {
     "key": "MON_WAVELORD",
@@ -53014,7 +54240,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 7000,
     "baseAC": 45,
     "coreBaseHp": 808,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -53031,7 +54257,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 85
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "HIT",
@@ -53087,7 +54313,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_WATE"
     ],
     "flavorText": "The Dolphiners came with the Thunderlords from their far home. These friendly beings ride their sharks into combat to assist you.",
-    "description": "The Dolphiners came with the Thunderlords from their far home. These friendly beings ride their sharks into combat to assist you."
+    "description": "The Dolphiners came with the Thunderlords from their far home. These friendly beings ride their sharks into combat to assist you.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_NOVICE_POSSESSOR_SOUL": {
     "key": "MON_NOVICE_POSSESSOR_SOUL",
@@ -53139,7 +54368,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 100,
     "baseAC": 30,
     "coreBaseHp": 110,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 37,
@@ -53191,7 +54420,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "Fed with horrid meats and grown to enormous size, this slavering creature seeks livelier prey.",
-    "description": "Fed with horrid meats and grown to enormous size, this slavering creature seeks livelier prey."
+    "description": "Fed with horrid meats and grown to enormous size, this slavering creature seeks livelier prey.",
+    "breathElements": [
+      "DARK",
+      "POISON"
+    ]
   },
   "MON_THE_PRINCESS": {
     "key": "MON_THE_PRINCESS",
@@ -53301,7 +54534,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 22000,
     "baseAC": 45,
     "coreBaseHp": 437,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 105,
@@ -53318,7 +54551,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 96
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [
       {
         "method": "HIT",
@@ -53441,7 +54674,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 0,
     "baseAC": 45,
     "coreBaseHp": 15,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 29,
@@ -53525,7 +54758,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12,
     "baseAC": 40,
     "coreBaseHp": 80,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 47,
@@ -53542,7 +54775,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 32
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CONFUSION",
     "attacks": [
       {
         "method": "CLAW",
@@ -53580,7 +54813,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Its scales glitter in a multitude of perplexing and distracting ways.",
-    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Its scales glitter in a multitude of perplexing and distracting ways."
+    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Its scales glitter in a multitude of perplexing and distracting ways.",
+    "breathElements": [
+      "CONFUSION"
+    ]
   },
   "MON_GOLD_DRAGON_WORM": {
     "key": "MON_GOLD_DRAGON_WORM",
@@ -53593,7 +54829,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12,
     "baseAC": 40,
     "coreBaseHp": 80,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 47,
@@ -53610,7 +54846,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 32
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SOUND",
     "attacks": [
       {
         "method": "CLAW",
@@ -53648,7 +54884,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. You can feel the air itself vibrating as you near it.",
-    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. You can feel the air itself vibrating as you near it."
+    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. You can feel the air itself vibrating as you near it.",
+    "breathElements": [
+      "SOUND"
+    ]
   },
   "MON_MOLDOUX_THE_DEFENCELESS_MOLD": {
     "key": "MON_MOLDOUX_THE_DEFENCELESS_MOLD",
@@ -53661,7 +54900,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3,
     "baseAC": 8,
     "coreBaseHp": 5,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 8,
@@ -53711,7 +54950,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 13500,
     "baseAC": 45,
     "coreBaseHp": 3282,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -53728,7 +54967,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 125
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "TOUCH",
@@ -53785,7 +55024,12 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "ROCKET"
     ],
     "flavorText": "A keeper of forbidden wisdom, this Teacher bombards you with his mastery over elements of matter.",
-    "description": "A keeper of forbidden wisdom, this Teacher bombards you with his mastery over elements of matter."
+    "description": "A keeper of forbidden wisdom, this Teacher bombards you with his mastery over elements of matter.",
+    "breathElements": [
+      "FIRE",
+      "PLASMA",
+      "TIME"
+    ]
   },
   "MON_AR_PHARAZON_THE_GOLDEN": {
     "key": "MON_AR_PHARAZON_THE_GOLDEN",
@@ -53937,7 +55181,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 200
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CHAOS",
     "attacks": [
       {
         "method": "GAZE",
@@ -54038,7 +55282,15 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "A woman of mind-shattering beauty, none can match her beauty. She is perfect, and totally evil. She loves nothing but herself and her evil is as great as her beauty. No one can stand against her, even DarkGod. As you see her approaching, you feel your heart breaking. She is the perfection, don't even try against her; you will surely lose your mind...",
-    "description": "A woman of mind-shattering beauty, none can match her beauty. She is perfect, and totally evil. She loves nothing but herself and her evil is as great as her beauty. No one can stand against her, even DarkGod. As you see her approaching, you feel your heart breaking. She is the perfection, don't even try against her; you will surely lose your mind..."
+    "description": "A woman of mind-shattering beauty, none can match her beauty. She is perfect, and totally evil. She loves nothing but herself and her evil is as great as her beauty. No one can stand against her, even DarkGod. As you see her approaching, you feel your heart breaking. She is the perfection, don't even try against her; you will surely lose your mind...",
+    "breathElements": [
+      "CHAOS",
+      "CONFUSION",
+      "DISENCHANT",
+      "NETHER",
+      "SOUND",
+      "TIME"
+    ]
   },
   "MON_THE_GREATER_LAG_MONSTER": {
     "key": "MON_THE_GREATER_LAG_MONSTER",
@@ -54068,7 +55320,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 185
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CONFUSION",
     "attacks": [
       {
         "method": "GAZE",
@@ -54145,7 +55397,13 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "It is even worse than the RNG, coming from Mangband, it seeks to crush you to pulp... and surely can.",
-    "description": "It is even worse than the RNG, coming from Mangband, it seeks to crush you to pulp... and surely can."
+    "description": "It is even worse than the RNG, coming from Mangband, it seeks to crush you to pulp... and surely can.",
+    "breathElements": [
+      "CONFUSION",
+      "GRAVITY",
+      "INERTIA",
+      "TIME"
+    ]
   },
   "MON_BULLROARER_THE_HOBBIT": {
     "key": "MON_BULLROARER_THE_HOBBIT",
@@ -54158,7 +55416,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 90,
     "baseAC": 8,
     "coreBaseHp": 33,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 22,
@@ -54218,7 +55476,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 350,
     "baseAC": 45,
     "coreBaseHp": 300,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 47,
@@ -54361,7 +55619,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 500,
     "baseAC": 45,
     "coreBaseHp": 192,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 103,
@@ -54439,7 +55697,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 4500,
     "baseAC": 45,
     "coreBaseHp": 1717,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 121,
@@ -54527,7 +55785,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1200,
     "baseAC": 45,
     "coreBaseHp": 1262,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 146,
@@ -54608,7 +55866,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 700,
     "baseAC": 45,
     "coreBaseHp": 154,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 58,
@@ -54625,7 +55883,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 52
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -54668,7 +55926,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "A figure twisted by evil standing in robes of deepest crimson.",
-    "description": "A figure twisted by evil standing in robes of deepest crimson."
+    "description": "A figure twisted by evil standing in robes of deepest crimson.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_HEZROU": {
     "key": "MON_HEZROU",
@@ -54698,7 +55959,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 59
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -54733,7 +55994,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_DEMON"
     ],
     "flavorText": "It is a demon of lizard form with cruel-looking jaws.",
-    "description": "It is a demon of lizard form with cruel-looking jaws."
+    "description": "It is a demon of lizard form with cruel-looking jaws.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_GLABREZU": {
     "key": "MON_GLABREZU",
@@ -54763,7 +56027,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 61
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -54797,7 +56061,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_DEMON"
     ],
     "flavorText": "It is a demon with arms and pincers, its form a true mockery of life.",
-    "description": "It is a demon with arms and pincers, its form a true mockery of life."
+    "description": "It is a demon with arms and pincers, its form a true mockery of life.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_NALFESHNEE": {
     "key": "MON_NALFESHNEE",
@@ -54869,7 +56136,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_DEMON"
     ],
     "flavorText": "It is a large demon with the head of a giant boar. Flames run up and down its length.",
-    "description": "It is a large demon with the head of a giant boar. Flames run up and down its length."
+    "description": "It is a large demon with the head of a giant boar. Flames run up and down its length.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_MARILITH": {
     "key": "MON_MARILITH",
@@ -54882,7 +56152,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 7000,
     "baseAC": 45,
     "coreBaseHp": 710,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 91,
@@ -54959,7 +56229,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 10000,
     "baseAC": 45,
     "coreBaseHp": 1010,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 129,
@@ -55028,7 +56298,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_DEMON"
     ],
     "flavorText": "It is a massive humanoid demon wreathed in flames.",
-    "description": "It is a massive humanoid demon wreathed in flames."
+    "description": "It is a massive humanoid demon wreathed in flames.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_MASTER_MYSTIC": {
     "key": "MON_MASTER_MYSTIC",
@@ -55058,7 +56331,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 71
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "KICK",
@@ -55110,7 +56383,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_SPIDER"
     ],
     "flavorText": "A lord of all that is natural, skilled in the mystic ways. He is a master of martial arts and is at one with nature, able to summon help from the wild if need be.",
-    "description": "A lord of all that is natural, skilled in the mystic ways. He is a master of martial arts and is at one with nature, able to summon help from the wild if need be."
+    "description": "A lord of all that is natural, skilled in the mystic ways. He is a master of martial arts and is at one with nature, able to summon help from the wild if need be.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_GRAND_MASTER_MYSTIC": {
     "key": "MON_GRAND_MASTER_MYSTIC",
@@ -55140,7 +56416,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 80
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "KICK",
@@ -55193,7 +56469,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_SPIDER"
     ],
     "flavorText": "He is one of the few true masters of the art, being extremely skillful in all forms of unarmed combat and controlling the world's natural creatures with disdainful ease.",
-    "description": "He is one of the few true masters of the art, being extremely skillful in all forms of unarmed combat and controlling the world's natural creatures with disdainful ease."
+    "description": "He is one of the few true masters of the art, being extremely skillful in all forms of unarmed combat and controlling the world's natural creatures with disdainful ease.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_ERINYES": {
     "key": "MON_ERINYES",
@@ -55223,7 +56502,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 55
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -55259,7 +56538,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "CONF"
     ],
     "flavorText": "It is a lesser demon of female form; however, she takes little time to show her true colours.",
-    "description": "It is a lesser demon of female form; however, she takes little time to show her true colours."
+    "description": "It is a lesser demon of female form; however, she takes little time to show her true colours.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_POLYPHEMUS_THE_BLIND_CYCLOPS": {
     "key": "MON_POLYPHEMUS_THE_BLIND_CYCLOPS",
@@ -55344,7 +56626,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BO_WATE"
     ],
     "flavorText": "No ordinary cyclops, but the son of a sea-god:  he wields the powers of elemental water as well as the considerable strength of a cyclops.  His one eye was blinded long ago by the warrior Odysseus, but he has trained himself to hear so well that it nearly makes up for his disability.",
-    "description": "No ordinary cyclops, but the son of a sea-god:  he wields the powers of elemental water as well as the considerable strength of a cyclops.  His one eye was blinded long ago by the warrior Odysseus, but he has trained himself to hear so well that it nearly makes up for his disability."
+    "description": "No ordinary cyclops, but the son of a sea-god:  he wields the powers of elemental water as well as the considerable strength of a cyclops.  His one eye was blinded long ago by the warrior Odysseus, but he has trained himself to hear so well that it nearly makes up for his disability.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_GREAT_WYRM_OF_PERPLEXITY": {
     "key": "MON_GREAT_WYRM_OF_PERPLEXITY",
@@ -55357,7 +56642,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 20000,
     "baseAC": 45,
     "coreBaseHp": 2020,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -55374,7 +56659,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 87
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CONFUSION",
     "attacks": [
       {
         "method": "CLAW",
@@ -55426,7 +56711,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A dragon of great size and power.  Its polished bronze scales reflect the light in strange and confusing patterns, and you find it hard to keep your mind on the job of fighting for your life.",
-    "description": "A dragon of great size and power.  Its polished bronze scales reflect the light in strange and confusing patterns, and you find it hard to keep your mind on the job of fighting for your life."
+    "description": "A dragon of great size and power.  Its polished bronze scales reflect the light in strange and confusing patterns, and you find it hard to keep your mind on the job of fighting for your life.",
+    "breathElements": [
+      "CONFUSION"
+    ]
   },
   "MON_GREAT_WYRM_OF_THUNDER": {
     "key": "MON_GREAT_WYRM_OF_THUNDER",
@@ -55439,7 +56727,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 23000,
     "baseAC": 45,
     "coreBaseHp": 2525,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -55456,7 +56744,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 93
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "SOUND",
     "attacks": [
       {
         "method": "CLAW",
@@ -55508,7 +56796,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "A dragon of gigantic proportions, with destructive abilities to match.  The sheer loudness of its roar leaves you stunned and unable to think clearly enough to defend yourself adequately.",
-    "description": "A dragon of gigantic proportions, with destructive abilities to match.  The sheer loudness of its roar leaves you stunned and unable to think clearly enough to defend yourself adequately."
+    "description": "A dragon of gigantic proportions, with destructive abilities to match.  The sheer loudness of its roar leaves you stunned and unable to think clearly enough to defend yourself adequately.",
+    "breathElements": [
+      "SOUND"
+    ]
   },
   "MON_SILVER_MOUSE": {
     "key": "MON_SILVER_MOUSE",
@@ -55570,7 +56861,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 32,
     "baseAC": 30,
     "coreBaseHp": 130,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 45,
@@ -55706,7 +56997,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 3,
     "baseAC": 8,
     "coreBaseHp": 5,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 19,
@@ -55756,7 +57047,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1200,
     "baseAC": 45,
     "coreBaseHp": 505,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 49,
@@ -55811,7 +57102,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "SCARE"
     ],
     "flavorText": "He's back from the grave for vengeance on those who burnt him. He has no mercy for those in his way.",
-    "description": "He's back from the grave for vengeance on those who burnt him. He has no mercy for those in his way."
+    "description": "He's back from the grave for vengeance on those who burnt him. He has no mercy for those in his way.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_THE_INSANE_PLAYER": {
     "key": "MON_THE_INSANE_PLAYER",
@@ -55824,7 +57118,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1200,
     "baseAC": 45,
     "coreBaseHp": 909,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "MAGE",
     "coreBase": {
       "str": 49,
@@ -55960,7 +57254,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 23000,
     "baseAC": 45,
     "coreBaseHp": 1767,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 187,
@@ -55977,7 +57271,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 85
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [
       {
         "method": "HIT",
@@ -56043,7 +57337,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 26000,
     "baseAC": 45,
     "coreBaseHp": 2020,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 200,
@@ -56060,7 +57354,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 90
     },
     "aiPattern": "BREATH",
-    "breathElement": "LIGHTNING",
+    "breathElement": "FIRE",
     "attacks": [
       {
         "method": "HIT",
@@ -56111,7 +57405,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "A gigantic four-armed animated bronze statue, glowing with great heat.",
-    "description": "A gigantic four-armed animated bronze statue, glowing with great heat."
+    "description": "A gigantic four-armed animated bronze statue, glowing with great heat.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_BLUE_DRAGON_WORM": {
     "key": "MON_BLUE_DRAGON_WORM",
@@ -56124,7 +57421,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12,
     "baseAC": 40,
     "coreBaseHp": 80,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 47,
@@ -56179,7 +57476,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Sparks fly from its jaws.",
-    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Sparks fly from its jaws."
+    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Sparks fly from its jaws.",
+    "breathElements": [
+      "LIGHTNING"
+    ]
   },
   "MON_WHITE_DRAGON_WORM": {
     "key": "MON_WHITE_DRAGON_WORM",
@@ -56192,7 +57492,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12,
     "baseAC": 40,
     "coreBaseHp": 80,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 47,
@@ -56247,7 +57547,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Its breath condenses in the air.",
-    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Its breath condenses in the air."
+    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Its breath condenses in the air.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_GREEN_DRAGON_WORM": {
     "key": "MON_GREEN_DRAGON_WORM",
@@ -56260,7 +57563,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12,
     "baseAC": 40,
     "coreBaseHp": 80,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 47,
@@ -56277,7 +57580,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 32
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -56315,7 +57618,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. You can smell foul gases on its breath.",
-    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. You can smell foul gases on its breath."
+    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. You can smell foul gases on its breath.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_BLACK_DRAGON_WORM": {
     "key": "MON_BLACK_DRAGON_WORM",
@@ -56328,7 +57634,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12,
     "baseAC": 40,
     "coreBaseHp": 80,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 47,
@@ -56383,7 +57689,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Acidic drool drips from its jaws.",
-    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Acidic drool drips from its jaws."
+    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Acidic drool drips from its jaws.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_RED_DRAGON_WORM": {
     "key": "MON_RED_DRAGON_WORM",
@@ -56396,7 +57705,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12,
     "baseAC": 40,
     "coreBaseHp": 80,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 47,
@@ -56451,7 +57760,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Smoke comes from its mouth.",
-    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Smoke comes from its mouth."
+    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Smoke comes from its mouth.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_MULTI_HUED_DRAGON_WORM": {
     "key": "MON_MULTI_HUED_DRAGON_WORM",
@@ -56464,7 +57776,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12,
     "baseAC": 40,
     "coreBaseHp": 105,
-    "speed": 4.0,
+    "speed": 4,
     "growthType": "BALANCED",
     "coreBase": {
       "str": 49,
@@ -56527,7 +57839,14 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Its scales shimmer different colours as you watch.",
-    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Its scales shimmer different colours as you watch."
+    "description": "You thought dragons used eggs, but this worm has the scales, and the bad breath, and the fiery eyes, of a real dragon. Its scales shimmer different colours as you watch.",
+    "breathElements": [
+      "ACID",
+      "COLD",
+      "LIGHTNING",
+      "FIRE",
+      "POISON"
+    ]
   },
   "MON_THE_MINOTAUR_OF_THE_LABYRINTH": {
     "key": "MON_THE_MINOTAUR_OF_THE_LABYRINTH",
@@ -56604,7 +57923,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 12,
     "baseAC": 40,
     "coreBaseHp": 315,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "WARRIOR",
     "coreBase": {
       "str": 89,
@@ -56621,7 +57940,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 68
     },
     "aiPattern": "BREATH",
-    "breathElement": "ACID",
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -56675,7 +57994,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_KIN"
     ],
     "flavorText": "Queen and mother of the sandworms, fear her and her prolific children.",
-    "description": "Queen and mother of the sandworms, fear her and her prolific children."
+    "description": "Queen and mother of the sandworms, fear her and her prolific children.",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_SANDWORM": {
     "key": "MON_SANDWORM",
@@ -56705,7 +58027,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 41
     },
     "aiPattern": "STANDARD",
-    "breathElement": null,
+    "breathElement": "POISON",
     "attacks": [
       {
         "method": "CLAW",
@@ -56744,7 +58066,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "MULTIPLY"
     ],
     "flavorText": "Offbreed of the Sandworm Queen, they are harmless alone...",
-    "description": "Offbreed of the Sandworm Queen, they are harmless alone..."
+    "description": "Offbreed of the Sandworm Queen, they are harmless alone...",
+    "breathElements": [
+      "POISON"
+    ]
   },
   "MON_TIK_SRVZLLAT": {
     "key": "MON_TIK_SRVZLLAT",
@@ -56774,7 +58099,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 200
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "DISENCHANT",
     "attacks": [
       {
         "method": "GAZE",
@@ -56837,7 +58162,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_WRAITH"
     ],
     "flavorText": "A disembodied and barely sentient mind, Tik'srvzllat floated through the void for eons before being awakened by sorcery, pulled into the nether realm, and shaped into the being you see before you. A flickering purple outline of a sphere, with eerie yellow-purple mist circling rapidly around it, Tik'srvzllat threatens your sanity with its appearance alone.",
-    "description": "A disembodied and barely sentient mind, Tik'srvzllat floated through the void for eons before being awakened by sorcery, pulled into the nether realm, and shaped into the being you see before you. A flickering purple outline of a sphere, with eerie yellow-purple mist circling rapidly around it, Tik'srvzllat threatens your sanity with its appearance alone."
+    "description": "A disembodied and barely sentient mind, Tik'srvzllat floated through the void for eons before being awakened by sorcery, pulled into the nether realm, and shaped into the being you see before you. A flickering purple outline of a sphere, with eerie yellow-purple mist circling rapidly around it, Tik'srvzllat threatens your sanity with its appearance alone.",
+    "breathElements": [
+      "DISENCHANT"
+    ]
   },
   "MON_THE_GLASS_GOLEM": {
     "key": "MON_THE_GLASS_GOLEM",
@@ -56867,7 +58195,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 107
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "CONFUSION",
     "attacks": [
       {
         "method": "HIT",
@@ -56926,7 +58254,13 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_LEVEL"
     ],
     "flavorText": "One of the last creations of the petty dwarves of Ludarin, its existence explains their destruction. A creation of finest glass, the body of this creature bends and amplifies light in a way that makes you unsure of its position. You feel somewhat dizzy as the radiant light reflects off the walls, the ceiling and your gear.",
-    "description": "One of the last creations of the petty dwarves of Ludarin, its existence explains their destruction. A creation of finest glass, the body of this creature bends and amplifies light in a way that makes you unsure of its position. You feel somewhat dizzy as the radiant light reflects off the walls, the ceiling and your gear."
+    "description": "One of the last creations of the petty dwarves of Ludarin, its existence explains their destruction. A creation of finest glass, the body of this creature bends and amplifies light in a way that makes you unsure of its position. You feel somewhat dizzy as the radiant light reflects off the walls, the ceiling and your gear.",
+    "breathElements": [
+      "CONFUSION",
+      "DARK",
+      "LIGHT",
+      "FORCE"
+    ]
   },
   "MON_THE_WHITE_BALROG": {
     "key": "MON_THE_WHITE_BALROG",
@@ -56939,7 +58273,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 25000,
     "baseAC": 45,
     "coreBaseHp": 1262,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 130,
@@ -56956,7 +58290,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 104
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "COLD",
     "attacks": [
       {
         "method": "HIT",
@@ -57015,7 +58349,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_UNDEAD"
     ],
     "flavorText": "It is a massive humanoid demon wreathed in frost, wielding a cruel looking pike in its hands.",
-    "description": "It is a massive humanoid demon wreathed in frost, wielding a cruel looking pike in its hands."
+    "description": "It is a massive humanoid demon wreathed in frost, wielding a cruel looking pike in its hands.",
+    "breathElements": [
+      "COLD"
+    ]
   },
   "MON_GOLGARACH_THE_LIVING_ROCK": {
     "key": "MON_GOLGARACH_THE_LIVING_ROCK",
@@ -57028,7 +58365,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 1500,
     "baseAC": 45,
     "coreBaseHp": 775,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 89,
@@ -57093,7 +58430,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_KIN"
     ],
     "flavorText": "Deep in the heart of the earth, even the rock itself is sentient and has learned to despise intruders.",
-    "description": "Deep in the heart of the earth, even the rock itself is sentient and has learned to despise intruders."
+    "description": "Deep in the heart of the earth, even the rock itself is sentient and has learned to despise intruders.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_ATLAS_THE_TITAN": {
     "key": "MON_ATLAS_THE_TITAN",
@@ -57263,7 +58603,13 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "The lord of the Titans, he has broken loose from his confinement in the nether hells to seek revenge on the world.",
-    "description": "The lord of the Titans, he has broken loose from his confinement in the nether hells to seek revenge on the world."
+    "description": "The lord of the Titans, he has broken loose from his confinement in the nether hells to seek revenge on the world.",
+    "breathElements": [
+      "COLD",
+      "FIRE",
+      "SHARDS",
+      "SOUND"
+    ]
   },
   "MON_WATER_HOUND": {
     "key": "MON_WATER_HOUND",
@@ -57293,7 +58639,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 61
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": null,
     "attacks": [
       {
         "method": "BITE",
@@ -57357,7 +58703,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 200
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "DISINTEGRATE",
     "attacks": [
       {
         "method": "SPORE",
@@ -57427,7 +58773,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TPORT"
     ],
     "flavorText": "An assistant to DarkGod, Improv has chosen the form of a dense purple smog for his incarnation into Middle-earth. It travels the dungeons, killing software bugs and creating random artifacts for guests to find.",
-    "description": "An assistant to DarkGod, Improv has chosen the form of a dense purple smog for his incarnation into Middle-earth. It travels the dungeons, killing software bugs and creating random artifacts for guests to find."
+    "description": "An assistant to DarkGod, Improv has chosen the form of a dense purple smog for his incarnation into Middle-earth. It travels the dungeons, killing software bugs and creating random artifacts for guests to find.",
+    "breathElements": [
+      "DISINTEGRATE"
+    ]
   },
   "MON_EMPEROR_MIMIC": {
     "key": "MON_EMPEROR_MIMIC",
@@ -57440,7 +58789,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
     "exp": 200,
     "baseAC": 45,
     "coreBaseHp": 1275,
-    "speed": 7.0,
+    "speed": 7,
     "growthType": "TANK",
     "coreBase": {
       "str": 108,
@@ -57514,7 +58863,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "S_MONSTER"
     ],
     "flavorText": "A strange creature that disguises itself as an object to lure unsuspecting adventurers within reach of its venomous claws.",
-    "description": "A strange creature that disguises itself as an object to lure unsuspecting adventurers within reach of its venomous claws."
+    "description": "A strange creature that disguises itself as an object to lure unsuspecting adventurers within reach of its venomous claws.",
+    "breathElements": [
+      "ACID"
+    ]
   },
   "MON_MELINDA_PROUDFOOT": {
     "key": "MON_MELINDA_PROUDFOOT",
@@ -57683,7 +59035,10 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "BR_FIRE"
     ],
     "flavorText": "A sentient mass of pure fire.",
-    "description": "A sentient mass of pure fire."
+    "description": "A sentient mass of pure fire.",
+    "breathElements": [
+      "FIRE"
+    ]
   },
   "MON_MELKOR_LORD_OF_DARKNESS": {
     "key": "MON_MELKOR_LORD_OF_DARKNESS",
@@ -57713,7 +59068,7 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "cha": 200
     },
     "aiPattern": "BREATH",
-    "breathElement": "DARK",
+    "breathElement": "DISINTEGRATE",
     "attacks": [
       {
         "method": "HIT",
@@ -57798,7 +59153,11 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "TELE_TO"
     ],
     "flavorText": "He was the most powerful of the Valar, the equal of Manwe. You banned him here, in the Void, and now you must destroy him forever. However here in the Void, his spirit gained much power for he is closer to the Flame Imperishable. He is coming to you in pure madness, which makes him even more dangerous. You are on the verge of dying!",
-    "description": "He was the most powerful of the Valar, the equal of Manwe. You banned him here, in the Void, and now you must destroy him forever. However here in the Void, his spirit gained much power for he is closer to the Flame Imperishable. He is coming to you in pure madness, which makes him even more dangerous. You are on the verge of dying!"
+    "description": "He was the most powerful of the Valar, the equal of Manwe. You banned him here, in the Void, and now you must destroy him forever. However here in the Void, his spirit gained much power for he is closer to the Flame Imperishable. He is coming to you in pure madness, which makes him even more dangerous. You are on the verge of dying!",
+    "breathElements": [
+      "DISINTEGRATE",
+      "NETHER"
+    ]
   },
   "MON_NEIL_THE_SORCEROR": {
     "key": "MON_NEIL_THE_SORCEROR",
@@ -57875,6 +59234,9 @@ export const TOME_MONSTERS_DATA = Object.freeze({
       "HASTE"
     ],
     "flavorText": "He looks like he is looking for something, and the flecks of dragon blood on his face tell you he means business!",
-    "description": "He looks like he is looking for something, and the flecks of dragon blood on his face tell you he means business!"
+    "description": "He looks like he is looking for something, and the flecks of dragon blood on his face tell you he means business!",
+    "breathElements": [
+      "FIRE"
+    ]
   }
 });

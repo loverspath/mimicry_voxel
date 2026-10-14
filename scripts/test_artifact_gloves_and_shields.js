@@ -4,8 +4,8 @@
  *              GLOVES/SHIELD 타입 전수 검증 및 ItemRegistry / Spawner / Player 연동 검증.
  */
 
-import { TOME_ARTIFACTS_DATA } from '../src/entities/TomeArtifactsData.js';
-import { createTomeItem, TOME_ARTIFACTS } from '../src/entities/ItemRegistry.js';
+import { TOME_ARTIFACTS_DATA, TOME_ARTIFACTS_DATA as TOME_ARTIFACTS } from '../src/entities/TomeArtifactsData.js';
+import { createTomeItem } from '../src/systems/TomeLootGenerator.js';
 import { Player } from '../src/entities/Player.js';
 
 let passed = 0;

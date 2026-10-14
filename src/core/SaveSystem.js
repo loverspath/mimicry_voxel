@@ -15,6 +15,7 @@ import { getSpeciesConfig, LEGACY_TOME_ALIASES_MAP } from '../entities/MonsterRe
 import { uniqueMonsterManager } from '../systems/UniqueMonsterManager.js';
 import { MonsterSpellFactory } from '../systems/MonsterSpellFactory.js';
 import { balanceModifierManager } from '../systems/BalanceModifierManager.js';
+import { StatusEffectEngine } from '../systems/StatusEffectEngine.js';
 
 /** 중앙화된 세이브 슬롯 목록 — 슬롯 수가 바뀌면 여기만 수정 */
 export const SAVE_SLOTS = ['slot1', 'slot2', 'slot3', 'slot4', 'slot5', 'slot6', 'slot7', 'slot8'];
@@ -30,32 +31,54 @@ export class SaveSystem {
                 char: item.char,
                 color: item._baseColor || item.color,
                 name: item._baseName || item.name,
+                _baseName: item._baseName,
+                _baseColor: item._baseColor,
                 lightBonus: item.lightBonus,
                 slotType: item.slotType,
                 statBonuses: item.statBonuses,
-                dice: item.dice,
+                dice: item.dice !== undefined ? item.dice : null,
+                sides: item.sides !== undefined ? item.sides : null,
                 coreType: item.coreType,
                 prefixes: item.prefixes,
                 suffixes: item.suffixes,
+                prefix: item.prefix !== undefined ? item.prefix : null,
+                suffix: item.suffix !== undefined ? item.suffix : null,
                 fusionLevel: item.fusionLevel,
                 upgradeLevel: item.upgradeLevel || 0,
                 count: item.count || 1,
                 specialTags: item.specialTags || [],
+                synergyTags: Array.isArray(item.synergyTags) ? [...item.synergyTags] : (item.specialTags || []),
                 weight: item.weight !== undefined ? item.weight : 0,
                 potionEffect: item.potionEffect || null,
                 scrollEffect: item.scrollEffect || null,
-                baseAC: item.baseAC !== undefined ? item.baseAC : 0,
-                toHit: item.toHit !== undefined ? item.toHit : 0,
-                toDamage: item.toDamage !== undefined ? item.toDamage : 0,
-                toDmg: item.toDmg !== undefined ? item.toDmg : 0,
+                baseAC: item.baseAC !== undefined ? item.baseAC : (item.ac !== undefined ? item.ac : 0),
+                ac: item.ac !== undefined ? item.ac : (item.baseAC !== undefined ? item.baseAC : 0),
+                toHit: item.toHit !== undefined ? item.toHit : (item.to_h !== undefined ? item.to_h : 0),
+                toDam: item.toDam !== undefined ? item.toDam : (item.toDamage !== undefined ? item.toDamage : (item.to_d !== undefined ? item.to_d : 0)),
+                toDamage: item.toDamage !== undefined ? item.toDamage : (item.toDam !== undefined ? item.toDam : 0),
+                toDmg: item.toDmg !== undefined ? item.toDmg : (item.toDam !== undefined ? item.toDam : 0),
+                toAC: item.toAC !== undefined ? item.toAC : (item.to_a !== undefined ? item.to_a : 0),
                 range: item.range !== undefined ? item.range : 0,
                 multiplier: item.multiplier !== undefined ? item.multiplier : 0,
                 weaponCategory: item.weaponCategory || null,
-                flavorText: item.flavorText || '',
-                tval: item.tval,
-                sval: item.sval,
-                charges: item.charges,
-                timeout: item.timeout || 0
+                flavorText: item.flavorText || "",
+                tval: item.tval !== undefined ? item.tval : null,
+                sval: item.sval !== undefined ? item.sval : null,
+                pval: item.pval !== undefined ? item.pval : 0,
+                idState: item.idState !== undefined ? item.idState : (item.isIdentified ? "KNOWN" : "UNIDENTIFIED"),
+                isIdentified: item.isIdentified !== undefined ? item.isIdentified : (item.idState === "KNOWN"),
+                isCursed: item.isCursed !== undefined ? item.isCursed : false,
+                curses: Array.isArray(item.curses) ? [...item.curses] : (item.curses || []),
+                isArtifact: item.isArtifact !== undefined ? item.isArtifact : false,
+                artifactKey: item.artifactKey !== undefined ? item.artifactKey : null,
+                artifactId: item.artifactId !== undefined ? item.artifactId : (item.artifactKey || null),
+                isRandart: item.isRandart !== undefined ? item.isRandart : false,
+                egoKey: item.egoKey !== undefined ? item.egoKey : null,
+                flags: Array.isArray(item.flags) ? [...item.flags] : (item.flags || []),
+                activate: item.activate !== undefined ? item.activate : null,
+                timeout: item.timeout !== undefined ? item.timeout : 0,
+                charges: item.charges !== undefined ? item.charges : null,
+                maxCharges: item.maxCharges !== undefined ? item.maxCharges : null
             };
         };
 
@@ -64,16 +87,28 @@ export class SaveSystem {
                 x: m.x,
                 y: m.y,
                 type: m.type,
+                key: m.key || m.monsterKey || m.tomeKey || m.type,
+                name: m.name,
+                char: m.char,
+                color: m.color,
                 level: m.level,
                 prefixes: m.prefixes,
                 suffixes: m.suffixes,
-                hp: m.stats.hp,
+                hp: m.stats ? m.stats.hp : m.hp,
+                maxHp: m.stats ? m.stats.maxHp : m.maxHp,
                 energy: m.energy,
                 batFleeTurns: m.batFleeTurns,
                 breathCooldown: m.breathCooldown,
                 giantBloodCooldown: m.giantBloodCooldown || 0,
                 debuffs: m.debuffs,
-                statuses: m.statuses || {}
+                statuses: m.statuses || {},
+                cooldowns: m.cooldowns || {},
+                isUnique: !!m.isUnique,
+                isFinalBoss: !!m.isFinalBoss,
+                bossPhase: m.bossPhase !== undefined ? m.bossPhase : 1,
+                blows: m.blows || m.attacks || [],
+                spells: m.spells || [],
+                flags: m.flags || m.perks || []
             };
         };
 
@@ -109,6 +144,7 @@ export class SaveSystem {
                 xpNeeded: game.player.xpNeeded,
                 baseStats: game.player.baseStats,
                 legacyStats: game.player.legacyStats,
+                reincarnationCount: game.player.reincarnationCount || 0,
                 attackCount: game.player.attackCount,
                 debuffs: game.player.debuffs,
                 statuses: game.player.statuses || {},
@@ -124,8 +160,13 @@ export class SaveSystem {
                 skillTrackers: game.player.skillTrackers || {},
                 inventory: playerInv.map(serializeItem),
                 equipmentIndexes: equipmentIndexes,
-                mutations: game.player.body ? game.player.body.mutations : [],
+                subCore1: serializeItem(game.player.equipment?.subCore1),
+                subCore2: serializeItem(game.player.equipment?.subCore2),
+                coreInventory: (game.player.coreInventory || []).map(serializeItem),
+                mutations: game.player.mutations || (game.player.body ? game.player.body.mutations : []),
+                loreProgress: game.player.loreProgress || (game.player.body ? game.player.body.loreRegistry : {}),
                 loreRegistry: game.player.body ? game.player.body.loreRegistry : {},
+                slainUniques: game.player.slainUniques || [],
                 weaponMastery: game.player.body ? game.player.body.weaponMastery : {}
             },
             items: game.items.map(serializeItem),
@@ -135,6 +176,21 @@ export class SaveSystem {
                 height: game.map.height,
                 floor: game.map.floor,
                 startingPosition: game.map.startingPosition,
+                stairs: (game.map.stairs && game.map.stairs.length > 0)
+                    ? game.map.stairs.map(s => ({
+                        x: s.x,
+                        y: s.y,
+                        type: s.type,
+                        isDown: s.isDown !== undefined ? s.isDown : (s.type === "STAIRS_DOWN"),
+                        isUp: s.isUp !== undefined ? s.isUp : (s.type === "STAIRS_UP"),
+                        isSealed: !!s.isSealed
+                    }))
+                    : [
+                        ...(game.map.downStaircases || []).map(s => ({ x: s.x, y: s.y, type: "STAIRS_DOWN", isDown: true, isUp: false, isSealed: !!s.isSealed })),
+                        ...(game.map.upStaircases || []).map(s => ({ x: s.x, y: s.y, type: "STAIRS_UP", isDown: false, isUp: true, isSealed: !!s.isSealed }))
+                    ],
+                downStaircases: game.map.downStaircases || [],
+                upStaircases: game.map.upStaircases || [],
                 rooms: (game.map.rooms || []).map(r => ({
                     x1: r.x1,
                     y1: r.y1,
@@ -178,6 +234,13 @@ export class SaveSystem {
         
         game.map = new Map(data.map.width, data.map.height, data.map.floor);
         game.map.startingPosition = data.map.startingPosition;
+        if (data.map.stairs) {
+            game.map.stairs = data.map.stairs.map(s => ({ ...s }));
+        } else {
+            game.map.stairs = [];
+        }
+        if (data.map.downStaircases) game.map.downStaircases = data.map.downStaircases;
+        if (data.map.upStaircases) game.map.upStaircases = data.map.upStaircases;
         
         // Restore rooms as structured RectRoom instances
         game.map.rooms = (data.map.rooms || []).map(r => {
@@ -322,7 +385,7 @@ export class SaveSystem {
             let itemName = iData.name;
             let itemColor = iData.color;
             let itemChar = iData.char;
-            if (iData.type === 'CORE' && iData.coreType) {
+            if (iData.type === "CORE" && iData.coreType) {
                 const config = getSpeciesConfig(iData.coreType);
                 if (config) {
                     itemName = `${config.name} 코어`;
@@ -339,20 +402,41 @@ export class SaveSystem {
             item.fusionLevel = iData.fusionLevel || 0;
             item.upgradeLevel = iData.upgradeLevel || 0;
             item.count = iData.count || 1;
-            // 동적 계산 대상(코어, 탄약, 소모품, 장비)의 _weight 오염 방지 (TomeEquipmentEngine dynamic getter 위임 유지)
             if (iData.potionEffect !== undefined) item.potionEffect = iData.potionEffect;
             if (iData.scrollEffect !== undefined) item.scrollEffect = iData.scrollEffect;
             if (iData.baseAC !== undefined) item.baseAC = iData.baseAC;
+            if (iData.ac !== undefined) item.ac = iData.ac;
             if (iData.toHit !== undefined) item.toHit = iData.toHit;
             if (iData.toDamage !== undefined) item.toDamage = iData.toDamage;
+            if (iData.toDam !== undefined) item.toDam = iData.toDam;
             if (iData.toDmg !== undefined) item.toDmg = iData.toDmg;
+            if (iData.toAC !== undefined) item.toAC = iData.toAC;
+            if (iData.dice !== undefined) item.dice = iData.dice;
+            if (iData.sides !== undefined) item.sides = iData.sides;
             if (iData.range !== undefined) item.range = iData.range;
             if (iData.multiplier !== undefined) item.multiplier = iData.multiplier;
             if (iData.weaponCategory !== undefined) item.weaponCategory = iData.weaponCategory;
             if (iData.tval !== undefined) item.tval = iData.tval;
             if (iData.sval !== undefined) item.sval = iData.sval;
-            if (iData.charges !== undefined) item.charges = iData.charges;
+            if (iData.pval !== undefined) item.pval = iData.pval;
+            if (iData.idState !== undefined) item.idState = iData.idState;
+            if (iData.isIdentified !== undefined) item.isIdentified = iData.isIdentified;
+            if (iData.isCursed !== undefined) item.isCursed = iData.isCursed;
+            if (iData.curses !== undefined) item.curses = iData.curses;
+            if (iData.isArtifact !== undefined) item.isArtifact = iData.isArtifact;
+            if (iData.artifactKey !== undefined) item.artifactKey = iData.artifactKey;
+            if (iData.artifactId !== undefined) item.artifactId = iData.artifactId;
+            if (iData.isRandart !== undefined) item.isRandart = iData.isRandart;
+            if (iData.egoKey !== undefined) item.egoKey = iData.egoKey;
+            if (iData.flags !== undefined) item.flags = iData.flags;
+            if (iData.activate !== undefined) item.activate = iData.activate;
             if (iData.timeout !== undefined) item.timeout = iData.timeout;
+            if (iData.charges !== undefined) item.charges = iData.charges;
+            if (iData.maxCharges !== undefined) item.maxCharges = iData.maxCharges;
+            if (iData.weight !== undefined) item.weight = iData.weight;
+            if (iData.prefix !== undefined) item.prefix = iData.prefix;
+            if (iData.suffix !== undefined) item.suffix = iData.suffix;
+            if (iData.synergyTags !== undefined) item.synergyTags = iData.synergyTags;
             return item;
         };
 
@@ -388,12 +472,33 @@ export class SaveSystem {
         if (eqIdx.gloves !== -1 && eqIdx.gloves !== undefined) game.player.equipment.gloves = game.player.inventory[eqIdx.gloves];
         if (eqIdx.boots !== -1 && eqIdx.boots !== undefined) game.player.equipment.boots = game.player.inventory[eqIdx.boots];
         if (eqIdx.cloak !== -1 && eqIdx.cloak !== undefined) game.player.equipment.cloak = game.player.inventory[eqIdx.cloak];
-        if (eqIdx.subCore1 !== -1 && eqIdx.subCore1 !== undefined) game.player.equipment.subCore1 = game.player.inventory[eqIdx.subCore1];
-        if (eqIdx.subCore2 !== -1 && eqIdx.subCore2 !== undefined) game.player.equipment.subCore2 = game.player.inventory[eqIdx.subCore2];
+        if (pData.subCore1) {
+            game.player.equipment.subCore1 = deserializeItem(pData.subCore1);
+        } else if (eqIdx.subCore1 !== -1 && eqIdx.subCore1 !== undefined) {
+            game.player.equipment.subCore1 = game.player.inventory[eqIdx.subCore1];
+        }
+        if (pData.subCore2) {
+            game.player.equipment.subCore2 = deserializeItem(pData.subCore2);
+        } else if (eqIdx.subCore2 !== -1 && eqIdx.subCore2 !== undefined) {
+            game.player.equipment.subCore2 = game.player.inventory[eqIdx.subCore2];
+        }
         if (eqIdx.ring1 !== -1 && eqIdx.ring1 !== undefined) game.player.equipment.ring1 = game.player.inventory[eqIdx.ring1];
         if (eqIdx.ring2 !== -1 && eqIdx.ring2 !== undefined) game.player.equipment.ring2 = game.player.inventory[eqIdx.ring2];
         if (eqIdx.amulet !== -1 && eqIdx.amulet !== undefined) game.player.equipment.amulet = game.player.inventory[eqIdx.amulet];
         if (eqIdx.equippedLamp !== -1 && eqIdx.equippedLamp !== undefined) game.player.equippedLamp = game.player.inventory[eqIdx.equippedLamp];
+
+        game.player.reincarnationCount = pData.reincarnationCount || 0;
+        game.player.slainUniques = pData.slainUniques || [];
+        game.player.loreProgress = pData.loreProgress || pData.loreRegistry || {};
+        if (game.player.body) {
+            game.player.body.loreRegistry = game.player.loreProgress;
+        }
+        if (pData.coreInventory) {
+            game.player.coreInventory = pData.coreInventory.map(deserializeItem);
+        }
+        if (typeof StatusEffectEngine !== "undefined" && StatusEffectEngine.syncLegacyFields) {
+            StatusEffectEngine.syncLegacyFields(game.player);
+        }
 
         game.player.markDirty('SaveSystem.deserialize');
 
@@ -403,7 +508,18 @@ export class SaveSystem {
         // 4. Monsters Restore
         game.monsters = (data.monsters || []).map(mData => {
             const m = new Monster(mData.x, mData.y, mData.type, mData.level, mData.prefixes || [], mData.suffixes || []);
-            m.stats.hp = mData.hp;
+            m.key = mData.key || mData.type;
+            m.isUnique = !!mData.isUnique;
+            m.isFinalBoss = !!mData.isFinalBoss;
+            m.bossPhase = mData.bossPhase !== undefined ? mData.bossPhase : 1;
+            if (mData.blows) m.blows = mData.blows;
+            if (mData.spells) m.spells = mData.spells;
+            if (mData.flags) m.flags = mData.flags;
+            m.cooldowns = mData.cooldowns || {};
+            if (m.stats) {
+                m.stats.hp = mData.hp !== undefined ? mData.hp : m.stats.hp;
+                if (mData.maxHp !== undefined) m.stats.maxHp = mData.maxHp;
+            }
             m.energy = mData.energy || 0;
             m.batFleeTurns = mData.batFleeTurns || 0;
             m.breathCooldown = mData.breathCooldown || 0;
@@ -418,8 +534,8 @@ export class SaveSystem {
                             duration: st.duration,
                             power: st.power || 1,
                             source: st.source || null,
-                            color: st.color || '#fbbf24',
-                            icon: st.icon || '⚡',
+                            color: st.color || "#fbbf24",
+                            icon: st.icon || "⚡",
                             modifiers: st.modifiers || {}
                         };
                     }
@@ -452,6 +568,16 @@ export class SaveSystem {
         // 7. UI and Render Update
         if (typeof game.updateUI === 'function') game.updateUI();
         if (typeof game.render === 'function') game.render();
+
+        // 8. 3D Renderer Dynamic Stairs Ghost Elimination
+        if (game?.renderer3d) {
+            game.renderer3d.clearDynamicStairs?.();
+            game.renderer3d.updateDynamicStairs?.(game);
+        }
+        if (game?.renderer && typeof game.renderer.clearDynamicStairs === "function") {
+            game.renderer.clearDynamicStairs?.();
+            game.renderer.updateDynamicStairs?.(game);
+        }
     }
 
     static getSlotInfo(slot) {

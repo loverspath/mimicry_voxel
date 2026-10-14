@@ -180,6 +180,9 @@ export class MimicBody {
 
   // Get Lore / Morph Mastery Level (from 1 to 50) based on accumulated lore experience points
   getLoreLevel(speciesType) {
+    if (this.loreMastery && this.loreMastery[speciesType]) {
+      return this.loreMastery[speciesType].level || 1;
+    }
     const xp = this.getLoreXp(speciesType);
     if (xp >= 2000) return 50;
     if (xp >= 500) return Math.min(49, 25 + Math.floor((xp - 500) / 60));
@@ -403,20 +406,22 @@ export class MimicBody {
     // 2. Gather tags from active innate skills (Main and Sub Cores)
     // Main core
     const mainCategory = this.player.normalizeCategory(this.player.mimicCore.name);
-    const mainMastery = this.getLoreLevel(this.player.mimicCore.coreType || mainCategory);
-    const mainSkills = CORE_SKILL_TREES[mainCategory] || [];
+    const mainKey = this.player.mimicCore.coreType || mainCategory;
+    const mainMastery = this.getLoreLevel(mainKey);
+    const mainSkills = CORE_SKILL_TREES[this.player.mimicCore.coreType] || CORE_SKILL_TREES[mainCategory] || [];
     mainSkills.forEach(skill => {
-      if (mainMastery >= (skill.requiredMastery || 1)) addTags(skill.synergyTags);
+      if (mainMastery >= (skill.pt || skill.requiredMastery || 1)) addTags(skill.synergyTags);
     });
 
     // Sub Cores
     const checkSubCoreSkills = (core) => {
       if (!core) return;
       const category = this.player.normalizeCategory(core.baseName || core.name || core.coreType);
-      const subMastery = this.getLoreLevel(core.coreType || category);
-      const skills = CORE_SKILL_TREES[category] || [];
+      const subKey = core.coreType || category;
+      const subMastery = this.getLoreLevel(subKey);
+      const skills = CORE_SKILL_TREES[core.coreType] || CORE_SKILL_TREES[category] || [];
       skills.forEach(skill => {
-        if (subMastery >= (skill.requiredMastery || 1)) addTags(skill.synergyTags);
+        if (subMastery >= (skill.pt || skill.requiredMastery || 1)) addTags(skill.synergyTags);
       });
     };
     checkSubCoreSkills(this.player.equipment.subCore1);
@@ -439,6 +444,10 @@ export class MimicBody {
     }
 
     return tagCounts;
+  }
+
+  compileBodyActiveTags() {
+    return this.compileActiveTags();
   }
 
   // Get cumulative stats weighting factors based on Lore Level

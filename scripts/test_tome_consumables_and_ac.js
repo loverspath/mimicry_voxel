@@ -7,7 +7,7 @@
  */
 
 import { CombatCalculator } from '../src/core/CombatCalculator.js';
-import { ConsumableEffectEngine } from '../src/systems/ConsumableEffectEngine.js';
+import { TomeConsumableEngine, TomeConsumableEngine as ConsumableEffectEngine } from '../src/systems/TomeConsumableEngine.js';
 import { TomeEgoEngine } from '../src/systems/TomeEgoEngine.js';
 import { Player } from '../src/entities/Player.js';
 import { Item } from '../src/entities/Item.js';

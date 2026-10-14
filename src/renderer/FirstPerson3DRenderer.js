@@ -37,6 +37,9 @@ export class FirstPerson3DRenderer {
     // 수직 시점 각도(Pitch / Y-Shearing 수직 오프셋 px, 한계치 +-0.42*H)
     this.pitch = 0;
 
+    // 동적 3D 계단/사다리 구조체 캐시 목록
+    this.dynamicStairs = [];
+
     this.resize();
 
     // 텍스처 사전 로딩 보장
@@ -655,7 +658,9 @@ export class FirstPerson3DRenderer {
     if (entity === playerInstance || (entity.x === playerX && entity.y === playerY && entity.isPlayer)) {
       return;
     }
-    this._drawBillboardSprite(entity.x, entity.y, entity.char, entity.color, playerX, playerY, false);
+    const posX = entity.visualX ?? entity.x;
+    const posY = entity.visualY ?? entity.y;
+    this._drawBillboardSprite(posX, posY, entity.char, entity.color, playerX, playerY, false);
   }
 
   /**
@@ -663,7 +668,9 @@ export class FirstPerson3DRenderer {
    */
   drawItem(item, startX, startY, playerX, playerY, floor, map = null) {
     if (!this.ctx || !item) return;
-    this._drawBillboardSprite(item.x, item.y, item.char, item.color, playerX, playerY, true);
+    const posX = item.visualX ?? item.x;
+    const posY = item.visualY ?? item.y;
+    this._drawBillboardSprite(posX, posY, item.char, item.color, playerX, playerY, true);
   }
 
   /**
@@ -1222,458 +1229,140 @@ export class FirstPerson3DRenderer {
   }
 
   /**
-   * 월드 좌표계 100% 고정형 하행 계단 3D 다면체 렌더링
+   * 동적 3D 계단/사다리 구조체 캐시 클리어
    */
-  _renderDownstairs3D(ctx, tx, ty, posX, posY, dirX, dirY, planeX, planeY, totalPitch, fogMul, theme = 'CAVE_RUINS') {
-    const q = (p1, p2, p3, p4, col, stroke) => {
-      this._render3DQuad(ctx, p1, p2, p3, p4, col, stroke, posX, posY, dirX, dirY, planeX, planeY, totalPitch);
+  clearDynamicStairs() {
+    this.dynamicStairs = [];
+  }
+
+  /**
+   * 계단 오브젝트로부터 3D 렌더링 지오메트리 메타데이터 생성
+   * @param {Object} stair - 계단 위치 및 타입 정보
+   * @param {number} [currentFloor=1] - 던전 현재 층
+   * @returns {Object|null} 계단 지오메트리 정보
+   */
+  buildStaircaseGeometry(stair, currentFloor = 1) {
+    if (!stair) return null;
+    return {
+      x: stair.x,
+      y: stair.y,
+      type: stair.type,
+      floor: currentFloor,
+      isSealed: !!stair.isSealed,
+      transformY: stair.transformY !== undefined ? stair.transformY : 0
     };
+  }
 
-    const curbColor = `rgba(${Math.floor(51 * fogMul)}, ${Math.floor(65 * fogMul)}, ${Math.floor(85 * fogMul)}, 0.95)`;
-    const curbDark = `rgba(${Math.floor(30 * fogMul)}, ${Math.floor(41 * fogMul)}, ${Math.floor(59 * fogMul)}, 0.95)`;
-    const curbStroke = `rgba(${Math.floor(71 * fogMul)}, ${Math.floor(85 * fogMul)}, ${Math.floor(105 * fogMul)}, 0.8)`;
-
-    // 1. 사방 3D 화강암 연석 (Stone Rim Curb Boxes around tile boundaries)
-    const cz = 0.08;
-    // North Curb: x in [tx, tx+1], y in [ty, ty+0.12]
-    q([tx, ty, cz], [tx+1, ty, cz], [tx+1, ty+0.12, cz], [tx, ty+0.12, cz], curbColor, curbStroke);
-    q([tx, ty+0.12, cz], [tx+1, ty+0.12, cz], [tx+1, ty+0.12, -0.15], [tx, ty+0.12, -0.15], curbDark, null);
-
-    // South Curb: x in [tx, tx+1], y in [ty+0.88, ty+1]
-    q([tx, ty+0.88, cz], [tx+1, ty+0.88, cz], [tx+1, ty+1, cz], [tx, ty+1, cz], curbColor, curbStroke);
-    q([tx, ty+0.88, -0.15], [tx+1, ty+0.88, -0.15], [tx+1, ty+0.88, cz], [tx, ty+0.88, cz], curbDark, null);
-
-    // West Curb: x in [tx, tx+0.12], y in [ty+0.12, ty+0.88]
-    q([tx, ty+0.12, cz], [tx+0.12, ty+0.12, cz], [tx+0.12, ty+0.88, cz], [tx, ty+0.88, cz], curbColor, curbStroke);
-    q([tx+0.12, ty+0.12, cz], [tx+0.12, ty+0.88, cz], [tx+0.12, ty+0.88, -0.15], [tx+0.12, ty+0.12, -0.15], curbDark, null);
-
-    // East Curb: x in [tx+0.88, tx+1], y in [ty+0.12, ty+0.88]
-    q([tx+0.88, ty+0.12, cz], [tx+1, ty+0.12, cz], [tx+1, ty+0.88, cz], [tx+0.88, ty+0.88, cz], curbColor, curbStroke);
-    q([tx+0.88, ty+0.12, -0.15], [tx+0.88, ty+0.88, -0.15], [tx+0.88, ty+0.88, cz], [tx+0.88, ty+0.12, cz], curbDark, null);
-
-    // 2. 지하 심연 개구부 바닥면 (Deep Subterranean Pit Base at wz = -0.55)
-    const pitColor = `rgba(${Math.floor(9 * fogMul)}, ${Math.floor(13 * fogMul)}, ${Math.floor(22 * fogMul)}, 0.95)`;
-    q([tx+0.12, ty+0.12, -0.55], [tx+0.88, ty+0.12, -0.55], [tx+0.88, ty+0.88, -0.55], [tx+0.12, ty+0.88, -0.55], pitColor, null);
-
-    // 3. 아래로 내려앉는 3단계 석조 디딤판 & 챌면
-    // Step 1 (z = -0.15)
-    const s1Top = `rgba(${Math.floor(47 * fogMul)}, ${Math.floor(59 * fogMul)}, ${Math.floor(75 * fogMul)}, 0.95)`;
-    const s1Front = `rgba(${Math.floor(30 * fogMul)}, ${Math.floor(41 * fogMul)}, ${Math.floor(59 * fogMul)}, 0.95)`;
-    q([tx+0.16, ty+0.15, -0.15], [tx+0.84, ty+0.15, -0.15], [tx+0.84, ty+0.38, -0.15], [tx+0.16, ty+0.38, -0.15], s1Top, curbStroke);
-    q([tx+0.16, ty+0.38, -0.15], [tx+0.84, ty+0.38, -0.15], [tx+0.84, ty+0.38, -0.30], [tx+0.16, ty+0.38, -0.30], s1Front, null);
-
-    // Step 2 (z = -0.30)
-    const s2Top = `rgba(${Math.floor(30 * fogMul)}, ${Math.floor(41 * fogMul)}, ${Math.floor(59 * fogMul)}, 0.95)`;
-    const s2Front = `rgba(${Math.floor(15 * fogMul)}, ${Math.floor(23 * fogMul)}, ${Math.floor(42 * fogMul)}, 0.95)`;
-    q([tx+0.18, ty+0.38, -0.30], [tx+0.82, ty+0.38, -0.30], [tx+0.82, ty+0.62, -0.30], [tx+0.18, ty+0.62, -0.30], s2Top, curbStroke);
-    q([tx+0.18, ty+0.62, -0.30], [tx+0.82, ty+0.62, -0.30], [tx+0.82, ty+0.62, -0.45], [tx+0.18, ty+0.62, -0.45], s2Front, null);
-
-    // Step 3 (z = -0.45)
-    const s3Top = `rgba(${Math.floor(15 * fogMul)}, ${Math.floor(23 * fogMul)}, ${Math.floor(42 * fogMul)}, 0.95)`;
-    const s3Front = `rgba(${Math.floor(5 * fogMul)}, ${Math.floor(8 * fogMul)}, ${Math.floor(15 * fogMul)}, 0.95)`;
-    q([tx+0.22, ty+0.62, -0.45], [tx+0.78, ty+0.62, -0.45], [tx+0.78, ty+0.84, -0.45], [tx+0.22, ty+0.84, -0.45], s3Top, curbStroke);
-    q([tx+0.22, ty+0.84, -0.45], [tx+0.78, ty+0.84, -0.45], [tx+0.78, ty+0.84, -0.55], [tx+0.22, ty+0.84, -0.55], s3Front, null);
-
-    // 4. 지하 깊은 곳의 따스한 테마별 등불 앰비언트 글로우
-    let glowR = 245, glowG = 158, glowB = 11;
-    if (theme === 'VOLCANIC_FORTRESS') {
-      glowR = 251; glowG = 146; glowB = 60;
-    } else if (theme === 'DARK_ABYSS') {
-      glowR = 168; glowG = 85; glowB = 247;
-    } else if (theme === 'DEEP_ANGBAND') {
-      glowR = 239; glowG = 68; glowB = 68;
+  /**
+   * 게임 상태로부터 동적 3D 계단 구조체 목록 갱신
+   * @param {Object} game - 활성 게임 인스턴스
+   */
+  updateDynamicStairs(game) {
+    this.clearDynamicStairs();
+    const map = game?.map;
+    if (!map) return;
+    const { downStairs, upStairs } = this._getStairLocations(map);
+    const currentFloor = game?.floor || map?.floor || 1;
+    for (const s of downStairs) {
+      const geom = this.buildStaircaseGeometry(s, currentFloor);
+      if (geom) this.dynamicStairs.push(geom);
     }
-    const glowCenter = this._projectWorldPoint(tx + 0.5, ty + 0.65, -0.52, posX, posY, dirX, dirY, planeX, planeY, totalPitch);
-    if (glowCenter && glowCenter.visible) {
-      const glowRad = Math.max(10, Math.min(80, (this.h / glowCenter.depth) * 0.28));
-      const glowGrad = ctx.createRadialGradient(glowCenter.sx, glowCenter.sy, 2, glowCenter.sx, glowCenter.sy, glowRad);
-      glowGrad.addColorStop(0, `rgba(${glowR}, ${glowG}, ${glowB}, ${0.40 * fogMul})`);
-      glowGrad.addColorStop(0.5, `rgba(${Math.floor(glowR * 0.8)}, ${Math.floor(glowG * 0.6)}, ${Math.floor(glowB * 0.4)}, ${0.18 * fogMul})`);
-      glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = glowGrad;
-      ctx.fillRect(glowCenter.sx - glowRad, glowCenter.sy - glowRad, glowRad * 2, glowRad * 2);
+    for (const s of upStairs) {
+      const geom = this.buildStaircaseGeometry(s, currentFloor);
+      if (geom) this.dynamicStairs.push(geom);
     }
   }
 
   /**
-   * 바닥(z=0.0)부터 천장(z=1.0)까지 일체 연결되는 3D 복셀 상행 계단 및 고딕 아치 구조체
+   * 빌보드 깊이 정렬(Painter\'s Algorithm) 및 시각적 선형 보간(Visual Lerp) 좌표 반영
+   * @param {Object|Array} monstersOrGame - 게임 인스턴스 또는 몬스터 배열
+   * @param {Array} [items=null] - 아이템 배열 (1번째 인자가 몬스터 배열일 때)
+   * @param {number} [playerX=null] - 플레이어 X 좌표
+   * @param {number} [playerY=null] - 플레이어 Y 좌표
+   * @returns {Array} 정렬된 빌보드 리스트
    */
-  _renderUpstairs3D(ctx, tx, ty, posX, posY, dirX, dirY, planeX, planeY, totalPitch, fogMul, theme = 'CAVE_RUINS') {
-    const q = (p1, p2, p3, p4, col, stroke) => {
-      this._render3DQuad(ctx, p1, p2, p3, p4, col, stroke, posX, posY, dirX, dirY, planeX, planeY, totalPitch);
-    };
+  updateBillboards(monstersOrGame, items = null, playerX = null, playerY = null) {
+    let monsters = [];
+    let groundItems = [];
+    let px = playerX;
+    let py = playerY;
 
-    const strokeCol = `rgba(${Math.floor(30 * fogMul)}, ${Math.floor(41 * fogMul)}, ${Math.floor(59 * fogMul)}, 0.8)`;
-
-    // 1. 차례대로 솟아오르는 4단 대형 석조 블록 디딤판 (Ascending Voxel Steps up to z=0.88)
-    // Step 1: z = 0.22
-    const s1Top = `rgba(${Math.floor(71 * fogMul)}, ${Math.floor(85 * fogMul)}, ${Math.floor(105 * fogMul)}, 0.95)`;
-    const s1Front = `rgba(${Math.floor(51 * fogMul)}, ${Math.floor(65 * fogMul)}, ${Math.floor(85 * fogMul)}, 0.95)`;
-    const s1Side = `rgba(${Math.floor(30 * fogMul)}, ${Math.floor(41 * fogMul)}, ${Math.floor(59 * fogMul)}, 0.95)`;
-    q([tx+0.15, ty+0.15, 0.22], [tx+0.85, ty+0.15, 0.22], [tx+0.85, ty+0.32, 0.22], [tx+0.15, ty+0.32, 0.22], s1Top, strokeCol);
-    q([tx+0.15, ty+0.15, 0.0], [tx+0.85, ty+0.15, 0.0], [tx+0.85, ty+0.15, 0.22], [tx+0.15, ty+0.15, 0.22], s1Front, strokeCol);
-    q([tx+0.15, ty+0.15, 0.0], [tx+0.15, ty+0.32, 0.0], [tx+0.15, ty+0.32, 0.22], [tx+0.15, ty+0.15, 0.22], s1Side, strokeCol);
-    q([tx+0.85, ty+0.15, 0.22], [tx+0.85, ty+0.32, 0.22], [tx+0.85, ty+0.32, 0.0], [tx+0.85, ty+0.15, 0.0], s1Side, strokeCol);
-
-    // Step 2: z = 0.44
-    const s2Top = `rgba(${Math.floor(100 * fogMul)}, ${Math.floor(116 * fogMul)}, ${Math.floor(139 * fogMul)}, 0.95)`;
-    const s2Front = `rgba(${Math.floor(71 * fogMul)}, ${Math.floor(85 * fogMul)}, ${Math.floor(105 * fogMul)}, 0.95)`;
-    const s2Side = `rgba(${Math.floor(47 * fogMul)}, ${Math.floor(59 * fogMul)}, ${Math.floor(75 * fogMul)}, 0.95)`;
-    q([tx+0.18, ty+0.32, 0.44], [tx+0.82, ty+0.32, 0.44], [tx+0.82, ty+0.50, 0.44], [tx+0.18, ty+0.50, 0.44], s2Top, strokeCol);
-    q([tx+0.18, ty+0.32, 0.22], [tx+0.82, ty+0.32, 0.22], [tx+0.82, ty+0.32, 0.44], [tx+0.18, ty+0.32, 0.44], s2Front, strokeCol);
-    q([tx+0.18, ty+0.32, 0.0], [tx+0.18, ty+0.50, 0.0], [tx+0.18, ty+0.50, 0.44], [tx+0.18, ty+0.32, 0.44], s2Side, strokeCol);
-    q([tx+0.82, ty+0.32, 0.44], [tx+0.82, ty+0.50, 0.44], [tx+0.82, ty+0.50, 0.0], [tx+0.82, ty+0.32, 0.0], s2Side, strokeCol);
-
-    // Step 3: z = 0.66
-    const s3Top = `rgba(${Math.floor(148 * fogMul)}, ${Math.floor(163 * fogMul)}, ${Math.floor(184 * fogMul)}, 0.95)`;
-    const s3Front = `rgba(${Math.floor(100 * fogMul)}, ${Math.floor(116 * fogMul)}, ${Math.floor(139 * fogMul)}, 0.95)`;
-    const s3Side = `rgba(${Math.floor(71 * fogMul)}, ${Math.floor(85 * fogMul)}, ${Math.floor(105 * fogMul)}, 0.95)`;
-    q([tx+0.22, ty+0.50, 0.66], [tx+0.78, ty+0.50, 0.66], [tx+0.78, ty+0.68, 0.66], [tx+0.22, ty+0.68, 0.66], s3Top, strokeCol);
-    q([tx+0.22, ty+0.50, 0.44], [tx+0.78, ty+0.50, 0.44], [tx+0.78, ty+0.50, 0.66], [tx+0.22, ty+0.50, 0.66], s3Front, strokeCol);
-    q([tx+0.22, ty+0.50, 0.0], [tx+0.22, ty+0.68, 0.0], [tx+0.22, ty+0.68, 0.66], [tx+0.22, ty+0.50, 0.66], s3Side, strokeCol);
-    q([tx+0.78, ty+0.50, 0.66], [tx+0.78, ty+0.68, 0.66], [tx+0.78, ty+0.68, 0.0], [tx+0.78, ty+0.50, 0.0], s3Side, strokeCol);
-
-    // Step 4 (천장 개구부로 연결되는 최상단 착지대 / Landing Step: z = 0.88)
-    const s4Top = `rgba(${Math.floor(203 * fogMul)}, ${Math.floor(213 * fogMul)}, ${Math.floor(225 * fogMul)}, 0.95)`;
-    const s4Front = `rgba(${Math.floor(148 * fogMul)}, ${Math.floor(163 * fogMul)}, ${Math.floor(184 * fogMul)}, 0.95)`;
-    q([tx+0.25, ty+0.68, 0.88], [tx+0.75, ty+0.68, 0.88], [tx+0.75, ty+0.85, 0.88], [tx+0.25, ty+0.85, 0.88], s4Top, strokeCol);
-    q([tx+0.25, ty+0.68, 0.66], [tx+0.75, ty+0.68, 0.66], [tx+0.75, ty+0.68, 0.88], [tx+0.25, ty+0.68, 0.88], s4Front, strokeCol);
-
-    // 2. 바닥부터 천장까지 관통 연결되는 좌우 3D 석조 기둥 (Floor-to-Ceiling Pillars: z in [0.0, 1.0])
-    const pillarCol = `rgba(${Math.floor(100 * fogMul)}, ${Math.floor(116 * fogMul)}, ${Math.floor(139 * fogMul)}, 0.95)`;
-    const pillarDark = `rgba(${Math.floor(51 * fogMul)}, ${Math.floor(65 * fogMul)}, ${Math.floor(85 * fogMul)}, 0.95)`;
-    const beamCol = `rgba(${Math.floor(71 * fogMul)}, ${Math.floor(85 * fogMul)}, ${Math.floor(105 * fogMul)}, 0.95)`;
-
-    // Left Pillar: x in [tx+0.06, tx+0.14], y in [ty+0.15, ty+0.85], z in [0.0, 1.0]
-    q([tx+0.06, ty+0.15, 0.0], [tx+0.14, ty+0.15, 0.0], [tx+0.14, ty+0.15, 1.0], [tx+0.06, ty+0.15, 1.0], pillarCol, strokeCol);
-    q([tx+0.06, ty+0.15, 0.0], [tx+0.06, ty+0.85, 0.0], [tx+0.06, ty+0.85, 1.0], [tx+0.06, ty+0.15, 1.0], pillarDark, strokeCol);
-    q([tx+0.14, ty+0.15, 1.0], [tx+0.14, ty+0.85, 1.0], [tx+0.14, ty+0.85, 0.0], [tx+0.14, ty+0.15, 0.0], pillarDark, strokeCol);
-
-    // Right Pillar: x in [tx+0.86, tx+0.94], y in [ty+0.15, ty+0.85], z in [0.0, 1.0]
-    q([tx+0.86, ty+0.15, 0.0], [tx+0.94, ty+0.15, 0.0], [tx+0.94, ty+0.15, 1.0], [tx+0.86, ty+0.15, 1.0], pillarCol, strokeCol);
-    q([tx+0.86, ty+0.15, 0.0], [tx+0.86, ty+0.85, 0.0], [tx+0.86, ty+0.85, 1.0], [tx+0.86, ty+0.15, 1.0], pillarDark, strokeCol);
-    q([tx+0.94, ty+0.15, 1.0], [tx+0.94, ty+0.85, 1.0], [tx+0.94, ty+0.85, 0.0], [tx+0.94, ty+0.15, 0.0], pillarDark, strokeCol);
-
-    // 3. 천장 개구부를 단단히 결속하는 상단 횡단 빔 (Ceiling Arch Lintels: z in [0.88, 1.0])
-    // Front Beam: y = ty + 0.15, connects left and right pillar at ceiling
-    q([tx+0.06, ty+0.15, 0.88], [tx+0.94, ty+0.15, 0.88], [tx+0.94, ty+0.15, 1.0], [tx+0.06, ty+0.15, 1.0], beamCol, strokeCol);
-    // Rear Beam: y = ty + 0.85, connects left and right pillar at back ceiling
-    q([tx+0.06, ty+0.85, 0.88], [tx+0.94, ty+0.85, 0.88], [tx+0.94, ty+0.85, 1.0], [tx+0.06, ty+0.85, 1.0], beamCol, strokeCol);
-
-    // 4. 천장 개구부에서 쏟아져 내리는 테마별 역광 채광 (Ceiling Skylight Volumetric Light)
-    let skyR = 224, skyG = 242, skyB = 254;
-    if (theme === 'VOLCANIC_FORTRESS') {
-      skyR = 251; skyG = 146; skyB = 60;
-    } else if (theme === 'MINES_CATACOMBS') {
-      skyR = 245; skyG = 158; skyB = 11;
-    } else if (theme === 'DARK_ABYSS') {
-      skyR = 168; skyG = 85; skyB = 247;
-    } else if (theme === 'DEEP_ANGBAND') {
-      skyR = 239; skyG = 68; skyB = 68;
+    if (monstersOrGame && monstersOrGame.player) {
+      const game = monstersOrGame;
+      monsters = game.monsters || [];
+      groundItems = game.items || [];
+      px = px !== null && px !== undefined ? px : (game.player.visualX ?? game.player.x);
+      py = py !== null && py !== undefined ? py : (game.player.visualY ?? game.player.y);
+      this.lastGame = game;
+    } else if (Array.isArray(monstersOrGame)) {
+      monsters = monstersOrGame;
+      groundItems = Array.isArray(items) ? items : [];
     }
 
-    const archTop = this._projectWorldPoint(tx + 0.5, ty + 0.85, 1.0, posX, posY, dirX, dirY, planeX, planeY, totalPitch);
-    const archBase = this._projectWorldPoint(tx + 0.5, ty + 0.35, 0.22, posX, posY, dirX, dirY, planeX, planeY, totalPitch);
-    if (archTop && archBase && archTop.visible && archBase.visible) {
-      const coneW = Math.max(16, Math.min(130, (this.h / archTop.depth) * 0.48));
-      const lightGrad = ctx.createLinearGradient(archTop.sx, archTop.sy, archBase.sx, archBase.sy);
-      lightGrad.addColorStop(0, `rgba(${skyR}, ${skyG}, ${skyB}, ${0.38 * fogMul})`);
-      lightGrad.addColorStop(0.5, `rgba(${Math.floor(skyR * 0.85)}, ${Math.floor(skyG * 0.85)}, ${Math.floor(skyB * 0.85)}, ${0.16 * fogMul})`);
-      lightGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = lightGrad;
-      ctx.beginPath();
-      ctx.moveTo(archTop.sx - coneW * 0.45, archTop.sy);
-      ctx.lineTo(archTop.sx + coneW * 0.45, archTop.sy);
-      ctx.lineTo(archBase.sx + coneW * 0.85, archBase.sy);
-      ctx.lineTo(archBase.sx - coneW * 0.85, archBase.sy);
-      ctx.closePath();
-      ctx.fill();
-    }
-  }
+    if (px === null || px === undefined) px = this.camX ?? 0;
+    if (py === null || py === undefined) py = this.camY ?? 0;
 
-  _renderDownstairsSubterranean(ctx, cx, groundY, w, h, tex, canDrawTex, fogMul) {
-    // 하위 호환성 헬퍼: 2D 폴백 컨텍스트 대응
-    const halfW = w / 2;
-    const rimH = Math.max(8, h * 0.32);
-    const wellTopY = groundY - rimH * 0.25;
-    const wellBottomY = groundY + rimH * 0.75;
-    const wellH = wellBottomY - wellTopY;
+    const billboards = [];
 
-    const rimGrad = ctx.createLinearGradient(0, wellTopY, 0, wellBottomY);
-    rimGrad.addColorStop(0, '#334155');
-    rimGrad.addColorStop(1, '#0f172a');
-    ctx.fillStyle = rimGrad;
-    ctx.fillRect(cx - halfW, wellTopY, w, wellH);
-
-    const cavityW = w * 0.82;
-    const cavityH = wellH * 0.75;
-    const cavityX = cx - cavityW / 2;
-    const cavityY = wellTopY + (wellH - cavityH) / 2;
-    ctx.fillStyle = '#050811';
-    ctx.fillRect(cavityX, cavityY, cavityW, cavityH);
-  }
-
-  _renderUpstairsGothicArch(ctx, cx, groundY, w, h, tex, canDrawTex, fogMul) {
-    // 하위 호환성 헬퍼: 2D 폴백 컨텍스트 대응
-    const halfW = w / 2;
-    const archH = Math.max(28, h * 1.25);
-    const archTopY = groundY - archH;
-    const portalW = w * 0.68;
-    const portalX = cx - portalW / 2;
-
-    const portalInner = ctx.createLinearGradient(0, archTopY, 0, groundY);
-    portalInner.addColorStop(0, '#cbd5e1');
-    portalInner.addColorStop(1, '#0f172a');
-    ctx.fillStyle = portalInner;
-    ctx.fillRect(portalX, archTopY, portalW, archH);
-  }
-
-  /**
-   * 하행 계단: 바닥 타일 안쪽으로 음푹 파고들어가는 3단 석조 지하 통로 (Subterranean Stairwell)
-   */
-  _renderDownstairsSubterranean(ctx, cx, groundY, w, h, tex, canDrawTex, fogMul) {
-    const halfW = w / 2;
-    const rimH = Math.max(8, h * 0.32);
-    const wellTopY = groundY - rimH * 0.25;
-    const wellBottomY = groundY + rimH * 0.75;
-    const wellH = wellBottomY - wellTopY;
-
-    // 1. 바닥면 수평 사각 석조 테두리 림 (Stone Rim Curb / Border Blocks)
-    const rimGrad = ctx.createLinearGradient(0, wellTopY, 0, wellBottomY);
-    rimGrad.addColorStop(0, '#334155');
-    rimGrad.addColorStop(0.5, '#1e293b');
-    rimGrad.addColorStop(1, '#0f172a');
-    ctx.fillStyle = rimGrad;
-    if (typeof ctx.roundRect === 'function') {
-      ctx.beginPath();
-      ctx.roundRect(cx - halfW, wellTopY, w, wellH, 4);
-      ctx.fill();
-    } else {
-      ctx.fillRect(cx - halfW, wellTopY, w, wellH);
-    }
-    ctx.strokeStyle = '#475569';
-    ctx.lineWidth = Math.max(1.5, w * 0.015);
-    ctx.strokeRect(cx - halfW, wellTopY, w, wellH);
-
-    // 2. 내부 지하 개구부 공동 (Inner Subterranean Pit Cavity)
-    const cavityW = w * 0.82;
-    const cavityH = wellH * 0.75;
-    const cavityX = cx - cavityW / 2;
-    const cavityY = wellTopY + (wellH - cavityH) / 2;
-
-    // 심연 배경 (깊은 지하의 칠흑 같은 어둠)
-    const pitGrad = ctx.createLinearGradient(0, cavityY, 0, cavityY + cavityH);
-    pitGrad.addColorStop(0, '#090d16');
-    pitGrad.addColorStop(0.6, '#020408');
-    pitGrad.addColorStop(1, '#000000');
-    ctx.fillStyle = pitGrad;
-    ctx.fillRect(cavityX, cavityY, cavityW, cavityH);
-
-    // 3. 실사 텍스처 (tex_stairs_down) 지하 계단면 투영
-    if (canDrawTex) {
-      try {
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(cavityX, cavityY, cavityW, cavityH);
-        ctx.clip();
-        ctx.drawImage(tex, cavityX, cavityY, cavityW, cavityH);
-
-        // 지하 깊이감 심연 오버레이 (아래로 갈수록 칠흑으로 페이드)
-        const depthShade = ctx.createLinearGradient(0, cavityY, 0, cavityY + cavityH);
-        depthShade.addColorStop(0, 'rgba(15, 23, 42, 0.25)');
-        depthShade.addColorStop(0.5, 'rgba(2, 6, 23, 0.55)');
-        depthShade.addColorStop(1, 'rgba(0, 0, 0, 0.88)');
-        ctx.fillStyle = depthShade;
-        ctx.fillRect(cavityX, cavityY, cavityW, cavityH);
-        ctx.restore();
-      } catch (_) {}
+    // 1. 몬스터 빌보드 (visualX, visualY 선형 보간 좌표 우선)
+    for (const m of monsters) {
+      if (!m || m.isDead || (m.stats && m.stats.hp <= 0)) continue;
+      const mx = m.visualX ?? m.x;
+      const my = m.visualY ?? m.y;
+      const dx = mx - px;
+      const dy = my - py;
+      const distSq = dx * dx + dy * dy;
+      billboards.push({
+        type: "monster",
+        entity: m,
+        monster: m,
+        x: mx,
+        y: my,
+        distSq,
+        renderOrder: -Math.round(distSq * 100),
+        depthTest: true,
+        alphaTest: 0.5,
+        char: m.char,
+        color: m.color
+      });
     }
 
-    // 4. 아래로 내려앉는 3단계 석조 디딤판 (Descending Steps & Risers)
-    const stepConfigs = [
-      { wFrac: 0.76, yFrac: 0.08, hFrac: 0.22, treadColor: '#334155', riserColor: '#1e293b' },
-      { wFrac: 0.60, yFrac: 0.34, hFrac: 0.22, treadColor: '#1e293b', riserColor: '#0f172a' },
-      { wFrac: 0.44, yFrac: 0.60, hFrac: 0.24, treadColor: '#0f172a', riserColor: '#020617' }
-    ];
-
-    for (let i = 0; i < stepConfigs.length; i++) {
-      const cfg = stepConfigs[i];
-      const sW = cavityW * cfg.wFrac;
-      const sX = cx - sW / 2;
-      const sY = cavityY + cavityH * cfg.yFrac;
-      const sH = cavityH * cfg.hFrac;
-      const treadH = Math.max(2, sH * 0.45);
-      const riserH = sH - treadH;
-
-      // Tread (디딤판 상면)
-      ctx.fillStyle = cfg.treadColor;
-      ctx.fillRect(sX, sY, sW, treadH);
-
-      // Tread Bevel Highlight
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
-      ctx.fillRect(sX, sY, sW, 1);
-
-      // Riser (챌면 수직면)
-      ctx.fillStyle = cfg.riserColor;
-      ctx.fillRect(sX, sY + treadH, sW, riserH);
-
-      // Riser Shadow Edge
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.50)';
-      ctx.fillRect(sX, sY + sH - 1, sW, 1);
+    // 2. 아이템 빌보드 (visualX, visualY 선형 보간 좌표 우선)
+    for (const it of groundItems) {
+      if (!it) continue;
+      const ix = it.visualX ?? it.x;
+      const iy = it.visualY ?? it.y;
+      const dx = ix - px;
+      const dy = iy - py;
+      const distSq = dx * dx + dy * dy;
+      billboards.push({
+        type: "item",
+        entity: it,
+        item: it,
+        x: ix,
+        y: iy,
+        distSq,
+        renderOrder: -Math.round(distSq * 100),
+        depthTest: true,
+        alphaTest: 0.5,
+        char: it.char,
+        color: it.color
+      });
     }
 
-    // 5. 지하 깊은 곳에서 새어 나오는 은은한 호박색 등불 앰비언트 글로우
-    const glowY = cavityY + cavityH * 0.85;
-    const glowR = Math.max(12, cavityW * 0.42);
-    const glowGrad = ctx.createRadialGradient(cx, glowY, 2, cx, glowY, glowR);
-    glowGrad.addColorStop(0, 'rgba(245, 158, 11, 0.35)');
-    glowGrad.addColorStop(0.4, 'rgba(217, 119, 6, 0.18)');
-    glowGrad.addColorStop(0.8, 'rgba(180, 83, 9, 0.05)');
-    glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-    ctx.save();
-    ctx.fillStyle = glowGrad;
-    ctx.fillRect(cx - glowR, glowY - glowR, glowR * 2, glowR * 2);
-    ctx.restore();
-  }
+    // 3. 거리 역순(distSq 내림차순, Back-to-Front Painter\'s Algorithm) 정렬
+    billboards.sort((a, b) => b.distSq - a.distSq);
 
-  /**
-   * 상행 계단: 바닥에서 상공으로 솟아오르는 3단 대형 석조 블록 디딤판 & 고딕 아치 포털
-   */
-  _renderUpstairsGothicArch(ctx, cx, groundY, w, h, tex, canDrawTex, fogMul) {
-    const halfW = w / 2;
-    const archH = Math.max(28, h * 1.25);
-    const archTopY = groundY - archH;
-    const portalW = w * 0.68;
-    const portalX = cx - portalW / 2;
+    this.activeBillboards = billboards;
 
-    // 1. 상단 천장 개구부를 통해 쏟아져 내리는 역광 (Volumetric Pale Daylight)
-    const lightW = portalW * 1.15;
-    const lightGrad = ctx.createLinearGradient(cx, archTopY, cx, groundY);
-    lightGrad.addColorStop(0, 'rgba(224, 242, 254, 0.28)');
-    lightGrad.addColorStop(0.4, 'rgba(186, 230, 253, 0.14)');
-    lightGrad.addColorStop(0.8, 'rgba(147, 197, 253, 0.04)');
-    lightGrad.addColorStop(1.0, 'rgba(0, 0, 0, 0)');
-    ctx.save();
-    ctx.fillStyle = lightGrad;
-    ctx.fillRect(cx - lightW / 2, archTopY, lightW, archH);
-    ctx.restore();
-
-    // 2. 고딕 석조 아치 포털 프레임 (Gothic Arch Masonry Frame)
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(portalX, groundY);
-    ctx.lineTo(portalX, archTopY + portalW * 0.45);
-    ctx.arcTo(portalX, archTopY, cx, archTopY, portalW * 0.45);
-    ctx.arcTo(portalX + portalW, archTopY, portalX + portalW, archTopY + portalW * 0.45, portalW * 0.45);
-    ctx.lineTo(portalX + portalW, groundY);
-    ctx.closePath();
-
-    // 포털 내부 상층 배경 (위층 복도 빛)
-    const portalInner = ctx.createLinearGradient(0, archTopY, 0, groundY);
-    portalInner.addColorStop(0, '#cbd5e1');
-    portalInner.addColorStop(0.3, '#94a3b8');
-    portalInner.addColorStop(0.7, '#334155');
-    portalInner.addColorStop(1, '#0f172a');
-    ctx.fillStyle = portalInner;
-    ctx.fill();
-
-    // 실사 텍스처 (tex_stairs_up) 아치 포털 내부 투영
-    if (canDrawTex) {
-      try {
-        ctx.save();
-        ctx.clip();
-        ctx.drawImage(tex, portalX, archTopY, portalW, archH);
-        // 부드러운 상층 빛 오버레이
-        const archShade = ctx.createLinearGradient(0, archTopY, 0, groundY);
-        archShade.addColorStop(0, 'rgba(255, 255, 255, 0.20)');
-        archShade.addColorStop(0.5, 'rgba(15, 23, 42, 0.35)');
-        archShade.addColorStop(1, 'rgba(2, 6, 23, 0.70)');
-        ctx.fillStyle = archShade;
-        ctx.fillRect(portalX, archTopY, portalW, archH);
-        ctx.restore();
-      } catch (_) {}
+    // 4. 컨텍스트가 존재하면 빌보드 렌더링 수행
+    if (this.ctx) {
+      for (const b of billboards) {
+        this._drawBillboardSprite(b.x, b.y, b.char, b.color, px, py, b.type === "item");
+      }
     }
 
-    // 아치 석재 외곽 테두리 (Keystone Arch Trim)
-    ctx.strokeStyle = '#475569';
-    ctx.lineWidth = Math.max(2, w * 0.02);
-    ctx.stroke();
-    ctx.restore();
-
-    // 3. 차례대로 솟아오르는 3단 대형 석조 블록 디딤판 (Ascending Voxel Steps)
-    const stepTiers = [
-      { wFrac: 0.86, hFrac: 0.20, stepY: groundY - h * 0.20, topCol: '#475569', frontCol: '#334155' },
-      { wFrac: 0.68, hFrac: 0.22, stepY: groundY - h * 0.42, topCol: '#64748b', frontCol: '#475569' },
-      { wFrac: 0.50, hFrac: 0.24, stepY: groundY - h * 0.66, topCol: '#94a3b8', frontCol: '#64748b' }
-    ];
-
-    for (let i = 0; i < stepTiers.length; i++) {
-      const tier = stepTiers[i];
-      const sW = w * tier.wFrac;
-      const sH = Math.max(6, h * tier.hFrac);
-      const sX = cx - sW / 2;
-      const sY = tier.stepY;
-      const treadH = Math.max(3, sH * 0.42);
-      const riserH = sH - treadH;
-
-      // Tread (디딤판 상면 - 원근 사다리꼴)
-      ctx.fillStyle = tier.topCol;
-      ctx.beginPath();
-      ctx.moveTo(sX, sY + treadH);
-      ctx.lineTo(sX + sW * 0.08, sY);
-      ctx.lineTo(sX + sW * 0.92, sY);
-      ctx.lineTo(sX + sW, sY + treadH);
-      ctx.closePath();
-      ctx.fill();
-
-      // Tread Edge Highlight
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
-      ctx.fillRect(sX, sY + treadH - 1, sW, 1);
-
-      // Riser (챌면 정면 석조)
-      ctx.fillStyle = tier.frontCol;
-      ctx.fillRect(sX, sY + treadH, sW, riserH);
-
-      // Riser Bottom Shadow
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
-      ctx.fillRect(sX, sY + sH - 1, sW, 1);
-
-      // 석재 윤곽선
-      ctx.strokeStyle = '#1e293b';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(sX, sY + treadH, sW, riserH);
-    }
-
-    // 4. 좌우 측면을 받쳐주는 석조 난간 기둥 (Stone Balustrades)
-    const pillarW = Math.max(4, w * 0.075);
-    const pillarH = h * 0.70;
-    const pillarY = groundY - pillarH;
-    const leftPillarX = cx - w * 0.44;
-    const rightPillarX = cx + w * 0.44 - pillarW;
-
-    const drawBalustrade = (pX) => {
-      // 기둥 몸체
-      const pilGrad = ctx.createLinearGradient(pX, pillarY, pX + pillarW, pillarY);
-      pilGrad.addColorStop(0, '#64748b');
-      pilGrad.addColorStop(0.4, '#475569');
-      pilGrad.addColorStop(1, '#1e293b');
-      ctx.fillStyle = pilGrad;
-      ctx.fillRect(pX, pillarY, pillarW, pillarH);
-
-      // 기둥 상단 석조 캡
-      ctx.fillStyle = '#94a3b8';
-      ctx.fillRect(pX - 2, pillarY - 4, pillarW + 4, 5);
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(pX - 2, pillarY + 1, pillarW + 4, 1);
-
-      // 외곽선
-      ctx.strokeStyle = '#0f172a';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(pX, pillarY, pillarW, pillarH);
-    };
-
-    drawBalustrade(leftPillarX);
-    drawBalustrade(rightPillarX);
+    return billboards;
   }
 
   /**
@@ -1740,38 +1429,174 @@ export class FirstPerson3DRenderer {
     ctx.restore();
   }
 
-  _drawPerspectiveVoxelBlock(ctx, cx, y, w, h, palette) {
-    const halfW = w / 2;
-    const capH = Math.max(3, h * 0.42);
-
-    // 정면 면 (Front Face)
-    ctx.fillStyle = palette.front;
-    ctx.fillRect(cx - halfW, y, w, h);
-
-    // 상단 면 (Top Isometric Face)
-    ctx.fillStyle = palette.top;
-    ctx.beginPath();
-    ctx.moveTo(cx - halfW, y);
-    ctx.lineTo(cx - halfW * 0.72, y - capH);
-    ctx.lineTo(cx + halfW * 0.72, y - capH);
-    ctx.lineTo(cx + halfW, y);
-    ctx.closePath();
-    ctx.fill();
-
-    // 테두리 네온 림 글로우 (Rim Glow Stroke)
-    ctx.strokeStyle = palette.rim;
-    ctx.lineWidth = 1.2;
-    ctx.shadowColor = palette.rim;
-    ctx.shadowBlur = 6;
-    ctx.stroke();
-    ctx.shadowBlur = 0;
-  }
-
   updateParticles(dt) {
     // 1인칭 모드 파티클 확장 훅
   }
 
-  pick(clientX, clientY) {
+  /**
+   * 1인칭 3D 뷰포트 레이캐스트 픽킹 (마우스/터치 클릭 좌표 -> 타일, 몬스터, 아이템 검색)
+   * @param {number} screenX - 화면 X 좌표
+   * @param {number} screenY - 화면 Y 좌표
+   * @param {Object} [game=null] - 활성 게임 인스턴스
+   * @returns {{x: number, y: number, tileX: number, tileY: number, monster: Object|null, item: Object|null}|null}
+   */
+  pick(screenX, screenY, game = null) {
+    const activeGame = game || this.lastGame;
+    if (screenX < 0 || screenX >= this.w || screenY < 0 || screenY >= this.h) {
+      return null;
+    }
+
+    const player = activeGame?.player;
+    const map = activeGame?.map;
+
+    const posX = this.camX ?? (player ? (player.visualX ?? player.x) + 0.5 : 0.5);
+    const posY = this.camY ?? (player ? (player.visualY ?? player.y) + 0.5 : 0.5);
+
+    const dirX = Math.cos(this.playerAngle);
+    const dirY = Math.sin(this.playerAngle);
+    const planeScale = Math.tan(this.fov / 2);
+    const planeX = -dirY * planeScale;
+    const planeY = dirX * planeScale;
+
+    const cameraX = (2 * screenX) / this.w - 1;
+    const rayDirX = dirX + planeX * cameraX;
+    const rayDirY = dirY + planeY * cameraX;
+
+    const horizonY = Math.floor(this.h / 2 + (this.pitch || 0) + (this.walkBob || 0));
+
+    // 1. 빌보드 스프라이트 스크린 영역 히트 테스트
+    if (activeGame) {
+      const candidates = [];
+      const monsters = activeGame.monsters || [];
+      for (const m of monsters) {
+        if (!m || m.isDead || (m.stats && m.stats.hp <= 0)) continue;
+        const mx = m.visualX ?? m.x;
+        const my = m.visualY ?? m.y;
+        candidates.push({ type: "monster", entity: m, x: mx, y: my });
+      }
+      const items = activeGame.items || [];
+      for (const it of items) {
+        if (!it) continue;
+        const ix = it.visualX ?? it.x;
+        const iy = it.visualY ?? it.y;
+        candidates.push({ type: "item", entity: it, x: ix, y: iy });
+      }
+
+      // 카메라와 가까운 빌보드부터 클릭 우선순위 판정
+      const invDet = 1.0 / (planeX * dirY - dirX * planeY || 0.0001);
+      const hitBillboards = [];
+
+      for (const c of candidates) {
+        const spriteX = (c.x + 0.5) - posX;
+        const spriteY = (c.y + 0.5) - posY;
+        const transformX = invDet * (dirY * spriteX - dirX * spriteY);
+        const transformY = invDet * (-planeY * spriteX + planeX * spriteY);
+
+        if (transformY > 0.25) {
+          const spriteScreenX = Math.floor((this.w / 2) * (1 + transformX / transformY));
+          const spriteSize = Math.abs(Math.floor(this.h / transformY));
+          const halfW = Math.max(16, spriteSize * 0.4);
+          const halfH = Math.max(16, spriteSize * 0.4);
+          const drawY = horizonY + (c.type === "item" ? spriteSize * 0.22 : 0);
+
+          if (Math.abs(screenX - spriteScreenX) <= halfW && Math.abs(screenY - drawY) <= halfH) {
+            const zDepth = (this.depthBuffer && this.depthBuffer[spriteScreenX] !== undefined) 
+              ? this.depthBuffer[spriteScreenX] 
+              : Infinity;
+            if (transformY <= zDepth + 0.5) {
+              hitBillboards.push({
+                ...c,
+                dist: transformY,
+                tileX: Math.floor(c.x),
+                tileY: Math.floor(c.y)
+              });
+            }
+          }
+        }
+      }
+
+      if (hitBillboards.length > 0) {
+        hitBillboards.sort((a, b) => a.dist - b.dist);
+        const best = hitBillboards[0];
+        return {
+          x: best.tileX,
+          y: best.tileY,
+          tileX: best.tileX,
+          tileY: best.tileY,
+          monster: best.type === "monster" ? best.entity : null,
+          item: best.type === "item" ? best.entity : null
+        };
+      }
+    }
+
+    // 2. 바닥면(Floor) 투영 좌표 계산 (지평선 아래 클릭 시)
+    let floorTileX = null;
+    let floorTileY = null;
+    if (screenY > horizonY) {
+      const p = screenY - horizonY;
+      const posZ = 0.5 * this.h;
+      const rowDistance = posZ / Math.max(1, p);
+      const floorX = posX + rowDistance * rayDirX;
+      const floorY = posY + rowDistance * rayDirY;
+      floorTileX = Math.floor(floorX);
+      floorTileY = Math.floor(floorY);
+    }
+
+    // 3. 2D DDA 그리드 레이마칭
+    let mapX = Math.floor(posX);
+    let mapY = Math.floor(posY);
+    const deltaDistX = Math.abs(1 / (rayDirX || 0.00001));
+    const deltaDistY = Math.abs(1 / (rayDirY || 0.00001));
+    let stepX = rayDirX < 0 ? -1 : 1;
+    let stepY = rayDirY < 0 ? -1 : 1;
+    let sideDistX = rayDirX < 0 ? (posX - mapX) * deltaDistX : (mapX + 1.0 - posX) * deltaDistX;
+    let sideDistY = rayDirY < 0 ? (posY - mapY) * deltaDistY : (mapY + 1.0 - posY) * deltaDistY;
+
+    let hit = 0;
+    let steps = 0;
+    const maxSteps = 40;
+
+    while (hit === 0 && steps++ < maxSteps) {
+      if (sideDistX < sideDistY) {
+        sideDistX += deltaDistX;
+        mapX += stepX;
+      } else {
+        sideDistY += deltaDistY;
+        mapY += stepY;
+      }
+
+      if (map) {
+        if (mapX < 0 || mapX >= map.width || mapY < 0 || mapY >= map.height) break;
+
+        // 타일 상의 몬스터 또는 아이템 확인
+        const mon = activeGame?.monsters?.find(m => !m.isDead && (m.stats ? m.stats.hp > 0 : true) && Math.floor(m.visualX ?? m.x) === mapX && Math.floor(m.visualY ?? m.y) === mapY);
+        const it = activeGame?.items?.find(i => Math.floor(i.visualX ?? i.x) === mapX && Math.floor(i.visualY ?? i.y) === mapY);
+
+        if (mon || it) {
+          return { x: mapX, y: mapY, tileX: mapX, tileY: mapY, monster: mon || null, item: it || null };
+        }
+
+        if (typeof map.isWall === "function" && map.isWall(mapX, mapY)) {
+          hit = 1;
+          break;
+        }
+      } else {
+        hit = 1;
+        break;
+      }
+    }
+
+    // 바닥 타일이 유효하고 맵 내부인 경우
+    if (floorTileX !== null && floorTileY !== null && map && floorTileX >= 0 && floorTileX < map.width && floorTileY >= 0 && floorTileY < map.height) {
+      const mon = activeGame?.monsters?.find(m => !m.isDead && (m.stats ? m.stats.hp > 0 : true) && Math.floor(m.visualX ?? m.x) === floorTileX && Math.floor(m.visualY ?? m.y) === floorTileY);
+      const it = activeGame?.items?.find(i => Math.floor(i.visualX ?? i.x) === floorTileX && Math.floor(i.visualY ?? i.y) === floorTileY);
+      return { x: floorTileX, y: floorTileY, tileX: floorTileX, tileY: floorTileY, monster: mon || null, item: it || null };
+    }
+
+    if (hit && mapX >= 0 && mapY >= 0 && (!map || (mapX < map.width && mapY < map.height))) {
+      return { x: mapX, y: mapY, tileX: mapX, tileY: mapY, monster: null, item: null };
+    }
+
     return null;
   }
 }

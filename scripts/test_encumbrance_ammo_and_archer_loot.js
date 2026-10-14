@@ -8,8 +8,7 @@
 
 import { Player } from '../src/entities/Player.js';
 import { Item } from '../src/entities/Item.js';
-import { createTomeItem } from '../src/entities/ItemRegistry.js';
-import { TomeLootGenerator } from '../src/systems/TomeLootGenerator.js';
+import { TomeLootGenerator, createTomeItem } from '../src/systems/TomeLootGenerator.js';
 import { LootSystem } from '../src/core/LootSystem.js';
 import { TomeEquipmentEngine, TVAL } from '../src/systems/TomeEquipmentEngine.js';
 

@@ -11,6 +11,7 @@
 
 import { TomeFlagResolver } from './TomeFlagResolver.js';
 import { UnifiedTraitEngine } from './UnifiedTraitEngine.js';
+import { StatusEffectEngine } from './StatusEffectEngine.js';
 
 export class VisionLightingEngine {
   /**
@@ -26,8 +27,22 @@ export class VisionLightingEngine {
     const visibleTiles = new Set();
     if (!map) return visibleTiles;
 
-    const flags = flagsOrEntity instanceof Set ? flagsOrEntity : TomeFlagResolver.collectFlagsFromEntity(flagsOrEntity);
-    const effectiveRadius = UnifiedTraitEngine.calculateLightRadius(flags, lightRadius);
+    let isBlind = false;
+    let flags = null;
+
+    if (flagsOrEntity instanceof Set) {
+      flags = flagsOrEntity;
+      isBlind = flags.has('BLIND');
+    } else if (flagsOrEntity && typeof flagsOrEntity === 'object') {
+      StatusEffectEngine.syncLegacyFields(flagsOrEntity);
+      isBlind = StatusEffectEngine.hasStatus(flagsOrEntity, 'BLIND');
+      flags = TomeFlagResolver.collectFlagsFromEntity(flagsOrEntity);
+    } else {
+      flags = new Set();
+    }
+
+    // BLIND reduces vision radius to 1
+    const effectiveRadius = isBlind ? 1 : UnifiedTraitEngine.calculateLightRadius(flags, lightRadius);
 
     const r = Math.max(1, effectiveRadius);
     visibleTiles.add(`${playerX},${playerY}`);
@@ -57,6 +72,10 @@ export class VisionLightingEngine {
    */
   static canDetectMonsters(player, flagsOrEntity = null) {
     if (!player) return false;
+    StatusEffectEngine.syncLegacyFields(player);
+    if (StatusEffectEngine.hasStatus(player, 'ESP') || StatusEffectEngine.hasStatus(player, 'INFRA')) {
+      return true;
+    }
     const flags = flagsOrEntity instanceof Set ? flagsOrEntity : TomeFlagResolver.collectFlagsFromEntity(flagsOrEntity || player);
     return flags.has('TELEPATHY') ||
       flags.has('ESP_ALL') ||
@@ -85,6 +104,10 @@ export class VisionLightingEngine {
   static isMonsterVisible(player, monster, map = null, flagsOrEntity = null) {
     if (!player || !monster) return { visible: false, detectionMethod: null, reason: 'Invalid entities' };
 
+    StatusEffectEngine.syncLegacyFields(player);
+    const pMods = StatusEffectEngine.getAggregatedModifiers(player);
+    const isBlind = StatusEffectEngine.hasStatus(player, 'BLIND');
+
     const flags = flagsOrEntity instanceof Set ? flagsOrEntity : TomeFlagResolver.collectFlagsFromEntity(flagsOrEntity || player);
     const mFlags = TomeFlagResolver.collectFlagsFromMonster(monster);
     const mType = (monster.type || '').toUpperCase();
@@ -95,27 +118,35 @@ export class VisionLightingEngine {
     const isMonsterInvis = mFlags.has('INVISIBLE') || mFlags.has('INVIS') || monster.isInvisible;
 
     // 1. ESP / 텔레파시 감지 (전 맵 투시, 벽 관통)
+    if (pMods.flags.telepathy || StatusEffectEngine.hasStatus(player, 'ESP')) {
+      const isMindless = mFlags.has('EMPTY_MIND') || mFlags.has('WEIRD_MIND');
+      if (!isMindless) {
+        return { visible: true, detectionMethod: 'ESP', reason: '초감각 텔레파시 (ESP Status)' };
+      }
+    }
     const espResult = this._checkESP(flags, mFlags, mType, mName);
     if (espResult.detected) {
       return { visible: true, detectionMethod: 'ESP', reason: espResult.reason };
     }
 
     // 2. 적외선 감지 (Infravision: 온혈 몬스터 감지)
-    const hasInfra = flags.has('INFRA') || flags.has('INFRA_VISION') || (player.infraRadius && player.infraRadius > 0);
-    const infraRadius = player.infraRadius || 4.5;
+    const infraBonus = pMods.infraBonus || 0;
+    const hasInfra = flags.has('INFRA') || flags.has('INFRA_VISION') || (player.infraRadius && player.infraRadius > 0) || infraBonus > 0;
+    const infraRadius = (player.infraRadius || 4.5) + infraBonus;
     const isWarmBlooded = !mFlags.has('UNDEAD') && !mFlags.has('NONLIVING') && !mFlags.has('GOLEM') && !mFlags.has('ELEMENTAL') && !mType.includes('UNDEAD') && !mType.includes('GOLEM');
     if (hasInfra && isWarmBlooded && dist <= infraRadius && hasLos) {
       return { visible: true, detectionMethod: 'INFRARED', reason: '적외선 온혈 감지 (Infravision)' };
     }
 
     // 3. 일반 광원 시야 (Line of Sight + Light Radius)
-    const lightRadius = UnifiedTraitEngine.calculateLightRadius(flags, player.lightRadius || 1);
+    // BLIND reduces vision radius to 1
+    const lightRadius = isBlind ? 1 : UnifiedTraitEngine.calculateLightRadius(flags, player.lightRadius || 1);
     const withinLight = dist <= (lightRadius + 0.5);
 
     if (withinLight && hasLos) {
       // 투명 몬스터의 경우 투명 감지(SEE_INVIS / TELEPATHY) 필요
       if (isMonsterInvis) {
-        const canSeeInvis = flags.has('SEE_INVIS') || flags.has('TELEPATHY') || flags.has('ESP_ALL');
+        const canSeeInvis = flags.has('SEE_INVIS') || flags.has('TELEPATHY') || flags.has('ESP_ALL') || pMods.seeInvis || pMods.flags.telepathy;
         if (canSeeInvis) {
           return { visible: true, detectionMethod: 'SEE_INVIS', reason: '투명체 시각화 (See Invisible)' };
         } else {

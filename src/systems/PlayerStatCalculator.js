@@ -11,6 +11,7 @@ import { PREFIX_TAGS, SUFFIX_TAGS, ELEMENT_METADATA } from '../entities/Tags.js'
 import { getSpeciesConfig, getSpeciesKeyByName } from '../entities/MonsterRegistry.js';
 import { MONSTER_PERKS } from '../entities/Perks.js';
 import { TraceLogger } from '../core/TraceLogger.js';
+import { StatusEffectEngine } from './StatusEffectEngine.js';
 
 const DEFAULT_SPECIES = 'HUMAN';
 
@@ -283,8 +284,15 @@ export class PlayerStatCalculator {
    * @returns {number}
    */
   static calculateSpeed(player) {
+    if (!player) return 4;
+    StatusEffectEngine.syncLegacyFields(player);
+    const statusMods = StatusEffectEngine.getAggregatedModifiers(player);
+
     const dex = this.calculateEffectiveStatWithBreakdown(player, 'dex').finalValue;
     let calculatedSpeed = dex < 100 ? (4 + 6 * (dex / 100)) : (10 + (dex - 100) * 0.0375);
+
+    // HASTE (+10), SLOW (-10), FROST (-5), PARALYZE (-99)
+    calculatedSpeed += statusMods.speedDelta;
 
     let speedMult = player.getPerkEffectMultiplier ? player.getPerkEffectMultiplier("speedMultiplier") : 1.0;
 
@@ -307,7 +315,7 @@ export class PlayerStatCalculator {
       speedMult *= player.body.getSpeedModifier();
     }
 
-    return Math.max(3.5, calculatedSpeed * speedMult);
+    return Math.max(1, calculatedSpeed * speedMult);
   }
 
   /**
@@ -316,10 +324,57 @@ export class PlayerStatCalculator {
    * @returns {number}
    */
   static calculateMaxHp(player) {
+    if (!player) return 10;
+    StatusEffectEngine.syncLegacyFields(player);
+    const statusMods = StatusEffectEngine.getAggregatedModifiers(player);
+
     const con = this.calculateEffectiveStatWithBreakdown(player, 'con').finalValue;
-    const baseMaxHp = con * 5 + player.level * 2;
+    const baseMaxHp = con * 5 + (player.level || 1) * 2 + (statusMods.maxHpBonus || 0);
     const hpMult = player.getPerkEffectMultiplier ? player.getPerkEffectMultiplier("hpMultiplier") : 1.0;
     return Math.floor(baseMaxHp * hpMult);
+  }
+
+  /**
+   * 플레이어 방어력(AC) 통합 계산
+   * @param {Object} player
+   * @returns {number}
+   */
+  static calculateTotalAC(player) {
+    if (!player) return 10;
+    StatusEffectEngine.syncLegacyFields(player);
+    const statusMods = StatusEffectEngine.getAggregatedModifiers(player);
+
+    let totalAC = 10;
+    if (player.mimicCore) {
+      const configKey = player.mimicCore.coreType || player.mimicCore.name;
+      const config = getSpeciesConfig(configKey);
+      if (config && typeof config.baseAC === 'number') {
+        totalAC = config.baseAC;
+      }
+    }
+
+    totalAC += (player.dexMod || 0);
+
+    const activeTags = player.compileActiveTags ? player.compileActiveTags() : {};
+    totalAC += (activeTags["EVASION_BOOST"] || 0);
+    totalAC += (activeTags["DEFENSE_BOOST"] || 0);
+
+    for (const key in player.equipment) {
+      if (key === 'subCore1' || key === 'subCore2') continue;
+      const gear = player.equipment[key];
+      if (gear) {
+        if (typeof gear.baseAC === 'number') {
+          totalAC += gear.baseAC;
+        }
+        if (typeof gear.upgradeLevel === 'number') {
+          totalAC += gear.upgradeLevel;
+        }
+      }
+    }
+
+    totalAC += (statusMods.acDelta || 0);
+
+    return Math.max(1, totalAC);
   }
 
 

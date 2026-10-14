@@ -20,6 +20,7 @@ import { CombatCalculator, COMBAT_CONFIG } from './CombatCalculator.js';
 import { bossPhaseEngine } from '../systems/BossPhaseEngine.js';
 import { TomeSpellEngine } from '../systems/TomeSpellEngine.js';
 import { combatVFXEngine, VFX_TYPES } from '../systems/CombatVFXEngine.js';
+import { StatusEffectEngine } from '../systems/StatusEffectEngine.js';
 
 export class CombatSystem {
     /**
@@ -141,7 +142,7 @@ export class CombatSystem {
                 }
 
                 // 3. Calculate Base Physical Damage (upgrade, conMod pen, critical, berserk, slay)
-                const physResult = CombatCalculator.calculatePhysicalDamage(player, monster, activeTags, naturalRoll);
+                const physResult = CombatCalculator.calculatePhysicalDamage(player, monster, activeTags, naturalRoll, currentBlow);
                 if (physResult.critLog && h === 0) {
                     game.addLogEntry(physResult.critLog, `loot`);
                 }
@@ -186,6 +187,41 @@ export class CombatSystem {
                 // Print Unified Combat Log with Blow method name
                 const blowLabel = currentBlow.isCoreInherited ? `의태 연타 [${currentBlow.method}]` : null;
                 CombatSystem.printMeleeDamageLog(game, monster, physDmg, appliedElemDmgs, totalDmg, genericResult.isStrong, blowLabel);
+
+                // Trigger Core-Inherited Blow Effect via StatusEffectEngine
+                if (currentBlow.isCoreInherited && currentBlow.effect && currentBlow.effect !== 'HURT' && currentBlow.effect !== '*') {
+                    const eff = currentBlow.effect.toUpperCase();
+                    const logFn = game && game.addLogEntry ? game.addLogEntry.bind(game) : null;
+                    if (eff === 'POISON' || eff === 'DISEASE' || eff === 'ABOMINATION') {
+                        StatusEffectEngine.applyStatus(monster, 'POISON', 4, 6, player, logFn);
+                    } else if (eff === 'FIRE') {
+                        StatusEffectEngine.applyStatus(monster, 'BURN', 3, 5, player, logFn);
+                    } else if (eff === 'COLD') {
+                        StatusEffectEngine.applyStatus(monster, 'SLOW', 3, 10, player, logFn);
+                    } else if (eff === 'ELEC') {
+                        StatusEffectEngine.applyStatus(monster, 'STUN', 2, 5, player, logFn);
+                    } else if (eff === 'ACID') {
+                        StatusEffectEngine.applyStatus(monster, 'SUNDER', 4, 15, player, logFn);
+                    } else if (eff === 'PARALYZE') {
+                        StatusEffectEngine.applyStatus(monster, 'PARALYZE', 2, null, player, logFn);
+                    } else if (eff === 'CONFUSE' || eff === 'HALLU' || eff === 'INSANITY') {
+                        StatusEffectEngine.applyStatus(monster, 'CONFUSE', 4, null, player, logFn);
+                    } else if (eff === 'TERRIFY') {
+                        StatusEffectEngine.applyStatus(monster, 'FEAR', 4, null, player, logFn);
+                    } else if (eff === 'BLIND') {
+                        StatusEffectEngine.applyStatus(monster, 'BLIND', 4, null, player, logFn);
+                    } else if (eff.startsWith('EXP_')) {
+                        const drainHp = Math.max(1, Math.floor(totalDmg * 0.35));
+                        player.stats.hp = Math.min(player.stats.maxHp, player.stats.hp + drainHp);
+                        if (logFn) logFn(`[Lifesteal] 🩸 적의 생명력을 흡수하여 +${drainHp} HP 회복!`, 'loot');
+                    } else if (eff.startsWith('LOSE_')) {
+                        StatusEffectEngine.applyStatus(monster, 'WEAKEN', 4, null, player, logFn);
+                    } else if (eff === 'SHATTER') {
+                        const shatterDmg = Math.max(1, Math.floor(totalDmg * 0.30));
+                        d = monster.takeDamage(shatterDmg) || d;
+                        if (logFn) logFn(`[Shatter] 💥 대지 분쇄 충격파로 +${shatterDmg} 추가 피해!`, 'combat');
+                    }
+                }
 
                 // Lifesteal
                 const lifestealResult = CombatCalculator.applyLifesteal(player, totalDmg);

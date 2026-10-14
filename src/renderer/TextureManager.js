@@ -57,10 +57,6 @@ export function resolveTexturePath(filename) {
     } catch (_) {}
   }
   if (typeof window !== 'undefined' && window.location) {
-    const pathname = window.location.pathname || '';
-    if (pathname.includes('/fork_experimental')) {
-      return `../public/textures/${cleanName}`;
-    }
     return `./public/textures/${cleanName}`;
   }
   return `/public/textures/${cleanName}`;

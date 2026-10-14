@@ -303,31 +303,15 @@ balanceModifierManager.setPreset('CHAOS_VOXEL');
 assert(isJokeMonster(bunnyGirlMonster) === false, "CHAOS_VOXEL에서는 바니걸이 조크 몬스터 차단 해제됨 (false, 출현 허용)");
 
 // -----------------------------------------------------------------------------
-// TEST 6: 독립 실행형 실험적 포크 파일 무결성 검증
+// TEST 6: 실험적 포크 파일 영구 삭제 및 메인 진입점 보존 검증
 // -----------------------------------------------------------------------------
-console.log("\n--- TEST 6: experimental.html / experimental_main.js / experimental_style.css 무결성 검증 ---");
+console.log("\n--- TEST 6: 실험적 포크 파일 삭제 및 index.html 무결성 검증 ---");
 
 const expHtmlPath = path.join(projectRoot, 'experimental.html');
 const expMainPath = path.join(projectRoot, 'experimental_main.js');
-const expCssPath = path.join(projectRoot, 'experimental_style.css');
 
-assert(fs.existsSync(expHtmlPath), "experimental.html 파일 존재 확인");
-assert(fs.existsSync(expMainPath), "experimental_main.js 파일 존재 확인");
-assert(fs.existsSync(expCssPath), "experimental_style.css 파일 존재 확인");
-
-const expHtmlContent = fs.readFileSync(expHtmlPath, 'utf8');
-assert(expHtmlContent.includes('experimental_style.css'), "experimental.html이 experimental_style.css 참조 확인");
-assert(expHtmlContent.includes('experimental_main.js'), "experimental.html이 experimental_main.js 모듈 참조 확인");
-assert(expHtmlContent.includes('skill-hotbar-container'), "experimental.html 내 skill-hotbar-container 마운트 확인");
-assert(expHtmlContent.includes('hud-status-chips-bar'), "experimental.html 내 hud-status-chips-bar 마운트 확인");
-assert(expHtmlContent.includes('low-hp-vignette'), "experimental.html 내 low-hp-vignette 마운트 확인");
-assert(expHtmlContent.includes('game-start-preset-modal-root'), "experimental.html 내 game-start-preset-modal-root 마운트 확인");
-
-const expCssContent = fs.readFileSync(expCssPath, 'utf8');
-assert(expCssContent.includes('.skill-hotbar-root'), "experimental_style.css 내 스킬 핫바 스타일 정의 확인");
-assert(expCssContent.includes('.low-hp-vignette'), "experimental_style.css 내 저체력 비네팅 스타일 정의 확인");
-assert(expCssContent.includes('.hud-status-chips-bar'), "experimental_style.css 내 실시간 상태 칩 스타일 정의 확인");
-assert(expCssContent.includes('.preset-modal-container'), "experimental_style.css 내 프리셋 모달 스타일 정의 확인");
+assert(!fs.existsSync(expHtmlPath), "experimental.html 파일 영구 삭제 확인");
+assert(!fs.existsSync(expMainPath), "experimental_main.js 파일 영구 삭제 확인");
 
 // 기존 index.html 보존 확인
 const indexHtmlContent = fs.readFileSync(path.join(projectRoot, 'index.html'), 'utf8');

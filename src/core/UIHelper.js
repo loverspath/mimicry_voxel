@@ -1,10 +1,10 @@
 /**
  * @module UIHelper
  * @category core
- * @description UI 컴포넌트 3분할(InventoryView, InspectModalView, HUDView, UIManager) 통합 경량 파사드 모듈
+ * @description UI 컴포넌트 3분할(InventoryView, InspectModalView, HUDView) 통합 경량 파사드 모듈
  * @purity DOM Facade / Pure Export
- * @dependencies InventoryView.js, InspectModalView.js, HUDView.js, UIManager.js
- * @exports EQUIP_BADGE_STYLES, renderInventorySlotHTML, renderItemDetailHTML, renderTransferMaterialHTML, renderActiveCoreDetailsHTML, renderMonsterInspectHTML, renderPlayerStatusPanelHTML, renderPlayerDetailsHTML, renderSkillTreeHTML, renderMasteryDetailsHTML, updateTopBarHUD, formatCombatLogHTML, UIManager
+ * @dependencies InventoryView.js, InspectModalView.js, HUDView.js
+ * @exports EQUIP_BADGE_STYLES, renderInventorySlotHTML, renderItemDetailHTML, renderTransferMaterialHTML, renderActiveCoreDetailsHTML, renderMonsterInspectHTML, renderPlayerStatusPanelHTML, renderPlayerDetailsHTML, renderSkillTreeHTML, renderMasteryDetailsHTML, updateTopBarHUD, updateFloatingAutoFireButton, formatCombatLogHTML
  */
 
 export {
@@ -28,7 +28,3 @@ export {
   updateFloatingAutoFireButton,
   formatCombatLogHTML
 } from '../ui/HUDView.js';
-
-export {
-  UIManager
-} from '../ui/UIManager.js';

@@ -16,5 +16,8 @@
     "data-oriented"
   ],
   "author": "OpenDCMart Engine Team",
-  "license": "GPL-3.0-or-later"
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "vitest": "^5.0.4"
+  }
 }

@@ -1,0 +1,26 @@
+{
+  "name": "Mimicry: The Roguelike 3D",
+  "short_name": "Mimicry",
+  "description": "2.5D Voxel & Classic ASCII Data-Oriented Roguelike Game",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
+  "orientation": "any",
+  "background_color": "#06070b",
+  "theme_color": "#06070b",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "entertainment"]
+}

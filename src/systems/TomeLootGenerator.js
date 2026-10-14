@@ -3,8 +3,8 @@
  * @category systems
  * @description ToME 2.3.5 정통 알고리즘 기반 던전 깊이(Depth)별 아이템 롤링, 에고(Ego) 접사 합성 및 전설 유물(Artifact) 드랍 파이프라인 엔진
  * @purity Pure Loot Factory
- * @dependencies Item.js, Tags.js
- * @exports TomeLootGenerator
+ * @dependencies Item.js, Tags.js, TomeKindsData.js, TomeArtifactsData.js, TomeEgosData.js
+ * @exports TomeLootGenerator, createTomeItem, getItemConfig
  */
 
 import { Item } from '../entities/Item.js';
@@ -287,6 +287,7 @@ export class TomeLootGenerator {
     if (typeof art.cost === 'number') artifactItem.cost = art.cost;
     if (typeof art.weight === 'number') artifactItem.weight = art.weight;
     if (baseKind?.multiplier) artifactItem.multiplier = baseKind.multiplier;
+    if (art.activate) artifactItem.activate = { ...art.activate };
     artifactItem.flags = resolvedFlags;
     artifactItem.syncComponents();
     return artifactItem;
@@ -680,4 +681,109 @@ export class TomeLootGenerator {
   static generateLoot(x, y, depth = 1, isBossDrop = false) {
     return this.generateFloorItem(x, y, depth, isBossDrop);
   }
+}
+
+/**
+ * ToME 아이템 키로부터 새로운 Item 인스턴스를 즉시 생성합니다.
+ */
+export function createTomeItem(key, x = 0, y = 0) {
+  const cfg = TOME_ARTIFACTS_DATA[key] || TOME_KINDS_DATA[key];
+  if (!cfg) return null;
+
+  let type = cfg.type || 'WEAPON';
+  let slotType = cfg.slotType || null;
+  let char = cfg.char;
+
+  // Safeguard slotType & type based on tval
+  if (cfg.tval === 16 || cfg.tval === 17 || cfg.tval === 18 || type === 'QUIVER' || slotType === 'QUIVER') {
+    type = 'QUIVER';
+    slotType = 'QUIVER';
+    char = '{';
+  } else if (cfg.tval === 31 || type === 'GLOVES') {
+    type = 'GLOVES';
+    slotType = 'GLOVES';
+    char = ']';
+  } else if (cfg.tval === 34 || type === 'SHIELD') {
+    type = 'SHIELD';
+    slotType = 'SHIELD';
+    char = ')';
+  } else if (cfg.tval === 30 || type === 'BOOTS') {
+    type = 'BOOTS';
+    slotType = 'BOOTS';
+    char = ']';
+  } else if (cfg.tval === 35 || type === 'CLOAK') {
+    type = 'CLOAK';
+    slotType = 'CLOAK';
+    char = '(';
+  } else if (cfg.tval === 32 || cfg.tval === 33 || type === 'HELMET' || type === 'CROWN') {
+    type = 'HELMET';
+    slotType = 'HELMET';
+    char = ']';
+  } else if (cfg.tval === 36 || cfg.tval === 37 || cfg.tval === 38 || type === 'ARMOR') {
+    type = 'ARMOR';
+    slotType = 'ARMOR';
+    char = '[';
+  }
+
+  const isArtifact = cfg.specialTags?.includes('ARTIFACT') || !!TOME_ARTIFACTS_DATA[key] || (cfg.key && cfg.key.startsWith('ART_'));
+  const item = new Item(
+    x, y,
+    type,
+    char,
+    cfg.color || (isArtifact ? '#ffd700' : '#cbd5e1'),
+    cfg.name,
+    cfg.type === 'LAMP' ? 2 : 0,
+    slotType,
+    cfg.statBonuses || {},
+    cfg.dice,
+    null,
+    [],
+    [],
+    cfg.specialTags || (isArtifact ? ['ARTIFACT'] : []),
+    cfg.flavorText || ""
+  );
+
+  if (cfg.tval !== undefined) {
+    item.tval = cfg.tval;
+  }
+  if (cfg.sval !== undefined) {
+    item.sval = cfg.sval;
+  }
+
+  // 탄약류(화살/볼트/탄환) 15~35발 다발(Bundle) 롤링 적용
+  const isAmmo = cfg.tval === 16 || cfg.tval === 17 || cfg.tval === 18 ||
+                 slotType === 'QUIVER' || type === 'QUIVER' ||
+                 /arrow|bolt|shot|화살|볼트|탄환/i.test(cfg.name || '');
+  if (isAmmo) {
+    item.count = Math.floor(Math.random() * 21) + 15; // 15 ~ 35발
+  }
+
+  if (isArtifact) {
+    item.artifactKey = cfg.key || key;
+  }
+  if (typeof cfg.baseAC === 'number') {
+    item.baseAC = cfg.baseAC;
+  }
+  if (typeof cfg.weight === 'number') {
+    item.weight = cfg.weight;
+  }
+  if (typeof cfg.cost === 'number') {
+    item.cost = cfg.cost;
+  }
+  if (typeof cfg.level === 'number') {
+    item.level = cfg.level;
+  }
+  if (cfg.flags && Array.isArray(cfg.flags)) {
+    item.flags = [...cfg.flags];
+  }
+  if (cfg.activate) {
+    item.activate = { ...cfg.activate };
+  }
+  item.syncComponents();
+
+  return item;
+}
+
+export function getItemConfig(key) {
+  return TOME_ARTIFACTS_DATA[key] || TOME_KINDS_DATA[key] || null;
 }

@@ -13,6 +13,8 @@ import { TOME_SLAY_CONFIG, RANGED_COMBAT_CONFIG, calculateDexCritChance, calcula
 import { getSpeciesConfig } from '../entities/MonsterRegistry.js';
 import { TomeEgoEngine } from '../systems/TomeEgoEngine.js';
 import { UnifiedTraitEngine } from '../systems/UnifiedTraitEngine.js';
+import { StatusEffectEngine } from '../systems/StatusEffectEngine.js';
+import { TOME_MONSTERS_DATA } from '../entities/TomeMonstersData.js';
 
 // 1. 전투 공식 및 한계 조율 데이터 레지스트리 (Hardcoding Eradication)
 export const COMBAT_CONFIG = {
@@ -163,6 +165,15 @@ export class CombatCalculator {
      */
     static getPlayerResistance(player, element, activeTags = null) {
         if (!player || !element) return false;
+        StatusEffectEngine.syncLegacyFields(player);
+        const mods = StatusEffectEngine.getAggregatedModifiers(player);
+        const elemUpper = String(element).toUpperCase();
+        if (elemUpper === 'FIRE' && mods.tempResistances.FIRE > 0) return true;
+        if (elemUpper === 'COLD' && mods.tempResistances.COLD > 0) return true;
+        if ((elemUpper === 'LIGHTNING' || elemUpper === 'ELEC') && mods.tempResistances.LIGHTNING > 0) return true;
+        if (elemUpper === 'ACID' && mods.tempResistances.ACID > 0) return true;
+        if ((elemUpper === 'POISON' || elemUpper === 'POIS') && mods.tempResistances.POISON > 0) return true;
+
         const trait = UnifiedTraitEngine.getElementalTrait(player, element);
         if (trait && (trait.isImmune || trait.isResistant)) return true;
         if (TomeEgoEngine.hasElementalResistance(player, element)) return true;
@@ -404,9 +415,16 @@ export class CombatCalculator {
             }
         }
 
-        // ToME Base-To-Hit (BTH)
-        let bHit = cfg.BASE_HIT_SCORE + (level * cfg.LEVEL_HIT_WEIGHT) + dexBonus + weaponToHit + masteryBonus + accBoost + archetypeHitBonus - fearPenalty;
+        // ToME Base-To-Hit (BTH) with Status Modifiers
+        StatusEffectEngine.syncLegacyFields(player);
+        const pMods = StatusEffectEngine.getAggregatedModifiers(player);
+        let bHit = cfg.BASE_HIT_SCORE + (level * cfg.LEVEL_HIT_WEIGHT) + dexBonus + weaponToHit + masteryBonus + accBoost + archetypeHitBonus - fearPenalty + pMods.toHitDelta;
         let targetAC = (monster.baseAC !== undefined ? monster.baseAC : 10) + (archetype?.effectiveAcBonus || 0);
+        if (monster && monster.statuses) {
+            const mMods = StatusEffectEngine.getAggregatedModifiers(monster);
+            targetAC += mMods.acDelta;
+        }
+        targetAC = Math.max(1, targetAC);
 
         // ToME 2.3.5 정통 Hit Chance Formula:
         let rawHitChance = bHit / (bHit + targetAC * cfg.AC_SCALING_FACTOR);
@@ -434,9 +452,10 @@ export class CombatCalculator {
     /**
      * 플레이어 물리 공격 피해량을 계산합니다.
      */
-    static calculatePhysicalDamage(player, monster, activeTags, naturalRoll) {
+    static calculatePhysicalDamage(player, monster, activeTags, naturalRoll, blow = null) {
         let weapon = player.equipment.weapon;
-        let weaponDmgRoll = CombatCalculator.rollDice(weapon ? weapon.dice : `1d3`);
+        const diceStr = weapon ? weapon.dice : (blow && blow.dice ? blow.dice : `1d3`);
+        let weaponDmgRoll = CombatCalculator.rollDice(diceStr);
         let category = weapon ? (weapon.weaponCategory || "SWORD") : "UNARMED";
         const masteryLvl = player.body.getWeaponMasteryLevel(category);
         
@@ -486,6 +505,12 @@ export class CombatCalculator {
             physDmg = Math.floor(physDmg * slayResult.multiplier);
             slayLog = `[Combat] 🗡️ ${slayResult.slayType} 격발! 대상에게 ${slayResult.multiplier}배의 치명적 슬레이 피해!`;
         }
+
+        // Status Modifiers (e.g. BERSERK toDamBonus: +15, WEAKEN: -10)
+        StatusEffectEngine.syncLegacyFields(player);
+        const pMods = StatusEffectEngine.getAggregatedModifiers(player);
+        physDmg += pMods.toDamDelta;
+        physDmg = Math.max(1, physDmg);
 
         return { dmg: physDmg, isCritRoll, critLog, berserkLog, slayLog };
     }
@@ -670,7 +695,9 @@ export class CombatCalculator {
     static calculateAcDamageReduction(player, rawDmg) {
         if (!player || rawDmg <= 0) return rawDmg;
 
-        const playerTotalAC = player.getTotalAC ? player.getTotalAC() : (COMBAT_CONFIG.PLAYER_DEFENSE.baseAC + (player.dexMod || 0));
+        StatusEffectEngine.syncLegacyFields(player);
+        const mods = StatusEffectEngine.getAggregatedModifiers(player);
+        const playerTotalAC = player.getTotalAC ? player.getTotalAC() : (COMBAT_CONFIG.PLAYER_DEFENSE.baseAC + (player.dexMod || 0) + mods.acDelta);
         
         // 1. 방어구 기본 AC 기반 감쇄 (AC / 8)
         const acReduction = Math.floor(playerTotalAC / 8);
@@ -699,6 +726,9 @@ export class CombatCalculator {
      * 플레이어가 받는 최종 피해량 경감 필터를 연산합니다.
      */
     static filterPlayerIncomingDamage(player, rawDmg, elemDmg, isFurious, isChieftain) {
+        StatusEffectEngine.syncLegacyFields(player);
+        const mods = StatusEffectEngine.getAggregatedModifiers(player);
+
         // 0. ToME 정통 AC 및 방패 블록 물리 감쇄 적용
         let totalDmg = CombatCalculator.calculateAcDamageReduction(player, rawDmg);
         const defenseCfg = COMBAT_CONFIG.PLAYER_DEFENSE;
@@ -712,19 +742,24 @@ export class CombatCalculator {
             totalDmg = Math.max(1, totalDmg - flatReduction);
         }
 
-        // protectPrayer
-        if (player.protectPrayerTurns && player.protectPrayerTurns > 0) {
+        // protectPrayer / protEvil
+        if ((player.protectPrayerTurns && player.protectPrayerTurns > 0) || mods.flags.protEvil) {
             totalDmg = Math.max(1, totalDmg - defenseCfg.protectPrayerReduction);
         }
 
         let finalDmg = totalDmg + elemDmg;
 
         // Element Resistance
-        if (isFurious && CombatCalculator.getPlayerResistance(player, "FIRE", activeTags)) {
+        if (isFurious && (CombatCalculator.getPlayerResistance(player, "FIRE", activeTags) || mods.tempResistances.FIRE > 0)) {
             finalDmg = Math.max(1, finalDmg - Math.floor(elemDmg * 0.5));
         }
-        if (isChieftain && CombatCalculator.getPlayerResistance(player, "ACID", activeTags)) {
+        if (isChieftain && (CombatCalculator.getPlayerResistance(player, "ACID", activeTags) || mods.tempResistances.ACID > 0)) {
             finalDmg = Math.max(1, finalDmg - Math.floor(elemDmg * 0.5));
+        }
+
+        // INVULN / damageReductionPct (e.g. 90% reduction)
+        if (mods.damageReductionPct > 0) {
+            finalDmg = Math.max(1, Math.floor(finalDmg * (1 - mods.damageReductionPct)));
         }
 
         return { finalDmg: Math.max(1, finalDmg) };
@@ -985,12 +1020,23 @@ export class CombatCalculator {
 
         // 맨손/의태 본체 공격 시 메인 코어의 Blows 시퀀스 계승
         if (category === "UNARMED" && player.mimicCore) {
+            const coreKey = player.mimicCore.coreType || player.mimicCore.name;
+            const mData = TOME_MONSTERS_DATA[coreKey] || Object.values(TOME_MONSTERS_DATA).find(m => m.name === coreKey || m.key === coreKey);
+            const attacks = (mData && mData.attacks && mData.attacks.length > 0) ? mData.attacks : null;
+            if (attacks && attacks.length > 0) {
+                return attacks.map(b => ({
+                    method: b.method || "HIT",
+                    effect: b.effect || "HURT",
+                    dice: b.damage || b.dice || "1d4",
+                    isCoreInherited: true
+                }));
+            }
             const config = getSpeciesConfig(player.mimicCore.coreType);
             if (config && config.blows && config.blows.length > 0) {
                 return config.blows.map(b => ({
                     method: b.method || "HIT",
                     effect: b.effect || "HURT",
-                    dice: b.dice || "1d4",
+                    dice: b.dice || b.damage || "1d4",
                     isCoreInherited: true
                 }));
             }

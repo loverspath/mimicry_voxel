@@ -21,7 +21,6 @@ import { uniqueMonsterManager, UniqueMonsterManager } from '../src/systems/Uniqu
 import { CombatSystem } from '../src/core/CombatSystem.js';
 import { LootSystem } from '../src/core/LootSystem.js';
 import { Spawner } from '../src/core/Spawner.js';
-import { GameEngine } from '../src/core/GameEngine.js';
 import { Map } from '../src/map/Map.js';
 import { Player } from '../src/entities/Player.js';
 import { Monster } from '../src/entities/Monster.js';
@@ -353,7 +352,14 @@ console.log("\n▶ [TEST 9] 50F 보스룸 스폰부터 3단계 페이즈 전투 
     monsters: [],
     effects: [],
     uniqueMonsterManager: new UniqueMonsterManager(),
-    engine: new GameEngine(),
+    engine: {
+      turn: 100,
+      floor: 50,
+      isVictory: false,
+      triggerVictory() {
+        this.isVictory = true;
+      }
+    },
     addLogEntry: (msg) => {},
     updateUI: () => {}
   };

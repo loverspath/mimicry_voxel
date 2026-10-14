@@ -8,75 +8,12 @@
 
 import { TOME_MONSTERS_DATA } from '../entities/TomeMonstersData.js';
 import { getSpeciesConfig, MONSTER_SPECIES } from '../entities/MonsterRegistry.js';
+import { ProceduralSkillSynthesizer, ActiveSkill } from './ProceduralSkillSynthesizer.js';
+import { SPELL_DESCRIPTOR_GRAMMAR } from '../configs/SynthesisSchemaConfig.js';
 
-export class ActiveSkill {
-  constructor(data) {
-    this.id = data.id;
-    this.tomeKey = data.tomeKey || data.id;
-    this.slot = data.slot; // 1, 2, 3, 4
-    this.requiredMastery = data.requiredMastery || (data.slot <= 2 ? 1 : (data.slot === 3 ? 10 : 25));
-    this.name = data.name;
-    this.desc = data.desc;
-    this.type = data.type || 'PROJECTILE'; // 'PROJECTILE', 'AOE', 'BREATH', 'SELF', 'MELEE_STRIKE', 'TELEPORT'
-    this.element = data.element || 'PHYSICAL';
-    this.cooldown = data.cooldown || 2;
-    this.maxRange = data.maxRange || 5.5;
-    this.dice = data.dice || '1d6';
-    this.color = data.color || '#38bdf8';
-    this.icon = data.icon || '⚔️';
-    this._execute = data.execute;
-  }
+export { ActiveSkill };
 
-  isUnlocked(masteryLevel = 1) {
-    return (masteryLevel || 1) >= this.requiredMastery;
-  }
 
-  /**
-   * 변신 숙련도(Morph Mastery)에 따른 실효 쿨타임을 산출합니다.
-   * @param {number} masteryLevel
-   * @returns {number}
-   */
-  getEffectiveCooldown(masteryLevel = 1) {
-    const reduction = Math.floor((masteryLevel || 1) / 25); // Lv 25: -1, Lv 50: -2
-    return Math.max(1, this.cooldown - reduction);
-  }
-
-  execute(game, player, target = null) {
-    if (!game || !player) return false;
-    const masteryLvl = player.getMorphMasteryLevel ? player.getMorphMasteryLevel() : 1;
-
-    if (!this.isUnlocked(masteryLvl)) {
-      if (game.addLogEntry) {
-        game.addLogEntry(`🔒 [스킬 잠김] ${this.name} 스킬은 [${player.mimicCore?.name || '현재 몬스터'}] 변신 숙련도 Lv.${this.requiredMastery} 이상에서 사용 가능합니다.`, 'combat');
-      }
-      return false;
-    }
-
-    const currentCd = player.getTracker ? player.getTracker(this.id, 'cooldown') : 0;
-    if (currentCd > 0) {
-      if (game.addLogEntry) {
-        game.addLogEntry(`⏳ [쿨다운 중] ${this.name} 재사용 대기시간이 ${currentCd}턴 남았습니다.`, 'combat');
-      }
-      return false;
-    }
-
-    // Run ToME canonical execution logic
-    const success = this._execute(game, player, target, this);
-    if (success) {
-      const finalCd = this.getEffectiveCooldown(masteryLvl);
-      if (player.setTracker) {
-        player.setTracker(this.id, 'cooldown', finalCd);
-      }
-
-      // Gain Morph Lore Mastery XP (+2) on successful active skill execution
-      const currentMorphKey = player.mimicCore?.coreType || player.mimicCore?.name;
-      if (currentMorphKey && player.body && player.body.gainLoreXp) {
-        player.body.gainLoreXp(currentMorphKey, 2);
-      }
-    }
-    return success;
-  }
-}
 
 /**
  * ToME 2.3.5 정통 스펠 정의 카탈로그 (1:1 스펙)
@@ -665,165 +602,33 @@ export class MonsterSpellFactory {
   static _cache = new Map();
 
   /**
+   * Retrieves or synthesizes the 4-slot procedural skill set for a core with optional sub-core infusions.
+   * @param {string} coreType
+   * @param {Array<string>} [subCoreTypes=[]]
+   * @returns {Array<ActiveSkill>}
+   */
+  static getSkillsForCore(coreType, subCoreTypes = []) {
+    return this.createInnateSkills(coreType, subCoreTypes);
+  }
+
+  /**
    * ToME 몬스터 데이터로부터 1:1 4슬롯 고유 스킬 인스턴스를 도출합니다.
    * @param {string} speciesIdentifier - 'MON_NOVICE_MAGE', 'Novice warrior', 'ORC', 'HUMAN' 등
+   * @param {Array<string>} [subCoreTypes=[]]
    * @returns {Array<ActiveSkill>} 4개의 ActiveSkill 인스턴스 배열 (슬롯 1, 2, 3, 4)
    */
-  static createInnateSkills(speciesIdentifier) {
-    if (!speciesIdentifier) speciesIdentifier = 'HUMAN';
+  static createInnateSkills(speciesIdentifier, subCoreTypes = []) {
+    return ProceduralSkillSynthesizer.synthesizeMonsterSkillSet(speciesIdentifier, subCoreTypes);
+  }
 
-    if (this._cache.has(speciesIdentifier)) {
-      return this._cache.get(speciesIdentifier);
-    }
-
-    // 1. Resolve exact ToME monster entry from TomeMonstersData
-    let monsterData = TOME_MONSTERS_DATA[speciesIdentifier];
-    if (!monsterData) {
-      for (const k in TOME_MONSTERS_DATA) {
-        const item = TOME_MONSTERS_DATA[k];
-        if (item.name === speciesIdentifier || item.key === speciesIdentifier) {
-          monsterData = item;
-          break;
-        }
-      }
-    }
-
-    const config = getSpeciesConfig(speciesIdentifier) || {};
-    const rawSpells = (monsterData && monsterData.spells) || [];
-    const rawAttacks = (monsterData && monsterData.attacks) || config.blows || [];
-    const breathElement = (monsterData && monsterData.breathElement) || config.breathElement || null;
-
-    // Filter valid castable spells (ignore 1_IN_* frequency markers)
-    const validSpells = rawSpells.filter(s => !s.startsWith('1_IN_') && TOME_SPELL_DEFINITIONS[s]);
-
-    const collectedSkills = [];
-
-    // 2. Map Valid ToME Spells 1:1
-    for (const spellKey of validSpells) {
-      if (collectedSkills.length >= 4) break;
-      const spec = TOME_SPELL_DEFINITIONS[spellKey];
-      const slotNum = collectedSkills.length + 1;
-      const reqMastery = slotNum <= 2 ? 1 : (slotNum === 3 ? 10 : 25);
-
-      collectedSkills.push(new ActiveSkill({
-        id: `${speciesIdentifier}_${spellKey}`,
-        tomeKey: spellKey,
-        slot: slotNum,
-        requiredMastery: reqMastery,
-        name: spec.name,
-        desc: spec.desc,
-        type: spec.type,
-        element: spec.element,
-        manaCost: spec.manaCost,
-        cooldown: spec.cooldown,
-        maxRange: spec.maxRange,
-        dice: spec.dice || '2d6',
-        color: spec.color,
-        icon: spec.icon,
-        execute: (game, player, target, skill) => this._executeGenericSpell(game, player, target, skill, spec)
-      }));
-    }
-
-    // 3. If Breath Element exists and not yet added, add Canonical ToME Breath
-    if (breathElement && collectedSkills.length < 4) {
-      const breathKey = `BR_${breathElement}`;
-      const breathSpec = TOME_SPELL_DEFINITIONS[breathKey] || TOME_SPELL_DEFINITIONS['BR_FIRE'];
-      const slotNum = collectedSkills.length + 1;
-      const reqMastery = slotNum <= 2 ? 1 : (slotNum === 3 ? 10 : 25);
-
-      collectedSkills.push(new ActiveSkill({
-        id: `${speciesIdentifier}_${breathKey}`,
-        tomeKey: breathKey,
-        slot: slotNum,
-        requiredMastery: reqMastery,
-        name: breathSpec.name,
-        desc: breathSpec.desc,
-        type: 'BREATH',
-        element: breathElement,
-        manaCost: breathSpec.manaCost,
-        cooldown: breathSpec.cooldown,
-        maxRange: breathSpec.maxRange,
-        dice: breathSpec.dice || '4d10',
-        color: breathSpec.color,
-        icon: breathSpec.icon,
-        execute: (game, player, target, skill) => this._executeBreathSpell(game, player, target, skill, breathElement)
-      }));
-    }
-
-    // 4. If slots remain (< 4), convert ToME Attacks (blows) into active strike techniques
-    for (const attack of rawAttacks) {
-      if (collectedSkills.length >= 4) break;
-      const method = attack.method || 'HIT';
-      const effect = attack.effect || 'HURT';
-      const damageDice = attack.damage || '1d4';
-
-      let attackSpecKey = 'BASIC_STRIKE';
-      if (effect === 'POISON') attackSpecKey = 'POISON_BITE';
-      else if (method === 'CRUSH' || method === 'BUTT') attackSpecKey = 'CRUSH_STRIKE';
-      else if (method === 'CLAW' || method === 'PECK') attackSpecKey = 'CLAW_SLASH';
-      else if (method === 'TOUCH' || method === 'STING') attackSpecKey = 'STEAL_STRIKE';
-
-      const spec = TOME_ATTACK_DEFINITIONS[attackSpecKey];
-      const slotNum = collectedSkills.length + 1;
-      const reqMastery = slotNum <= 2 ? 1 : (slotNum === 3 ? 10 : 25);
-
-      collectedSkills.push(new ActiveSkill({
-        id: `${speciesIdentifier}_ATK_${method}_${slotNum}`,
-        tomeKey: `ATK_${method}`,
-        slot: slotNum,
-        requiredMastery: reqMastery,
-        name: spec.name,
-        desc: `${spec.desc} (기본 피해 주사위: ${damageDice})`,
-        type: spec.type,
-        element: spec.element,
-        manaCost: spec.manaCost,
-        cooldown: spec.cooldown,
-        maxRange: spec.maxRange,
-        dice: damageDice,
-        color: spec.color,
-        icon: spec.icon,
-        execute: (game, player, target, skill) => this._executeAttackStrike(game, player, target, skill, spec, damageDice)
-      }));
-    }
-
-    // 5. Fill any remaining slots up to 4 with Standard Innate Techniques
-    const growthType = config.growthType || (monsterData && monsterData.growthType) || '';
-    const isWarriorPhysical = (growthType === 'WARRIOR') || (validSpells.length === 0);
-
-    while (collectedSkills.length < 4) {
-      const slotNum = collectedSkills.length + 1;
-      const reqMastery = slotNum <= 2 ? 1 : (slotNum === 3 ? 10 : 25);
-      let fallbackKey = 'BASIC_STRIKE';
-      if (slotNum === 3) {
-        fallbackKey = isWarriorPhysical ? 'SHIELD_BASH' : 'BLINK';
-      } else if (slotNum === 4) {
-        fallbackKey = 'CRUSH_STRIKE'; // Heavy smash
-      }
-
-      const spec = TOME_SPELL_DEFINITIONS[fallbackKey] || TOME_ATTACK_DEFINITIONS[fallbackKey] || TOME_ATTACK_DEFINITIONS.BASIC_STRIKE;
-      const dice = spec.dice || (fallbackKey === 'SHIELD_BASH' ? '2d6' : '1d6');
-
-      collectedSkills.push(new ActiveSkill({
-        id: `${speciesIdentifier}_SLOT_${slotNum}`,
-        tomeKey: fallbackKey,
-        slot: slotNum,
-        requiredMastery: reqMastery,
-        name: spec.name,
-        desc: spec.desc,
-        type: spec.type,
-        element: spec.element,
-        manaCost: spec.manaCost || 2,
-        cooldown: spec.cooldown || (fallbackKey === 'SHIELD_BASH' ? 3 : 2),
-        maxRange: spec.maxRange || 1.5,
-        dice: dice,
-        color: spec.color || '#38bdf8',
-        icon: spec.icon || '⚔️',
-        execute: (game, player, target, skill) => spec.type === 'TELEPORT' ? this._executePhaseDoor(game, player, skill) : this._executeAttackStrike(game, player, target, skill, spec, dice)
-      }));
-    }
-
-    this._cache.set(speciesIdentifier, collectedSkills);
-    return collectedSkills;
+  /**
+   * 스펠 키에 대한 정통 명세 객체를 반환합니다.
+   * @param {string} spellId
+   * @returns {Object|null}
+   */
+  static getMonsterSpellConfig(spellId) {
+    if (!spellId) return null;
+    return SPELL_DESCRIPTOR_GRAMMAR[spellId] || TOME_SPELL_DEFINITIONS[spellId] || null;
   }
 
   // =========================================================================

@@ -19,7 +19,6 @@ import {
   renderLoreMasterySummaryHTML, 
   getUniqueChecklistStats 
 } from '../src/ui/MonsterLoreView.js';
-import { UIManager } from '../src/ui/UIManager.js';
 
 let passed = 0;
 let total = 0;
@@ -183,17 +182,6 @@ assert(modalMasteryHTML.includes('로어 숙련도 & 무기 마스터리') || mo
 // 4. HUDView renderMasteryDetailsHTML delegation
 const hudMasteryHTML = renderMasteryDetailsHTML(player);
 assert(hudMasteryHTML.includes('몬스터 로어 숙련도') || hudMasteryHTML.includes('몬스터 로어'), 'HUD 마스터리 도감 버튼 클릭 시 통합 로어/유니크 도감으로 정상 연결됨');
-
-console.log('\n🧪 ========================================================');
-console.log('🧪 [TEST SUITE 5] UIManager 라우팅 및 연동 무결성 검증');
-console.log('🧪 ========================================================');
-
-const uiManager = new UIManager(null);
-assert(typeof uiManager.showActiveCoreDetails === 'function', 'UIManager.showActiveCoreDetails 메서드 존재');
-assert(typeof uiManager.showMonsterLoreModal === 'function', 'UIManager.showMonsterLoreModal 메서드 존재');
-assert(typeof uiManager.showMasteryDetails === 'function', 'UIManager.showMasteryDetails 메서드 존재');
-assert(typeof uiManager.showPlayerDetails === 'function', 'UIManager.showPlayerDetails 메서드 존재');
-assert(typeof uiManager.showSkillTree === 'function', 'UIManager.showSkillTree 메서드 존재');
 
 console.log('\n========================================================');
 console.log(`🎉 [TEST RESULTS] ${passed}/${total} 테스트 100% 통과 완료!`);

@@ -7,7 +7,9 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { MONSTER_SPECIES } from '../src/entities/MonsterRegistry.js';
-import { TOME_BASE_ITEMS } from '../src/entities/ItemRegistry.js';
+import { TOME_MONSTERS_DATA } from '../src/entities/TomeMonstersData.js';
+import { TOME_KINDS_DATA } from '../src/entities/TomeKindsData.js';
+import { TOME_ARTIFACTS_DATA } from '../src/entities/TomeArtifactsData.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,34 +49,25 @@ function auditDataset(name, items, getFlavorFn) {
   return { total: datasetTotal, valid: datasetValid, missing: datasetMissing };
 }
 
-// 1. Audit tome_monsters.json (851 monsters)
-const monstersPath = path.join(ROOT_DIR, 'src/entities/tome_monsters.json');
-const monstersRaw = JSON.parse(fs.readFileSync(monstersPath, 'utf8'));
-const monsterStats = auditDataset('ToME Monsters (r_info.txt)', monstersRaw.data || monstersRaw, (m) => m.flavorText || m.description);
+// 1. Audit TomeMonstersData.js (851 monsters)
+const monsterStats = auditDataset('ToME Monsters (r_info.txt)', TOME_MONSTERS_DATA, (m) => m.flavorText || m.description);
 
-// 2. Audit tome_kinds.json (501 base items)
-const kindsPath = path.join(ROOT_DIR, 'src/entities/tome_kinds.json');
-const kindsRaw = JSON.parse(fs.readFileSync(kindsPath, 'utf8'));
-const kindStats = auditDataset('ToME Base Items (k_info.txt)', kindsRaw.data || kindsRaw, (k) => k.flavorText);
+// 2. Audit TomeKindsData.js (560 base items)
+const kindStats = auditDataset('ToME Base Items (k_info.txt)', TOME_KINDS_DATA, (k) => k.flavorText);
 
-// 3. Audit tome_artifacts.json (183 legendary artifacts)
-const artifactsPath = path.join(ROOT_DIR, 'src/entities/tome_artifacts.json');
-const artifactsRaw = JSON.parse(fs.readFileSync(artifactsPath, 'utf8'));
-const artifactStats = auditDataset('ToME Artifacts (a_info.txt)', artifactsRaw.data || artifactsRaw, (a) => a.flavorText);
+// 3. Audit TomeArtifactsData.js (183 legendary artifacts)
+const artifactStats = auditDataset('ToME Artifacts (a_info.txt)', TOME_ARTIFACTS_DATA, (a) => a.flavorText);
 
 // 4. Audit MonsterRegistry species configs (11 species)
 const registryStats = auditDataset('MonsterRegistry Species', MONSTER_SPECIES, (s) => s.flavorText);
-
-// 5. Audit ItemRegistry sample items
-const itemRegStats = auditDataset('ItemRegistry Inlined Items', TOME_BASE_ITEMS, (i) => i.flavorText);
 
 console.log("\n==================================================");
 console.log("🌟 REPRESENTATIVE FLAVOR TEXT & LORE SHOWCASE");
 console.log("==================================================");
 
-const monsterData = monstersRaw.data || monstersRaw;
-const artifactData = artifactsRaw.data || artifactsRaw;
-const kindData = kindsRaw.data || kindsRaw;
+const monsterData = TOME_MONSTERS_DATA;
+const artifactData = TOME_ARTIFACTS_DATA;
+const kindData = TOME_KINDS_DATA;
 
 function showSampleMonster(query) {
   const match = Object.values(monsterData).find(m => m.name.toLowerCase().includes(query.toLowerCase()));
