@@ -273,6 +273,37 @@ export class MonsterAISystem {
   }
 
   /**
+   * 몬스터의 이동 가능 여부 판정 (PASS_WALL 및 KILL_WALL 기믹 지원, 외곽 테두리 제외)
+   */
+  static canMonsterStep(monster, x, y, map, isMonsterAt, player) {
+    if (isMonsterAt(x, y)) return false;
+    if (x === player.x && y === player.y) return false;
+    if (map.isWalkable(x, y)) return true;
+
+    // 맵 외곽 테두리 타일 보호
+    const width = map.width || (map.tiles && map.tiles[0] ? map.tiles[0].length : 80);
+    const height = map.height || (map.tiles ? map.tiles.length : 24);
+    const isBorder = (x <= 0 || y <= 0 || x >= width - 1 || y >= height - 1);
+    if (isBorder) return false;
+
+    const mFlags = monster.flags || [];
+    if (mFlags.includes('PASS_WALL')) {
+      return true;
+    }
+    if (mFlags.includes('KILL_WALL') || mFlags.includes('HURT_ROCK')) {
+      const tile = map.getTile ? map.getTile(x, y) : (map.tiles && map.tiles[y] ? map.tiles[y][x] : null);
+      if (tile && !tile.isWalkable) {
+        tile.type = 'FLOOR';
+        tile.char = '.';
+        tile.isWalkable = true;
+        tile.blocksVision = false;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * 표준 몬스터 근접 공격 및 추적 AI
    */
   static runStandardMonsterAI(monster, player, map, isMonsterAt, attackPlayer, dx, dy, dist) {
@@ -284,12 +315,12 @@ export class MonsterAISystem {
       const nextX = monster.x + sx;
       const nextY = monster.y + sy;
 
-      if (map.isWalkable(nextX, nextY) && !isMonsterAt(nextX, nextY) && !(nextX === player.x && nextY === player.y)) {
+      if (this.canMonsterStep(monster, nextX, nextY, map, isMonsterAt, player)) {
         monster.x = nextX;
         monster.y = nextY;
-      } else if (sx !== 0 && map.isWalkable(monster.x + sx, monster.y) && !isMonsterAt(monster.x + sx, monster.y) && !(monster.x + sx === player.x && monster.y === player.y)) {
+      } else if (sx !== 0 && this.canMonsterStep(monster, monster.x + sx, monster.y, map, isMonsterAt, player)) {
         monster.x += sx;
-      } else if (sy !== 0 && map.isWalkable(monster.x, monster.y + sy) && !isMonsterAt(monster.x, monster.y + sy) && !(monster.x === player.x && monster.y + sy === player.y)) {
+      } else if (sy !== 0 && this.canMonsterStep(monster, monster.x, monster.y + sy, map, isMonsterAt, player)) {
         monster.y += sy;
       }
     }

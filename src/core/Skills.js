@@ -89,14 +89,12 @@ export const BASE_SKILL_TREES = {
  * @returns {Array<Object>}
  */
 export function generateDynamicSkillTree(speciesIdentifier) {
-  if (!speciesIdentifier) return BASE_SKILL_TREES["인간 여행자"];
-  return ProceduralSkillSynthesizer.synthesizePassiveTree(speciesIdentifier);
+  return ProceduralSkillSynthesizer.synthesizePassiveTree(speciesIdentifier || 'MON_NOVICE_WARRIOR');
 }
 
 export const CORE_SKILL_TREES = new Proxy(BASE_SKILL_TREES, {
   get(target, prop) {
     if (typeof prop !== 'string') return target[prop];
-    if (prop in target) return target[prop];
     return generateDynamicSkillTree(prop);
   }
 });

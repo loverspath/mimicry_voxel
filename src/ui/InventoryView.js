@@ -13,6 +13,7 @@ import { MONSTER_PERKS } from '../entities/Perks.js';
 import { TomeSpellEngine } from '../systems/TomeSpellEngine.js';
 import { MonsterSpellFactory } from '../systems/MonsterSpellFactory.js';
 import { ArtifactActivationEngine } from '../systems/ArtifactActivationEngine.js';
+import { ProceduralSkillSynthesizer } from '../systems/ProceduralSkillSynthesizer.js';
 
 /** 장비 슬롯 배지 메타 데이터 (슬롯명 → 표시 텍스트, 색상) */
 export const EQUIP_BADGE_STYLES = {
@@ -186,7 +187,7 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
       : '';
 
     // 1. 4 Active Skills 2x2 Grid
-    const skills = TomeSpellEngine.getMonsterSkills(effectiveKey || item);
+    const skills = ProceduralSkillSynthesizer.synthesizeMonsterSkillSet(effectiveKey || item);
     const skillCardsHTML = skills.map((sk, idx) => {
       const elemKey = (sk.element || 'PHYSICAL').toUpperCase();
       const elemStyle = ELEMENT_BADGE_STYLES[elemKey] || ELEMENT_BADGE_STYLES.PHYSICAL;
@@ -218,6 +219,28 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem;">
           ${skillCardsHTML}
+        </div>
+      </div>
+    `;
+
+    // 1.5. 5-Tier Passive Tree Preview
+    const passives = ProceduralSkillSynthesizer.synthesizePassiveTree(effectiveKey || item);
+    const passivesHTML = `
+      <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.74rem; font-weight: bold; color: #c084fc;">🧬 의태 5티어 패시브 트리:</span>
+          <span style="font-size: 0.65rem; color: #94a3b8;">(레벨 개방 특성)</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+          ${passives.map(p => `
+            <div style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(168,85,247,0.2); border-radius: 5px; padding: 0.25rem 0.4rem; font-size: 0.67rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: bold; color: #e9d5ff;">[Lv.${p.pt}] ${p.name}</span>
+                <span style="color: #a855f7; font-size: 0.6rem; font-family: monospace;">${(p.synergyTags || []).join(', ')}</span>
+              </div>
+              <div style="color: #94a3b8; font-size: 0.63rem; margin-top: 0.05rem;">${p.desc}</div>
+            </div>
+          `).join('')}
         </div>
       </div>
     `;
@@ -321,6 +344,7 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
       </div>
       <div class="detail-desc" style="margin-top: 0.4rem; font-size: 0.8rem; color: var(--text-muted); text-align: left; display: flex; flex-direction: column; gap: 0.45rem; line-height: 1.4; overflow-y: auto; max-height: 240px; padding-right: 4px;">
         ${skillsSectionHTML}
+        ${passivesHTML}
         ${statGridHTML}
         ${growthHTML}
         ${flagsHTML}
@@ -898,6 +922,30 @@ export function renderActiveCoreDetailsHTML(player) {
   const fusionBadge = fusionLevel > 0 ? `<span style="background: rgba(59,130,246,0.18); color: #60a5fa; border: 1px solid rgba(59,130,246,0.35); padding: 0.05rem 0.3rem; border-radius: 4px; font-size: 0.65rem; font-weight: bold;">🔮 융합 +${fusionLevel}</span>` : '';
   const lightBadge = lightBonus > 0 ? `<span style="background: rgba(251,191,36,0.18); color: #fbbf24; border: 1px solid rgba(251,191,36,0.35); padding: 0.05rem 0.3rem; border-radius: 4px; font-size: 0.65rem; font-weight: bold;">🏮 광원 +${lightBonus}칸</span>` : '';
 
+  const passives = ProceduralSkillSynthesizer.synthesizePassiveTree(coreType);
+  const passivesSectionHTML = `
+    <div style="border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 0.4rem; margin-top: 0.2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+        <span style="font-weight: bold; color: #c084fc; font-size: 0.78rem;">🧬 5티어 의태 패시브 트리:</span>
+        <span style="font-size: 0.68rem; color: #94a3b8;">Lv.${player.level || 1} 기준 활성화</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+        ${passives.map(p => {
+          const isUnlocked = (player.level || 1) >= (p.pt || 1);
+          return `
+            <div style="background: rgba(0,0,0,0.25); border: 1px solid ${isUnlocked ? 'rgba(168,85,247,0.4)' : 'rgba(255,255,255,0.08)'}; border-radius: 5px; padding: 0.3rem 0.45rem; opacity: ${isUnlocked ? '1' : '0.6'}; font-size: 0.72rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: bold; color: ${isUnlocked ? '#e9d5ff' : '#94a3b8'};">[Lv.${p.pt}] ${p.name}</span>
+                <span style="font-size: 0.63rem; color: ${isUnlocked ? '#34d399' : '#f87171'}; font-weight: bold;">${isUnlocked ? '🟢 활성' : '🔒 잠김'}</span>
+              </div>
+              <div style="color: var(--text-muted); font-size: 0.68rem; margin-top: 0.1rem;">${p.desc}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+
   return `
     <div class="detail-header" style="text-align: left; display: flex; flex-direction: column; gap: 0.15rem;">
       <div style="display: flex; align-items: center; gap: 0.35rem;">
@@ -921,6 +969,7 @@ export function renderActiveCoreDetailsHTML(player) {
       ${growthMultiplierHTML}
       ${perksHTML}
       ${skillsSectionHTML}
+      ${passivesSectionHTML}
       ${coreFlavorHTML}
 
       <div style="border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 0.4rem; font-size: 0.72rem; color: #cbd5e1; line-height: 1.35;">

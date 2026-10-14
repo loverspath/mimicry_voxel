@@ -357,14 +357,19 @@ export class UnifiedTraitEngine {
       noBlind: flags.has('NO_BLIND') || flags.has('RES_BLIND') || flags.has('IM_BLIND'),
       noStun: flags.has('NO_STUN'),
       holdLife: flags.has('HOLD_LIFE'),
-      reflect: flags.has('REFLECT'),
+      reflect: flags.has('REFLECT') || flags.has('REFLECTING'),
       seeInvis: flags.has('SEE_INVIS') || flags.has('STATUS_SEE_INVIS') || flags.has('TELEPATHY') || flags.has('ESP_ALL'),
       telepathy: flags.has('TELEPATHY') || flags.has('ESP_ALL'),
       regeneration: flags.has('REGEN') || flags.has('REGENERATE'),
       featherFall: flags.has('FEATHER'),
       slowDigest: flags.has('SLOW_DIGEST'),
       canFly: flags.has('CAN_FLY') || flags.has('FLYING'),
-      passWall: flags.has('PASS_WALL')
+      passWall: flags.has('PASS_WALL'),
+      killWall: flags.has('KILL_WALL') || flags.has('HURT_ROCK'),
+      auraFire: flags.has('AURA_FIRE'),
+      auraCold: flags.has('AURA_COLD'),
+      auraElec: flags.has('AURA_ELEC'),
+      forceMaxHp: flags.has('FORCE_MAXHP')
     };
   }
 

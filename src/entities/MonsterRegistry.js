@@ -16,6 +16,8 @@ export const MONSTER_GROWTH_PATTERNS = Object.freeze({
   DPS:      { str: 1.6, dex: 1.2, con: 0.7, int: 0.9, hp: 0.8 },
   SPEEDY:   { str: 0.7, dex: 1.8, con: 0.8, int: 1.0, hp: 0.7 },
   MAGE:     { str: 0.5, dex: 0.8, con: 0.7, int: 1.8, hp: 0.7 },
+  WARRIOR:  { str: 1.4, dex: 1.0, con: 1.3, int: 0.6, hp: 1.3 },
+  ROGUE:    { str: 1.1, dex: 1.5, con: 0.9, int: 1.0, hp: 0.9 },
   BOSS:     { str: 2.0, dex: 1.2, con: 2.0, int: 1.5, hp: 2.5 }
 });
 
@@ -25,8 +27,8 @@ export const LEGACY_TOME_ALIASES_MAP = Object.freeze({
   '인간': 'MON_NOVICE_WARRIOR',
   '인간 여행자': 'MON_NOVICE_WARRIOR',
   '인간 여성 여행자': 'MON_NOVICE_WARRIOR',
-  IMP: 'MON_HOMUNCULUS',
-  '임프': 'MON_HOMUNCULUS',
+  IMP: 'MON_IMP',
+  '임프': 'MON_IMP',
   GOBLIN: 'MON_SMALL_KOBOLD',
   '고블린': 'MON_SMALL_KOBOLD',
   '고블린 전사': 'MON_SMALL_KOBOLD',

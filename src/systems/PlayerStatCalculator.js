@@ -330,7 +330,26 @@ export class PlayerStatCalculator {
 
     const con = this.calculateEffectiveStatWithBreakdown(player, 'con').finalValue;
     const baseMaxHp = con * 5 + (player.level || 1) * 2 + (statusMods.maxHpBonus || 0);
-    const hpMult = player.getPerkEffectMultiplier ? player.getPerkEffectMultiplier("hpMultiplier") : 1.0;
+    let hpMult = player.getPerkEffectMultiplier ? player.getPerkEffectMultiplier("hpMultiplier") : 1.0;
+
+    // FORCE_MAXHP flag check (+25% Max HP bonus)
+    const activeTags = player.compileActiveTags ? player.compileActiveTags() : {};
+    let hasForceMaxHp = Boolean(activeTags['FORCE_MAXHP']);
+    if (!hasForceMaxHp && player.mimicCore) {
+      if (player.mimicCore.flags && player.mimicCore.flags.includes('FORCE_MAXHP')) {
+        hasForceMaxHp = true;
+      } else {
+        const configKey = player.mimicCore.coreType || player.mimicCore.name;
+        const config = getSpeciesConfig(configKey);
+        if (config && config.flags && config.flags.includes('FORCE_MAXHP')) {
+          hasForceMaxHp = true;
+        }
+      }
+    }
+    if (hasForceMaxHp) {
+      hpMult *= 1.25;
+    }
+
     return Math.floor(baseMaxHp * hpMult);
   }
 

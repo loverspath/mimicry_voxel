@@ -857,7 +857,19 @@ export class Game {
         tookAction = true;
       } else {
         // 3. Move player
+        const prevTile = this.map ? (typeof this.map.getTile === 'function' ? this.map.getTile(targetX, targetY) : (this.map.tiles && this.map.tiles[targetY] ? this.map.tiles[targetY][targetX] : null)) : null;
+        const wasWall = prevTile && !prevTile.isWalkable;
         tookAction = this.player.move(dx, dy, this.map);
+        if (tookAction && wasWall) {
+          if (this.player.hasKillWall && this.player.hasKillWall()) {
+            this.addLogEntry(`[Excavation] ⛏️ 단단한 암반을 굴착하여 통로를 개척했습니다!`, `system`);
+          } else if (this.player.hasPassWall && this.player.hasPassWall()) {
+            this.addLogEntry(`[PassWall] 👻 벽을 투과하여 유령처럼 이동했습니다.`, `system`);
+          }
+          if (typeof this.updateFOV === 'function') {
+            this.updateFOV();
+          }
+        }
       }
     }
 
@@ -865,23 +877,28 @@ export class Game {
       // 4. Trap check at player's current position
       const currentTile = this.map ? (typeof this.map.getTile === 'function' ? this.map.getTile(this.player.x, this.player.y) : (this.map.tiles && this.map.tiles[this.player.y] ? this.map.tiles[this.player.y][this.player.x] : null)) : null;
       if (currentTile && (currentTile.isTrap || currentTile.type === 'TRAP' || currentTile.char === '^')) {
-        const dex = (typeof this.player.getEffectiveStat === 'function') 
-          ? this.player.getEffectiveStat('dex') 
-          : (this.player.stats?.dex || 10);
-        const disarmChance = Math.min(0.9, Math.max(0.1, dex / 30));
-        if (Math.random() < disarmChance) {
-          currentTile.isTrap = false;
-          currentTile.isDisarmed = true;
-          currentTile.type = 'FLOOR';
-          currentTile.char = '.';
-          this.addLogEntry(`[Trap] ⚠️ 함정을 민첩하게 감지하여 해체했습니다!`, `system`);
+        const canFly = (typeof this.player.canFly === 'boolean' ? this.player.canFly : (typeof this.player.canFly === 'function' ? this.player.canFly() : false)) || (this.player.compileActiveTags && (this.player.compileActiveTags()["CAN_FLY"] || 0) > 0);
+        if (canFly) {
+          this.addLogEntry(`[Flight] 🪶 공중을 비행 중이므로 바닥의 함정을 안전하게 지나쳤습니다.`, `system`);
         } else {
-          const trapDmg = Math.floor(Math.random() * 10) + 5;
-          this.player.stats.hp = Math.max(0, this.player.stats.hp - trapDmg);
-          this.addLogEntry(`[Trap] 💥 함정을 밟았습니다! ${trapDmg}의 피해를 입었습니다! (HP: ${this.player.stats.hp}/${this.player.stats.maxHp})`, `combat`);
-          if (this.player.stats.hp <= 0) {
-            this.handlePlayerDeath();
-            return true;
+          const dex = (typeof this.player.getEffectiveStat === 'function') 
+            ? this.player.getEffectiveStat('dex') 
+            : (this.player.stats?.dex || 10);
+          const disarmChance = Math.min(0.9, Math.max(0.1, dex / 30));
+          if (Math.random() < disarmChance) {
+            currentTile.isTrap = false;
+            currentTile.isDisarmed = true;
+            currentTile.type = 'FLOOR';
+            currentTile.char = '.';
+            this.addLogEntry(`[Trap] ⚠️ 함정을 민첩하게 감지하여 해체했습니다!`, `system`);
+          } else {
+            const trapDmg = Math.floor(Math.random() * 10) + 5;
+            this.player.stats.hp = Math.max(0, this.player.stats.hp - trapDmg);
+            this.addLogEntry(`[Trap] 💥 함정을 밟았습니다! ${trapDmg}의 피해를 입었습니다! (HP: ${this.player.stats.hp}/${this.player.stats.maxHp})`, `combat`);
+            if (this.player.stats.hp <= 0) {
+              this.handlePlayerDeath();
+              return true;
+            }
           }
         }
       }

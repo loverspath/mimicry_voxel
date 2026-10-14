@@ -251,7 +251,29 @@ export class Player {
   }
 
   get canFly() {
-    return UnifiedTraitEngine.getStatusImmunities(this).canFly || this.body.mutations.includes('SPEEDY_FLIGHT');
+    const activeTags = this.compileActiveTags ? this.compileActiveTags() : {};
+    return (activeTags["CAN_FLY"] || 0) > 0 ||
+           UnifiedTraitEngine.getStatusImmunities(this).canFly ||
+           (this.statuses?.FLYING?.duration > 0) ||
+           (this.statuses?.LEVITATION?.duration > 0) ||
+           (this.mimicCore?.flags && this.mimicCore.flags.includes('CAN_FLY')) ||
+           (this.body?.mutations && this.body.mutations.includes('SPEEDY_FLIGHT'));
+  }
+
+  hasPassWall() {
+    const activeTags = this.compileActiveTags ? this.compileActiveTags() : {};
+    return (activeTags["PASS_WALL"] || 0) > 0 ||
+           this.wraithformTurns > 0 ||
+           (this.statuses?.PASS_WALL?.duration > 0) ||
+           UnifiedTraitEngine.getStatusImmunities(this).passWall ||
+           (this.mimicCore?.flags && this.mimicCore.flags.includes('PASS_WALL'));
+  }
+
+  hasKillWall() {
+    const activeTags = this.compileActiveTags ? this.compileActiveTags() : {};
+    return (activeTags["KILL_WALL"] || 0) > 0 ||
+           UnifiedTraitEngine.getStatusImmunities(this).killWall ||
+           (this.mimicCore?.flags && (this.mimicCore.flags.includes('KILL_WALL') || this.mimicCore.flags.includes('HURT_ROCK')));
   }
 
   getResistancePercent(element) {
@@ -732,6 +754,28 @@ export class Player {
       this.x = newX;
       this.y = newY;
       return true;
+    }
+    const width = map.width || (map.tiles && map.tiles[0] ? map.tiles[0].length : 80);
+    const height = map.height || (map.tiles ? map.tiles.length : 24);
+    const isBorder = (newX <= 0 || newY <= 0 || newX >= width - 1 || newY >= height - 1);
+    if (!isBorder) {
+      if (this.hasPassWall()) {
+        this.x = newX;
+        this.y = newY;
+        return true;
+      }
+      if (this.hasKillWall()) {
+        const tile = map.getTile ? map.getTile(newX, newY) : (map.tiles && map.tiles[newY] ? map.tiles[newY][newX] : null);
+        if (tile) {
+          tile.type = 'FLOOR';
+          tile.char = '.';
+          tile.isWalkable = true;
+          tile.blocksVision = false;
+        }
+        this.x = newX;
+        this.y = newY;
+        return true;
+      }
     }
     return false;
   }

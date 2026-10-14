@@ -41,6 +41,17 @@ export class Monster {
    * @param {Array<string>} suffixes - Rarity suffix tags
    */
   constructor(x, y, type, level = 1, prefixes = [], suffixes = []) {
+    let opts = null;
+    if (typeof x === 'object' && x !== null) {
+      opts = x;
+      x = opts.x || 0;
+      y = opts.y || 0;
+      type = opts.type || opts.tomeKey || opts.coreType || 'MON_NOVICE_WARRIOR';
+      level = opts.level || 1;
+      prefixes = opts.prefixes || [];
+      suffixes = opts.suffixes || [];
+    }
+
     this.x = x;
     this.y = y;
     this.type = type;
@@ -64,10 +75,10 @@ export class Monster {
     const config = getSpeciesConfig(type);
 
     this.tomeKey = config.coreType || type;
-    this.name = config.name;
-    this.char = config.char;
-    this.color = config.baseColor;
-    this.flavorText = config.flavorText || "A creature lurking in the depths of the dungeon.";
+    this.name = opts?.name || config.name;
+    this.char = opts?.char || config.char;
+    this.color = opts?.color || config.baseColor;
+    this.flavorText = opts?.flavorText || config.flavorText || "A creature lurking in the depths of the dungeon.";
     this.description = this.flavorText;
 
     const coreBase = config.coreBase || { str: 10, dex: 10, con: 10, int: 10, wis: 10, chr: 10, cha: 10 };
@@ -85,11 +96,11 @@ export class Monster {
     const phi = Math.pow(Math.log(this.level) / Math.log(100), 1.5);
     const growthCoeff = isNaN(phi) ? 0 : phi;
 
-    this.perks = config.perks || [];
-    this.flags = config.flags || config.perks || [];
-    this.spells = config.spells || [];
-    this.attacks = config.attacks || config.blows || [{ method: "HIT", effect: "HURT", damage: "1d4" }];
-    this.blows = config.blows || [{ method: "HIT", effect: "HURT", dice: "1d4" }];
+    this.perks = [...(config.perks || []), ...(opts?.perks || [])];
+    this.flags = [...(config.flags || config.perks || []), ...(opts?.flags || [])];
+    this.spells = opts?.spells || config.spells || [];
+    this.attacks = opts?.attacks || config.attacks || config.blows || [{ method: "HIT", effect: "HURT", damage: "1d4" }];
+    this.blows = opts?.blows || config.blows || [{ method: "HIT", effect: "HURT", dice: "1d4" }];
 
     const normalizedName = normalizeCoreName(type);
     this.skillSets = [config.name];
@@ -135,9 +146,19 @@ export class Monster {
       cha: (coreBase.chr || coreBase.cha || 6) + Math.floor(((coreMax.chr || coreMax.cha || 150) - (coreBase.chr || coreBase.cha || 6)) * growthCoeff * (pattern.chr || pattern.cha || 1.0) * statWeights.chr)
     };
 
+    if (this.flags && this.flags.includes('FORCE_MAXHP')) {
+      hpMult *= 1.25;
+    }
+
     const conGrowth = this.stats.con - (coreBase.con || 10);
     const rawHp = coreBaseHp + conGrowth * 5 + this.level * 2;
     this.stats.maxHp = Math.floor(rawHp * (pattern.hp || 1.0) * hpMult);
+
+    if (opts?.stats) {
+      const baseMaxHp = opts.stats.maxHp || this.stats.maxHp;
+      const finalMaxHp = opts.flags?.includes('FORCE_MAXHP') ? Math.round(baseMaxHp * 1.25) : baseMaxHp;
+      this.stats = { ...this.stats, ...opts.stats, maxHp: finalMaxHp, hp: finalMaxHp };
+    }
 
     this.stats.str = Math.max(1, Math.min(999, this.stats.str));
     this.stats.dex = Math.max(1, Math.min(999, this.stats.dex));
@@ -292,6 +313,10 @@ export class Monster {
       }
     }
     
+    if (this.flags && this.flags.includes('FORCE_MAXHP')) {
+      hpMult *= 1.25;
+    }
+
     const currentCon = this.getEffectiveStat('con');
     const conGrowth = currentCon - (coreBase.con || 10);
     const rawHp = coreBaseHp + conGrowth * 5 + this.level * 2;

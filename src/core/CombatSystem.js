@@ -502,6 +502,80 @@ export class CombatSystem {
                     }
                     return;
                 }
+
+                // 플레이어 고유 방어/반격 기믹 (거인족 피의 재생, 슬라임 산성 반사, 원소 오라 반격)
+                const activeTags = player.compileActiveTags ? player.compileActiveTags() : {};
+                const pCore = player.mimicCore;
+                const pFlags = pCore?.flags || [];
+                const pChar = pCore?.char || '';
+                const pType = pCore?.type || '';
+
+                // 1. 거인족 피의 재생 (GIANT_BLOOD / REGEN_UNIT / GIANT / TROLL / OGRE / REGENERATE)
+                const isPlayerGiant = activeTags['GIANT_BLOOD'] || activeTags['REGEN_UNIT'] ||
+                    pFlags.includes('GIANT') || pFlags.includes('TROLL') || pFlags.includes('OGRE') || pFlags.includes('REGENERATE') ||
+                    pChar === 'O' || pChar === 'T' || pChar === 'P' || pType === 'OGRE' || pType === 'TROLL';
+
+                if (isPlayerGiant && player.stats.hp < player.stats.maxHp && Math.random() < 0.30) {
+                    const healAmt = Math.max(1, Math.floor((player.stats.maxHp - player.stats.hp) * 0.15));
+                    player.stats.hp = Math.min(player.stats.maxHp, player.stats.hp + healAmt);
+                    if (game && game.addLogEntry) {
+                        game.addLogEntry(`[거인족 피의 재생] 🩸 피격 후 상처가 급속히 아물며 +${healAmt} HP 회복! (HP: ${player.stats.hp}/${player.stats.maxHp})`, `loot`);
+                    }
+                }
+
+                // 2. 슬라임 산성 반사 (ACID_COUNTER / SLIME / char: 'j'|'m'|',')
+                const isPlayerSlime = activeTags['ACID_COUNTER'] || pFlags.includes('SLIME') ||
+                    pChar === 'j' || pChar === 'm' || pChar === ',' || pType === 'SLIME';
+
+                if (isPlayerSlime && monster.stats.hp > 0 && Math.random() < 0.25) {
+                    const acidDmg = CombatCalculator.rollDice('1d4');
+                    const isDead = monster.takeDamage(acidDmg);
+                    if (game && game.addLogEntry) {
+                        game.addLogEntry(`[산성 반사] 🧪 산성 피부가 튀어 ${monster.displayName || monster.name}에게 ${acidDmg}의 산성 피해 반사!`, `loot`);
+                    }
+                    if (isDead) {
+                        LootSystem.processMonsterDeath(game, player, monster, "산성 반사");
+                        break;
+                    }
+                }
+
+                // 3. 원소 오라 반격 (AURA_FIRE / AURA_COLD / AURA_ELEC)
+                if (monster.stats.hp > 0) {
+                    if (activeTags['AURA_FIRE'] || pFlags.includes('AURA_FIRE')) {
+                        const auraDmg = CombatCalculator.rollDice('1d6');
+                        const isDead = monster.takeDamage(auraDmg);
+                        if (game && game.addLogEntry) {
+                            game.addLogEntry(`[화염의 오라] 🔥 타오르는 불길이 ${monster.displayName || monster.name}에게 ${auraDmg}의 화염 반사 피해!`, `danger`);
+                        }
+                        if (isDead) {
+                            LootSystem.processMonsterDeath(game, player, monster, "화염 오라 반사");
+                            break;
+                        }
+                    }
+                    if (activeTags['AURA_COLD'] || pFlags.includes('AURA_COLD')) {
+                        const auraDmg = CombatCalculator.rollDice('1d6');
+                        const isDead = monster.takeDamage(auraDmg);
+                        if (monster.debuffs) monster.debuffs.frost = (monster.debuffs.frost || 0) + 2;
+                        if (game && game.addLogEntry) {
+                            game.addLogEntry(`[냉기의 오라] ❄️ 서릿발 오라가 ${monster.displayName || monster.name}에게 ${auraDmg}의 냉기 반사 피해 및 동결!`, `danger`);
+                        }
+                        if (isDead) {
+                            LootSystem.processMonsterDeath(game, player, monster, "냉기 오라 반사");
+                            break;
+                        }
+                    }
+                    if (activeTags['AURA_ELEC'] || pFlags.includes('AURA_ELEC')) {
+                        const auraDmg = CombatCalculator.rollDice('1d6');
+                        const isDead = monster.takeDamage(auraDmg);
+                        if (game && game.addLogEntry) {
+                            game.addLogEntry(`[전기의 오라] ⚡ 번개 오라가 ${monster.displayName || monster.name}에게 ${auraDmg}의 뇌격 반사 피해!`, `danger`);
+                        }
+                        if (isDead) {
+                            LootSystem.processMonsterDeath(game, player, monster, "전기 오라 반사");
+                            break;
+                        }
+                    }
+                }
             } else {
                 if (game && game.addLogEntry) {
                     game.addLogEntry(`[Combat] ${monster.displayName || monster.name}의 ${currentAtk.method || '근접'} 공격을 가볍게 회피했습니다.`, `system`);

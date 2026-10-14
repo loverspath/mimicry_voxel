@@ -14,6 +14,7 @@ import { UnifiedTraitEngine } from './UnifiedTraitEngine.js';
 import { TomeFlagResolver } from './TomeFlagResolver.js';
 import { Spawner } from '../core/Spawner.js';
 import { combatVFXEngine } from './CombatVFXEngine.js';
+import { ProceduralSkillSynthesizer } from './ProceduralSkillSynthesizer.js';
 
 export const TOME_ATTACK_METHODS = Object.freeze([
   'HIT', 'TOUCH', 'PUNCH', 'KICK', 'CLAW', 'BITE', 'STING', 'BUTT',
@@ -820,120 +821,14 @@ export class TomeSpellEngine {
    * @returns {Array<Object>} 4개 스킬 슬롯 명세
    */
   static generatePlayerSkillsFromCore(monsterOrKey) {
-    const spells = this.resolveMonsterSpells(monsterOrKey);
-    const attacks = this.resolveMonsterAttacks(monsterOrKey);
-
-    const skills = [];
-
-    // Slot 1: 기본 공격 / 평타 기반 스킬
-    const primaryAtk = attacks[0] || { method: 'HIT', effect: 'HURT', damage: '1d6' };
-    skills.push({
-      slot: 1,
-      id: 'SKILL_BASIC_ATTACK',
-      name: `기본 타격 (${primaryAtk.method})`,
-      desc: `${primaryAtk.method} 방식으로 적을 타격합니다. (${primaryAtk.damage} + ${primaryAtk.effect})`,
-      element: primaryAtk.effect === 'HURT' ? 'PHYSICAL' : primaryAtk.effect,
-      cooldown: 1,
-      dice: primaryAtk.damage,
-      icon: '⚔️',
-      color: '#38bdf8'
-    });
-
-    // Slot 2: 볼트 또는 상태이상 스킬
-    const boltSpell = spells.find(s => s.spec.type === 'PROJECTILE' || s.spec.type === 'DEBUFF') || spells[0];
-    if (boltSpell) {
-      skills.push({
-        slot: 2,
-        id: `SKILL_${boltSpell.key}`,
-        tomeKey: boltSpell.key,
-        name: boltSpell.spec.name,
-        desc: `${boltSpell.spec.name}을(를) 투사합니다. (원소: ${boltSpell.spec.element || 'MANA'})`,
-        element: boltSpell.spec.element || 'MANA',
-        cooldown: boltSpell.spec.cooldown || 2,
-        dice: boltSpell.spec.dice || '2d6',
-        icon: boltSpell.spec.icon || '🔮',
-        color: boltSpell.spec.color || '#a78bfa'
-      });
-    } else {
-      skills.push({
-        slot: 2,
-        id: 'SKILL_POWER_STRIKE',
-        name: '강타 (Power Strike)',
-        desc: '무기를 힘껏 휘둘러 강력한 강타를 입힙니다. (2d8)',
-        element: 'PHYSICAL',
-        cooldown: 2,
-        dice: '2d8',
-        icon: '💥',
-        color: '#f59e0b'
-      });
-    }
-
-    // Slot 3: AoE 폭발 또는 소환 / 회복 스킬
-    const aoeSpell = spells.find(s => s.spec.type === 'AOE' || s.spec.type === 'HEAL' || s.spec.type === 'UTILITY') || spells[1];
-    if (aoeSpell) {
-      skills.push({
-        slot: 3,
-        id: `SKILL_${aoeSpell.key}`,
-        tomeKey: aoeSpell.key,
-        name: aoeSpell.spec.name,
-        desc: `${aoeSpell.spec.name}을(를) 방출합니다.`,
-        element: aoeSpell.spec.element || 'MANA',
-        cooldown: aoeSpell.spec.cooldown || 4,
-        dice: aoeSpell.spec.dice || '6d6',
-        icon: aoeSpell.spec.icon || '💥',
-        color: aoeSpell.spec.color || '#ec4899'
-      });
-    } else {
-      skills.push({
-        slot: 3,
-        id: 'SKILL_WHIRLWIND',
-        name: '회전 베기 (Whirlwind)',
-        desc: '주변 모든 적을 휩쓰는 광역 회전 공격을 가합니다. (3d8)',
-        element: 'PHYSICAL',
-        cooldown: 4,
-        dice: '3d8',
-        icon: '🌪️',
-        color: '#a855f7'
-      });
-    }
-
-    // Slot 4: 궁극기 (브레스 / 대규모 마나 폭풍 / 상급 소환)
-    const ultSpell = spells.find(s => s.spec.type === 'BREATH' || s.spec.type === 'SUMMON' || s.key === 'BA_MANA') || spells[2];
-    if (ultSpell) {
-      skills.push({
-        slot: 4,
-        id: `SKILL_${ultSpell.key}`,
-        tomeKey: ultSpell.key,
-        name: `[궁극기] ${ultSpell.spec.name}`,
-        desc: `${ultSpell.spec.name} 궁극기를 발동합니다. 파멸적인 피해를 입힙니다.`,
-        element: ultSpell.spec.element || 'DRAGON',
-        cooldown: ultSpell.spec.cooldown || 6,
-        dice: ultSpell.spec.dice || '12d12',
-        icon: ultSpell.spec.icon || '🐉',
-        color: ultSpell.spec.color || '#ef4444'
-      });
-    } else {
-      skills.push({
-        slot: 4,
-        id: 'SKILL_ULTIMATE_SMASH',
-        name: '[궁극기] 파멸의 일격',
-        desc: '혼신의 힘을 실은 파멸의 일격을 가합니다. (8d10)',
-        element: 'PHYSICAL',
-        cooldown: 6,
-        dice: '8d10',
-        icon: '⚡',
-        color: '#ef4444'
-      });
-    }
-
-    return skills;
+    return ProceduralSkillSynthesizer.synthesizeMonsterSkillSet(monsterOrKey);
   }
 
   /**
    * Alias for generatePlayerSkillsFromCore
    */
   static getMonsterSkills(monsterOrKey) {
-    return this.generatePlayerSkillsFromCore(monsterOrKey);
+    return ProceduralSkillSynthesizer.synthesizeMonsterSkillSet(monsterOrKey);
   }
 }
 

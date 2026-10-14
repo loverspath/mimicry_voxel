@@ -619,20 +619,58 @@ export class CombatCalculator {
             game.addLogEntry(`[Skill] 약화의 저주 발동! ${monster.name}에게 3턴간 [마법 취약] 상태를 부여했습니다! (마법 피해 +30% 증폭)`, `loot`);
         }
 
-        // 몬스터 고유 기믹 - 오우거 자가 재생
+        // 몬스터 고유 기믹 - 거인/트롤/오우거 자가 재생 및 슬라임 산성 반격, 원소 오라 반격
         const mstCfg = COMBAT_CONFIG.MONSTER;
-        if (monster.type === `OGRE` && monster.stats.hp > 0 && (!monster.giantBloodCooldown || monster.giantBloodCooldown <= 0) && Math.random() < mstCfg.OGRE_REGEN.chance) {
+        const mFlags = monster.flags || [];
+        const isGiantTroll = monster.type === 'OGRE' || monster.type === 'TROLL' ||
+          mFlags.includes('GIANT') || mFlags.includes('TROLL') || mFlags.includes('OGRE') || mFlags.includes('REGENERATE') ||
+          monster.char === 'O' || monster.char === 'T' || monster.char === 'P' ||
+          (monster.synergyTags && monster.synergyTags.includes('GIANT_BLOOD'));
+
+        if (isGiantTroll && monster.stats.hp > 0 && (!monster.giantBloodCooldown || monster.giantBloodCooldown <= 0) && Math.random() < mstCfg.OGRE_REGEN.chance) {
             let healAmt = Math.max(1, Math.floor((monster.stats.maxHp - monster.stats.hp) * mstCfg.OGRE_REGEN.maxHpPercentageHeal));
             monster.stats.hp = Math.min(monster.stats.maxHp, monster.stats.hp + healAmt);
             monster.giantBloodCooldown = mstCfg.OGRE_REGEN.cooldown;
-            game.addLogEntry(`[MonsterSkill] 오우거 거인의피 발동! 강인한 심장박동으로 체력 +${healAmt} 회복 (HP: ${monster.stats.hp}/${monster.stats.maxHp})`, `combat`);
+            if (game && game.addLogEntry) {
+                game.addLogEntry(`[MonsterSkill] 🩸 ${monster.displayName || monster.name}의 거인족 재생 발동! 체력 +${healAmt} 회복 (HP: ${monster.stats.hp}/${monster.stats.maxHp})`, `combat`);
+            }
         }
 
-        // 몬스터 고유 기믹 - 슬라임 산성반격
-        if (monster.type === `SLIME` && monster.stats.hp > 0 && Math.random() < mstCfg.SLIME_REFLECTION.chance) {
+        const isSlimeJelly = monster.type === 'SLIME' || mFlags.includes('SLIME') ||
+          monster.char === 'j' || monster.char === 'm' || monster.char === ',' ||
+          (monster.synergyTags && monster.synergyTags.includes('ACID_COUNTER'));
+
+        if (isSlimeJelly && monster.stats.hp > 0 && Math.random() < mstCfg.SLIME_REFLECTION.chance) {
             let reflDmg = CombatCalculator.rollDice(mstCfg.SLIME_REFLECTION.diceFormula);
             player.stats.hp = Math.max(0, player.stats.hp - reflDmg);
-            game.addLogEntry(`[MonsterSkill] 슬라임 산성반격 발동! 산성 액체가 튀어 나에게 ${reflDmg}의 반사 피해! (HP: ${player.stats.hp}/${player.stats.maxHp})`, `loot`);
+            if (game && game.addLogEntry) {
+                game.addLogEntry(`[MonsterSkill] 🧪 ${monster.displayName || monster.name}의 산성 반격 발동! 산성 액체가 튀어 나에게 ${reflDmg}의 반사 피해! (HP: ${player.stats.hp}/${player.stats.maxHp})`, `loot`);
+            }
+        }
+
+        if (monster.stats.hp > 0) {
+            if (mFlags.includes('AURA_FIRE')) {
+                let auraDmg = CombatCalculator.rollDice('1d6');
+                player.stats.hp = Math.max(0, player.stats.hp - auraDmg);
+                if (game && game.addLogEntry) {
+                    game.addLogEntry(`[MonsterSkill] 🔥 ${monster.displayName || monster.name}의 화염 오라 반격! ${auraDmg}의 화염 반사 피해! (HP: ${player.stats.hp}/${player.stats.maxHp})`, `danger`);
+                }
+            }
+            if (mFlags.includes('AURA_COLD')) {
+                let auraDmg = CombatCalculator.rollDice('1d6');
+                player.stats.hp = Math.max(0, player.stats.hp - auraDmg);
+                if (player.debuffs) player.debuffs.frost = (player.debuffs.frost || 0) + 2;
+                if (game && game.addLogEntry) {
+                    game.addLogEntry(`[MonsterSkill] ❄️ ${monster.displayName || monster.name}의 냉기 오라 반격! ${auraDmg}의 냉기 반사 피해 및 동결! (HP: ${player.stats.hp}/${player.stats.maxHp})`, `danger`);
+                }
+            }
+            if (mFlags.includes('AURA_ELEC')) {
+                let auraDmg = CombatCalculator.rollDice('1d6');
+                player.stats.hp = Math.max(0, player.stats.hp - auraDmg);
+                if (game && game.addLogEntry) {
+                    game.addLogEntry(`[MonsterSkill] ⚡ ${monster.displayName || monster.name}의 뇌전 오라 반격! ${auraDmg}의 뇌격 반사 피해! (HP: ${player.stats.hp}/${player.stats.maxHp})`, `danger`);
+                }
+            }
         }
 
         return { physDmg, isStrong };

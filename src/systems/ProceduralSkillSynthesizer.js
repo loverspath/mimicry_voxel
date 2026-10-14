@@ -347,7 +347,15 @@ export class ProceduralSkillSynthesizer {
       const effectGrammar = BLOW_EFFECT_GRAMMAR[effect] || BLOW_EFFECT_GRAMMAR.HURT;
 
       let name = `${effectGrammar.koPrefix} ${methodGrammar.koVerb}`;
-      if (attacks.length >= 3 && attacks.some(a => a.method === 'CLAW') && attacks.some(a => a.method === 'BITE')) {
+      const isSwordWarrior = (char === 'p' || char === 'h' || char === 'k') && (
+        monsterData.name.toLowerCase().includes('warrior') ||
+        monsterData.name.toLowerCase().includes('guard') ||
+        monsterData.name.toLowerCase().includes('knight') ||
+        monsterData.name.toLowerCase().includes('soldier')
+      );
+      if (isSwordWarrior && method === 'HIT' && effect === 'HURT') {
+        name = '검 베기';
+      } else if (attacks.length >= 3 && attacks.some(a => a.method === 'CLAW') && attacks.some(a => a.method === 'BITE')) {
         name = '연속 할퀴기와 물어뜯기';
       }
 
@@ -380,7 +388,7 @@ export class ProceduralSkillSynthesizer {
         slot: 1,
         requiredMastery: 1,
         name,
-        desc: `${monsterData.name} 고유의 시그니처 타격 기예. (${dice}, 속성: ${effectGrammar.element})`,
+        desc: `대상을 강하게 가격하는 ${effectGrammar.element} 속성 타격 기술. (${dice})`,
         type: methodGrammar.delivery === 'MELEE_RUSH' ? 'CHARGE' : 'MELEE_STRIKE',
         element: effectGrammar.element || 'PHYSICAL',
         cooldown: 2,
@@ -394,7 +402,7 @@ export class ProceduralSkillSynthesizer {
     }
 
     // Creature with NEVER_BLOW or 0 attacks (Molds, Eyes, Jellies, Passive NPCs)
-    let fallbackName = '본능의 타격';
+    let fallbackName = '본능적 타격';
     let fallbackElement = 'PHYSICAL';
     let fallbackIcon = '⚔️';
     let fallbackOps = [{ op: EFFECT_OP_TYPES.DEAL_DAMAGE, element: 'PHYSICAL', dice: '1d4', mult: 1.15, target: 'TARGET' }];
@@ -438,7 +446,7 @@ export class ProceduralSkillSynthesizer {
       slot: 1,
       requiredMastery: 1,
       name: fallbackName,
-      desc: `${monsterData.name} 종족의 신체 본능 타격 기술.`,
+      desc: '신체 본능을 실어 대상을 타격합니다. (1d4)',
       type: 'MELEE_STRIKE',
       element: fallbackElement,
       cooldown: 2,
@@ -452,366 +460,793 @@ export class ProceduralSkillSynthesizer {
   }
 
   // =========================================================================
-  // Slot 2: Primary Elemental / Ranged / Secondary Special
+  // Slot 2: Survival / Stance / Ecological Upkeep / Support Gimmick
   // =========================================================================
   static _synthesizeSlot2(key, monsterData, spells, attacks, flags, char, seed, slot1) {
-    // 1. Try to find a primary offensive spell (Breaths, Bolts, Balls, Arrow, Rocket, Mind Blast)
-    const offensiveSpellKey = spells.find(s => {
-      const spec = SPELL_DESCRIPTOR_GRAMMAR[s];
-      return spec && (
-        spec.type === 'BREATH' ||
-        spec.type === 'PROJECTILE' ||
-        (spec.type === 'AOE' && !s.startsWith('BA_MANA')) ||
-        s.startsWith('BO_') ||
-        s.startsWith('ARROW_') ||
-        s === 'MISSILE' ||
-        s === 'ROCKET' ||
-        s === 'MIND_BLAST'
-      );
-    });
+    const growthType = monsterData.growthType || 'BALANCED';
+    const nameLower = (monsterData.name || '').toLowerCase();
 
-    if (offensiveSpellKey) {
-      const spec = SPELL_DESCRIPTOR_GRAMMAR[offensiveSpellKey];
+    // 1. Ogre / Troll / Giant / Regenerate
+    if (flags.has('GIANT') || flags.has('TROLL') || flags.has('OGRE') || flags.has('REGENERATE') || char === 'O' || char === 'T' || char === 'P') {
       return new ActiveSkill({
-        id: `${key}_SLOT_2_${offensiveSpellKey}`,
-        tomeKey: offensiveSpellKey,
+        id: `${key}_SLOT_2_GIANT_REGEN`,
+        tomeKey: 'GIANT_REGEN',
         slot: 2,
         requiredMastery: 1,
-        name: spec.name,
-        desc: spec.desc,
-        type: spec.type,
-        element: spec.element,
-        cooldown: spec.cooldown || 3,
-        maxRange: spec.range || 6.0,
-        dice: spec.dice || '2d6',
-        color: spec.color || '#38bdf8',
-        icon: spec.icon || '🔮',
-        synergyTags: [spec.element ? `${spec.element}_SPELL` : 'MAGIC_SPELL'],
-        ops: spec.ops
+        name: '거인족 피의 재생',
+        desc: '신체 활성 세포를 급속 자극하여 생명력을 회복하고 상처를 치유합니다.',
+        type: 'BUFF',
+        element: 'PHYSICAL',
+        cooldown: 5,
+        maxRange: 0,
+        color: '#10b981',
+        icon: '🌿',
+        synergyTags: ['DEFENSE_BUFF', 'REGEN_UNIT'],
+        ops: [
+          { op: EFFECT_OP_TYPES.HEAL_ENTITY, dice: '3d8', target: 'SELF' },
+          { op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'REGEN_UNIT', duration: 4, power: 5, target: 'SELF' }
+        ]
       });
     }
 
-    // 2. Try to find a distinct secondary attack
-    if (attacks.length > 1) {
-      const atk0 = attacks[0];
-      const distinctAtk = attacks.find(a => a.method !== atk0.method || a.effect !== atk0.effect) || attacks[1];
-      const method = (distinctAtk.method || 'BITE').toUpperCase();
-      const effect = (distinctAtk.effect || 'HURT').toUpperCase();
-      const dice = distinctAtk.damage || '1d6';
-
-      const methodGrammar = BLOW_METHOD_GRAMMAR[method] || BLOW_METHOD_GRAMMAR.BITE;
-      const effectGrammar = BLOW_EFFECT_GRAMMAR[effect] || BLOW_EFFECT_GRAMMAR.HURT;
-
-      const ops = [
-        {
-          op: EFFECT_OP_TYPES.DEAL_DAMAGE,
-          element: effectGrammar.element || 'PHYSICAL',
-          dice,
-          mult: (effectGrammar.mult || 1.15) * 1.1,
-          ignoreACPct: methodGrammar.ignoreACPct || 0,
-          lifestealPct: effectGrammar.lifestealPct || 0,
-          target: 'TARGET'
-        }
-      ];
-
-      if (effectGrammar.statusId) {
-        ops.push({
-          op: EFFECT_OP_TYPES.APPLY_STATUS,
-          statusId: effectGrammar.statusId,
-          duration: effectGrammar.duration || 3,
-          power: effectGrammar.power || 6,
-          target: 'TARGET'
-        });
-      }
-
+    // 2. Slime / Mold / Jelly (cell fission / acid counter)
+    if (char === 'j' || char === 'm' || char === ',') {
       return new ActiveSkill({
-        id: `${key}_SLOT_2_SEC_${method}_${effect}`,
-        tomeKey: `SEC_${method}`,
+        id: `${key}_SLOT_2_SLIME_FISSION`,
+        tomeKey: 'SLIME_FISSION',
         slot: 2,
         requiredMastery: 1,
-        name: `보조 타격: ${effectGrammar.koPrefix} ${methodGrammar.koVerb}`,
-        desc: `정교하게 가하는 ${distinctAtk.method} 2차 특수 타격 기술. (${dice})`,
-        type: 'MELEE_STRIKE',
-        element: effectGrammar.element || 'PHYSICAL',
-        cooldown: 3,
-        maxRange: methodGrammar.range || 1.5,
-        dice,
-        color: '#fb923c',
-        icon: methodGrammar.icon || '🦷',
-        synergyTags: [`${effectGrammar.element || 'PHYS'}_MELEE`],
-        ops
+        name: '점액 세포 분열',
+        desc: '점액질 세포를 분열시켜 피해를 흡수하는 방어막을 전개하고 체력을 회복합니다.',
+        type: 'BUFF',
+        element: 'ACID',
+        cooldown: 5,
+        maxRange: 0,
+        color: '#22c55e',
+        icon: '🟢',
+        synergyTags: ['DEFENSE_BUFF', 'ACID_COUNTER'],
+        ops: [
+          { op: EFFECT_OP_TYPES.HEAL_ENTITY, dice: '2d8', target: 'SELF' },
+          { op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'SHIELD', duration: 4, power: 15, target: 'SELF' }
+        ]
       });
     }
 
-    // 3. Fallback Archetype Ranged / Spitting / Lunge technique
-    let fallbackName = '원거리 투척 견제';
-    let fallbackElement = 'PHYSICAL';
-    let fallbackIcon = '🪨';
-    let fallbackRange = 5.0;
-    let fallbackDice = '1d6';
-
-    if (char === 'd' || char === 'D') {
-      fallbackName = '원소 불꽃 뿜기';
-      fallbackElement = 'FIRE';
-      fallbackIcon = '🔥';
-      fallbackDice = '2d6';
-    } else if (char === 'S' || char === 's' || char === 'c') {
-      fallbackName = '독침 투사';
-      fallbackElement = 'POISON';
-      fallbackIcon = '💉';
-      fallbackDice = '1d8';
-    } else if (char === 'j' || char === 'm') {
-      fallbackName = '부식액 분사';
-      fallbackElement = 'ACID';
-      fallbackIcon = '🧪';
-      fallbackDice = '2d6';
-    } else if (char === 'B' || char === 'f') {
-      fallbackName = '맹렬한 덮치기';
-      fallbackElement = 'PHYSICAL';
-      fallbackIcon = '🐾';
-      fallbackRange = 3.0;
-      fallbackDice = '2d4';
+    // 3. Rogue / Assassin / Thief / Invisible (only if not Mage or Priest)
+    if (growthType === 'ROGUE' || ((flags.has('INVISIBLE') || nameLower.includes('thief') || nameLower.includes('rogue') || nameLower.includes('assassin')) && growthType !== 'MAGE' && growthType !== 'PRIEST')) {
+      return new ActiveSkill({
+        id: `${key}_SLOT_2_SHADOW_VEIL`,
+        tomeKey: 'SHADOW_VEIL',
+        slot: 2,
+        requiredMastery: 1,
+        name: '그림자 은신',
+        desc: '어둠의 장막 속에 몸을 숨겨 회피율과 급습 치명타 확률을 끌어올립니다.',
+        type: 'BUFF',
+        element: 'DARK',
+        cooldown: 6,
+        maxRange: 0,
+        color: '#475569',
+        icon: '👥',
+        synergyTags: ['STEALTH_BUFF', 'AMBUSH'],
+        ops: [
+          { op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'HASTE', duration: 4, target: 'SELF' }
+        ]
+      });
     }
 
+    // 4. Undead / Ghost / Wraith / Wight / Lich
+    if (flags.has('UNDEAD') || char === 'G' || char === 'W' || char === 'L' || char === 'V') {
+      return new ActiveSkill({
+        id: `${key}_SLOT_2_DEATH_WAIL`,
+        tomeKey: 'DEATH_WAIL',
+        slot: 2,
+        requiredMastery: 1,
+        name: '망자의 통곡',
+        desc: '사령의 서늘한 비명을 내질러 주변 적들에게 공포를 심고 움직임을 둔화시킵니다.',
+        type: 'AOE',
+        element: 'NETHER',
+        cooldown: 6,
+        maxRange: 2.5,
+        color: '#818cf8',
+        icon: '👻',
+        synergyTags: ['CONTROL_AOE', 'FEAR_AURA'],
+        ops: [
+          { op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'SURROUND', element: 'NETHER', dice: '2d6', radius: 2.5, onHitOps: [{ op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'SLOW', duration: 3, power: 5 }] }
+        ]
+      });
+    }
+
+    // 5. Dragon / Wyrm
+    if (flags.has('DRAGON') || char === 'd' || char === 'D') {
+      return new ActiveSkill({
+        id: `${key}_SLOT_2_DRAGON_DREAD`,
+        tomeKey: 'DRAGON_DREAD',
+        slot: 2,
+        requiredMastery: 1,
+        name: '용의 위압',
+        desc: '고룡의 위압적인 기운을 뿜어내어 전신에 단단한 비늘 방어막을 형성합니다.',
+        type: 'BUFF',
+        element: 'FIRE',
+        cooldown: 6,
+        maxRange: 0,
+        color: '#f97316',
+        icon: '🐉',
+        synergyTags: ['DEFENSE_BUFF'],
+        ops: [
+          { op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'SHIELD', duration: 5, power: 20, target: 'SELF' }
+        ]
+      });
+    }
+
+    // 6. Priest / Cleric / Angel / Holy
+    if (flags.has('ANGEL') || char === 'A' || spells.includes('HEAL') || nameLower.includes('priest') || nameLower.includes('cleric') || nameLower.includes('paladin')) {
+      return new ActiveSkill({
+        id: `${key}_SLOT_2_HOLY_HEAL`,
+        tomeKey: 'HOLY_HEAL',
+        slot: 2,
+        requiredMastery: 1,
+        name: '성스러운 치유',
+        desc: '성스러운 권능을 집중하여 부상당한 신체를 치유하고 회복합니다.',
+        type: 'SELF',
+        element: 'HOLY',
+        cooldown: 5,
+        maxRange: 0,
+        color: '#fbbf24',
+        icon: '✨',
+        synergyTags: ['HOLY_BUFF', 'SAGE_HEAL'],
+        ops: [
+          { op: EFFECT_OP_TYPES.HEAL_ENTITY, dice: '3d8', target: 'SELF' }
+        ]
+      });
+    }
+
+    // 7. Beholder / Eye
+    if (char === 'e' || char === 'E' || nameLower.includes('beholder') || nameLower.includes('eye')) {
+      return new ActiveSkill({
+        id: `${key}_SLOT_2_CONFUSION_GAZE`,
+        tomeKey: 'CONFUSION_GAZE',
+        slot: 2,
+        requiredMastery: 1,
+        name: '혼란의 주시',
+        desc: '기괴한 마안의 눈빛으로 대상의 정신을 어지럽혀 혼란에 빠뜨립니다.',
+        type: 'PROJECTILE',
+        element: 'MANA',
+        cooldown: 4,
+        maxRange: 5.0,
+        color: '#c084fc',
+        icon: '👁️',
+        synergyTags: ['CONTROL_SPELL'],
+        ops: [
+          { op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'CONFUSE', duration: 3, power: 5, target: 'TARGET' }
+        ]
+      });
+    }
+
+    // 8. Mage / Caster / Imp
+    if (growthType === 'MAGE' || spells.includes('BLINK') || spells.includes('MANA_SHIELD') || char === 'u' || (char === 'p' && nameLower.includes('mage'))) {
+      return new ActiveSkill({
+        id: `${key}_SLOT_2_MANA_SHIELD`,
+        tomeKey: 'MANA_SHIELD',
+        slot: 2,
+        requiredMastery: 1,
+        name: '마력 보호막',
+        desc: '압축된 비전 마나를 신체 주변에 둘러 적의 피해를 흡수하는 보호막을 전개합니다.',
+        type: 'BUFF',
+        element: 'MANA',
+        cooldown: 5,
+        maxRange: 0,
+        color: '#38bdf8',
+        icon: '🔮',
+        synergyTags: ['DEFENSE_BUFF', 'MANA_SHIELD_PASSIVE'],
+        ops: [
+          { op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'SHIELD', duration: 4, power: 15, target: 'SELF' }
+        ]
+      });
+    }
+
+    // 9. Humanoid Warrior / Knight / Guard (e.g. Novice warrior)
+    if ((char === 'p' || char === 'h' || char === 'k') && (growthType === 'WARRIOR' || nameLower.includes('warrior') || nameLower.includes('guard') || nameLower.includes('knight') || nameLower.includes('soldier'))) {
+      return new ActiveSkill({
+        id: `${key}_SLOT_2_DEFENSIVE_STANCE`,
+        tomeKey: 'DEFENSIVE_STANCE',
+        slot: 2,
+        requiredMastery: 1,
+        name: '방패 막기 태세',
+        desc: '방어구를 견고히 다잡아 적의 공격을 방어하고 충격을 감쇄시키는 태세를 취합니다.',
+        type: 'BUFF',
+        element: 'PHYSICAL',
+        cooldown: 4,
+        maxRange: 0,
+        color: '#60a5fa',
+        icon: '🛡️',
+        synergyTags: ['DEFENSE_BUFF'],
+        ops: [
+          { op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'SHIELD', duration: 4, power: 12, target: 'SELF' }
+        ]
+      });
+    }
+
+    // 10. Animal / Beast / Speedy
+    if (flags.has('ANIMAL') || growthType === 'SPEEDY' || char === 'f' || char === 'C' || char === 'B') {
+      return new ActiveSkill({
+        id: `${key}_SLOT_2_ALERT_STANCE`,
+        tomeKey: 'ALERT_STANCE',
+        slot: 2,
+        requiredMastery: 1,
+        name: '경계 태세',
+        desc: '야수의 본능적인 직감으로 주변을 경계하며 신속하게 회피할 태세를 갖춥니다.',
+        type: 'BUFF',
+        element: 'PHYSICAL',
+        cooldown: 4,
+        maxRange: 0,
+        color: '#fbbf24',
+        icon: '🐾',
+        synergyTags: ['SPEED_BUFF'],
+        ops: [
+          { op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'HASTE', duration: 3, target: 'SELF' }
+        ]
+      });
+    }
+
+    // Fallback Defensive Stance
     return new ActiveSkill({
-      id: `${key}_SLOT_2_ARCHETYPE_SPECIAL`,
-      tomeKey: 'ARCHETYPE_SPECIAL',
+      id: `${key}_SLOT_2_DEFENSIVE_STANCE`,
+      tomeKey: 'DEFENSIVE_STANCE',
       slot: 2,
       requiredMastery: 1,
-      name: fallbackName,
-      desc: `${monsterData.name}의 고유 원거리/특수 견제 기술.`,
-      type: fallbackRange > 1.5 ? 'PROJECTILE' : 'MELEE_STRIKE',
-      element: fallbackElement,
-      cooldown: 3,
-      maxRange: fallbackRange,
-      dice: fallbackDice,
-      color: '#38bdf8',
-      icon: fallbackIcon,
-      synergyTags: [`${fallbackElement}_SPECIAL`],
+      name: '방어 태세',
+      desc: '단단한 방어 태세를 취하여 일시적으로 피해를 흡수하는 방어막을 전개합니다.',
+      type: 'BUFF',
+      element: 'PHYSICAL',
+      cooldown: 4,
+      maxRange: 0,
+      color: '#94a3b8',
+      icon: '🛡️',
+      synergyTags: ['DEFENSE_BUFF'],
       ops: [
-        { op: EFFECT_OP_TYPES.DEAL_DAMAGE, element: fallbackElement, dice: fallbackDice, target: 'TARGET' }
+        { op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'SHIELD', duration: 4, power: 10, target: 'SELF' }
       ]
     });
   }
 
   // =========================================================================
-  // Slot 3: Tactical / Mobility / Control / Aura
+  // Slot 3: Terrain / Movement / Environment Interaction Gimmick
   // =========================================================================
   static _synthesizeSlot3(key, monsterData, spells, flags, char, seed, prevSkills) {
     const prevIds = new Set(prevSkills.map(s => s.tomeKey));
-
-    // 1. Try to find a tactical/utility/crowd control spell
-    const tacticalSpellKey = spells.find(s => {
-      if (prevIds.has(s)) return false;
-      const spec = SPELL_DESCRIPTOR_GRAMMAR[s];
-      return spec && (
-        spec.type === 'TELEPORT' ||
-        spec.type === 'BUFF' ||
-        spec.type === 'DEBUFF' ||
-        spec.type === 'SELF' ||
-        spec.type === 'SUMMON' ||
-        spec.type === 'UTILITY' ||
-        s === 'HEAL' ||
-        s === 'HASTE' ||
-        s === 'BLINK' ||
-        s === 'TPORT' ||
-        s === 'HOLD' ||
-        s === 'CONF' ||
-        s === 'SLOW' ||
-        s === 'SCARE' ||
-        s === 'BLIND' ||
-        s.startsWith('S_')
-      );
-    });
-
-    if (tacticalSpellKey) {
-      const spec = SPELL_DESCRIPTOR_GRAMMAR[tacticalSpellKey];
-      return new ActiveSkill({
-        id: `${key}_SLOT_3_${tacticalSpellKey}`,
-        tomeKey: tacticalSpellKey,
-        slot: 3,
-        requiredMastery: 10,
-        name: spec.name,
-        desc: spec.desc,
-        type: spec.type,
-        element: spec.element || 'MANA',
-        cooldown: spec.cooldown || 4,
-        maxRange: spec.range || 5.0,
-        dice: spec.dice || '1d6',
-        color: spec.color || '#a855f7',
-        icon: spec.icon || '🌀',
-        synergyTags: ['TACTICAL_CONTROL'],
-        ops: spec.ops
-      });
-    }
-
-    // 2. Try to find a Flag-based tactic
-    for (const flagKey in ARCHETYPE_FLAG_TACTICS.FLAGS) {
-      if (flags.has(flagKey)) {
-        const tacSpec = ARCHETYPE_FLAG_TACTICS.FLAGS[flagKey];
-        return new ActiveSkill({
-          id: `${key}_SLOT_3_${tacSpec.id}`,
-          tomeKey: tacSpec.id,
-          slot: 3,
-          requiredMastery: 10,
-          name: tacSpec.name,
-          desc: tacSpec.desc,
-          type: tacSpec.type,
-          element: tacSpec.element,
-          cooldown: tacSpec.cooldown,
-          maxRange: tacSpec.range || 2.5,
-          dice: tacSpec.dice || '2d6',
-          color: tacSpec.color || '#fbbf24',
-          icon: tacSpec.icon || '⚡',
-          synergyTags: ['TACTICAL_AURA'],
-          ops: tacSpec.ops
-        });
-      }
-    }
-
-    // 3. Try Char-based tactic
-    if (ARCHETYPE_FLAG_TACTICS.CHARS[char]) {
-      const charSpec = ARCHETYPE_FLAG_TACTICS.CHARS[char];
-      return new ActiveSkill({
-        id: `${key}_SLOT_3_${charSpec.id}`,
-        tomeKey: charSpec.id,
-        slot: 3,
-        requiredMastery: 10,
-        name: charSpec.name,
-        desc: charSpec.desc,
-        type: charSpec.type,
-        element: charSpec.element,
-        cooldown: charSpec.cooldown,
-        maxRange: charSpec.range || 2.5,
-        dice: charSpec.dice || '2d6',
-        color: '#fbbf24',
-        icon: charSpec.icon || '🎯',
-        synergyTags: ['TACTICAL_ARCHETYPE'],
-        ops: charSpec.ops
-      });
-    }
-
-    // 4. Fallback based on Growth Type & Shield Check
     const growthType = monsterData.growthType || 'BALANCED';
-    const isShieldHumanoid = (char === 'p' || char === 'h' || char === 'k') && (
-      monsterData.name.toLowerCase().includes('warrior') ||
-      monsterData.name.toLowerCase().includes('guard') ||
-      monsterData.name.toLowerCase().includes('knight') ||
-      monsterData.name.toLowerCase().includes('paladin')
-    );
+    const nameLower = (monsterData.name || '').toLowerCase();
 
-    if (isShieldHumanoid) {
+    // 1. PASS_WALL
+    if (flags.has('PASS_WALL')) {
       return new ActiveSkill({
-        id: `${key}_SLOT_3_SHIELD_BASH`,
-        tomeKey: 'SHIELD_BASH',
+        id: `${key}_SLOT_3_PASS_WALL`,
+        tomeKey: 'PASS_WALL',
         slot: 3,
         requiredMastery: 10,
-        name: '방패 강타 (Shield Bash)',
-        desc: '단단한 방패로 적을 내리쳐 1턴간 기절시키고 뒤로 밀쳐냅니다.',
-        type: 'MELEE_STRIKE',
+        name: '에테르 투과',
+        desc: '물질계를 일시 이탈하여 벽을 자유롭게 통과하여 이동합니다.',
+        type: 'TELEPORT',
+        element: 'DARK',
+        cooldown: 4,
+        maxRange: 4.5,
+        color: '#6366f1',
+        icon: '👻',
+        synergyTags: ['PASS_WALL', 'TACTICAL_MOBILITY'],
+        ops: [
+          { op: EFFECT_OP_TYPES.DISPLACE, mode: 'BLINK', dist: 4, target: 'SELF' }
+        ]
+      });
+    }
+
+    // 2. KILL_WALL / HURT_ROCK
+    if (flags.has('KILL_WALL') || flags.has('HURT_ROCK')) {
+      return new ActiveSkill({
+        id: `${key}_SLOT_3_KILL_WALL`,
+        tomeKey: 'KILL_WALL',
+        slot: 3,
+        requiredMastery: 10,
+        name: '암반 굴착',
+        desc: '전방의 단단한 암벽을 파쇄하여 새로운 통로를 개척하고 주변에 충격파를 일으킵니다.',
+        type: 'AOE',
+        element: 'PHYSICAL',
+        cooldown: 5,
+        maxRange: 2.5,
+        dice: '3d8',
+        color: '#a8a29e',
+        icon: '⛏️',
+        synergyTags: ['KILL_WALL', 'ALTER_MAP'],
+        ops: [
+          { op: EFFECT_OP_TYPES.ALTER_MAP, action: 'EARTHQUAKE', radius: 2 },
+          { op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'SURROUND', element: 'PHYSICAL', dice: '3d8', radius: 2.5 }
+        ]
+      });
+    }
+
+    // 2.5. Teleport spells for Mages/Casters (priority over flight for casters)
+    const casterTeleSpell = spells.find(s => s === 'BLINK' || s === 'TPORT' || s === 'TELE_TO');
+    if (casterTeleSpell && (growthType === 'MAGE' || growthType === 'PRIEST')) {
+      const isBlink = (casterTeleSpell === 'BLINK');
+      return new ActiveSkill({
+        id: `${key}_SLOT_3_${casterTeleSpell}`,
+        tomeKey: casterTeleSpell,
+        slot: 3,
+        requiredMastery: 10,
+        name: isBlink ? '단거리 전이' : '차원 이동',
+        desc: '공간을 왜곡하여 안전한 위치로 순식간에 순간 이동합니다.',
+        type: 'TELEPORT',
+        element: 'MANA',
+        cooldown: isBlink ? 3 : 5,
+        maxRange: isBlink ? 4.0 : 8.0,
+        color: '#c084fc',
+        icon: '🌀',
+        synergyTags: ['TACTICAL_MOBILITY'],
+        ops: [
+          { op: EFFECT_OP_TYPES.DISPLACE, mode: 'BLINK', dist: isBlink ? 4 : 8, target: 'SELF' }
+        ]
+      });
+    }
+
+    // 3. CAN_FLY / FLYING
+    if (flags.has('CAN_FLY') || flags.has('FLYING')) {
+      return new ActiveSkill({
+        id: `${key}_SLOT_3_AERIAL_SWOOP`,
+        tomeKey: 'AERIAL_SWOOP',
+        slot: 3,
+        requiredMastery: 10,
+        name: '비상 강습',
+        desc: '공중으로 솟구쳐 함정을 무시하고 적의 머리 위로 급강하 타격을 가합니다.',
+        type: 'CHARGE',
+        element: 'PHYSICAL',
+        cooldown: 4,
+        maxRange: 4.0,
+        dice: '2d8',
+        color: '#38bdf8',
+        icon: '🦅',
+        synergyTags: ['CAN_FLY', 'TACTICAL_MOBILITY'],
+        ops: [
+          { op: EFFECT_OP_TYPES.DISPLACE, mode: 'CHARGE_TO', dist: 4, target: 'TARGET' },
+          { op: EFFECT_OP_TYPES.DEAL_DAMAGE, element: 'PHYSICAL', dice: '2d8', mult: 1.25, target: 'TARGET' }
+        ]
+      });
+    }
+
+    // 4. REFLECTING / REFLECT
+    if (flags.has('REFLECTING') || flags.has('REFLECT')) {
+      return new ActiveSkill({
+        id: `${key}_SLOT_3_MIRROR_CARAPACE`,
+        tomeKey: 'MIRROR_CARAPACE',
+        slot: 3,
+        requiredMastery: 10,
+        name: '거울 장갑',
+        desc: '마법 투사체를 튕겨내는 거울 광택 장갑을 활성화합니다.',
+        type: 'BUFF',
+        element: 'MANA',
+        cooldown: 7,
+        maxRange: 0,
+        color: '#67e8f9',
+        icon: '🛡️',
+        synergyTags: ['DEFENSE_BUFF', 'REFLECT'],
+        ops: [
+          { op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'SHIELD', duration: 5, power: 20, target: 'SELF' }
+        ]
+      });
+    }
+
+    // 5. Teleport spells (BLINK, TPORT, TELE_TO)
+    const teleSpell = spells.find(s => s === 'BLINK' || s === 'TPORT' || s === 'TELE_TO');
+    if (teleSpell) {
+      const isBlink = (teleSpell === 'BLINK');
+      return new ActiveSkill({
+        id: `${key}_SLOT_3_${teleSpell}`,
+        tomeKey: teleSpell,
+        slot: 3,
+        requiredMastery: 10,
+        name: isBlink ? '단거리 전이' : '차원 이동',
+        desc: '공간을 왜곡하여 안전한 위치로 순식간에 순간 이동합니다.',
+        type: 'TELEPORT',
+        element: 'MANA',
+        cooldown: isBlink ? 3 : 5,
+        maxRange: isBlink ? 4.0 : 8.0,
+        color: '#c084fc',
+        icon: '🌀',
+        synergyTags: ['TACTICAL_MOBILITY'],
+        ops: [
+          { op: EFFECT_OP_TYPES.DISPLACE, mode: 'BLINK', dist: isBlink ? 4 : 8, target: 'SELF' }
+        ]
+      });
+    }
+
+    // 6. Elemental Auras
+    if (flags.has('AURA_FIRE')) {
+      return new ActiveSkill({
+        id: `${key}_SLOT_3_AURA_FIRE`,
+        tomeKey: 'AURA_FIRE',
+        slot: 3,
+        requiredMastery: 10,
+        name: '화염 오라 방출',
+        desc: '신체 주변에 작열하는 화염 오라를 폭발시켜 근접한 적을 불태웁니다.',
+        type: 'AOE',
+        element: 'FIRE',
+        cooldown: 5,
+        maxRange: 2.5,
+        dice: '3d8',
+        color: '#ef4444',
+        icon: '🔥',
+        synergyTags: ['TACTICAL_AURA'],
+        ops: [
+          { op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'SURROUND', element: 'FIRE', dice: '3d8', radius: 2.5 }
+        ]
+      });
+    }
+    if (flags.has('AURA_COLD')) {
+      return new ActiveSkill({
+        id: `${key}_SLOT_3_AURA_COLD`,
+        tomeKey: 'AURA_COLD',
+        slot: 3,
+        requiredMastery: 10,
+        name: '서리 오라 방출',
+        desc: '신체 주변에 냉기를 방출하여 주변 적을 둔화시킵니다.',
+        type: 'AOE',
+        element: 'COLD',
+        cooldown: 5,
+        maxRange: 2.5,
+        dice: '3d8',
+        color: '#38bdf8',
+        icon: '❄️',
+        synergyTags: ['TACTICAL_AURA'],
+        ops: [
+          { op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'SURROUND', element: 'COLD', dice: '3d8', radius: 2.5, onHitOps: [{ op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'SLOW', duration: 3, power: 8 }] }
+        ]
+      });
+    }
+    if (flags.has('AURA_ELEC')) {
+      return new ActiveSkill({
+        id: `${key}_SLOT_3_AURA_ELEC`,
+        tomeKey: 'AURA_ELEC',
+        slot: 3,
+        requiredMastery: 10,
+        name: '뇌전 방전',
+        desc: '주변 타일에 고압 전기를 방전하여 적을 감전시킵니다.',
+        type: 'AOE',
+        element: 'LIGHTNING',
+        cooldown: 5,
+        maxRange: 2.5,
+        dice: '3d8',
+        color: '#eab308',
+        icon: '⚡',
+        synergyTags: ['TACTICAL_AURA'],
+        ops: [
+          { op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'SURROUND', element: 'LIGHTNING', dice: '3d8', radius: 2.5, onHitOps: [{ op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'STUN', duration: 1, power: 5 }] }
+        ]
+      });
+    }
+
+    // 7. Humanoid Warrior / Knight / Guard (e.g. Novice warrior)
+    if ((char === 'p' || char === 'h' || char === 'k') && (growthType === 'WARRIOR' || nameLower.includes('warrior') || nameLower.includes('guard') || nameLower.includes('knight') || nameLower.includes('soldier'))) {
+      return new ActiveSkill({
+        id: `${key}_SLOT_3_SHOULDER_TACKLE`,
+        tomeKey: 'SHOULDER_TACKLE',
+        slot: 3,
+        requiredMastery: 10,
+        name: '어깨 밀치기',
+        desc: '체중을 실어 강하게 몸을 부딪혀 적을 뒤로 1칸 밀쳐내고 1턴간 기절시킵니다.',
+        type: 'CHARGE',
         element: 'PHYSICAL',
         cooldown: 3,
-        maxRange: 1.5,
+        maxRange: 2.0,
         dice: '2d6',
         color: '#60a5fa',
         icon: '🛡️',
-        synergyTags: ['PHYS_STUN'],
+        synergyTags: ['PHYS_STUN', 'TACTICAL_CONTROL'],
         ops: [
-          { op: EFFECT_OP_TYPES.DEAL_DAMAGE, element: 'PHYSICAL', dice: '2d6', mult: 1.35, target: 'TARGET' },
+          { op: EFFECT_OP_TYPES.DEAL_DAMAGE, element: 'PHYSICAL', dice: '2d6', mult: 1.25, target: 'TARGET' },
           { op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'STUN', duration: 1, power: 6, target: 'TARGET' },
           { op: EFFECT_OP_TYPES.DISPLACE, mode: 'PUSH_AWAY', dist: 1, target: 'TARGET' }
         ]
       });
     }
 
-    // NEVER give SHIELD_BASH to non-shield monsters
-    if (growthType === 'TANK') {
+    // 8. Rogue / Assassin
+    if (growthType === 'ROGUE' || nameLower.includes('thief') || nameLower.includes('rogue') || nameLower.includes('assassin')) {
       return new ActiveSkill({
-        id: `${key}_SLOT_3_IRON_SKIN`,
-        tomeKey: 'IRON_SKIN',
+        id: `${key}_SLOT_3_SHADOW_STEP`,
+        tomeKey: 'SHADOW_STEP',
         slot: 3,
         requiredMastery: 10,
-        name: '강철 가죽 방호',
-        desc: '신체 외피를 순간 강화하여 피해를 흡수하는 보호막을 전개합니다.',
-        type: 'BUFF',
-        element: 'PHYSICAL',
-        cooldown: 6,
-        maxRange: 0,
-        color: '#94a3b8',
-        icon: '🛡️',
-        synergyTags: ['DEFENSE_BUFF'],
-        ops: [{ op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'SHIELD', duration: 5, power: 12, target: 'SELF' }]
+        name: '그림자 걸음',
+        desc: '그림자 속을 미끄러지듯 이동하여 대상의 배후로 순간 도약합니다.',
+        type: 'TELEPORT',
+        element: 'DARK',
+        cooldown: 4,
+        maxRange: 3.5,
+        color: '#64748b',
+        icon: '👥',
+        synergyTags: ['TACTICAL_MOBILITY'],
+        ops: [
+          { op: EFFECT_OP_TYPES.DISPLACE, mode: 'BLINK', dist: 3, target: 'SELF' }
+        ]
       });
     }
 
+    // 9. Beast / Speedy
+    if (flags.has('ANIMAL') || growthType === 'SPEEDY' || char === 'f' || char === 'C' || char === 'B') {
+      return new ActiveSkill({
+        id: `${key}_SLOT_3_LEAP_RUSH`,
+        tomeKey: 'LEAP_RUSH',
+        slot: 3,
+        requiredMastery: 10,
+        name: '도약 돌진',
+        desc: '강한 도약으로 거리를 좁혀 적에게 덮치기 타격을 가합니다.',
+        type: 'CHARGE',
+        element: 'PHYSICAL',
+        cooldown: 3,
+        maxRange: 3.5,
+        dice: '2d6',
+        color: '#fbbf24',
+        icon: '🐾',
+        synergyTags: ['TACTICAL_MOBILITY'],
+        ops: [
+          { op: EFFECT_OP_TYPES.DISPLACE, mode: 'CHARGE_TO', dist: 3, target: 'TARGET' },
+          { op: EFFECT_OP_TYPES.DEAL_DAMAGE, element: 'PHYSICAL', dice: '2d6', mult: 1.2, target: 'TARGET' }
+        ]
+      });
+    }
+
+    // Fallback: Tactical Maneuver
     return new ActiveSkill({
-      id: `${key}_SLOT_3_TACTICAL_EVASION`,
-      tomeKey: 'TACTICAL_EVASION',
+      id: `${key}_SLOT_3_TACTICAL_MANEUVER`,
+      tomeKey: 'TACTICAL_MANEUVER',
       slot: 3,
       requiredMastery: 10,
-      name: '전술적 회피 기동',
-      desc: '민첩하게 몸을 움직여 4턴간 이동 속도를 가속합니다.',
+      name: '전술적 기동',
+      desc: '민첩하게 위치를 전환하여 3턴간 이동 속도를 가속합니다.',
       type: 'BUFF',
       element: 'PHYSICAL',
-      cooldown: 5,
-      range: 0,
+      cooldown: 4,
+      maxRange: 0,
       color: '#fbbf24',
       icon: '💨',
       synergyTags: ['SPEED_BUFF'],
-      ops: [{ op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'HASTE', duration: 4, target: 'SELF' }]
+      ops: [{ op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'HASTE', duration: 3, target: 'SELF' }]
     });
   }
 
   // =========================================================================
-  // Slot 4: Apex / Ultimate Finisher
+  // Slot 4: Apex Finisher / Signature High Spell / Breath
   // =========================================================================
   static _synthesizeSlot4(key, monsterData, spells, attacks, flags, char, seed, prevSkills) {
     const prevIds = new Set(prevSkills.map(s => s.tomeKey));
+    const growthType = monsterData.growthType || 'BALANCED';
+    const nameLower = (monsterData.name || '').toLowerCase();
 
-    // 1. Try to find an Apex spell (Balls, High Breaths, Doom, Brain Smash, World)
+    // 1. Dragon Breaths (BR_*) - TOP PRIORITY for Breaths / Dragons to avoid starvation!
+    const isDragon = flags.has('DRAGON') || char === 'd' || char === 'D' || nameLower.includes('dragon') || nameLower.includes('wyrm');
+    const breathSpellKey = spells.find(s => s.startsWith('BR_')) || (isDragon && monsterData.breathElement ? `BR_${monsterData.breathElement}` : null);
+    if (breathSpellKey) {
+      const breathNames = {
+        BR_FIRE: '화염의 숨결',
+        BR_COLD: '냉기의 숨결',
+        BR_ACID: '산성의 숨결',
+        BR_ELEC: '뇌전의 숨결',
+        BR_POIS: '독의 숨결',
+        BR_NETH: '황천의 숨결',
+        BR_CHAOS: '혼돈의 숨결',
+        BR_DISI: '분해의 숨결',
+        BR_TIME: '시간의 숨결',
+        BR_DARK: '암흑의 숨결',
+        BR_LITE: '섬광의 숨결',
+        BR_SHAR: '파편의 숨결',
+        BR_SOUN: '음파의 숨결'
+      };
+      const element = breathSpellKey.replace('BR_', '') || 'FIRE';
+      const breathName = breathNames[breathSpellKey] || `${element} 숨결`;
+      const spec = SPELL_DESCRIPTOR_GRAMMAR[breathSpellKey] || {
+        element,
+        cooldown: 6,
+        range: 6.5,
+        dice: '12d10',
+        color: '#ef4444'
+      };
+
+      return new ActiveSkill({
+        id: `${key}_SLOT_4_${breathSpellKey}`,
+        tomeKey: breathSpellKey,
+        slot: 4,
+        requiredMastery: 25,
+        name: breathName,
+        desc: `전방 원뿔 범위를 향해 강력한 ${breathName}을 내뿜어 광역 피해를 입힙니다.`,
+        type: 'BREATH',
+        element: spec.element || element,
+        cooldown: Math.max(5, (spec.cooldown || 6)),
+        maxRange: spec.range || 6.5,
+        dice: spec.dice || '12d10',
+        color: spec.color || '#ef4444',
+        icon: '🐉',
+        synergyTags: ['APEX_TECHNIQUE', `${spec.element || element}_BREATH`],
+        ops: spec.ops || [
+          { op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'CONE', element: spec.element || element, dice: spec.dice || '12d10', range: spec.range || 6.5 }
+        ]
+      });
+    }
+
+    // 2. Apex Spells (BA_*, HAND_DOOM, BRAIN_SMASH, WORLD, ROCKET, CAUSE_4, S_HI_*, DRAIN_MANA)
     const apexSpellKey = spells.find(s => {
-      if (prevIds.has(s)) return false;
-      const spec = SPELL_DESCRIPTOR_GRAMMAR[s];
-      return spec && (
+      return (
         s.startsWith('BA_') ||
         s === 'HAND_DOOM' ||
         s === 'BRAIN_SMASH' ||
         s === 'WORLD' ||
         s === 'ROCKET' ||
         s === 'CAUSE_4' ||
+        s === 'DRAIN_MANA' ||
         s === 'S_HI_DEMON' ||
         s === 'S_HI_DRAGON' ||
         s === 'S_HI_UNDEAD' ||
-        s === 'S_UNIQUE' ||
-        (spec.type === 'BREATH' && !prevIds.has(s))
+        s === 'S_UNIQUE'
       );
     });
 
     if (apexSpellKey) {
-      const spec = SPELL_DESCRIPTOR_GRAMMAR[apexSpellKey];
+      const spec = SPELL_DESCRIPTOR_GRAMMAR[apexSpellKey] || {
+        name: apexSpellKey,
+        desc: '강력한 상급 주문을 시전합니다.',
+        type: 'AOE',
+        element: 'MANA',
+        cooldown: 6,
+        range: 6.0,
+        dice: '10d10',
+        color: '#ec4899'
+      };
+
+      // Strip prohibited tags like [궁극기]
+      const cleanName = (spec.name || apexSpellKey).replace(/\[궁극기\]\s*/g, '');
+
       return new ActiveSkill({
         id: `${key}_SLOT_4_${apexSpellKey}`,
         tomeKey: apexSpellKey,
         slot: 4,
         requiredMastery: 25,
-        name: `[궁극기] ${spec.name}`,
-        desc: `전장을 휩쓰는 ${spec.name} 극대 파멸 궁극기.`,
+        name: cleanName,
+        desc: `전장을 휩쓰는 강력한 ${cleanName} 주문을 시전합니다. (${spec.dice || '10d10'})`,
         type: spec.type,
         element: spec.element,
-        cooldown: Math.max(6, (spec.cooldown || 6) + 1),
+        cooldown: Math.max(5, (spec.cooldown || 6)),
         maxRange: spec.range || 6.5,
-        dice: spec.dice || '15d10',
+        dice: spec.dice || '10d10',
         color: spec.color || '#ec4899',
-        icon: '👑',
+        icon: '🔮',
         synergyTags: ['APEX_TECHNIQUE', `${spec.element}_APEX`],
         ops: spec.ops
       });
     }
 
-    // 2. Synthesize an Apex Multi-Hit Combo Flurry using monster's attacks
+    // 3. Other projectile / offensive spells for Casters (BO_*, MISSILE, ARROW_*)
+    const offensiveSpellKey = spells.find(s => {
+      return (
+        s.startsWith('BO_') ||
+        s.startsWith('ARROW_') ||
+        s === 'MISSILE' ||
+        s === 'MIND_BLAST' ||
+        s === 'CAUSE_3' ||
+        s === 'CAUSE_2'
+      );
+    });
+
+    if (offensiveSpellKey || growthType === 'MAGE') {
+      const spellKey = offensiveSpellKey || 'BO_FIRE';
+      const spec = SPELL_DESCRIPTOR_GRAMMAR[spellKey] || {
+        name: spellKey === 'MISSILE' ? '마법 화살' : '화염 화살',
+        desc: '원거리 마법 투사체를 발사합니다.',
+        type: 'PROJECTILE',
+        element: spellKey === 'MISSILE' ? 'MANA' : 'FIRE',
+        cooldown: 4,
+        range: 6.0,
+        dice: '4d8',
+        color: '#38bdf8'
+      };
+
+      const cleanName = (spec.name || spellKey).replace(/\[궁극기\]\s*/g, '');
+
+      return new ActiveSkill({
+        id: `${key}_SLOT_4_${spellKey}`,
+        tomeKey: spellKey,
+        slot: 4,
+        requiredMastery: 25,
+        name: cleanName,
+        desc: `정밀하게 조준된 ${cleanName} 투사체를 발사하여 대상을 강타합니다.`,
+        type: spec.type,
+        element: spec.element,
+        cooldown: spec.cooldown || 4,
+        maxRange: spec.range || 6.0,
+        dice: spec.dice || '4d8',
+        color: spec.color || '#38bdf8',
+        icon: spec.icon || '🔮',
+        synergyTags: ['APEX_TECHNIQUE', `${spec.element}_SPELL`],
+        ops: spec.ops
+      });
+    }
+
+    // 4. Special physical gimmicks (EXPLODE, ENGULF, SHATTER)
+    const hasExplode = attacks.some(a => a.method === 'EXPLODE');
+    if (hasExplode) {
+      return new ActiveSkill({
+        id: `${key}_SLOT_4_EXPLODE`,
+        tomeKey: 'EXPLODE',
+        slot: 4,
+        requiredMastery: 25,
+        name: '제어 폭발',
+        desc: '체내 폭발성 에너지를 방출하여 주변 타일의 적들에게 강력한 파편 피해를 가합니다.',
+        type: 'AOE',
+        element: 'SHARDS',
+        cooldown: 6,
+        maxRange: 2.5,
+        dice: '8d8',
+        color: '#ef4444',
+        icon: '💥',
+        synergyTags: ['APEX_TECHNIQUE'],
+        ops: [{ op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'SURROUND', element: 'SHARDS', dice: '8d8', radius: 2.5 }]
+      });
+    }
+
+    const hasEngulf = attacks.some(a => a.method === 'ENGULF');
+    if (hasEngulf) {
+      return new ActiveSkill({
+        id: `${key}_SLOT_4_ENGULF`,
+        tomeKey: 'ENGULF',
+        slot: 4,
+        requiredMastery: 25,
+        name: '포식',
+        desc: '대상을 신체 내부로 집어삼켜 강력한 소화 피해를 가하고 체력을 회복합니다.',
+        type: 'MELEE_STRIKE',
+        element: 'ACID',
+        cooldown: 5,
+        maxRange: 1.5,
+        dice: '4d8',
+        color: '#22c55e',
+        icon: '👅',
+        synergyTags: ['APEX_TECHNIQUE'],
+        ops: [
+          { op: EFFECT_OP_TYPES.DEAL_DAMAGE, element: 'ACID', dice: '4d8', mult: 1.5, lifestealPct: 0.5, target: 'TARGET' }
+        ]
+      });
+    }
+
+    const hasShatter = attacks.some(a => a.effect === 'SHATTER');
+    if (hasShatter) {
+      return new ActiveSkill({
+        id: `${key}_SLOT_4_SHATTER`,
+        tomeKey: 'SHATTER',
+        slot: 4,
+        requiredMastery: 25,
+        name: '대지 강타',
+        desc: '지면을 강하게 내리쳐 진동파로 주변 지형과 적들을 일제히 흔들어 놓습니다.',
+        type: 'AOE',
+        element: 'PHYSICAL',
+        cooldown: 5,
+        maxRange: 2.0,
+        dice: '5d8',
+        color: '#78716c',
+        icon: '🔨',
+        synergyTags: ['APEX_TECHNIQUE'],
+        ops: [
+          { op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'SURROUND', element: 'PHYSICAL', dice: '5d8', radius: 2.0, onHitOps: [{ op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'STUN', duration: 1, power: 8 }] }
+        ]
+      });
+    }
+
+    // 5. Multi-Attack Melee Combo Flurry
     if (attacks.length > 1) {
+      const isSwordHumanoid = (char === 'p' || char === 'h' || char === 'k');
+      const isBeast = (char === 'f' || char === 'C' || char === 'd' || char === 'B' || flags.has('ANIMAL'));
+      let comboName = '연속 타격';
+      if (isSwordHumanoid) {
+        comboName = '무기 숙련 연격';
+      } else if (isBeast) {
+        comboName = '연속 할퀴기와 물어뜯기';
+      }
+
       const comboOps = [];
-      let totalMult = 1.0;
       for (const atk of attacks) {
         const method = (atk.method || 'HIT').toUpperCase();
         const effect = (atk.effect || 'HURT').toUpperCase();
@@ -822,72 +1257,53 @@ export class ProceduralSkillSynthesizer {
           op: EFFECT_OP_TYPES.DEAL_DAMAGE,
           element: effectGrammar.element || 'PHYSICAL',
           dice,
-          mult: 1.25,
+          mult: 1.15,
           target: 'TARGET'
         });
-        if (effectGrammar.statusId) {
-          comboOps.push({
-            op: EFFECT_OP_TYPES.APPLY_STATUS,
-            statusId: effectGrammar.statusId,
-            duration: 3,
-            power: 6,
-            target: 'TARGET'
-          });
-        }
       }
 
       return new ActiveSkill({
-        id: `${key}_SLOT_4_APEX_COMBO_FLURRY`,
-        tomeKey: 'APEX_COMBO_FLURRY',
+        id: `${key}_SLOT_4_COMBO_STRIKE`,
+        tomeKey: 'COMBO_STRIKE',
         slot: 4,
         requiredMastery: 25,
-        name: `[궁극기] ${monsterData.name}의 전심전력 연격 난무`,
-        desc: `신체의 모든 타격 기관을 일제히 해방하여 ${attacks.length}회의 연속 파멸 강타를 쏟아붓습니다.`,
+        name: comboName,
+        desc: `모든 타격 부위를 연계하여 ${attacks.length}회의 연속 타격을 신속하게 퍼붓습니다.`,
         type: 'MELEE_STRIKE',
         element: 'PHYSICAL',
-        cooldown: 7,
+        cooldown: 5,
         maxRange: 1.5,
-        dice: attacks[0].damage || '2d8',
+        dice: attacks[0].damage || '2d6',
         color: '#f43f5e',
-        icon: '👑',
+        icon: '⚔️',
         synergyTags: ['APEX_TECHNIQUE', 'MULTI_HIT_COMBO'],
         ops: comboOps
       });
     }
 
-    // 3. Archetype Apex Finisher
-    let apexName = `[궁극기] ${monsterData.name}의 한계 돌파 극타`;
+    // 6. Single Attack Archetype Finisher
+    let apexName = '결전 강타';
     let apexElement = 'PHYSICAL';
-    let apexDice = '10d10';
+    let apexDice = '6d8';
     let apexOps = [
-      { op: EFFECT_OP_TYPES.DEAL_DAMAGE, element: 'PHYSICAL', dice: '10d10', mult: 2.0, ignoreACPct: 0.50, target: 'TARGET' },
-      { op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'STUN', duration: 2, power: 10, target: 'TARGET' }
+      { op: EFFECT_OP_TYPES.DEAL_DAMAGE, element: 'PHYSICAL', dice: '6d8', mult: 1.5, ignoreACPct: 0.35, target: 'TARGET' },
+      { op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'STUN', duration: 1, power: 8, target: 'TARGET' }
     ];
 
-    if (flags.has('DRAGON') || char === 'd' || char === 'D') {
-      apexName = '[궁극기] 용황의 천지개벽 브레스';
-      apexElement = 'FIRE';
-      apexOps = [
-        { op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'CONE', element: 'FIRE', dice: '15d12', range: 7.5 }
-      ];
-    } else if (flags.has('UNDEAD') || char === 'L' || char === 'V') {
-      apexName = '[궁극기] 명계의 영혼 대수확';
+    if (flags.has('UNDEAD') || char === 'L' || char === 'V') {
+      apexName = '생명력 착취 접촉';
       apexElement = 'NETHER';
       apexOps = [
-        { op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'SURROUND', element: 'NETHER', dice: '12d10', radius: 3.5, lifestealPct: 0.50 }
-      ];
-    } else if (flags.has('DEMON') || char === 'u' || char === 'U') {
-      apexName = '[궁극기] 지옥의 업화 대폭발';
-      apexElement = 'FIRE';
-      apexOps = [
-        { op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'BALL', element: 'FIRE', dice: '14d10', range: 6.5, radius: 3.0 }
+        { op: EFFECT_OP_TYPES.DEAL_DAMAGE, element: 'NETHER', dice: '5d8', lifestealPct: 0.50, target: 'TARGET' }
       ];
     } else if (char === 'j' || char === 'm') {
-      apexName = '[궁극기] 절대 융해 산성 폭풍';
+      apexName = '산성 점액 방출';
       apexElement = 'ACID';
       apexOps = [
-        { op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'SURROUND', element: 'ACID', dice: '12d10', radius: 3.5, onHitOps: [{ op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'SUNDER', duration: 5, power: 25 }] }
+        { op: EFFECT_OP_TYPES.PROJECT_AREA, shape: 'SURROUND', element: 'ACID', dice: '5d8', radius: 2.5, onHitOps: [{ op: EFFECT_OP_TYPES.APPLY_STATUS, statusId: 'SUNDER', duration: 3, power: 15 }] }
       ];
+    } else if (growthType === 'WARRIOR') {
+      apexName = '대지 강타';
     }
 
     return new ActiveSkill({
@@ -896,14 +1312,14 @@ export class ProceduralSkillSynthesizer {
       slot: 4,
       requiredMastery: 25,
       name: apexName,
-      desc: `${monsterData.name}의 모든 잠재력을 폭발시키는 궁극의 결전 기예.`,
-      type: 'AOE',
+      desc: `온 힘을 실어 적을 강타하는 필사의 공격. (${apexDice})`,
+      type: 'MELEE_STRIKE',
       element: apexElement,
-      cooldown: 8,
-      maxRange: 6.0,
+      cooldown: 5,
+      maxRange: 1.5,
       dice: apexDice,
-      color: '#ec4899',
-      icon: '👑',
+      color: '#f43f5e',
+      icon: '⚔️',
       synergyTags: ['APEX_TECHNIQUE'],
       ops: apexOps
     });
@@ -1037,53 +1453,84 @@ export class ProceduralSkillSynthesizer {
     const tree = [];
     const flags = new Set(data.flags || []);
     const gType = data.growthType || 'BALANCED';
+    const char = data.char || 'p';
+    const nameLower = (data.name || '').toLowerCase();
 
+    // ----------------------------------------------------
     // 1pt: Ancestral Stat Affinity
+    // ----------------------------------------------------
     let statTag = 'STR_BOOST';
+    let statName = '전사의 완력';
     let statDesc = '힘(STR) 스탯 +10%';
-    if (gType === 'TANK' || data.char === 'j' || data.char === 'm') {
+
+    if (gType === 'TANK' || char === 'j' || char === 'm') {
       statTag = 'CON_BOOST';
+      statName = '강인한 생명력';
       statDesc = '생명력(CON) 스탯 +10%';
-    } else if (gType === 'MAGE' || flags.has('UNDEAD') || data.char === 'e') {
+    } else if (gType === 'MAGE' || flags.has('UNDEAD') || char === 'e' || char === 'u') {
       statTag = 'INT_BOOST';
+      statName = '마력 친화';
       statDesc = '지능(INT) 스탯 +10%';
-    } else if (gType === 'SPEEDY' || flags.has('ANIMAL') || data.char === 'S' || data.char === 'B') {
+    } else if (gType === 'SPEEDY' || gType === 'ROGUE' || flags.has('ANIMAL') || char === 'S' || char === 'B' || char === 'f') {
       statTag = 'DEX_BOOST';
+      statName = '기민한 감각';
       statDesc = '민첩(DEX) 스탯 +10%';
     }
 
     tree.push({
       pt: 1,
-      name: `${data.name}의 혈통`,
+      name: statName,
       desc: statDesc,
       type: 'PASSIVE',
       isIntScaled: false,
       synergyTags: [statTag]
     });
 
-    // 3pt: Innate Strike Technique / Element Attunement
-    let pt3Name = '치명적 본능';
-    let pt3Desc = '기본 공격력 및 치명타율 +5% 증가';
+    // ----------------------------------------------------
+    // 3pt: Innate Combat Gimmick
+    // ----------------------------------------------------
+    let pt3Name = '강타 숙련';
+    let pt3Desc = '기본 공격력 및 치명타율 보정';
     let pt3Tags = ['STRONG_ATTACK'];
 
-    if (data.attacks && data.attacks.length > 0) {
+    if (gType === 'MAGE' || (data.spells && data.spells.length > 0)) {
+      pt3Name = '주문 충전';
+      pt3Desc = '마법 주문 적중 시 행동 에너지가 충전됩니다.';
+      pt3Tags = ['SPELL_CHARGE'];
+    } else if (flags.has('GIANT') || flags.has('TROLL') || flags.has('OGRE') || flags.has('REGENERATE') || char === 'O' || char === 'T' || char === 'P') {
+      pt3Name = '거인족 피의 재생';
+      pt3Desc = '피격 시 확률적으로 결손 체력을 자연 회복합니다.';
+      pt3Tags = ['GIANT_BLOOD'];
+    } else if (char === 'j' || char === 'm' || char === ',') {
+      pt3Name = '산성 반격';
+      pt3Desc = '피격 시 부식 산성 반사 피해를 입힙니다.';
+      pt3Tags = ['ACID_COUNTER'];
+    } else if (gType === 'ROGUE' || flags.has('INVISIBLE') || nameLower.includes('thief') || nameLower.includes('rogue')) {
+      pt3Name = '그림자 기습';
+      pt3Desc = '벽 지형에 인접한 적 근접 타격 시 추가 피해를 입힙니다.';
+      pt3Tags = ['AMBUSH'];
+    } else if (flags.has('ANGEL') || char === 'A' || nameLower.includes('priest') || nameLower.includes('cleric')) {
+      pt3Name = '현자의 은혜';
+      pt3Desc = '마법 상태이상인 적 처치 시 체력을 회복합니다.';
+      pt3Tags = ['SAGE_HEAL'];
+    } else if (data.attacks && data.attacks.length > 0) {
       const atk = data.attacks[0];
-      const effect = atk.effect || 'HURT';
+      const effect = (atk.effect || 'HURT').toUpperCase();
       if (effect === 'POISON' || effect === 'DISEASE') {
         pt3Name = '독소 분비체';
-        pt3Desc = '모든 근접 공격에 맹독 피해 부여';
-        pt3Tags = ['POISON_MELEE', 'ACID_MELEE'];
+        pt3Desc = '근접 공격 시 맹독 피해를 부여합니다.';
+        pt3Tags = ['POISON_MELEE'];
       } else if (effect === 'FIRE') {
         pt3Name = '발화 신체';
-        pt3Desc = '모든 근접 공격에 화염 피해 부여';
+        pt3Desc = '근접 공격 시 화염 피해를 부여합니다.';
         pt3Tags = ['FIRE_MELEE'];
       } else if (effect === 'COLD') {
-        pt3Name = '혹한의 서리발';
-        pt3Desc = '모든 근접 공격에 빙결 감속 부여';
+        pt3Name = '혹한의 냉기';
+        pt3Desc = '근접 공격 시 빙결 감속을 부여합니다.';
         pt3Tags = ['COLD_MELEE'];
       } else if (effect === 'ELEC') {
-        pt3Name = '생체 발전기';
-        pt3Desc = '근접 공격 시 20% 확률로 뇌전 감전';
+        pt3Name = '뇌전 유도';
+        pt3Desc = '근접 공격 시 뇌전 감전을 일으킵니다.';
         pt3Tags = ['LIGHTNING_MELEE'];
       }
     }
@@ -1097,7 +1544,9 @@ export class ProceduralSkillSynthesizer {
       synergyTags: pt3Tags
     });
 
-    // 5pt: Carapace & Elemental Resistance
+    // ----------------------------------------------------
+    // 5pt: Defensive / Resistance / Environmental
+    // ----------------------------------------------------
     const resTags = [];
     if (flags.has('IM_FIRE') || flags.has('RES_FIRE')) resTags.push('FIRE_RESIST');
     if (flags.has('IM_COLD') || flags.has('RES_COLD')) resTags.push('COLD_RESIST');
@@ -1105,36 +1554,72 @@ export class ProceduralSkillSynthesizer {
     if (flags.has('IM_ACID') || flags.has('RES_ACID')) resTags.push('ACID_RESIST');
     if (flags.has('IM_POIS') || flags.has('RES_POIS')) resTags.push('POISON_RESIST');
 
+    let pt5Name = '단단한 갑주';
+    let pt5Desc = '물리 피해 고정 감쇄 획득';
+    let pt5Tags = ['PHYS_RESIST'];
+
+    if (flags.has('PASS_WALL')) {
+      pt5Name = '위상 투과';
+      pt5Desc = '물질계 벽 타일을 자유롭게 투과하여 이동할 수 있습니다.';
+      pt5Tags = ['PASS_WALL'];
+    } else if (flags.has('CAN_FLY') || flags.has('FLYING')) {
+      pt5Name = '비행 본능';
+      pt5Desc = '바닥의 모든 함정을 무시하고 공중을 비행합니다.';
+      pt5Tags = ['CAN_FLY'];
+    } else if (resTags.length > 0) {
+      pt5Name = '원소 저항 외피';
+      pt5Desc = `${resTags.length}종 원소 저항력을 획득합니다.`;
+      pt5Tags = resTags;
+    } else if (gType === 'MAGE') {
+      pt5Name = '마력 보호막';
+      pt5Desc = '스킬 시전 시 피해를 흡수하는 마나 보호막을 전개합니다.';
+      pt5Tags = ['MANA_SHIELD_PASSIVE'];
+    }
+
     tree.push({
       pt: 5,
-      name: `${data.name}의 외피`,
-      desc: resTags.length > 0 ? `${resTags.length}종 원소 저항력 획득` : '물리 피해 고정 감쇄 획득',
+      name: pt5Name,
+      desc: pt5Desc,
       type: 'PASSIVE',
       isIntScaled: false,
-      synergyTags: resTags.length > 0 ? resTags : ['PHYS_RESIST']
+      synergyTags: pt5Tags
     });
 
-    // 7pt: Mobility / Regeneration / Ambush Perk
-    let pt7Name = '강인한 육체';
-    let pt7Desc = '체력 자연 회복력 및 최대 HP +10% 증가';
-    let pt7Tags = ['CON_BOOST'];
+    // ----------------------------------------------------
+    // 7pt: Mobility / Regeneration / Sustain
+    // ----------------------------------------------------
+    let pt7Name = '불굴의 투지';
+    let pt7Desc = '대기 시 소실된 체력을 신속히 회복합니다.';
+    let pt7Tags = ['WAIT_HEAL'];
 
-    if ((data.speed && data.speed >= 6) || flags.has('CAN_FLY') || flags.has('FAST')) {
-      pt7Name = '질풍의 비행';
-      pt7Desc = '행동 속도를 충전해 주는 가속(HASTE_UNIT)을 획득합니다.';
-      pt7Tags = ['HASTE_UNIT'];
-    } else if (flags.has('REGENERATE')) {
-      pt7Name = '세포 재생';
+    if (gType === 'MAGE') {
+      pt7Name = '신속 영창';
+      pt7Desc = '스킬 쿨다운이 신속하게 감소합니다.';
+      pt7Tags = ['QUICKCAST'];
+    } else if (flags.has('REGENERATE') || flags.has('GIANT') || flags.has('TROLL')) {
+      pt7Name = '자연 재생';
       pt7Desc = '매 턴마다 생명력이 자연 재생됩니다.';
       pt7Tags = ['REGEN_UNIT'];
-    } else if (flags.has('INVISIBLE')) {
-      pt7Name = '그림자 은신';
-      pt7Desc = '어둠 속에서 치명타 확률이 대폭 증가합니다.';
-      pt7Tags = ['AMBUSH'];
+    } else if (flags.has('INVISIBLE') || gType === 'ROGUE') {
+      pt7Name = '기민한 회피';
+      pt7Desc = '적의 공격을 민첩하게 피하는 추가 회피율을 획득합니다.';
+      pt7Tags = ['EVASION_BOOST'];
     } else if (flags.has('UNDEAD')) {
-      pt7Name = '망령의 생명 착취';
+      pt7Name = '생명력 흡수';
       pt7Desc = '적에게 입힌 피해의 일부를 생명력으로 흡수합니다.';
       pt7Tags = ['LIFESTEAL'];
+    } else if (flags.has('ANGEL') || char === 'A' || nameLower.includes('priest')) {
+      pt7Name = '성스러운 가호';
+      pt7Desc = '피격 시 신성 가호로 체력을 회복합니다.';
+      pt7Tags = ['HOLY_SHIELD'];
+    } else if (flags.has('CAN_FLY') || flags.has('FAST') || gType === 'SPEEDY') {
+      pt7Name = '질풍 기동';
+      pt7Desc = '행동 속도를 충전해 주는 가속 효과를 획득합니다.';
+      pt7Tags = ['HASTE_UNIT'];
+    } else if (gType === 'WARRIOR') {
+      pt7Name = '휴식 재생';
+      pt7Desc = '대기 시 소실된 체력을 신속히 회복합니다.';
+      pt7Tags = ['WAIT_HEAL'];
     }
 
     tree.push({
@@ -1146,27 +1631,37 @@ export class ProceduralSkillSynthesizer {
       synergyTags: pt7Tags
     });
 
-    // 10pt: Apex Awakening / Core Transcendance
-    let pt10Name = '[각성] 패왕의 기백';
-    let pt10Desc = '모든 능력치 및 전투 능력이 극한으로 각성합니다.';
+    // ----------------------------------------------------
+    // 10pt: Apex Mastery
+    // ----------------------------------------------------
+    let pt10Name = '절대 투지';
+    let pt10Desc = '체력이 저하되면 전투 능력이 대폭 증폭됩니다.';
     let pt10Tags = ['BERSERK_RAGE'];
 
     if (flags.has('DRAGON')) {
-      pt10Name = '[각성] 용황 각성';
-      pt10Desc = '모든 원소 피해 +50% 및 브레스 쿨다운 -2턴';
-      pt10Tags = ['ELEMENTAL_BOOST', 'DRAGON_AWAKENING'];
+      pt10Name = '용의 권능';
+      pt10Desc = '모든 원소 피해 및 브레스 위력이 증폭됩니다.';
+      pt10Tags = ['ELEMENTAL_BOOST'];
     } else if (flags.has('UNDEAD') || flags.has('DEMON')) {
-      pt10Name = '[각성] 심연의 지배자';
-      pt10Desc = '적 처치 시 주변에 공포 파동 및 체력 흡수';
-      pt10Tags = ['SOUL_REAP', 'FEAR_AURA'];
-    } else if (data.char === 'j' || data.char === 'm') {
-      pt10Name = '[각성] 극산성 대사체';
-      pt10Desc = '피격 시 적 방어력 100% 분쇄 및 산성 반격';
-      pt10Tags = ['ACID_COUNTER', 'PHYS_RESIST'];
+      pt10Name = '심연의 공포';
+      pt10Desc = '주변 적들에게 지속적인 공포 디버프를 부여합니다.';
+      pt10Tags = ['FEAR_AURA'];
+    } else if (char === 'j' || char === 'm') {
+      pt10Name = '원초적 분열';
+      pt10Desc = '피격 시 생명력이 지속적으로 자가 회복됩니다.';
+      pt10Tags = ['REGEN_UNIT'];
     } else if (gType === 'WARRIOR' || flags.has('ORC') || flags.has('GIANT')) {
-      pt10Name = '[각성] 광폭 분쇄격';
-      pt10Desc = '공격 시 25% 확률로 연속 2회 타격';
-      pt10Tags = ['FRENZY', 'STRONG_ATTACK'];
+      pt10Name = '전장의 광기';
+      pt10Desc = '위기 상황에서 공격력과 이동 속도가 대폭 상승합니다.';
+      pt10Tags = ['BERSERK_RAGE'];
+    } else if (gType === 'MAGE') {
+      pt10Name = '비전 극대화';
+      pt10Desc = '지능 기반 마법 주문의 최종 위력이 집중 증폭됩니다.';
+      pt10Tags = ['FOCUS'];
+    } else if (gType === 'ROGUE') {
+      pt10Name = '급소 찌르기';
+      pt10Desc = '치명타 임계치가 대폭 낮아져 치명타가 빈번하게 발생합니다.';
+      pt10Tags = ['CRIT_UNIT'];
     }
 
     tree.push({

@@ -520,8 +520,42 @@ export class EffectVM {
         }
       }
       if (logFn) logFn('[Map] ☀️ 주변 지역이 환한 빛으로 가득 찹니다!', 'system');
-    } else if (action === 'EARTHQUAKE' || action === 'DESTROY_AREA') {
-      // 주변 몬스터 물리 충격 대미지 및 벽 파괴
+    } else if (action === 'EARTHQUAKE' || action === 'DESTROY_AREA' || action === 'STONE_TO_MUD' || action === 'KILL_WALL') {
+      // 1. 암반 굴착 및 벽 파괴 (맵 최외곽 테두리 제외)
+      if (map && map.tiles) {
+        const height = map.height || map.tiles.length;
+        const width = map.width || (map.tiles[0] ? map.tiles[0].length : 0);
+        let carvedCount = 0;
+        
+        for (let dy = -radius; dy <= radius; dy++) {
+          for (let dx = -radius; dx <= radius; dx++) {
+            const tx = caster.x + dx;
+            const ty = caster.y + dy;
+            // 맵 최외곽 테두리 보호
+            if (tx <= 0 || ty <= 0 || tx >= width - 1 || ty >= height - 1) continue;
+            
+            const dist = Math.hypot(dx, dy);
+            if (dist <= radius) {
+              const tile = map.getTile ? map.getTile(tx, ty) : map.tiles[ty]?.[tx];
+              if (tile && !tile.isWalkable) {
+                tile.type = 'FLOOR';
+                tile.char = '.';
+                tile.isWalkable = true;
+                tile.blocksVision = false;
+                carvedCount++;
+              }
+            }
+          }
+        }
+        if (context.game && typeof context.game.updateFOV === 'function') {
+          context.game.updateFOV();
+        }
+        if (carvedCount > 0 && logFn) {
+          logFn(`[Excavation] ⛏️ 강력한 충격으로 암반 ${carvedCount}칸이 붕괴되어 평지가 되었습니다!`, 'system');
+        }
+      }
+
+      // 2. 주변 몬스터 물리 충격 대미지
       const monsters = this._resolveMonsters(context);
       for (const m of monsters) {
         if (!m || (m.stats && m.stats.hp <= 0)) continue;
