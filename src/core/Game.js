@@ -1659,8 +1659,8 @@ export class Game {
     e &&
       (this.isInventoryOpen
         ? (e.classList.remove(`hidden`),
-          this.renderInventoryList(),
-          this.showPlayerDetails())
+          this.bindInventoryTabEvents(),
+          this.switchInventoryTab('items'))
         : (e.classList.add(`hidden`), this.closeContextMenu()));
   }
   loadOptions() {
@@ -1855,41 +1855,72 @@ export class Game {
         e.appendChild(r));
     }
   }
+  bindInventoryTabEvents() {
+    const tabContainer = document.getElementById('inventory-modal-tabs');
+    if (!tabContainer || tabContainer._hasTabEvents) return;
+    tabContainer._hasTabEvents = true;
+    tabContainer.addEventListener('click', (e) => {
+      const btn = e.target.closest('.inv-tab-btn');
+      if (btn && btn.dataset.tab) {
+        this.switchInventoryTab(btn.dataset.tab);
+      }
+    });
+  }
+  switchInventoryTab(tabName = 'items') {
+    this.activeInventoryTab = tabName;
+    const splitView = document.getElementById('inventory-split-view');
+    const fullView = document.getElementById('inventory-full-view');
+    const titleEl = document.getElementById('inventory-modal-title');
+    const tabButtons = document.querySelectorAll('.inv-tab-btn');
+
+    tabButtons.forEach(btn => {
+      if (btn.dataset.tab === tabName) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    if (tabName === 'items') {
+      if (titleEl) titleEl.textContent = '소지품 및 장비 (INVENTORY)';
+      if (splitView) splitView.classList.remove('hidden');
+      if (fullView) fullView.classList.add('hidden');
+      this.renderInventoryList();
+      if (!this.selectedItem) {
+        let detail = document.getElementById('item-detail');
+        if (detail) detail.innerHTML = `<div class="detail-empty">소지품에서 아이템을 선택하세요.</div>`;
+      }
+    } else {
+      if (splitView) splitView.classList.add('hidden');
+      if (fullView) {
+        fullView.classList.remove('hidden');
+        if (tabName === 'core') {
+          if (titleEl) titleEl.textContent = '🧬 장착 코어 & 5단계 패시브 트리';
+          fullView.innerHTML = te(this.player);
+        } else if (tabName === 'skills') {
+          if (titleEl) titleEl.textContent = '⚡ 의태 고유 스킬 & 숙련도';
+          fullView.innerHTML = renderSkillTreeHTML(this.player);
+        } else if (tabName === 'character') {
+          if (titleEl) titleEl.textContent = '👤 주인공 상세 정보 & 스펙';
+          fullView.innerHTML = ne(this.player);
+        } else if (tabName === 'lore') {
+          if (titleEl) titleEl.textContent = '📚 마스터리 및 851종 로어 도감';
+          fullView.innerHTML = renderMasteryDetailsHTML(this.player);
+        }
+      }
+    }
+  }
   showActiveCoreDetails() {
-    this.selectedItem = null;
-    let e = document.getElementById(`item-detail`);
-    e &&
-      (document
-        .querySelectorAll(`.inventory-slot`)
-        .forEach((e) => e.classList.remove(`selected`)),
-      (e.innerHTML = te(this.player)));
+    this.switchInventoryTab('core');
   }
   showPlayerDetails() {
-    this.selectedItem = null;
-    let e = document.getElementById(`item-detail`);
-    e &&
-      (document
-        .querySelectorAll(`.inventory-slot`)
-        .forEach((e) => e.classList.remove(`selected`)),
-      (e.innerHTML = ne(this.player)));
+    this.switchInventoryTab('character');
   }
   showMasteryDetails() {
-    this.selectedItem = null;
-    let e = document.getElementById(`item-detail`);
-    e &&
-      (document
-        .querySelectorAll(`.inventory-slot`)
-        .forEach((e) => e.classList.remove(`selected`)),
-      (e.innerHTML = renderMasteryDetailsHTML(this.player)));
+    this.switchInventoryTab('lore');
   }
   showSkillTree() {
-    this.selectedItem = null;
-    let e = document.getElementById(`item-detail`);
-    if (!e) return;
-    document
-      .querySelectorAll(`.inventory-slot`)
-      .forEach((e) => e.classList.remove(`selected`));
-    e.innerHTML = renderSkillTreeHTML(this.player);
+    this.switchInventoryTab('skills');
   }
   bindSlotEvents(e, t) {
     let n = 0,

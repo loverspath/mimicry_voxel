@@ -37,8 +37,8 @@ describe('Argon Phase 2: 851 Monsters & Procedural Skillset Synthesizer', () => 
 
         expect(skills[0].requiredMastery).toBeLessThanOrEqual(2);
         expect(skills[1].requiredMastery).toBeLessThanOrEqual(2);
-        expect(skills[2].requiredMastery).toBe(10);
-        expect(skills[3].requiredMastery).toBe(25);
+        expect(skills[2].requiredMastery).toBe(3);
+        expect(skills[3].requiredMastery).toBe(6);
 
         // Check ID uniqueness within this monster's 4 slots
         const idSet = new Set();

@@ -7,13 +7,23 @@
  * @exports EQUIP_BADGE_STYLES, TOME_FLAG_TRANSLATIONS, renderInventorySlotHTML, renderItemDetailHTML, renderTransferMaterialHTML, renderActiveCoreDetailsHTML
  */
 
-import { PREFIX_TAGS, SUFFIX_TAGS } from '../entities/Tags.js';
+import { PREFIX_TAGS, SUFFIX_TAGS, SYNERGY_TAG_REGISTRY } from '../entities/Tags.js';
 import { getSpeciesConfig, MONSTER_GROWTH_PATTERNS } from '../entities/MonsterRegistry.js';
 import { MONSTER_PERKS } from '../entities/Perks.js';
 import { TomeSpellEngine } from '../systems/TomeSpellEngine.js';
 import { MonsterSpellFactory } from '../systems/MonsterSpellFactory.js';
 import { ArtifactActivationEngine } from '../systems/ArtifactActivationEngine.js';
-import { ProceduralSkillSynthesizer } from '../systems/ProceduralSkillSynthesizer.js';
+import { ProceduralSkillSynthesizer, ELEMENT_KO } from '../systems/ProceduralSkillSynthesizer.js';
+
+export const GROWTH_TYPE_KO = {
+  WARRIOR: '전사형',
+  MAGE: '마법형',
+  TANK: '탱커형',
+  ROGUE: '도적형',
+  SPEEDY: '신속형',
+  BALANCED: '균형형',
+  PRIEST: '사제형'
+};
 
 /** 장비 슬롯 배지 메타 데이터 (슬롯명 → 표시 텍스트, 색상) */
 export const EQUIP_BADGE_STYLES = {
@@ -119,6 +129,16 @@ const ELEMENT_BADGE_STYLES = {
   PHYSICAL: { bg: 'rgba(148,163,184,0.12)', color: '#cbd5e1', border: 'rgba(148,163,184,0.25)' },
 };
 
+/** 내부 메타 플래그 및 원시 드랍/확률 코드 필터링 세트 */
+export const INTERNAL_META_FLAGS = new Set([
+  'BASH_DOOR', 'FORCE_SLEEP', 'DROP_CORPSE', 'OPEN_DOOR', 'MORTAL', 
+  'FORCE_MAXHP', 'TAKE_ITEM', 'FRIENDS', 'DROP_1D2', 'DROP_60', 'DROP_90', 
+  'DROP_1', 'DROP_2', 'DROP_3', 'DROP_4', 'MALE', 'FEMALE', 'WILD_TOO',
+  'HAS_LITE', 'SMART', 'EMPTY_MIND', 'COLD_BLOOD', 'WEIRD_MIND', 'ANIMAL',
+  'EVIL', 'GOOD', 'UNDEAD', 'DEMON', 'DRAGON', 'GIANT', 'ORC', 'TROLL',
+  'DROP_SKELETON', 'NEVER_BLOW', 'NEVER_MOVE', 'MULTIPLY', 'ATTR_CLEAR'
+]);
+
 /** ToME 고유 플래그 한글화 및 메타데이터 맵 */
 export const TOME_FLAG_TRANSLATIONS = {
   FREE_ACT: { name: "마비 면역 (Free Action)", color: "#34d399", desc: "마비 및 기절 상태이상에 면역이 됩니다." },
@@ -129,6 +149,15 @@ export const TOME_FLAG_TRANSLATIONS = {
   RES_ELEC: { name: "전격 저항 (Resist Elec)", color: "#eab308", desc: "번개 속성 공격 피해를 대폭 경감합니다." },
   RES_POIS: { name: "독 저항 (Resist Poison)", color: "#10b981", desc: "독 속성 공격 피해 및 중독 효과를 대폭 경감합니다." },
   RES_ACID: { name: "산 저항 (Resist Acid)", color: "#84cc16", desc: "산성 부식 및 산 속성 피해를 경감합니다." },
+  RES_CONF: { name: "혼란 저항 (Resist Confusion)", color: "#c084fc", desc: "혼란 상태이상에 저항합니다." },
+  RES_SOUND: { name: "음파 저항 (Resist Sound)", color: "#06b6d4", desc: "음파 기절에 저항합니다." },
+  RES_SHARDS: { name: "파편 저항 (Resist Shards)", color: "#a3a3a3", desc: "파편 출혈에 저항합니다." },
+  RES_NETHER: { name: "황천 저항 (Resist Nether)", color: "#7c3aed", desc: "황천 사령 피해에 저항합니다." },
+  RES_NEXUS: { name: "인과 저항 (Resist Nexus)", color: "#ec4899", desc: "인과 변이 및 강제 순간이동에 저항합니다." },
+  RES_CHAOS: { name: "혼돈 저항 (Resist Chaos)", color: "#d946ef", desc: "혼돈 환각에 저항합니다." },
+  RES_DISEN: { name: "마력해제 저항 (Resist Disenchant)", color: "#a855f7", desc: "장비 마력 해제에 저항합니다." },
+  RES_BLIND: { name: "실명 저항 (Resist Blind)", color: "#fbbf24", desc: "실명 상태이상에 저항합니다." },
+  RES_FEAR: { name: "공포 저항 (Resist Fear)", color: "#f43f5e", desc: "공포 상태이상에 저항합니다." },
   SUST_STR: { name: "힘 유지 (Sustain STR)", color: "#f87171", desc: "힘 능력치 저하 및 드레인을 방어합니다." },
   SUST_INT: { name: "지능 유지 (Sustain INT)", color: "#60a5fa", desc: "지능 능력치 저하를 방어합니다." },
   SUST_WIS: { name: "지혜 유지 (Sustain WIS)", color: "#c084fc", desc: "지혜 능력치 저하를 방어합니다." },
@@ -140,6 +169,8 @@ export const TOME_FLAG_TRANSLATIONS = {
   TELEPATHY: { name: "텔레파시 (Telepathy)", color: "#ec4899", desc: "시야 밖 몬스터의 정신을 감지합니다." },
   SLOW_DIGEST: { name: "완만한 대사 (Slow Digest)", color: "#a3e635", desc: "대사 속도를 안정화합니다." },
   REGEN: { name: "초재생 (Regeneration)", color: "#10b981", desc: "체력 자연 회복 속도를 비약적으로 가속합니다." },
+  FEATHER: { name: "깃털 낙하 (Feather Fall)", color: "#38bdf8", desc: "낙하 피해를 받지 않고 함정을 가볍게 통과합니다." },
+  INFRA: { name: "적외선 시야 (Infravision)", color: "#ef4444", desc: "어둠 속 따뜻한 생명체를 감지합니다." },
   LITE1: { name: "발광 +1 (Light +1)", color: "#fbbf24", desc: "자체 광원 반경이 +1칸 증가합니다." },
   LITE2: { name: "발광 +2 (Light +2)", color: "#fbbf24", desc: "자체 광원 반경이 +2칸 증가합니다." },
   LITE3: { name: "발광 +3 (Light +3)", color: "#fbbf24", desc: "자체 광원 반경이 +3칸 증가합니다." },
@@ -147,7 +178,38 @@ export const TOME_FLAG_TRANSLATIONS = {
   IM_COLD: { name: "냉기 면역 (Immune Cold)", color: "#38bdf8", desc: "냉기 피해를 100% 완전 무효화합니다." },
   IM_ELEC: { name: "전격 면역 (Immune Elec)", color: "#eab308", desc: "전격 피해를 100% 완전 무효화합니다." },
   IM_ACID: { name: "산 면역 (Immune Acid)", color: "#84cc16", desc: "산성 피해 및 장비 부식을 완전 무효화합니다." },
-  SPECIAL_GENE: { name: "고유 전승 유물", color: "#ffd700", desc: "발리노르의 전승에 기록된 유일무이한 고유 유물입니다." }
+  SLAY_EVIL: { name: "악 슬레이 (Slay Evil)", color: "#fbbf24", desc: "사악한 적 타격 시 추가 피해를 입힙니다." },
+  SLAY_UNDEAD: { name: "언데드 슬레이 (Slay Undead)", color: "#a855f7", desc: "불사의 존재 타격 시 추가 피해를 입힙니다." },
+  SLAY_DEMON: { name: "악마 슬레이 (Slay Demon)", color: "#ef4444", desc: "지옥 악마 타격 시 추가 피해를 입힙니다." },
+  SLAY_DRAGON: { name: "드래곤 슬레이 (Slay Dragon)", color: "#f43f5e", desc: "용족 타격 시 추가 피해를 입힙니다." },
+  SLAY_ORC: { name: "오크 슬레이 (Slay Orc)", color: "#f97316", desc: "오크 타격 시 추가 피해를 입힙니다." },
+  SLAY_TROLL: { name: "트롤 슬레이 (Slay Troll)", color: "#84cc16", desc: "트롤 타격 시 추가 피해를 입힙니다." },
+  SLAY_GIANT: { name: "거인 슬레이 (Slay Giant)", color: "#eab308", desc: "거인족 타격 시 추가 피해를 입힙니다." },
+  SLAY_ANIMAL: { name: "야수 슬레이 (Slay Animal)", color: "#10b981", desc: "야수 타격 시 추가 피해를 입힙니다." },
+  BRAND_FIRE: { name: "화염 브랜드 (Fire Brand)", color: "#ef4444", desc: "타격 시 강력한 화염 속성 추가 피해를 가합니다." },
+  BRAND_COLD: { name: "냉기 브랜드 (Cold Brand)", color: "#38bdf8", desc: "타격 시 강력한 냉기 속성 추가 피해를 가합니다." },
+  BRAND_ELEC: { name: "전격 브랜드 (Elec Brand)", color: "#eab308", desc: "타격 시 강력한 전격 속성 추가 피해를 가합니다." },
+  BRAND_ACID: { name: "산성 브랜드 (Acid Brand)", color: "#84cc16", desc: "타격 시 강력한 산성 속성 추가 피해를 가합니다." },
+  BRAND_POIS: { name: "맹독 브랜드 (Poison Brand)", color: "#10b981", desc: "타격 시 강력한 맹독 속성 추가 피해를 가합니다." },
+  PASS_WALL: { name: "위상 투과 (Pass Wall)", color: "#818cf8", desc: "물질계 암벽을 자유롭게 투과하여 이동합니다." },
+  CAN_FLY: { name: "비행 (Flight)", color: "#38bdf8", desc: "함정을 무시하고 공중을 비행합니다." },
+  KILL_WALL: { name: "암반 굴착 (Dig Wall)", color: "#a8a29e", desc: "암벽을 파쇄하여 새로운 통로를 개척합니다." },
+  SPECIAL_GENE: { name: "고유 전승 유물", color: "#ffd700", desc: "발리노르의 전승에 기록된 유일무이한 고유 유물입니다." },
+  SPEED: { name: "신속 (Speed)", color: "#38bdf8", desc: "이동 및 행동 속도가 대폭 증가합니다." },
+  STEALTH: { name: "은밀 (Stealth)", color: "#a78bfa", desc: "적에게 발각될 확률이 감소합니다." },
+  SEARCH: { name: "탐지 (Searching)", color: "#fbbf24", desc: "숨겨진 문과 함정을 더 잘 찾아냅니다." },
+  TUNNEL: { name: "채굴 (Tunneling)", color: "#a8a29e", desc: "암석을 파내는 능력이 대폭 향상됩니다." },
+  IMPACT: { name: "충격 (Impact)", color: "#f97316", desc: "강력한 지진 충격파를 일으킵니다." },
+  VORPAL: { name: "보팔 (Vorpal)", color: "#f43f5e", desc: "치명타 확률과 치명타 피해가 극대화됩니다." },
+  BLESS_BLADE: { name: "축복받은 칼날 (Blessed)", color: "#fbbf24", desc: "성스러운 축복이 깃들어 사악한 존재를 정화합니다." },
+  NO_TELE: { name: "순간이동 차단 (No Teleport)", color: "#ec4899", desc: "외부의 강제 순간이동 효과를 차단합니다." },
+  TELEPORT: { name: "순간이동 (Teleportation)", color: "#c084fc", desc: "착용자를 무작위 위치로 순간이동시킵니다." },
+  AGGRAVATE: { name: "도발 (Aggravate)", color: "#ef4444", desc: "주변 몬스터의 어그로를 강하게 끌어당깁니다." },
+  DRAIN_EXP: { name: "경험치 흡수 저주", color: "#f43f5e", desc: "착용자의 경험치를 지속적으로 흡수합니다." },
+  CURSED: { name: "저주받음 (Cursed)", color: "#dc2626", desc: "사악한 저주에 걸려 장착 해제가 불가능합니다." },
+  HEAVY_CURSE: { name: "강력한 저주 (Heavy Curse)", color: "#991b1b", desc: "해제하기 매우 어려운 지독한 저주입니다." },
+  PERMA_CURSE: { name: "영구 저주 (Permanent Curse)", color: "#7f1d1d", desc: "절대 벗을 수 없는 사악한 저주입니다." },
+  BLESSED: { name: "축복받음 (Blessed)", color: "#fbbf24", desc: "성스러운 힘이 깃들어 있습니다." }
 };
 
 /**
@@ -180,7 +242,8 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
     const legacyRatio = 0.15 + (player?.mimicCore?.fusionLevel || 0) * 0.015;
 
     // 뱃지 생성
-    const growthBadge = `<span style="background: rgba(168,85,247,0.18); color: #c084fc; border: 1px solid rgba(168,85,247,0.4); padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: bold; font-size: 0.65rem;">[${growthType}]</span>`;
+    const growthName = GROWTH_TYPE_KO[growthType] || growthType;
+    const growthBadge = `<span style="background: rgba(168,85,247,0.18); color: #c084fc; border: 1px solid rgba(168,85,247,0.4); padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: bold; font-size: 0.65rem;">[${growthName}]</span>`;
     const levelBadge = `<span style="background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: bold; font-size: 0.65rem;">Lv.${level}</span>`;
     const fusionBadge = fusionLevel > 0 
       ? `<span style="background: rgba(59,130,246,0.18); color: #60a5fa; border: 1px solid rgba(59,130,246,0.35); padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: bold; font-size: 0.65rem;">🔮 +${fusionLevel} 융합</span>`
@@ -191,6 +254,7 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
     const skillCardsHTML = skills.map((sk, idx) => {
       const elemKey = (sk.element || 'PHYSICAL').toUpperCase();
       const elemStyle = ELEMENT_BADGE_STYLES[elemKey] || ELEMENT_BADGE_STYLES.PHYSICAL;
+      const elemKor = ELEMENT_KO[elemKey] || sk.element || '물리';
       const slotNum = idx + 1;
       const skillColor = sk.color || '#38bdf8';
 
@@ -201,7 +265,7 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
               <span style="font-size: 0.8rem; flex-shrink: 0;">${sk.icon || '⚔️'}</span>
               <span style="overflow: hidden; text-overflow: ellipsis;" title="${sk.name}">[${slotNum}] ${sk.name}</span>
             </span>
-            <span style="font-size: 0.6rem; background: ${elemStyle.bg}; color: ${elemStyle.color}; border: 1px solid ${elemStyle.border}; padding: 0.02rem 0.25rem; border-radius: 3px; font-weight: bold; flex-shrink: 0; white-space: nowrap;">${sk.element || 'PHYSICAL'}</span>
+            <span style="font-size: 0.6rem; background: ${elemStyle.bg}; color: ${elemStyle.color}; border: 1px solid ${elemStyle.border}; padding: 0.02rem 0.25rem; border-radius: 3px; font-weight: bold; flex-shrink: 0; white-space: nowrap;">${elemKor}</span>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.66rem; color: #94a3b8; font-family: monospace;">
             <span>⚔️ 다이스: <b style="color: #f87171;">${sk.dice || '1d4'}</b></span>
@@ -232,15 +296,21 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
           <span style="font-size: 0.65rem; color: #94a3b8;">(레벨 개방 특성)</span>
         </div>
         <div style="display: flex; flex-direction: column; gap: 0.2rem;">
-          ${passives.map(p => `
-            <div style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(168,85,247,0.2); border-radius: 5px; padding: 0.25rem 0.4rem; font-size: 0.67rem;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-weight: bold; color: #e9d5ff;">[Lv.${p.pt}] ${p.name}</span>
-                <span style="color: #a855f7; font-size: 0.6rem; font-family: monospace;">${(p.synergyTags || []).join(', ')}</span>
+          ${passives.map(p => {
+            const tagBadges = (p.synergyTags || []).map(t => {
+              const reg = SYNERGY_TAG_REGISTRY[t];
+              return `<span style="background: rgba(255,255,255,0.06); color: ${reg?.themeColor || '#c084fc'}; padding: 1px 4px; border-radius: 3px; font-size: 0.6rem;">${reg?.displayName || t}</span>`;
+            }).join(' ');
+            return `
+              <div style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(168,85,247,0.2); border-radius: 5px; padding: 0.25rem 0.4rem; font-size: 0.67rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-weight: bold; color: #e9d5ff;">[Lv.${p.pt}] ${p.name}</span>
+                </div>
+                <div style="color: #94a3b8; font-size: 0.63rem; margin-top: 0.05rem;">${p.desc}</div>
+                ${tagBadges ? `<div style="display: flex; flex-wrap: wrap; gap: 0.2rem; margin-top: 0.15rem;">${tagBadges}</div>` : ''}
               </div>
-              <div style="color: #94a3b8; font-size: 0.63rem; margin-top: 0.05rem;">${p.desc}</div>
-            </div>
-          `).join('')}
+            `;
+          }).join('')}
         </div>
       </div>
     `;
@@ -275,7 +345,7 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
     const growthHTML = `
       <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 5px; padding: 0.35rem 0.5rem; font-size: 0.72rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
-          <span>📈 <b>성장 유형:</b> <b style="color: #c084fc;">${growthType}</b></span>
+          <span>📈 <b>성장 유형:</b> <b style="color: #c084fc;">${growthName}</b></span>
           <span style="color: #94a3b8; font-size: 0.68rem;">기본 HP: <b style="color: #ef4444;">${baseHp}</b> | 기본 AC: <b style="color: #38bdf8;">+${baseAC}</b></span>
         </div>
         <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; color: #cbd5e1; font-family: monospace; font-size: 0.68rem;">
@@ -293,7 +363,7 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
     const seenFlags = new Set();
 
     for (let f of allFlags) {
-      if (!f || seenFlags.has(f)) continue;
+      if (!f || seenFlags.has(f) || INTERNAL_META_FLAGS.has(f) || String(f).startsWith('1_IN_') || String(f).startsWith('DROP_')) continue;
       seenFlags.add(f);
       const info = TOME_FLAG_TRANSLATIONS[f];
       const perk = MONSTER_PERKS[f];
@@ -342,7 +412,7 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
           <span>${coreName}</span>
         </h3>
       </div>
-      <div class="detail-desc" style="margin-top: 0.4rem; font-size: 0.8rem; color: var(--text-muted); text-align: left; display: flex; flex-direction: column; gap: 0.45rem; line-height: 1.4; overflow-y: auto; max-height: 240px; padding-right: 4px;">
+      <div class="detail-desc" style="margin-top: 0.4rem; font-size: 0.8rem; color: var(--text-muted); text-align: left; display: flex; flex-direction: column; gap: 0.45rem; line-height: 1.4; padding-right: 4px;">
         ${skillsSectionHTML}
         ${passivesHTML}
         ${statGridHTML}
@@ -452,7 +522,7 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
           <span>${item.name}</span>
         </h3>
       </div>
-      <div class="detail-desc" style="margin-top: 0.4rem; font-size: 0.8rem; color: var(--text-muted); text-align: left; overflow-y: auto; max-height: 140px; padding-right: 4px; line-height: 1.4; display: flex; flex-direction: column; gap: 0.35rem;">
+      <div class="detail-desc" style="margin-top: 0.4rem; font-size: 0.8rem; color: var(--text-muted); text-align: left; padding-right: 4px; line-height: 1.4; display: flex; flex-direction: column; gap: 0.35rem;">
         <p><b>효과:</b> <span style="color: #cbd5e1;">${desc}</span></p>
         ${consumableFlavorHTML}
       </div>
@@ -615,11 +685,10 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
 
   if (item.flags && Array.isArray(item.flags)) {
     for (let f of item.flags) {
+      if (INTERNAL_META_FLAGS.has(f) || String(f).startsWith('1_IN_') || String(f).startsWith('DROP_')) continue;
       const info = TOME_FLAG_TRANSLATIONS[f];
       if (info) {
         flagItems.push(`<li>• <span style="color: ${info.color}; font-weight: bold;">${info.name}</span>: <span style="color: #cbd5e1;">${info.desc}</span></li>`);
-      } else {
-        flagItems.push(`<li>• <span style="color: #38bdf8; font-weight: bold;">${f}</span></li>`);
       }
     }
   }
@@ -708,7 +777,7 @@ export function renderItemDetailHTML(item, player, isEquipped, isSubCore1, isSub
         <span>${item.name}</span>
       </h3>
     </div>
-    <div class="detail-desc" style="margin-top: 0.4rem; font-size: 0.8rem; color: var(--text-muted); text-align: left; overflow-y: auto; max-height: 180px; padding-right: 4px; display: flex; flex-direction: column; gap: 0.4rem;">
+    <div class="detail-desc" style="margin-top: 0.4rem; font-size: 0.8rem; color: var(--text-muted); text-align: left; padding-right: 4px; display: flex; flex-direction: column; gap: 0.4rem;">
       ${specGridHTML}
       ${statChipsHTML}
       ${flagsHTML}
@@ -759,7 +828,7 @@ export function renderTransferMaterialHTML(targetItem, otherCores) {
       <span class="detail-type" style="font-size: 0.7rem; color: #3b82f6; text-transform: uppercase;">[🔮 수치 계승 소재 선택]</span>
       <h3 class="detail-title" style="color: #3b82f6; font-size: 1.1rem; font-weight:600; margin-top: 0.15rem;">소재로 사용할 코어 선택</h3>
     </div>
-    <div class="detail-desc" style="margin-top: 0.5rem; font-size: 0.82rem; color: var(--text-muted); text-align: left; display: flex; flex-direction: column; gap: 0.4rem; line-height: 1.4; overflow-y: auto; max-height: 120px; padding-right: 4px;">
+    <div class="detail-desc" style="margin-top: 0.5rem; font-size: 0.82rem; color: var(--text-muted); text-align: left; display: flex; flex-direction: column; gap: 0.4rem; line-height: 1.4; padding-right: 4px;">
       <p>소재로 사용될 코어는 <b>파괴</b>되며, 해당 코어의 <b>+수치(융합 레벨) 전체</b>가 대상 코어 [${targetItem.name}]에 합산되어 이전됩니다.</p>
       <div style="display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.4rem;">
         ${coresHTML}
@@ -818,11 +887,12 @@ export function renderActiveCoreDetailsHTML(player) {
 
   // 2. 성장 유형 및 성장 공식 배율
   const growthType = config.growthType || 'BALANCED';
+  const growthName = GROWTH_TYPE_KO[growthType] || growthType;
   const pattern = MONSTER_GROWTH_PATTERNS[growthType] || MONSTER_GROWTH_PATTERNS.BALANCED;
   const growthMultiplierHTML = `
     <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 0.45rem 0.6rem; font-size: 0.74rem;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
-        <span>📈 <b>성장 유형:</b> <b style="color: #c084fc;">${growthType}</b></span>
+        <span>📈 <b>성장 유형:</b> <b style="color: #c084fc;">${growthName}</b></span>
         <span style="color: #94a3b8; font-size: 0.68rem;">기본 HP: <b style="color: #ef4444;">${baseHp}</b> | 기본 AC: <b style="color: #38bdf8;">+${baseAC}</b></span>
       </div>
       <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; color: #cbd5e1; font-family: monospace; font-size: 0.7rem;">
@@ -855,11 +925,7 @@ export function renderActiveCoreDetailsHTML(player) {
         ${perkDescList.join('')}
       </ul>
     </div>
-  ` : `
-    <div style="border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 0.4rem; margin-top: 0.2rem; font-size: 0.74rem; color: var(--text-muted); font-style: italic;">
-      💡 코어 고유 특성: 기본 신체 특성 (추가 고유 패시브 없음)
-    </div>
-  `;
+  ` : '';
 
   // 4. 의태 고유 스킬 및 몬스터 로어 숙련도 레벨
   const masteryLvl = player.body?.getLoreLevel ? player.body.getLoreLevel(coreType) : (player.getMorphMasteryLevel ? player.getMorphMasteryLevel(coreType) : 1);
@@ -909,7 +975,7 @@ export function renderActiveCoreDetailsHTML(player) {
   `;
 
   // 5. ToME 전승 생태 서사 (Lore)
-  const flavorText = config.flavorText || config.desc || "A creature from the deep subterranean depths of ToME.";
+  const flavorText = config.flavorText || config.desc || "ToME 지하 심층부에서 채취된 고대 몬스터의 원형 정수입니다.";
   const coreFlavorHTML = `
     <div style="background: rgba(30, 41, 59, 0.45); border-left: 3px solid #fbbf24; border-radius: 6px; padding: 0.45rem 0.65rem; margin-top: 0.2rem; backdrop-filter: blur(8px);">
       <p style="font-size: 0.65rem; color: #fbbf24; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.15rem;">📜 ToME 전승 서사 (Lore)</p>
@@ -923,15 +989,21 @@ export function renderActiveCoreDetailsHTML(player) {
   const lightBadge = lightBonus > 0 ? `<span style="background: rgba(251,191,36,0.18); color: #fbbf24; border: 1px solid rgba(251,191,36,0.35); padding: 0.05rem 0.3rem; border-radius: 4px; font-size: 0.65rem; font-weight: bold;">🏮 광원 +${lightBonus}칸</span>` : '';
 
   const passives = ProceduralSkillSynthesizer.synthesizePassiveTree(coreType);
+  const effectiveUnlockLevel = Math.max(player.level || 1, masteryLvl || 1);
   const passivesSectionHTML = `
     <div style="border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 0.4rem; margin-top: 0.2rem;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
         <span style="font-weight: bold; color: #c084fc; font-size: 0.78rem;">🧬 5티어 의태 패시브 트리:</span>
-        <span style="font-size: 0.68rem; color: #94a3b8;">Lv.${player.level || 1} 기준 활성화</span>
+        <span style="font-size: 0.68rem; color: #94a3b8;">Lv.${effectiveUnlockLevel} 기준 활성화</span>
       </div>
       <div style="display: flex; flex-direction: column; gap: 0.25rem;">
         ${passives.map(p => {
-          const isUnlocked = (player.level || 1) >= (p.pt || 1);
+          const isUnlocked = effectiveUnlockLevel >= (p.pt || 1);
+          const tagBadges = (p.synergyTags || []).map(tag => {
+            const def = SYNERGY_TAG_REGISTRY[tag];
+            return def ? `<span style="background: rgba(255,255,255,0.06); color: ${def.color}; border: 1px solid ${def.color}44; padding: 0.05rem 0.25rem; border-radius: 3px; font-size: 0.6rem;">${def.icon} ${def.name}</span>` : '';
+          }).filter(Boolean).join('');
+
           return `
             <div style="background: rgba(0,0,0,0.25); border: 1px solid ${isUnlocked ? 'rgba(168,85,247,0.4)' : 'rgba(255,255,255,0.08)'}; border-radius: 5px; padding: 0.3rem 0.45rem; opacity: ${isUnlocked ? '1' : '0.6'}; font-size: 0.72rem;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -939,6 +1011,7 @@ export function renderActiveCoreDetailsHTML(player) {
                 <span style="font-size: 0.63rem; color: ${isUnlocked ? '#34d399' : '#f87171'}; font-weight: bold;">${isUnlocked ? '🟢 활성' : '🔒 잠김'}</span>
               </div>
               <div style="color: var(--text-muted); font-size: 0.68rem; margin-top: 0.1rem;">${p.desc}</div>
+              ${tagBadges ? `<div style="display: flex; flex-wrap: wrap; gap: 0.2rem; margin-top: 0.15rem;">${tagBadges}</div>` : ''}
             </div>
           `;
         }).join('')}
@@ -958,9 +1031,12 @@ export function renderActiveCoreDetailsHTML(player) {
         <span>${coreName}</span>
       </h3>
     </div>
-    <div class="detail-desc" style="margin-top: 0.4rem; font-size: 0.8rem; color: var(--text-muted); text-align: left; display: flex; flex-direction: column; gap: 0.4rem; line-height: 1.4; overflow-y: auto; max-height: 280px; padding-right: 4px;">
+    <div class="detail-desc" style="margin-top: 0.4rem; font-size: 0.8rem; color: var(--text-muted); text-align: left; display: flex; flex-direction: column; gap: 0.4rem; line-height: 1.4; padding-right: 4px;">
       <p style="margin: 0; font-size: 0.76rem;"><b>설명:</b> 당신이 현재 모방하여 머물고 있는 바디의 근본(코어) 데이터 형상입니다. 이 코어의 육체적 기본 틀을 기준으로 스킬 및 스탯 성장이 이루어집니다.</p>
       
+      ${passivesSectionHTML}
+      ${skillsSectionHTML}
+
       <div>
         <span style="font-size: 0.74rem; font-weight: bold; color: #38bdf8;">📊 ToME 종족 베이스 6대 스탯:</span>
         ${statGridHTML}
@@ -968,8 +1044,6 @@ export function renderActiveCoreDetailsHTML(player) {
 
       ${growthMultiplierHTML}
       ${perksHTML}
-      ${skillsSectionHTML}
-      ${passivesSectionHTML}
       ${coreFlavorHTML}
 
       <div style="border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 0.4rem; font-size: 0.72rem; color: #cbd5e1; line-height: 1.35;">

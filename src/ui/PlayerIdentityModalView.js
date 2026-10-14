@@ -9,6 +9,8 @@
 
 import { UnifiedTraitEngine } from '../systems/UnifiedTraitEngine.js';
 import { ELEMENT_COLORS, ELEMENT_PALETTES } from '../configs/ThemeColors.js';
+import { ProceduralSkillSynthesizer } from '../systems/ProceduralSkillSynthesizer.js';
+import { SYNERGY_TAG_REGISTRY } from '../entities/Tags.js';
 
 /**
  * 14대 핵심 원소 저항 메타데이터
@@ -194,6 +196,35 @@ export function renderPlayerIdentityModalHTML(player, activeTab = 'STATS') {
       `;
     }).join('');
 
+    const coreKey = player.mimicCore?.coreType || player.mimicCore?.name || 'MON_NOVICE_WARRIOR';
+    const masteryLvl = player.body?.getLoreLevel ? player.body.getLoreLevel(coreKey) : 1;
+    const effectiveUnlockLevel = Math.max(player.level || 1, masteryLvl || 1);
+    const passives = ProceduralSkillSynthesizer.synthesizePassiveTree(coreKey);
+
+    const passivesHtml = `
+      <h4 class="traits-section-title" style="margin-top: 1rem;">🧬 5티어 의태 패시브 트리 (Lv.${effectiveUnlockLevel} 기준)</h4>
+      <div style="display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.3rem;">
+        ${passives.map(p => {
+          const isUnlocked = effectiveUnlockLevel >= (p.pt || 1);
+          const tagBadges = (p.synergyTags || []).map(tag => {
+            const def = SYNERGY_TAG_REGISTRY[tag];
+            return def ? `<span style="background: rgba(255,255,255,0.06); color: ${def.color}; border: 1px solid ${def.color}44; padding: 0.05rem 0.25rem; border-radius: 3px; font-size: 0.6rem;">${def.icon} ${def.name}</span>` : '';
+          }).filter(Boolean).join('');
+
+          return `
+            <div style="background: rgba(0,0,0,0.3); border: 1px solid ${isUnlocked ? 'rgba(168,85,247,0.4)' : 'rgba(255,255,255,0.08)'}; border-radius: 6px; padding: 0.35rem 0.5rem; opacity: ${isUnlocked ? '1' : '0.6'}; font-size: 0.72rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: bold; color: ${isUnlocked ? '#e9d5ff' : '#94a3b8'};">[Lv.${p.pt}] ${p.name}</span>
+                <span style="font-size: 0.63rem; color: ${isUnlocked ? '#34d399' : '#f87171'}; font-weight: bold;">${isUnlocked ? '🟢 활성' : '🔒 잠김'}</span>
+              </div>
+              <div style="color: var(--text-muted); font-size: 0.68rem; margin-top: 0.1rem;">${p.desc}</div>
+              ${tagBadges ? `<div style="display: flex; flex-wrap: wrap; gap: 0.2rem; margin-top: 0.15rem;">${tagBadges}</div>` : ''}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+
     return `
       <div class="identity-traits-container">
         <h4 class="traits-section-title">⚔️ 종족별 슬레이(Slay) 배율</h4>
@@ -205,6 +236,8 @@ export function renderPlayerIdentityModalHTML(player, activeTab = 'STATS') {
         <div class="immunities-grid">
           ${immunitiesHtml}
         </div>
+
+        ${passivesHtml}
       </div>
     `;
   };

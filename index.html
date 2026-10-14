@@ -96,21 +96,31 @@
       <div id="inventory-modal" class="hidden">
         <div class="modal-content">
           <header class="modal-header">
-            <h2>소지품 (INVENTORY)</h2>
+            <h2 id="inventory-modal-title">소지품 (INVENTORY)</h2>
             <button id="modal-close-btn">&times;</button>
           </header>
+          <div id="inventory-modal-tabs" class="modal-tabs">
+            <button class="inv-tab-btn active" data-tab="items">🎒 소지품 & 장비</button>
+            <button class="inv-tab-btn" data-tab="core">🧬 코어 & 패시브</button>
+            <button class="inv-tab-btn" data-tab="skills">⚡ 스킬 & 숙련</button>
+            <button class="inv-tab-btn" data-tab="character">👤 캐릭터 상세</button>
+            <button class="inv-tab-btn" data-tab="lore">📚 도감</button>
+          </div>
           <div class="modal-body">
-            <div class="inventory-left">
-              <div id="inventory-list" class="inventory-grid">
-                <!-- Dynamic item slots will be added here by JS -->
+            <div id="inventory-split-view">
+              <div class="inventory-left">
+                <div id="inventory-list" class="inventory-grid">
+                  <!-- Dynamic item slots will be added here by JS -->
+                </div>
+              </div>
+              <div class="inventory-right">
+                <div id="player-status-panel"></div>
+                <div id="item-detail">
+                  <div class="detail-empty">소지품에서 아이템을 선택하세요.</div>
+                </div>
               </div>
             </div>
-            <div class="inventory-right">
-              <div id="player-status-panel"></div>
-              <div id="item-detail">
-                <div class="detail-empty">소지품에서 아이템을 선택하세요.</div>
-              </div>
-            </div>
+            <div id="inventory-full-view" class="hidden"></div>
           </div>
         </div>
       </div>

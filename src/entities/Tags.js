@@ -442,7 +442,7 @@ export function rollJobSuffix(danger = 1) {
   return "WARRIOR";
 }
 
-export const SYNERGY_TAG_REGISTRY = {
+const RAW_SYNERGY_TAG_REGISTRY = {
   PHYS_RESIST: {
     displayName: "물리 절대 감쇄",
     category: "DEFENSE",
@@ -522,13 +522,22 @@ export const SYNERGY_TAG_REGISTRY = {
   COLD_RESIST: { displayName: "냉기 속성 저항", category: "RESISTANCE", themeColor: "#38bdf8", formatValue: (stacks) => `${Math.min(75, stacks * 15)}% 경감` },
   LIGHTNING_RESIST: { displayName: "전기 속성 저항", category: "RESISTANCE", themeColor: "#eab308", formatValue: (stacks) => `${Math.min(75, stacks * 15)}% 경감` },
   ACID_RESIST: { displayName: "산성 속성 저항", category: "RESISTANCE", themeColor: "#34d399", formatValue: (stacks) => `${Math.min(75, stacks * 15)}% 경감` },
+  POISON_RESIST: { displayName: "맹독 속성 저항", category: "RESISTANCE", themeColor: "#10b981", formatValue: (stacks) => `${Math.min(75, stacks * 15)}% 경감` },
   MANA_RESIST: { displayName: "마나 속성 저항", category: "RESISTANCE", themeColor: "#a78bfa", formatValue: (stacks) => `${Math.min(75, stacks * 15)}% 경감` },
+
   FIRE_MELEE: { displayName: "화염 속성 추가 타격", category: "ELEMENTAL_DMG", themeColor: "#f43f5e", formatValue: (stacks) => `타격 시 +${stacks}d4 (INT 비례) 및 5스택 화염 대폭발` },
   COLD_MELEE: { displayName: "냉기 속성 추가 타격", category: "ELEMENTAL_DMG", themeColor: "#38bdf8", formatValue: (stacks) => `타격 시 +${stacks}d4 (INT 비례) 및 5스택 완동결` },
   LIGHTNING_MELEE: { displayName: "전기 속성 추가 타격", category: "ELEMENTAL_DMG", themeColor: "#eab308", formatValue: (stacks) => `타격 시 +${stacks}d4 (INT/감전비례) 및 5스택 연쇄낙뢰` },
   ACID_MELEE: { displayName: "산성 속성 추가 타격", category: "ELEMENTAL_DMG", themeColor: "#34d399", formatValue: (stacks) => `타격 시 +${stacks}d4 (INT 비례) 및 5스택 AC 영구삭감` },
+  POISON_MELEE: { displayName: "독소 분비체 타격", category: "ELEMENTAL_DMG", themeColor: "#10b981", formatValue: (stacks) => `근접 타격 시 +${stacks}d4 맹독 피해` },
   MANA_MELEE: { displayName: "마나 속성 추가 타격", category: "ELEMENTAL_DMG", themeColor: "#a78bfa", formatValue: (stacks) => `타격 시 +${stacks}d4 (INT 비례) 및 5스택 비전파열` },
-  
+  NETHER_MELEE: { displayName: "황천 사령 접촉", category: "ELEMENTAL_DMG", themeColor: "#7c3aed", formatValue: (stacks) => `근접 타격 시 +${stacks}d4 황천 흡혈 피해` },
+  DARK_MELEE: { displayName: "암흑 속성 추가 타격", category: "ELEMENTAL_DMG", themeColor: "#475569", formatValue: (stacks) => `근접 타격 시 +${stacks}d4 암흑 피해` },
+
+  PASS_WALL: { displayName: "위상 투과 (Pass Wall)", category: "DEFENSE", themeColor: "#818cf8", formatValue: () => "물질계 암벽을 자유롭게 투과하여 이동" },
+  CAN_FLY: { displayName: "비행 본능 (Fly)", category: "VELOCITY", themeColor: "#38bdf8", formatValue: () => "바닥의 모든 함정을 무시하고 비행" },
+  KILL_WALL: { displayName: "암반 굴착 (Carve Wall)", category: "OFFENSE", themeColor: "#a8a29e", formatValue: () => "암벽을 파쇄하여 새로운 통로를 개척" },
+
   INT_BOOST: { displayName: "지능 스탯 증폭", category: "DEFENSE", themeColor: "#c084fc", formatValue: (stacks) => `지능(INT) 스탯 +${stacks * 10}% 증폭` },
   STR_BOOST: { displayName: "힘 스탯 증폭", category: "DEFENSE", themeColor: "#ef4444", formatValue: (stacks) => `힘(STR) 스탯 +${stacks * 10}% 증폭` },
   DEX_BOOST: { displayName: "민첩 스탯 증폭", category: "DEFENSE", themeColor: "#38bdf8", formatValue: (stacks) => `민첩(DEX) 스탯 +${stacks * 10}% 증폭` },
@@ -537,7 +546,7 @@ export const SYNERGY_TAG_REGISTRY = {
   PHYS_MELEE: { displayName: "추가 물리 피해", category: "OFFENSE", themeColor: "#fb7185", formatValue: (stacks) => `물리 타격 시 +${stacks * 3} 고정 추가 피해` },
   MAGIC_BOOST: { displayName: "추가 마법 피해", category: "OFFENSE", themeColor: "#a78bfa", formatValue: (stacks) => `마법 타격 시 +${stacks * 3} 고정 추가 피해` },
   CURSE_BOOST: { displayName: "약화 확률 증폭", category: "OFFENSE", themeColor: "#fda4af", formatValue: (stacks) => `타격 시 ${stacks * 25}% 확률로 마법 취약 부여` },
-  
+
   JOB_WARRIOR: { displayName: "전사 클래스 시너지", category: "OFFENSE", themeColor: "#f87171", formatValue: (stacks) => `전술 물리 공격 보정 (중합: ${stacks})` },
   JOB_MAGE: { displayName: "마법사 클래스 시너지", category: "OFFENSE", themeColor: "#c084fc", formatValue: (stacks) => `주문 극대화 마법 공격 보정 (중합: ${stacks})` },
   JOB_SHAMAN: { displayName: "샤먼 클래스 시너지", category: "OFFENSE", themeColor: "#fb923c", formatValue: (stacks) => `원소 정령 분노 피갈망 활성 (중합: ${stacks})` },
@@ -554,19 +563,121 @@ export const SYNERGY_TAG_REGISTRY = {
   ACTIVE_REND_STRIKE: { displayName: "상처 찢기 스킬", category: "OFFENSE", themeColor: "#fda4af", formatValue: (stacks) => `4턴마다 출혈 타격 스킬 활성화 (중합: ${stacks})` },
   ACTIVE_MANA_BREATH: { displayName: "마나 원소 브레스 스킬", category: "OFFENSE", themeColor: "#c084fc", formatValue: (stacks) => `4턴마다 비전 마나 브레스 격발 활성화 (중합: ${stacks})` },
 
-  STRONG_ATTACK: { displayName: "강한 공격 (3타)", category: "OFFENSE", themeColor: "#f43f5e", formatValue: (stacks) => "매 3타째 공격 시 1.5배 물리 피해 강타 격발" },
-  ACID_COUNTER: { displayName: "산성 반격 보호", category: "DEFENSE", themeColor: "#22c55e", formatValue: (stacks) => "피격 시 15% 확률로 1d4 부식 산성 반사 피해" },
+  STRONG_ATTACK: { displayName: "강한 공격 (3타)", category: "OFFENSE", themeColor: "#f43f5e", formatValue: () => "매 3타째 공격 시 1.5배 물리 피해 강타 격발" },
+  ACID_COUNTER: { displayName: "산성 반격 보호", category: "DEFENSE", themeColor: "#22c55e", formatValue: () => "피격 시 15% 확률로 1d4 부식 산성 반사 피해" },
   EVASION_BOOST: { displayName: "신체 회피 가속", category: "DEFENSE", themeColor: "#10b981", formatValue: (stacks) => `회피 AC 등급 +${stacks} 가산 추가 보정` },
   ACCURACY_BOOST: { displayName: "비열한 기습 명중", category: "OFFENSE", themeColor: "#38bdf8", formatValue: (stacks) => `명중 주사위 판정 롤 +${stacks * 2} 보정` },
-  AMBUSH: { displayName: "벽 지형 암습 기습", category: "OFFENSE", themeColor: "#fb7185", formatValue: (stacks) => "벽에 인접한 적 근접 타격 시 +3 고정 추가 피해" },
-  FRENZY: { displayName: "광폭 더블 FRENZY", category: "OFFENSE", themeColor: "#ec4899", formatValue: (stacks) => "물리 평타 공격 시 20% 확률로 2회 연속 타격" },
-  GIANT_BLOOD: { displayName: "거인의 피 회복력", category: "DEFENSE", themeColor: "#854d0e", formatValue: (stacks) => "피격 시 30% 확률로 소실 체력 10% 즉시 초재생 복구" },
-  ELEMENTAL_BOOST: { displayName: "주문 원소 마법 증폭", category: "OFFENSE", themeColor: "#ef4444", formatValue: (stacks) => "모든 액티브 속성 마법 및 원소 브레스 피해 +50% 증폭" },
-  FEAR_AURA: { displayName: "심연 지배 공포 오라", category: "OFFENSE", themeColor: "#a855f7", formatValue: (stacks) => "5칸 범위 내 모든 적 명중 등급 -3 절대 페널티 디버프" },
-  SPELL_CHARGE: { displayName: "주문 에너지 가속", category: "VELOCITY", themeColor: "#60a5fa", formatValue: (stacks) => "마법 주문 적중 시 행동 에너지 +15 즉시 충전" },
-  SAGE_HEAL: { displayName: "현자의 포식 힐", category: "DEFENSE", themeColor: "#34d399", formatValue: (stacks) => "마법 취약 상태인 적 처치 시 잃은 체력 10% 가속 복구" },
-  HOLY_SHIELD: { displayName: "천사 신성 장벽", category: "DEFENSE", themeColor: "#ffffff", formatValue: (stacks) => "피격 시 10% 확률로 잃은 체력 5% 신성 가호 즉시 회복" },
-  MANA_SHIELD_PASSIVE: { displayName: "천상 마나 실드", category: "DEFENSE", themeColor: "#cbd5e1", formatValue: (stacks) => "스킬 시전 시 가한 대미지만큼 1턴 흡수 마나 보호막 전개" },
-  MELEE_BOOST: { displayName: "근접 물리 투지", category: "OFFENSE", themeColor: "#fbbf24", formatValue: (stacks) => "기본 근접 평타 및 물리 공격 피해량 +15% 증폭" },
-  BERSERK_RAGE: { displayName: "광전사의 분노", category: "OFFENSE", themeColor: "#ec4899", formatValue: (stacks) => "HP 50% 이하 돌입 시 물리 피해 +40% 및 행동 속도 +25% 극대화" },
+  AMBUSH: { displayName: "벽 지형 암습 기습", category: "OFFENSE", themeColor: "#fb7185", formatValue: () => "벽에 인접한 적 근접 타격 시 +3 고정 추가 피해" },
+  FRENZY: { displayName: "광폭 더블 FRENZY", category: "OFFENSE", themeColor: "#ec4899", formatValue: () => "물리 평타 공격 시 20% 확률로 2회 연속 타격" },
+  GIANT_BLOOD: { displayName: "거인의 피 회복력", category: "DEFENSE", themeColor: "#854d0e", formatValue: () => "피격 시 30% 확률로 소실 체력 10% 즉시 초재생 복구" },
+  ELEMENTAL_BOOST: { displayName: "주문 원소 마법 증폭", category: "OFFENSE", themeColor: "#ef4444", formatValue: () => "모든 액티브 속성 마법 및 원소 브레스 피해 +50% 증폭" },
+  FEAR_AURA: { displayName: "심연 지배 공포 오라", category: "OFFENSE", themeColor: "#a855f7", formatValue: () => "5칸 범위 내 모든 적 명중 등급 -3 절대 페널티 디버프" },
+  SPELL_CHARGE: { displayName: "주문 에너지 가속", category: "VELOCITY", themeColor: "#60a5fa", formatValue: () => "마법 주문 적중 시 행동 에너지 +15 즉시 충전" },
+  SAGE_HEAL: { displayName: "현자의 포식 힐", category: "DEFENSE", themeColor: "#34d399", formatValue: () => "마법 취약 상태인 적 처치 시 잃은 체력 10% 가속 복구" },
+  HOLY_SHIELD: { displayName: "천사 신성 장벽", category: "DEFENSE", themeColor: "#ffffff", formatValue: () => "피격 시 10% 확률로 잃은 체력 5% 신성 가호 즉시 회복" },
+  MANA_SHIELD_PASSIVE: { displayName: "천상 마나 실드", category: "DEFENSE", themeColor: "#cbd5e1", formatValue: () => "스킬 시전 시 가한 대미지만큼 1턴 흡수 마나 보호막 전개" },
+  MELEE_BOOST: { displayName: "근접 물리 투지", category: "OFFENSE", themeColor: "#fbbf24", formatValue: () => "기본 근접 평타 및 물리 공격 피해량 +15% 증폭" },
+  BERSERK_RAGE: { displayName: "광전사의 분노", category: "OFFENSE", themeColor: "#ec4899", formatValue: () => "HP 50% 이하 돌입 시 물리 피해 +40% 및 행동 속도 +25% 극대화" },
+
+  // Tactical / Active Ability Tags
+  TACTICAL_MOBILITY: { displayName: "전술적 기동 (Mobility)", category: "VELOCITY", themeColor: "#38bdf8", formatValue: () => "점멸 또는 고속 이동을 통한 위치 재선정" },
+  ALTER_MAP: { displayName: "지형 개조 (Terrain Alter)", category: "OFFENSE", themeColor: "#a8a29e", formatValue: () => "암반 파쇄 및 던전 지형 직접 조작" },
+  DEFENSE_BUFF: { displayName: "방어 태세 (Defense)", category: "DEFENSE", themeColor: "#60a5fa", formatValue: () => "일시적 보호막 또는 방어 강화 전개" },
+  STEALTH_BUFF: { displayName: "은신 장막 (Stealth)", category: "DEFENSE", themeColor: "#64748b", formatValue: () => "어둠의 장막으로 회피 및 기습 극대화" },
+  CONTROL_AOE: { displayName: "광역 군중 제어 (AOE Control)", category: "OFFENSE", themeColor: "#818cf8", formatValue: () => "광역 감속, 공포 또는 상태이상 유발" },
+  CONTROL_SPELL: { displayName: "정신 제어 주문 (Control)", category: "OFFENSE", themeColor: "#c084fc", formatValue: () => "혼란, 마비 또는 감각 왜곡 부여" },
+  HOLY_BUFF: { displayName: "신성 축복 (Holy Blessing)", category: "DEFENSE", themeColor: "#fbbf24", formatValue: () => "성스러운 권능으로 즉각적인 체력 치유" },
+  SPEED_BUFF: { displayName: "신속 가속 (Speed)", category: "VELOCITY", themeColor: "#fbbf24", formatValue: () => "순간적인 폭발적 가속 및 턴 이점 확보" },
+  REFLECT: { displayName: "주문 반사 장갑 (Reflect)", category: "DEFENSE", themeColor: "#67e8f9", formatValue: () => "원거리 마법 투사체를 튕겨내는 거울 광택" },
+  TACTICAL_AURA: { displayName: "원소 방출 오라 (Aura)", category: "OFFENSE", themeColor: "#ef4444", formatValue: () => "체내 원소 에너지를 주변으로 폭발 방출" },
+  PHYS_STUN: { displayName: "충격 기절 (Stun)", category: "OFFENSE", themeColor: "#f59e0b", formatValue: () => "물리적 충격으로 적의 행동을 1턴간 완전 마비" },
+  TACTICAL_CONTROL: { displayName: "전술적 견제 (Tactics)", category: "OFFENSE", themeColor: "#60a5fa", formatValue: () => "밀치기 및 거리 조절을 통한 전장 제어" },
+  APEX_TECHNIQUE: { displayName: "결전 비기 (Apex)", category: "OFFENSE", themeColor: "#ec4899", formatValue: () => "코어 본연의 파괴적인 결정타 기술" },
+  MULTI_HIT_COMBO: { displayName: "연속 타격 (Combo)", category: "OFFENSE", themeColor: "#f43f5e", formatValue: () => "모든 신체 부위를 동원한 다단 연격" },
+
+  // Elemental Spells
+  FIRE_SPELL: { displayName: "화염 주문 (Fire Spell)", category: "OFFENSE", themeColor: "#ef4444", formatValue: () => "원거리 화염 마법 투사체" },
+  COLD_SPELL: { displayName: "냉기 주문 (Cold Spell)", category: "OFFENSE", themeColor: "#38bdf8", formatValue: () => "원거리 냉기 마법 투사체" },
+  LIGHTNING_SPELL: { displayName: "뇌전 주문 (Lightning Spell)", category: "OFFENSE", themeColor: "#eab308", formatValue: () => "원거리 뇌전 마법 투사체" },
+  ACID_SPELL: { displayName: "산성 주문 (Acid Spell)", category: "OFFENSE", themeColor: "#22c55e", formatValue: () => "원거리 산성 마법 투사체" },
+  POISON_SPELL: { displayName: "맹독 주문 (Poison Spell)", category: "OFFENSE", themeColor: "#10b981", formatValue: () => "원거리 맹독 마법 투사체" },
+  NETHER_SPELL: { displayName: "황천 주문 (Nether Spell)", category: "OFFENSE", themeColor: "#7c3aed", formatValue: () => "원거리 황천 마법 투사체" },
+  DARK_SPELL: { displayName: "암흑 주문 (Dark Spell)", category: "OFFENSE", themeColor: "#475569", formatValue: () => "원거리 암흑 마법 투사체" },
+  HOLY_SPELL: { displayName: "신성 주문 (Holy Spell)", category: "OFFENSE", themeColor: "#fef08a", formatValue: () => "성스러운 빛의 마법 투사체" },
+  MANA_SPELL: { displayName: "비전 주문 (Arcane Spell)", category: "OFFENSE", themeColor: "#c084fc", formatValue: () => "순수 비전 마법 투사체" },
+  PHYSICAL_SPELL: { displayName: "물리 투척 (Physical Cast)", category: "OFFENSE", themeColor: "#94a3b8", formatValue: () => "원거리 물리 투척 및 사격" },
+  PLASMA_SPELL: { displayName: "플라즈마 주문 (Plasma Spell)", category: "OFFENSE", themeColor: "#f97316", formatValue: () => "고열 플라즈마 마법 투사체" },
+  SOUND_SPELL: { displayName: "음파 주문 (Sound Spell)", category: "OFFENSE", themeColor: "#06b6d4", formatValue: () => "음파 진동 마법 투사체" },
+  WATER_SPELL: { displayName: "수류 주문 (Water Spell)", category: "OFFENSE", themeColor: "#0284c7", formatValue: () => "고압 수류 마법 투사체" },
+
+  // Elemental Breaths
+  FIRE_BREATH: { displayName: "화염 숨결 (Fire Breath)", category: "OFFENSE", themeColor: "#ef4444", formatValue: () => "광역 화염 방출 브레스" },
+  COLD_BREATH: { displayName: "냉기 숨결 (Cold Breath)", category: "OFFENSE", themeColor: "#38bdf8", formatValue: () => "광역 냉기 방출 브레스" },
+  LIGHTNING_BREATH: { displayName: "뇌전 숨결 (Lightning Breath)", category: "OFFENSE", themeColor: "#eab308", formatValue: () => "광역 뇌전 방출 브레스" },
+  ACID_BREATH: { displayName: "산성 숨결 (Acid Breath)", category: "OFFENSE", themeColor: "#22c55e", formatValue: () => "광역 산성 방출 브레스" },
+  POISON_BREATH: { displayName: "독의 숨결 (Poison Breath)", category: "OFFENSE", themeColor: "#10b981", formatValue: () => "광역 맹독 방출 브레스" },
+  NETHER_BREATH: { displayName: "황천 숨결 (Nether Breath)", category: "OFFENSE", themeColor: "#7c3aed", formatValue: () => "광역 황천 방출 브레스" },
+  CHAOS_BREATH: { displayName: "혼돈 숨결 (Chaos Breath)", category: "OFFENSE", themeColor: "#d946ef", formatValue: () => "광역 혼돈 방출 브레스" },
+  DISENCHANT_BREATH: { displayName: "마력해제 숨결 (Disenchant Breath)", category: "OFFENSE", themeColor: "#a855f7", formatValue: () => "광역 마력해제 브레스" },
+  DISINTEGRATION_BREATH: { displayName: "분해 숨결 (Disintegrate Breath)", category: "OFFENSE", themeColor: "#f43f5e", formatValue: () => "광역 분해 광선 브레스" },
+  FORCE_BREATH: { displayName: "역장 숨결 (Force Breath)", category: "OFFENSE", themeColor: "#64748b", formatValue: () => "광역 역장 충격 브레스" },
+  GRAVITY_BREATH: { displayName: "중력 숨결 (Gravity Breath)", category: "OFFENSE", themeColor: "#475569", formatValue: () => "광역 중력 왜곡 브레스" },
+  INERTIA_BREATH: { displayName: "관성 숨결 (Inertia Breath)", category: "OFFENSE", themeColor: "#94a3b8", formatValue: () => "광역 관성 둔화 브레스" },
+  LIGHT_BREATH: { displayName: "섬광 숨결 (Light Breath)", category: "OFFENSE", themeColor: "#fef08a", formatValue: () => "광역 섬광 방출 브레스" },
+  DARK_BREATH: { displayName: "암흑 숨결 (Dark Breath)", category: "OFFENSE", themeColor: "#334155", formatValue: () => "광역 암흑 방출 브레스" },
+  NEXUS_BREATH: { displayName: "인과 숨결 (Nexus Breath)", category: "OFFENSE", themeColor: "#ec4899", formatValue: () => "광역 인과 왜곡 브레스" },
+  PLASMA_BREATH: { displayName: "플라즈마 숨결 (Plasma Breath)", category: "OFFENSE", themeColor: "#f97316", formatValue: () => "광역 고열 플라즈마 브레스" },
+  SHARDS_BREATH: { displayName: "파편 숨결 (Shards Breath)", category: "OFFENSE", themeColor: "#a3a3a3", formatValue: () => "광역 암석 파편 브레스" },
+  SOUND_BREATH: { displayName: "음파 숨결 (Sound Breath)", category: "OFFENSE", themeColor: "#06b6d4", formatValue: () => "광역 충격 음파 브레스" },
+  TIME_BREATH: { displayName: "시간 숨결 (Time Breath)", category: "OFFENSE", themeColor: "#8b5cf6", formatValue: () => "광역 시간 왜곡 브레스" },
+  CONFUSION_BREATH: { displayName: "혼란 숨결 (Confusion Breath)", category: "OFFENSE", themeColor: "#c084fc", formatValue: () => "광역 정신 혼란 가스 브레스" },
+
+  // Apex Spells
+  FIRE_APEX: { displayName: "화염 극의 (Fire Apex)", category: "OFFENSE", themeColor: "#ef4444", formatValue: () => "파괴적인 최상급 화염 주문" },
+  COLD_APEX: { displayName: "냉기 극의 (Cold Apex)", category: "OFFENSE", themeColor: "#38bdf8", formatValue: () => "파괴적인 최상급 냉기 주문" },
+  LIGHTNING_APEX: { displayName: "뇌전 극의 (Lightning Apex)", category: "OFFENSE", themeColor: "#eab308", formatValue: () => "파괴적인 최상급 뇌전 주문" },
+  ACID_APEX: { displayName: "산성 극의 (Acid Apex)", category: "OFFENSE", themeColor: "#22c55e", formatValue: () => "파괴적인 최상급 산성 주문" },
+  POISON_APEX: { displayName: "맹독 극의 (Poison Apex)", category: "OFFENSE", themeColor: "#10b981", formatValue: () => "파괴적인 최상급 맹독 주문" },
+  NETHER_APEX: { displayName: "황천 극의 (Nether Apex)", category: "OFFENSE", themeColor: "#7c3aed", formatValue: () => "파괴적인 최상급 황천 주문" },
+  DARK_APEX: { displayName: "암흑 극의 (Dark Apex)", category: "OFFENSE", themeColor: "#475569", formatValue: () => "파괴적인 최상급 암흑 주문" },
+  CHAOS_APEX: { displayName: "혼돈 극의 (Chaos Apex)", category: "OFFENSE", themeColor: "#d946ef", formatValue: () => "파괴적인 최상급 혼돈 주문" },
+  MANA_APEX: { displayName: "비전 극의 (Mana Apex)", category: "OFFENSE", themeColor: "#c084fc", formatValue: () => "파괴적인 최상급 비전 주문" },
+  WATER_APEX: { displayName: "수류 극의 (Water Apex)", category: "OFFENSE", themeColor: "#0284c7", formatValue: () => "파괴적인 최상급 수류 주문" },
+
+  // Additional Melee
+  PHYSICAL_MELEE: { displayName: "물리 연타", category: "ELEMENTAL_DMG", themeColor: "#fb7185", formatValue: (stacks) => `근접 타격 시 +${stacks * 3} 물리 추가 피해` },
+  CONFUSION_MELEE: { displayName: "혼란 타격", category: "ELEMENTAL_DMG", themeColor: "#c084fc", formatValue: () => "타격 시 정신 혼란 유발" },
+  SHARDS_MELEE: { displayName: "파편 타격", category: "ELEMENTAL_DMG", themeColor: "#a3a3a3", formatValue: () => "타격 시 암석 파편 출혈 피해" },
+  TIME_MELEE: { displayName: "시간 왜곡 타격", category: "ELEMENTAL_DMG", themeColor: "#8b5cf6", formatValue: () => "타격 시 시간 지연 둔화 유발" }
 };
+
+// Fallback Proxy to guarantee no tag is ever unmapped or returns undefined
+export const SYNERGY_TAG_REGISTRY = new Proxy(RAW_SYNERGY_TAG_REGISTRY, {
+  get(target, prop) {
+    if (typeof prop !== 'string') return target[prop];
+    if (target[prop]) return target[prop];
+
+    const propStr = String(prop);
+    if (propStr.endsWith('_INFUSION')) {
+      const elem = propStr.replace('_INFUSION', '');
+      return { displayName: `${elem} 주입`, category: 'ELEMENTAL_DMG', themeColor: '#f59e0b', formatValue: () => `${elem} 속성 보조 피해 주입` };
+    }
+    if (propStr.endsWith('_STATUS')) {
+      const st = propStr.replace('_STATUS', '');
+      return { displayName: `${st} 유발`, category: 'OFFENSE', themeColor: '#ec4899', formatValue: () => `적중 시 ${st} 상태이상 유발` };
+    }
+    if (propStr.endsWith('_BREATH')) {
+      const elem = propStr.replace('_BREATH', '');
+      return { displayName: `${elem} 숨결`, category: 'OFFENSE', themeColor: '#ef4444', formatValue: () => `광역 ${elem} 브레스` };
+    }
+    if (propStr.endsWith('_SPELL')) {
+      const elem = propStr.replace('_SPELL', '');
+      return { displayName: `${elem} 주문`, category: 'OFFENSE', themeColor: '#38bdf8', formatValue: () => `${elem} 마법 주문` };
+    }
+    if (propStr.endsWith('_APEX')) {
+      const elem = propStr.replace('_APEX', '');
+      return { displayName: `${elem} 극의`, category: 'OFFENSE', themeColor: '#c084fc', formatValue: () => `최상급 ${elem} 비전 기술` };
+    }
+    return { displayName: propStr, category: 'UTILITY', themeColor: '#94a3b8', formatValue: () => propStr };
+  }
+});

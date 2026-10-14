@@ -634,6 +634,62 @@ export class Map {
   }
 
   /**
+   * 지정한 좌표의 벽을 바닥으로 굴착/파쇄합니다 (KILL_WALL / ALTER_MAP)
+   * 최외곽 테두리 및 계단 타일은 파괴 불가 보호 가드가 적용됩니다.
+   * @param {number} x - X 좌표
+   * @param {number} y - Y 좌표
+   * @returns {boolean} 파괴 성공 여부
+   */
+  carveWall(x, y) {
+    if (x <= 0 || y <= 0 || x >= this.width - 1 || y >= this.height - 1) {
+      return false;
+    }
+    const tile = this.getTile(x, y);
+    if (!tile) return false;
+
+    // 계단 타일 절대 파괴 불가 보호
+    if (tile.isStaircase || tile.isUpStaircase || tile.type === 'STAIRS_UP' || tile.type === 'STAIRS_DOWN' || tile.char === '<' || tile.char === '>') {
+      return false;
+    }
+
+    // 이미 통행 가능한 바닥인 경우 패스 (벽 또는 VAULT_WALL만 파괴)
+    if (tile.isWalkable && tile.type !== 'WALL' && tile.type !== 'VAULT_WALL') {
+      return false;
+    }
+
+    const floorColor = this.theme?.colors?.floorColor || '#94a3b8';
+    const floorChar = this.theme?.colors?.floorChar || '.';
+
+    tile.type = 'FLOOR';
+    tile.char = floorChar;
+    tile.color = floorColor;
+    tile.isWalkable = true;
+    tile.blocksVision = false;
+
+    // 파생 구조 동기화: rooms 내 innerWalls에서 제거
+    if (this.rooms) {
+      for (const r of this.rooms) {
+        if (r.innerWalls && Array.isArray(r.innerWalls)) {
+          r.innerWalls = r.innerWalls.filter(w => !(w.x === x && w.y === y));
+        }
+      }
+    }
+
+    this.mutationVersion = (this.mutationVersion || 0) + 1;
+
+    // 3D 복셀 브릿지 동기화
+    if (this.bridge && typeof this.bridge.updateTile === 'function') {
+      this.bridge.updateTile(x, y);
+    }
+
+    return true;
+  }
+
+  digWall(x, y) {
+    return this.carveWall(x, y);
+  }
+
+  /**
    * 두 좌표 사이의 시선(LOS / Transparency) 투과 여부를 브레젠험 알고리즘으로 판정합니다.
    * @param {number} x1 - 출발지 X
    * @param {number} y1 - 출발지 Y

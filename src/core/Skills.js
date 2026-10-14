@@ -8,6 +8,9 @@
 import { getSpeciesConfig, getSpeciesKeyByName } from '../entities/MonsterRegistry.js';
 import { TomeSpellEngine, TOME_CANONICAL_SPELLS } from '../systems/TomeSpellEngine.js';
 import { ProceduralSkillSynthesizer } from '../systems/ProceduralSkillSynthesizer.js';
+import { SYNERGY_TAG_REGISTRY } from '../entities/Tags.js';
+
+export { SYNERGY_TAG_REGISTRY };
 
 // Base static definitions for UI fallbacks
 export const BASE_SKILL_TREES = {

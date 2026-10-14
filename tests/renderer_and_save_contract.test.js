@@ -16,6 +16,7 @@ import { Item } from '../src/entities/Item.js';
 import { Monster } from '../src/entities/Monster.js';
 import { Map } from '../src/map/Map.js';
 import { SaveSystem } from '../src/core/SaveSystem.js';
+import { Voxel3DMapBridge } from '../src/map/Voxel3DMapBridge.js';
 
 describe('Phase 4: FirstPerson3DRenderer Contract', () => {
   it('has no duplicate clearDynamicStairs / buildStaircaseGeometry / updateDynamicStairs method definitions', () => {
@@ -414,5 +415,89 @@ describe('Phase 4: SaveSystem 100% Fidelity Serialization Contract', () => {
     // 5. Verify 3D dynamic stairs elimination was triggered
     expect(restoredGame.renderer3d.clearDynamicStairs).toHaveBeenCalled();
     expect(restoredGame.renderer3d.updateDynamicStairs).toHaveBeenCalledWith(restoredGame);
+  });
+
+  describe('Contract 2: Wall Carving (carveWall) & 3D Bridge Cache Synchronization', () => {
+    it('carves an inner wall, updates map state, mutationVersion, room innerWalls, and syncs Voxel3DMapBridge', () => {
+      const map = new Map(20, 20);
+
+      // Find an inner wall tile not on boundary
+      let targetX = -1;
+      let targetY = -1;
+      for (let y = 1; y < 19; y++) {
+        for (let x = 1; x < 19; x++) {
+          const tile = map.getTile(x, y);
+          if (tile && (tile.type === 'WALL' || !tile.isWalkable) && !tile.isStaircase) {
+            targetX = x;
+            targetY = y;
+            break;
+          }
+        }
+        if (targetX !== -1) break;
+      }
+
+      expect(targetX).toBeGreaterThan(0);
+      expect(targetY).toBeGreaterThan(0);
+
+      // Attach bridge
+      const bridge = new Voxel3DMapBridge(map);
+      expect(map.bridge).toBe(bridge);
+
+      // Verify before state
+      const initialMutation = map.mutationVersion || 0;
+      const initialVoxel = bridge.getVoxelAt(targetX, targetY);
+      expect(initialVoxel.themeKey).toBe('WALL');
+
+      // Add a dummy innerWall coordinate to rooms[0] if exists
+      if (map.rooms && map.rooms.length > 0) {
+        if (!map.rooms[0].innerWalls) map.rooms[0].innerWalls = [];
+        map.rooms[0].innerWalls.push({ x: targetX, y: targetY });
+      }
+
+      // Execute carveWall
+      const carved = map.carveWall(targetX, targetY);
+      expect(carved).toBe(true);
+
+      // Verify tile state
+      const tileAfter = map.getTile(targetX, targetY);
+      expect(tileAfter.type).toBe('FLOOR');
+      expect(tileAfter.char).toBe('.');
+      expect(tileAfter.isWalkable).toBe(true);
+      expect(tileAfter.blocksVision).toBe(false);
+
+      // Verify mutation version incremented
+      expect(map.mutationVersion).toBe(initialMutation + 1);
+
+      // Verify rooms.innerWalls synchronized
+      if (map.rooms && map.rooms.length > 0 && map.rooms[0].innerWalls) {
+        const found = map.rooms[0].innerWalls.some(w => w.x === targetX && w.y === targetY);
+        expect(found).toBe(false);
+      }
+
+      // Verify Voxel3DMapBridge synchronized to FLOOR (z = 0)
+      const voxelAfter = bridge.getVoxelAt(targetX, targetY);
+      expect(voxelAfter.themeKey).toBe('FLOOR');
+      expect(voxelAfter.z).toBe(0);
+    });
+
+    it('guards map boundaries and staircases from being carved', () => {
+      const map = new Map(20, 20);
+
+      // Boundary tile (0, 0)
+      const carvedBorder = map.carveWall(0, 0);
+      expect(carvedBorder).toBe(false);
+
+      // Boundary tile (19, 10)
+      const carvedRightBorder = map.carveWall(19, 10);
+      expect(carvedRightBorder).toBe(false);
+
+      // Staircase tile
+      const stairTile = map.getTile(5, 5);
+      stairTile.isStaircase = true;
+      stairTile.type = 'STAIRS_DOWN';
+      const carvedStair = map.carveWall(5, 5);
+      expect(carvedStair).toBe(false);
+      expect(stairTile.type).toBe('STAIRS_DOWN');
+    });
   });
 });

@@ -79,8 +79,81 @@ export class Voxel3DMapBridge {
    */
   constructor(map) {
     this.map = map;
+    if (this.map) {
+      this.map.bridge = this;
+    }
     this.voxelGrid = [];
     this.rebuildVoxelGrid();
+  }
+
+  /**
+   * 특정 (x, y) 좌표의 2D 타일 상태를 읽어 3D 복셀 스택을 갱신합니다.
+   * @param {number} x - X 좌표
+   * @param {number} y - Y 좌표
+   */
+  updateTile(x, y) {
+    if (!this.map || x < 0 || y < 0 || x >= this.map.width || y >= this.map.height) return;
+    const tile = this.map.tiles?.[y]?.[x] || (typeof this.map.getTile === 'function' ? this.map.getTile(x, y) : null);
+    if (!tile) return;
+
+    let themeKey = 'FLOOR';
+    let maxZ = 0;
+    let isWalkable = tile.isWalkable;
+
+    // Check if inside special room
+    if (this.map.rooms) {
+      for (const room of this.map.rooms) {
+        if (x >= room.x1 && x < room.x2 && y >= room.y1 && y < room.y2) {
+          if (tile.isWalkable) {
+            if (room.type === 'TREASURE_VAULT') themeKey = 'TREASURE';
+            else if (room.type === 'MONSTER_PIT') { themeKey = 'ELEVATED'; maxZ = 1; }
+            else if (room.type === 'BOSS') themeKey = 'LAVA';
+          }
+          break;
+        }
+      }
+    }
+
+    if (tile.char === '#' || tile.type === 'WALL' || tile.type === 'VAULT_WALL') {
+      themeKey = 'WALL';
+      maxZ = 2;
+      isWalkable = false;
+    } else if (tile.char === '+' || tile.type === 'DOOR') {
+      themeKey = 'DOOR';
+      maxZ = 1;
+      isWalkable = true;
+    } else if (tile.char === '>' || tile.type === 'STAIRS_DOWN') {
+      themeKey = 'STAIRS_DOWN';
+      maxZ = 0;
+      isWalkable = true;
+    } else if (tile.char === '<' || tile.type === 'STAIRS_UP') {
+      themeKey = 'STAIRS_UP';
+      maxZ = 0;
+      isWalkable = true;
+    } else if (tile.char === '$' || tile.char === '*' || tile.type === 'TREASURE' || tile.type === 'VAULT_FLOOR') {
+      themeKey = 'TREASURE';
+      maxZ = 0;
+      isWalkable = true;
+    } else if (tile.char === '^' || (tile.color && tile.color.includes('f97316')) || tile.type === 'LAVA') {
+      themeKey = 'LAVA';
+      maxZ = 0;
+      isWalkable = true;
+    }
+
+    const stack = [];
+    for (let z = 0; z <= maxZ; z++) {
+      stack.push({
+        x, y, z,
+        themeKey: (z === maxZ) ? themeKey : (themeKey === 'WALL' ? 'WALL' : 'FLOOR'),
+        isWalkable: (z === maxZ) ? isWalkable : false,
+        isTop: (z === maxZ),
+        originalTile: tile
+      });
+    }
+
+    if (this.voxelGrid && this.voxelGrid[x]) {
+      this.voxelGrid[x][y] = stack;
+    }
   }
 
   /**
@@ -196,5 +269,15 @@ export class Voxel3DMapBridge {
   getTopVoxel(x, y) {
     const stack = this.getVoxelStack(x, y);
     return stack.length > 0 ? stack[stack.length - 1] : null;
+  }
+
+  /**
+   * 지정한 (x, y) 좌표의 복셀 객체 (최상단)를 반환합니다.
+   * @param {number} x - X 좌표
+   * @param {number} y - Y 좌표
+   * @returns {object|null}
+   */
+  getVoxelAt(x, y) {
+    return this.getTopVoxel(x, y);
   }
 }

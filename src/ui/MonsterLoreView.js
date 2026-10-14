@@ -13,6 +13,10 @@ import { WEAPON_MASTERY_CONFIG } from '../entities/MimicBody.js';
 import { getSpeciesConfig } from '../entities/MonsterRegistry.js';
 import { MONSTER_PERKS } from '../entities/Perks.js';
 import { MonsterSpellFactory } from '../systems/MonsterSpellFactory.js';
+import { BLOW_METHOD_GRAMMAR, BLOW_EFFECT_GRAMMAR, SPELL_DESCRIPTOR_GRAMMAR } from '../configs/SynthesisSchemaConfig.js';
+import { SYNERGY_TAG_REGISTRY } from '../entities/Tags.js';
+import { ProceduralSkillSynthesizer } from '../systems/ProceduralSkillSynthesizer.js';
+import { INTERNAL_META_FLAGS, TOME_FLAG_TRANSLATIONS } from './InventoryView.js';
 
 /**
  * 유니크 몬스터 처치 통계 데이터를 산출합니다.
@@ -78,7 +82,10 @@ function renderFlagChipsHTML(flags = []) {
   };
 
   const chips = [];
+  const seen = new Set();
   flags.forEach(f => {
+    if (!f || seen.has(f) || INTERNAL_META_FLAGS.has(f) || String(f).startsWith('1_IN_') || String(f).startsWith('DROP_')) return;
+    seen.add(f);
     if (FLAG_STYLE_MAP[f]) {
       const s = FLAG_STYLE_MAP[f];
       chips.push(`
@@ -86,12 +93,18 @@ function renderFlagChipsHTML(flags = []) {
           ${s.label}
         </span>
       `);
+    } else if (TOME_FLAG_TRANSLATIONS[f]) {
+      const info = TOME_FLAG_TRANSLATIONS[f];
+      chips.push(`
+        <span style="background: rgba(255,255,255,0.06); color: ${info.color}; border: 1px solid ${info.color}44; padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: bold; font-size: 0.65rem; white-space: nowrap;">
+          ${info.name.split(' (')[0]}
+        </span>
+      `);
     }
   });
 
   if (chips.length === 0) {
-    const previewFlags = flags.slice(0, 3).map(f => `<span style="background: rgba(255,255,255,0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); padding: 0.1rem 0.3rem; border-radius: 4px; font-size: 0.65rem;">${f}</span>`);
-    return previewFlags.join(' ');
+    return `<span style="color:var(--text-muted); font-size:0.7rem;">기본 상태</span>`;
   }
 
   return chips.join(' ');
@@ -121,25 +134,41 @@ export function renderMonsterDetailCardHTML(monster, player = null) {
   // 공격 패턴 표 생성
   let attacksHTML = `<span style="color:var(--text-muted); font-size:0.72rem; font-style:italic;">특수 물리 타격 없음</span>`;
   if (monster.attacks && Array.isArray(monster.attacks) && monster.attacks.length > 0) {
-    const attackRows = monster.attacks.map(att => `
-      <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:0.2rem 0.4rem; border-radius:4px; border:1px solid rgba(255,255,255,0.04); font-size:0.72rem;">
-        <span style="color:#cbd5e1; font-weight:600;">⚔️ ${att.method || 'HIT'} (${att.effect || 'HURT'})</span>
-        <span style="color:#f87171; font-weight:bold; font-family:monospace;">${att.damage || '1d4'}</span>
-      </div>
-    `).join('');
+    const attackRows = monster.attacks.map(att => {
+      const methodSpec = BLOW_METHOD_GRAMMAR[att.method];
+      const effectSpec = BLOW_EFFECT_GRAMMAR[att.effect];
+      const methodKo = methodSpec?.koVerb || att.method || '타격';
+      const effectKo = effectSpec?.koPrefix ? `${effectSpec.koPrefix} 피해` : (att.effect || '일반 피해');
+      const icon = methodSpec?.icon || '⚔️';
+      return `
+        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:0.2rem 0.4rem; border-radius:4px; border:1px solid rgba(255,255,255,0.04); font-size:0.72rem;">
+          <span style="color:#cbd5e1; font-weight:600;">${icon} ${methodKo} (${effectKo})</span>
+          <span style="color:#f87171; font-weight:bold; font-family:monospace;">${att.damage || '1d4'}</span>
+        </div>
+      `;
+    }).join('');
     attacksHTML = `<div style="display:flex; flex-direction:column; gap:0.25rem;">${attackRows}</div>`;
   }
 
   // 주문 및 브레스 목록
   let spellsHTML = '';
   if (monster.spells && Array.isArray(monster.spells) && monster.spells.length > 0) {
-    const spellBadges = monster.spells.map(s => `<span style="background:rgba(168,85,247,0.12); color:#c084fc; border:1px solid rgba(168,85,247,0.25); padding:0.1rem 0.35rem; border-radius:4px; font-size:0.65rem; font-weight:bold;">🔮 ${s}</span>`).join(' ');
-    spellsHTML = `
-      <div style="margin-top:0.35rem;">
-        <span style="font-size:0.7rem; color:#c084fc; font-weight:bold;">비전 주문 & 마법:</span>
-        <div style="display:flex; flex-wrap:wrap; gap:0.25rem; margin-top:0.15rem;">${spellBadges}</div>
-      </div>
-    `;
+    const validSpells = monster.spells.filter(s => s && !INTERNAL_META_FLAGS.has(s) && !String(s).startsWith('1_IN_') && !String(s).startsWith('DROP_'));
+    if (validSpells.length > 0) {
+      const spellBadges = validSpells.map(s => {
+        const spec = SPELL_DESCRIPTOR_GRAMMAR[s];
+        const name = spec?.name || s;
+        const icon = spec?.icon || '🔮';
+        const color = spec?.color || '#c084fc';
+        return `<span style="background:rgba(168,85,247,0.12); color:${color}; border:1px solid ${color}44; padding:0.1rem 0.35rem; border-radius:4px; font-size:0.65rem; font-weight:bold;">${icon} ${name}</span>`;
+      }).join(' ');
+      spellsHTML = `
+        <div style="margin-top:0.35rem;">
+          <span style="font-size:0.7rem; color:#c084fc; font-weight:bold;">비전 주문 & 마법:</span>
+          <div style="display:flex; flex-wrap:wrap; gap:0.25rem; margin-top:0.15rem;">${spellBadges}</div>
+        </div>
+      `;
+    }
   }
 
   // 4대 고유 의태 스킬 (Innate Skills) 및 실시간 해금 상태
@@ -185,6 +214,36 @@ export function renderMonsterDetailCardHTML(monster, player = null) {
       </div>
     `;
   }
+
+  const passives = ProceduralSkillSynthesizer.synthesizePassiveTree(monsterKey);
+  const passivesHTML = `
+    <div style="margin-top: 0.1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+        <p style="font-size: 0.74rem; font-weight: bold; color: #c084fc; margin: 0;">🧬 5티어 의태 패시브 트리</p>
+        <span style="font-size: 0.68rem; color: #94a3b8;">Lv.${loreLvl} 기준 활성화</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+        ${passives.map(p => {
+          const isUnlocked = loreLvl >= (p.pt || 1);
+          const tagBadges = (p.synergyTags || []).map(tag => {
+            const def = SYNERGY_TAG_REGISTRY[tag];
+            return def ? `<span style="background: rgba(255,255,255,0.06); color: ${def.color}; border: 1px solid ${def.color}44; padding: 0.05rem 0.25rem; border-radius: 3px; font-size: 0.6rem;">${def.icon} ${def.name}</span>` : '';
+          }).filter(Boolean).join('');
+
+          return `
+            <div style="background: rgba(0,0,0,0.25); border: 1px solid ${isUnlocked ? 'rgba(168,85,247,0.4)' : 'rgba(255,255,255,0.08)'}; border-radius: 5px; padding: 0.3rem 0.45rem; opacity: ${isUnlocked ? '1' : '0.6'}; font-size: 0.72rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: bold; color: ${isUnlocked ? '#e9d5ff' : '#94a3b8'};">[Lv.${p.pt}] ${p.name}</span>
+                <span style="font-size: 0.63rem; color: ${isUnlocked ? '#34d399' : '#f87171'}; font-weight: bold;">${isUnlocked ? '🟢 활성' : '🔒 잠김'}</span>
+              </div>
+              <div style="color: var(--text-muted); font-size: 0.68rem; margin-top: 0.1rem;">${p.desc}</div>
+              ${tagBadges ? `<div style="display: flex; flex-wrap: wrap; gap: 0.2rem; margin-top: 0.15rem;">${tagBadges}</div>` : ''}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
 
   const flagsChipsHTML = renderFlagChipsHTML(monster.flags || []);
 
@@ -249,6 +308,9 @@ export function renderMonsterDetailCardHTML(monster, player = null) {
 
       <!-- 4대 고유 의태 스킬 -->
       ${innateSkillsHTML}
+
+      <!-- 5티어 의태 패시브 트리 -->
+      ${passivesHTML}
 
       <!-- 플레이버 텍스트 / 서사 -->
       <div style="background: rgba(30, 41, 59, 0.45); border-left: 3px solid #fbbf24; border-radius: 4px; padding: 0.45rem 0.65rem; margin-top: 0.1rem;">

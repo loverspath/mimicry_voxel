@@ -133,23 +133,26 @@ describe('Procedural Gimmick & Classic Fantasy Naming V2 Specification Test Suit
       const skills = ProceduralSkillSynthesizer.synthesizeMonsterSkillSet('MON_IMP');
       expect(skills.length).toBe(4);
 
-      // Slot 1: Poison strike
+      // Slot 1: Primary fire spell (BO_FIRE) for caster
       expect(skills[0].slot).toBe(1);
-      expect(skills[0].element).toBe('POISON');
+      expect(skills[0].element).toBe('FIRE');
+      expect(skills[0].type).toBe('PROJECTILE');
+      expect(skills[0].requiredMastery).toBe(1);
+      expect(skills[0].cooldown).toBeLessThanOrEqual(2);
 
-      // Slot 2: Mana shield
+      // Slot 2: Mana shield or control/debuff
       expect(skills[1].slot).toBe(2);
-      expect(skills[1].name).toBe('마력 보호막');
+      expect(skills[1].requiredMastery).toBe(1);
 
       // Slot 3: Tactical blink / short teleport
       expect(skills[2].slot).toBe(3);
       expect(skills[2].name).toBe('단거리 전이');
       expect(skills[2].type).toBe('TELEPORT');
+      expect(skills[2].requiredMastery).toBe(3);
 
-      // Slot 4: Fire bolt spell
+      // Slot 4: Remaining spell (SCARE/Fear or Apex)
       expect(skills[3].slot).toBe(4);
-      expect(skills[3].element).toBe('FIRE');
-      expect(skills[3].type).toBe('PROJECTILE');
+      expect(skills[3].requiredMastery).toBe(6);
 
       // Passive tree
       const passives = ProceduralSkillSynthesizer.synthesizePassiveTree('MON_IMP');
@@ -164,11 +167,15 @@ describe('Procedural Gimmick & Classic Fantasy Naming V2 Specification Test Suit
   // =========================================================================
   describe('Contract 3: 4-Slot Role Separation & Spell Starvation Prevention', () => {
     it('ensures casters and dragon monsters retain spells/breaths in Slot 4', () => {
-      // Novice mage: has MISSILE, etc.
+      // Novice mage: has MISSILE on Slot 1, and spells distributed across slots
       const mageSkills = ProceduralSkillSynthesizer.synthesizeMonsterSkillSet('MON_NOVICE_MAGE');
+      expect(mageSkills[0].slot).toBe(1);
+      expect(mageSkills[0].type).toBe('PROJECTILE');
+      expect(mageSkills[0].requiredMastery).toBe(1);
+      expect(['마법 화살', '화염 화살', '냉기 화살', '마법 미사일']).toContain(mageSkills[0].name);
+
       expect(mageSkills[3].slot).toBe(4);
-      expect(mageSkills[3].type).toBe('PROJECTILE');
-      expect(['마법 화살', '화염 화살', '냉기 화살', '마법 미사일']).toContain(mageSkills[3].name);
+      expect(mageSkills[3].requiredMastery).toBe(6);
 
       // Baby red dragon: breathElement FIRE
       const redDragonSkills = ProceduralSkillSynthesizer.synthesizeMonsterSkillSet('MON_BABY_RED_DRAGON');
@@ -215,7 +222,7 @@ describe('Procedural Gimmick & Classic Fantasy Naming V2 Specification Test Suit
       expect(hpWithFlag).toBe(Math.floor(hpWithoutFlag * 1.25));
     });
 
-    it('verifies Giant / Troll / Ogre regeneration and Slime acid counter in CombatCalculator', () => {
+    it('verifies Giant / Troll / Ogre regeneration and Slime acid counter in CombatCalculator deterministically', () => {
       const mockGame = { addLogEntry: vi.fn(), map: { getTile: () => ({ isWalkable: true }) } };
       const player = new Player(10, 10, 'MON_NOVICE_WARRIOR');
       player.stats = { hp: 50, maxHp: 50 };
@@ -224,35 +231,37 @@ describe('Procedural Gimmick & Classic Fantasy Naming V2 Specification Test Suit
       const ogre = new Monster(0, 0, 'MON_OGRE');
       ogre.stats.maxHp = 100;
       ogre.stats.hp = 20;
+      ogre.giantBloodCooldown = 0;
 
-      // Run multiple generic attack synergies to trigger regen
-      let regenTriggered = false;
-      for (let i = 0; i < 50; i++) {
-        ogre.stats.hp = 20;
-        ogre.giantBloodCooldown = 0;
-        CombatCalculator.processGenericAttackSynergies(player, ogre, {}, 10, mockGame);
-        if (ogre.stats.hp > 20) {
-          regenTriggered = true;
-          break;
-        }
-      }
-      expect(regenTriggered).toBe(true);
+      // 100% deterministic test with rng injection: roll < threshold triggers regen
+      CombatCalculator.processGenericAttackSynergies(player, ogre, {}, 10, mockGame, { rng: () => 0.0 });
+      expect(ogre.stats.hp).toBeGreaterThan(20);
+      expect(ogre.giantBloodCooldown).toBeGreaterThan(0);
+
+      // Cooldown prevents regen even if roll is 0.0
+      const hpAfterRegen = ogre.stats.hp;
+      CombatCalculator.processGenericAttackSynergies(player, ogre, {}, 10, mockGame, { rng: () => 0.0 });
+      expect(ogre.stats.hp).toBe(hpAfterRegen);
+
+      // Reset cooldown, roll >= threshold does not trigger regen
+      ogre.giantBloodCooldown = 0;
+      CombatCalculator.processGenericAttackSynergies(player, ogre, {}, 10, mockGame, { rng: () => 0.99 });
+      expect(ogre.stats.hp).toBe(hpAfterRegen);
 
       // Slime monster acid reflection (char: 'j')
       const slime = new Monster(0, 0, 'MON_GREEN_JELLY');
       slime.stats.maxHp = 50;
       slime.stats.hp = 50;
+      player.stats.hp = 50;
 
-      let acidTriggered = false;
-      for (let i = 0; i < 50; i++) {
-        player.stats.hp = 50;
-        CombatCalculator.processGenericAttackSynergies(player, slime, {}, 10, mockGame);
-        if (player.stats.hp < 50) {
-          acidTriggered = true;
-          break;
-        }
-      }
-      expect(acidTriggered).toBe(true);
+      // 100% deterministic test with rng injection: roll < threshold triggers acid counter
+      CombatCalculator.processGenericAttackSynergies(player, slime, {}, 10, mockGame, { rng: () => 0.0 });
+      expect(player.stats.hp).toBeLessThan(50);
+
+      // Roll >= threshold does not trigger acid counter
+      player.stats.hp = 50;
+      CombatCalculator.processGenericAttackSynergies(player, slime, {}, 10, mockGame, { rng: () => 0.99 });
+      expect(player.stats.hp).toBe(50);
     });
 
     it('verifies PASS_WALL allows passing non-border walls and blocks border breach', () => {

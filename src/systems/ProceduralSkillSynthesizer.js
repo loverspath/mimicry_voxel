@@ -19,6 +19,33 @@ import {
 import { EFFECT_OP_TYPES } from '../configs/EffectOpSchema.js';
 import { EffectVM } from './EffectVM.js';
 
+export const ELEMENT_KO = Object.freeze({
+  PHYSICAL: '물리',
+  POISON: '맹독',
+  FIRE: '화염',
+  COLD: '냉기',
+  LIGHTNING: '뇌전',
+  ELEC: '뇌전',
+  ACID: '산성',
+  MANA: '비전',
+  NETHER: '황천',
+  DARK: '암흑',
+  LIGHT: '광휘',
+  CHAOS: '혼돈',
+  SOUND: '음파',
+  SHARDS: '파편',
+  WATER: '수류',
+  FORCE: '역장',
+  PLASMA: '플라즈마',
+  TIME: '시공간',
+  GRAVITY: '중력',
+  INERTIA: '관성',
+  CONFUSION: '혼란',
+  DISENCHANT: '해체',
+  DISINTEGRATION: '분해',
+  HOLY: '신성'
+});
+
 /**
  * 32-bit FNV-1a deterministic hash.
  * @param {string} str
@@ -42,7 +69,7 @@ export class ActiveSkill {
     this.id = data.id;
     this.tomeKey = data.tomeKey || data.id;
     this.slot = data.slot; // 1, 2, 3, 4
-    this.requiredMastery = data.requiredMastery || (data.slot <= 2 ? 1 : (data.slot === 3 ? 10 : 25));
+    this.requiredMastery = data.requiredMastery || (data.slot <= 2 ? 1 : (data.slot === 3 ? 3 : 6));
     this.pt = data.pt || this.requiredMastery;
     this.name = data.name;
     this.desc = data.desc || '';
@@ -289,26 +316,34 @@ export class ProceduralSkillSynthesizer {
     const rawSpells = (monsterData.spells || []).filter(s => typeof s === 'string' && !s.startsWith('1_IN_') && !s.startsWith('FREQ_'));
     const flags = new Set(monsterData.flags || []);
     const char = monsterData.char || 'p';
+    const growthType = monsterData.growthType || 'BALANCED';
+
+    // 5대 데이터 시그니처 (growthType, spells, attacks, flags, breathElement) 기반 일반화 아키타입 판정
+    const isCaster = growthType === 'MAGE' || growthType === 'PRIEST' || char === 'u' ||
+      rawSpells.some(s => s.startsWith('BO_') || s.startsWith('BA_') || s === 'MISSILE' || s === 'MIND_BLAST' || s.startsWith('CAUSE_'));
+    const isRangedArcher = growthType === 'ARCHER' || flags.has('ARCHER') || rawSpells.some(s => s.startsWith('ARROW_'));
+
+    const remainingSpells = [...rawSpells];
 
     // ----------------------------------------------------
-    // Slot 1: Signature Blow / Innate Strike (reqMastery: 1)
+    // Slot 1: Signature Blow / Innate Strike or Core Caster Spell (reqMastery: 1)
     // ----------------------------------------------------
-    const slot1 = this._synthesizeSlot1(cleanKey, monsterData, rawAttacks, flags, char, seed);
+    const slot1 = this._synthesizeSlot1(cleanKey, monsterData, rawAttacks, flags, char, seed, remainingSpells, isCaster, isRangedArcher);
 
     // ----------------------------------------------------
-    // Slot 2: Primary Elemental / Ranged / Secondary Strike (reqMastery: 1)
+    // Slot 2: Primary Elemental / Ranged / Secondary Strike / Support (reqMastery: 1)
     // ----------------------------------------------------
-    const slot2 = this._synthesizeSlot2(cleanKey, monsterData, rawSpells, rawAttacks, flags, char, seed, slot1);
+    const slot2 = this._synthesizeSlot2(cleanKey, monsterData, remainingSpells, rawAttacks, flags, char, seed, slot1);
 
     // ----------------------------------------------------
-    // Slot 3: Tactical / Mobility / Control / Aura (reqMastery: 10)
+    // Slot 3: Tactical / Mobility / Control / Aura (reqMastery: 3)
     // ----------------------------------------------------
-    const slot3 = this._synthesizeSlot3(cleanKey, monsterData, rawSpells, flags, char, seed, [slot1, slot2]);
+    const slot3 = this._synthesizeSlot3(cleanKey, monsterData, remainingSpells, flags, char, seed, [slot1, slot2]);
 
     // ----------------------------------------------------
-    // Slot 4: Apex / Ultimate Finisher (reqMastery: 25)
+    // Slot 4: Apex / Ultimate Finisher / High Spell (reqMastery: 6)
     // ----------------------------------------------------
-    const slot4 = this._synthesizeSlot4(cleanKey, monsterData, rawSpells, rawAttacks, flags, char, seed, [slot1, slot2, slot3]);
+    const slot4 = this._synthesizeSlot4(cleanKey, monsterData, remainingSpells, rawAttacks, flags, char, seed, [slot1, slot2, slot3], isCaster);
 
     const skillset = [slot1, slot2, slot3, slot4];
 
@@ -334,9 +369,52 @@ export class ProceduralSkillSynthesizer {
   }
 
   // =========================================================================
-  // Slot 1: Signature Blow / Innate Strike
+  // Slot 1: Signature Blow / Innate Strike or Core Caster/Ranged Magic
   // =========================================================================
-  static _synthesizeSlot1(key, monsterData, attacks, flags, char, seed) {
+  static _synthesizeSlot1(key, monsterData, attacks, flags, char, seed, availableSpells = [], isCaster = false, isRangedArcher = false) {
+    if (isCaster || isRangedArcher) {
+      let chosenKey = null;
+      if (isRangedArcher) {
+        chosenKey = availableSpells.find(s => s.startsWith('ARROW_')) || 'ARROW_1';
+      } else {
+        // Caster: priority BO_* -> MISSILE -> MIND_BLAST -> CAUSE_*
+        chosenKey = availableSpells.find(s => s.startsWith('BO_')) ||
+                    availableSpells.find(s => s === 'MISSILE') ||
+                    availableSpells.find(s => s === 'MIND_BLAST') ||
+                    availableSpells.find(s => s === 'CAUSE_1' || s === 'CAUSE_2' || s === 'CAUSE_3') ||
+                    (monsterData.growthType === 'PRIEST' ? 'CAUSE_1' : 'MISSILE');
+      }
+
+      if (chosenKey) {
+        const spec = SPELL_DESCRIPTOR_GRAMMAR[chosenKey];
+        if (spec) {
+          const sIdx = availableSpells.indexOf(chosenKey);
+          if (sIdx >= 0) availableSpells.splice(sIdx, 1);
+
+          const cleanName = (spec.name || chosenKey).replace(/\[궁극기\]\s*/g, '');
+          const elemKor = ELEMENT_KO[spec.element] || '비전';
+
+          return new ActiveSkill({
+            id: `${key}_SLOT_1_${chosenKey}`,
+            tomeKey: chosenKey,
+            slot: 1,
+            requiredMastery: 1,
+            name: cleanName,
+            desc: spec.desc || `원거리 ${elemKor} 투사체를 발사하여 대상을 타격합니다. (${spec.dice || '2d6'})`,
+            type: spec.type || 'PROJECTILE',
+            element: spec.element || 'MANA',
+            cooldown: Math.min(2, spec.cooldown || 2),
+            maxRange: spec.range || 6.0,
+            dice: spec.dice || '2d6',
+            color: spec.color || '#38bdf8',
+            icon: spec.icon || '🔮',
+            synergyTags: ['SPELL_CHARGE', `${spec.element || 'MANA'}_SPELL`],
+            ops: spec.ops
+          });
+        }
+      }
+    }
+
     if (attacks.length > 0) {
       const atk0 = attacks[0];
       const method = (atk0.method || 'HIT').toUpperCase();
@@ -359,10 +437,13 @@ export class ProceduralSkillSynthesizer {
         name = '연속 할퀴기와 물어뜯기';
       }
 
+      const elemKey = effectGrammar.element || 'PHYSICAL';
+      const elemKor = ELEMENT_KO[elemKey] || '물리';
+
       const ops = [
         {
           op: EFFECT_OP_TYPES.DEAL_DAMAGE,
-          element: effectGrammar.element || 'PHYSICAL',
+          element: elemKey,
           dice,
           mult: effectGrammar.mult || 1.15,
           ignoreACPct: methodGrammar.ignoreACPct || 0,
@@ -388,15 +469,15 @@ export class ProceduralSkillSynthesizer {
         slot: 1,
         requiredMastery: 1,
         name,
-        desc: `대상을 강하게 가격하는 ${effectGrammar.element} 속성 타격 기술. (${dice})`,
+        desc: `대상을 강하게 가격하는 ${elemKor} 속성 타격 기술. (${dice})`,
         type: methodGrammar.delivery === 'MELEE_RUSH' ? 'CHARGE' : 'MELEE_STRIKE',
-        element: effectGrammar.element || 'PHYSICAL',
+        element: elemKey,
         cooldown: 2,
         maxRange: methodGrammar.range || 1.5,
         dice,
         color: '#f43f5e',
         icon: methodGrammar.icon || '⚔️',
-        synergyTags: [effectGrammar.element ? `${effectGrammar.element}_MELEE` : 'PHYS_MELEE'],
+        synergyTags: [elemKey ? `${elemKey}_MELEE` : 'PHYS_MELEE'],
         ops
       });
     }
@@ -465,6 +546,37 @@ export class ProceduralSkillSynthesizer {
   static _synthesizeSlot2(key, monsterData, spells, attacks, flags, char, seed, slot1) {
     const growthType = monsterData.growthType || 'BALANCED';
     const nameLower = (monsterData.name || '').toLowerCase();
+
+    // 다중 스펠 몬스터의 상태이상/제어/보조 주문 최우선 분배 (BLIND, CONF, SCARE, SLOW, HOLD, HEAL, HASTE 등)
+    const controlSpellKey = spells.find(s => 
+      s === 'CONF' || s === 'BLIND' || s === 'SCARE' || s === 'HOLD' || s === 'SLOW' ||
+      s === 'HEAL' || s === 'HASTE' || s === 'MANA_SHIELD' || s === 'INVULNER' || s === 'FORGET' ||
+      s === 'DISPEL' || s === 'SHRIEK'
+    );
+    if (controlSpellKey) {
+      const spec = SPELL_DESCRIPTOR_GRAMMAR[controlSpellKey];
+      if (spec) {
+        const sIdx = spells.indexOf(controlSpellKey);
+        if (sIdx >= 0) spells.splice(sIdx, 1);
+        const cleanName = (spec.name || controlSpellKey).replace(/\[궁극기\]\s*/g, '');
+        return new ActiveSkill({
+          id: `${key}_SLOT_2_${controlSpellKey}`,
+          tomeKey: controlSpellKey,
+          slot: 2,
+          requiredMastery: 1,
+          name: cleanName,
+          desc: spec.desc,
+          type: spec.type,
+          element: spec.element || 'MANA',
+          cooldown: spec.cooldown || 4,
+          maxRange: spec.range || 5.0,
+          color: spec.color || '#c084fc',
+          icon: spec.icon || '🌀',
+          synergyTags: ['CONTROL_SPELL'],
+          ops: spec.ops
+        });
+      }
+    }
 
     // 1. Ogre / Troll / Giant / Regenerate
     if (flags.has('GIANT') || flags.has('TROLL') || flags.has('OGRE') || flags.has('REGENERATE') || char === 'O' || char === 'T' || char === 'P') {
@@ -710,7 +822,7 @@ export class ProceduralSkillSynthesizer {
   }
 
   // =========================================================================
-  // Slot 3: Terrain / Movement / Environment Interaction Gimmick
+  // Slot 3: Terrain / Movement / Environment Interaction Gimmick (reqMastery: 3)
   // =========================================================================
   static _synthesizeSlot3(key, monsterData, spells, flags, char, seed, prevSkills) {
     const prevIds = new Set(prevSkills.map(s => s.tomeKey));
@@ -723,7 +835,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_3_PASS_WALL`,
         tomeKey: 'PASS_WALL',
         slot: 3,
-        requiredMastery: 10,
+        requiredMastery: 3,
         name: '에테르 투과',
         desc: '물질계를 일시 이탈하여 벽을 자유롭게 통과하여 이동합니다.',
         type: 'TELEPORT',
@@ -745,7 +857,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_3_KILL_WALL`,
         tomeKey: 'KILL_WALL',
         slot: 3,
-        requiredMastery: 10,
+        requiredMastery: 3,
         name: '암반 굴착',
         desc: '전방의 단단한 암벽을 파쇄하여 새로운 통로를 개척하고 주변에 충격파를 일으킵니다.',
         type: 'AOE',
@@ -766,12 +878,13 @@ export class ProceduralSkillSynthesizer {
     // 2.5. Teleport spells for Mages/Casters (priority over flight for casters)
     const casterTeleSpell = spells.find(s => s === 'BLINK' || s === 'TPORT' || s === 'TELE_TO');
     if (casterTeleSpell && (growthType === 'MAGE' || growthType === 'PRIEST')) {
+      spells.splice(spells.indexOf(casterTeleSpell), 1);
       const isBlink = (casterTeleSpell === 'BLINK');
       return new ActiveSkill({
         id: `${key}_SLOT_3_${casterTeleSpell}`,
         tomeKey: casterTeleSpell,
         slot: 3,
-        requiredMastery: 10,
+        requiredMastery: 3,
         name: isBlink ? '단거리 전이' : '차원 이동',
         desc: '공간을 왜곡하여 안전한 위치로 순식간에 순간 이동합니다.',
         type: 'TELEPORT',
@@ -793,7 +906,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_3_AERIAL_SWOOP`,
         tomeKey: 'AERIAL_SWOOP',
         slot: 3,
-        requiredMastery: 10,
+        requiredMastery: 3,
         name: '비상 강습',
         desc: '공중으로 솟구쳐 함정을 무시하고 적의 머리 위로 급강하 타격을 가합니다.',
         type: 'CHARGE',
@@ -817,7 +930,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_3_MIRROR_CARAPACE`,
         tomeKey: 'MIRROR_CARAPACE',
         slot: 3,
-        requiredMastery: 10,
+        requiredMastery: 3,
         name: '거울 장갑',
         desc: '마법 투사체를 튕겨내는 거울 광택 장갑을 활성화합니다.',
         type: 'BUFF',
@@ -833,25 +946,28 @@ export class ProceduralSkillSynthesizer {
       });
     }
 
-    // 5. Teleport spells (BLINK, TPORT, TELE_TO)
-    const teleSpell = spells.find(s => s === 'BLINK' || s === 'TPORT' || s === 'TELE_TO');
+    // 5. Teleport spells (BLINK, TPORT, TELE_TO, etc.)
+    const teleSpell = spells.find(s => s === 'BLINK' || s === 'TPORT' || s === 'TELE_TO' || s === 'TELE_AWAY' || s === 'TELE_LEVEL' || s === 'DARKNESS' || s === 'TRAPS');
     if (teleSpell) {
+      spells.splice(spells.indexOf(teleSpell), 1);
       const isBlink = (teleSpell === 'BLINK');
+      const spec = SPELL_DESCRIPTOR_GRAMMAR[teleSpell];
+      const cleanName = isBlink ? '단거리 전이' : (spec?.name || teleSpell).replace(/\[궁극기\]\s*/g, '');
       return new ActiveSkill({
         id: `${key}_SLOT_3_${teleSpell}`,
         tomeKey: teleSpell,
         slot: 3,
-        requiredMastery: 10,
-        name: isBlink ? '단거리 전이' : '차원 이동',
-        desc: '공간을 왜곡하여 안전한 위치로 순식간에 순간 이동합니다.',
-        type: 'TELEPORT',
-        element: 'MANA',
-        cooldown: isBlink ? 3 : 5,
-        maxRange: isBlink ? 4.0 : 8.0,
-        color: '#c084fc',
-        icon: '🌀',
+        requiredMastery: 3,
+        name: cleanName,
+        desc: spec?.desc || '공간을 왜곡하여 안전한 위치로 순식간에 순간 이동합니다.',
+        type: spec?.type || 'TELEPORT',
+        element: spec?.element || 'MANA',
+        cooldown: isBlink ? 3 : (spec?.cooldown || 5),
+        maxRange: spec?.range || (isBlink ? 4.0 : 8.0),
+        color: spec?.color || '#c084fc',
+        icon: spec?.icon || '🌀',
         synergyTags: ['TACTICAL_MOBILITY'],
-        ops: [
+        ops: spec?.ops || [
           { op: EFFECT_OP_TYPES.DISPLACE, mode: 'BLINK', dist: isBlink ? 4 : 8, target: 'SELF' }
         ]
       });
@@ -863,7 +979,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_3_AURA_FIRE`,
         tomeKey: 'AURA_FIRE',
         slot: 3,
-        requiredMastery: 10,
+        requiredMastery: 3,
         name: '화염 오라 방출',
         desc: '신체 주변에 작열하는 화염 오라를 폭발시켜 근접한 적을 불태웁니다.',
         type: 'AOE',
@@ -884,7 +1000,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_3_AURA_COLD`,
         tomeKey: 'AURA_COLD',
         slot: 3,
-        requiredMastery: 10,
+        requiredMastery: 3,
         name: '서리 오라 방출',
         desc: '신체 주변에 냉기를 방출하여 주변 적을 둔화시킵니다.',
         type: 'AOE',
@@ -905,7 +1021,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_3_AURA_ELEC`,
         tomeKey: 'AURA_ELEC',
         slot: 3,
-        requiredMastery: 10,
+        requiredMastery: 3,
         name: '뇌전 방전',
         desc: '주변 타일에 고압 전기를 방전하여 적을 감전시킵니다.',
         type: 'AOE',
@@ -928,7 +1044,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_3_SHOULDER_TACKLE`,
         tomeKey: 'SHOULDER_TACKLE',
         slot: 3,
-        requiredMastery: 10,
+        requiredMastery: 3,
         name: '어깨 밀치기',
         desc: '체중을 실어 강하게 몸을 부딪혀 적을 뒤로 1칸 밀쳐내고 1턴간 기절시킵니다.',
         type: 'CHARGE',
@@ -953,7 +1069,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_3_SHADOW_STEP`,
         tomeKey: 'SHADOW_STEP',
         slot: 3,
-        requiredMastery: 10,
+        requiredMastery: 3,
         name: '그림자 걸음',
         desc: '그림자 속을 미끄러지듯 이동하여 대상의 배후로 순간 도약합니다.',
         type: 'TELEPORT',
@@ -975,7 +1091,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_3_LEAP_RUSH`,
         tomeKey: 'LEAP_RUSH',
         slot: 3,
-        requiredMastery: 10,
+        requiredMastery: 3,
         name: '도약 돌진',
         desc: '강한 도약으로 거리를 좁혀 적에게 덮치기 타격을 가합니다.',
         type: 'CHARGE',
@@ -998,7 +1114,7 @@ export class ProceduralSkillSynthesizer {
       id: `${key}_SLOT_3_TACTICAL_MANEUVER`,
       tomeKey: 'TACTICAL_MANEUVER',
       slot: 3,
-      requiredMastery: 10,
+      requiredMastery: 3,
       name: '전술적 기동',
       desc: '민첩하게 위치를 전환하여 3턴간 이동 속도를 가속합니다.',
       type: 'BUFF',
@@ -1013,7 +1129,7 @@ export class ProceduralSkillSynthesizer {
   }
 
   // =========================================================================
-  // Slot 4: Apex Finisher / Signature High Spell / Breath
+  // Slot 4: Apex Finisher / Signature High Spell / Breath (reqMastery: 6)
   // =========================================================================
   static _synthesizeSlot4(key, monsterData, spells, attacks, flags, char, seed, prevSkills) {
     const prevIds = new Set(prevSkills.map(s => s.tomeKey));
@@ -1024,6 +1140,9 @@ export class ProceduralSkillSynthesizer {
     const isDragon = flags.has('DRAGON') || char === 'd' || char === 'D' || nameLower.includes('dragon') || nameLower.includes('wyrm');
     const breathSpellKey = spells.find(s => s.startsWith('BR_')) || (isDragon && monsterData.breathElement ? `BR_${monsterData.breathElement}` : null);
     if (breathSpellKey) {
+      if (spells.includes(breathSpellKey)) {
+        spells.splice(spells.indexOf(breathSpellKey), 1);
+      }
       const breathNames = {
         BR_FIRE: '화염의 숨결',
         BR_COLD: '냉기의 숨결',
@@ -1040,7 +1159,7 @@ export class ProceduralSkillSynthesizer {
         BR_SOUN: '음파의 숨결'
       };
       const element = breathSpellKey.replace('BR_', '') || 'FIRE';
-      const breathName = breathNames[breathSpellKey] || `${element} 숨결`;
+      const breathName = breathNames[breathSpellKey] || `${ELEMENT_KO[element] || element} 숨결`;
       const spec = SPELL_DESCRIPTOR_GRAMMAR[breathSpellKey] || {
         element,
         cooldown: 6,
@@ -1053,7 +1172,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_4_${breathSpellKey}`,
         tomeKey: breathSpellKey,
         slot: 4,
-        requiredMastery: 25,
+        requiredMastery: 6,
         name: breathName,
         desc: `전방 원뿔 범위를 향해 강력한 ${breathName}을 내뿜어 광역 피해를 입힙니다.`,
         type: 'BREATH',
@@ -1088,6 +1207,7 @@ export class ProceduralSkillSynthesizer {
     });
 
     if (apexSpellKey) {
+      spells.splice(spells.indexOf(apexSpellKey), 1);
       const spec = SPELL_DESCRIPTOR_GRAMMAR[apexSpellKey] || {
         name: apexSpellKey,
         desc: '강력한 상급 주문을 시전합니다.',
@@ -1106,7 +1226,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_4_${apexSpellKey}`,
         tomeKey: apexSpellKey,
         slot: 4,
-        requiredMastery: 25,
+        requiredMastery: 6,
         name: cleanName,
         desc: `전장을 휩쓰는 강력한 ${cleanName} 주문을 시전합니다. (${spec.dice || '10d10'})`,
         type: spec.type,
@@ -1116,25 +1236,27 @@ export class ProceduralSkillSynthesizer {
         dice: spec.dice || '10d10',
         color: spec.color || '#ec4899',
         icon: '🔮',
-        synergyTags: ['APEX_TECHNIQUE', `${spec.element}_APEX`],
+        synergyTags: ['APEX_TECHNIQUE', `${spec.element || 'MANA'}_APEX`],
         ops: spec.ops
       });
     }
 
-    // 3. Other projectile / offensive spells for Casters (BO_*, MISSILE, ARROW_*)
-    const offensiveSpellKey = spells.find(s => {
+    // 3. Other projectile / offensive spells or remaining spells for Casters
+    const candidateSpellKey = spells.find(s => {
       return (
         s.startsWith('BO_') ||
         s.startsWith('ARROW_') ||
         s === 'MISSILE' ||
         s === 'MIND_BLAST' ||
-        s === 'CAUSE_3' ||
-        s === 'CAUSE_2'
+        s.startsWith('CAUSE_')
       );
-    });
+    }) || (spells.length > 0 ? spells[0] : null);
 
-    if (offensiveSpellKey || growthType === 'MAGE') {
-      const spellKey = offensiveSpellKey || 'BO_FIRE';
+    if (candidateSpellKey || growthType === 'MAGE' || growthType === 'PRIEST') {
+      const spellKey = candidateSpellKey || 'BO_FIRE';
+      if (spells.includes(spellKey)) {
+        spells.splice(spells.indexOf(spellKey), 1);
+      }
       const spec = SPELL_DESCRIPTOR_GRAMMAR[spellKey] || {
         name: spellKey === 'MISSILE' ? '마법 화살' : '화염 화살',
         desc: '원거리 마법 투사체를 발사합니다.',
@@ -1152,18 +1274,20 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_4_${spellKey}`,
         tomeKey: spellKey,
         slot: 4,
-        requiredMastery: 25,
+        requiredMastery: 6,
         name: cleanName,
-        desc: `정밀하게 조준된 ${cleanName} 투사체를 발사하여 대상을 강타합니다.`,
-        type: spec.type,
-        element: spec.element,
+        desc: spec.desc || `정밀하게 조준된 ${cleanName} 투사체를 발사하여 대상을 강타합니다.`,
+        type: spec.type || 'PROJECTILE',
+        element: spec.element || 'MANA',
         cooldown: spec.cooldown || 4,
         maxRange: spec.range || 6.0,
         dice: spec.dice || '4d8',
         color: spec.color || '#38bdf8',
         icon: spec.icon || '🔮',
-        synergyTags: ['APEX_TECHNIQUE', `${spec.element}_SPELL`],
-        ops: spec.ops
+        synergyTags: ['APEX_TECHNIQUE', `${spec.element || 'MANA'}_SPELL`],
+        ops: spec.ops || [
+          { op: EFFECT_OP_TYPES.PROJECT_MISSILE, element: spec.element || 'MANA', dice: spec.dice || '4d8', range: spec.range || 6.0 }
+        ]
       });
     }
 
@@ -1174,7 +1298,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_4_EXPLODE`,
         tomeKey: 'EXPLODE',
         slot: 4,
-        requiredMastery: 25,
+        requiredMastery: 6,
         name: '제어 폭발',
         desc: '체내 폭발성 에너지를 방출하여 주변 타일의 적들에게 강력한 파편 피해를 가합니다.',
         type: 'AOE',
@@ -1195,7 +1319,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_4_ENGULF`,
         tomeKey: 'ENGULF',
         slot: 4,
-        requiredMastery: 25,
+        requiredMastery: 6,
         name: '포식',
         desc: '대상을 신체 내부로 집어삼켜 강력한 소화 피해를 가하고 체력을 회복합니다.',
         type: 'MELEE_STRIKE',
@@ -1218,7 +1342,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_4_SHATTER`,
         tomeKey: 'SHATTER',
         slot: 4,
-        requiredMastery: 25,
+        requiredMastery: 6,
         name: '대지 강타',
         desc: '지면을 강하게 내리쳐 진동파로 주변 지형과 적들을 일제히 흔들어 놓습니다.',
         type: 'AOE',
@@ -1266,7 +1390,7 @@ export class ProceduralSkillSynthesizer {
         id: `${key}_SLOT_4_COMBO_STRIKE`,
         tomeKey: 'COMBO_STRIKE',
         slot: 4,
-        requiredMastery: 25,
+        requiredMastery: 6,
         name: comboName,
         desc: `모든 타격 부위를 연계하여 ${attacks.length}회의 연속 타격을 신속하게 퍼붓습니다.`,
         type: 'MELEE_STRIKE',
@@ -1310,7 +1434,7 @@ export class ProceduralSkillSynthesizer {
       id: `${key}_SLOT_4_APEX_FINISHER`,
       tomeKey: 'APEX_FINISHER',
       slot: 4,
-      requiredMastery: 25,
+      requiredMastery: 6,
       name: apexName,
       desc: `온 힘을 실어 적을 강타하는 필사의 공격. (${apexDice})`,
       type: 'MELEE_STRIKE',
@@ -1398,7 +1522,8 @@ export class ProceduralSkillSynthesizer {
             target: 'TARGET'
           });
           targetSlot.synergyTags.push(`${payload.element}_INFUSION`);
-          targetSlot.desc += ` [${payload.element} 주입: +1d6]`;
+          const elemKor = ELEMENT_KO[payload.element] || payload.element;
+          targetSlot.desc += ` [${elemKor} 주입: +1d6]`;
         }
 
         // Append status effect op

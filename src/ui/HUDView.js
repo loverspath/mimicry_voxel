@@ -15,6 +15,7 @@ import { WEAPON_MASTERY_CONFIG } from '../entities/MimicBody.js';
 import { eventBus } from '../events/EventBus.js';
 import { GameEvents } from '../events/GameEvents.js';
 import { renderMonsterLoreModalHTML } from './MonsterLoreView.js';
+import { ProceduralSkillSynthesizer } from '../systems/ProceduralSkillSynthesizer.js';
 
 /**
  * 인벤토리 내 플레이어 요약 상태 패널 HTML을 생성합니다.
@@ -589,6 +590,39 @@ export function renderSkillTreeHTML(player) {
       <div style="display: flex; flex-direction: column; gap: 0.4rem;">
         ${skillsListHTML}
       </div>
+
+      ${(() => {
+        const passives = ProceduralSkillSynthesizer.synthesizePassiveTree(coreKey);
+        const effectiveUnlockLevel = Math.max(player.level || 1, masteryLvl || 1);
+        return `
+          <div style="border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 0.5rem; margin-top: 0.4rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span style="font-weight: bold; color: #c084fc; font-size: 0.8rem;">🧬 5티어 의태 패시브 트리:</span>
+              <span style="font-size: 0.7rem; color: #94a3b8;">Lv.${effectiveUnlockLevel} 기준 활성화</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+              ${passives.map(p => {
+                const isUnlocked = effectiveUnlockLevel >= (p.pt || 1);
+                const tagBadges = (p.synergyTags || []).map(tag => {
+                  const def = SYNERGY_TAG_REGISTRY[tag];
+                  return def ? `<span style="background: rgba(255,255,255,0.06); color: ${def.color}; border: 1px solid ${def.color}44; padding: 0.05rem 0.25rem; border-radius: 3px; font-size: 0.62rem;">${def.icon} ${def.name}</span>` : '';
+                }).filter(Boolean).join('');
+
+                return `
+                  <div style="background: rgba(0,0,0,0.3); border: 1px solid ${isUnlocked ? 'rgba(168,85,247,0.45)' : 'rgba(255,255,255,0.08)'}; border-radius: 6px; padding: 0.4rem 0.55rem; opacity: ${isUnlocked ? '1' : '0.6'}; font-size: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <span style="font-weight: bold; color: ${isUnlocked ? '#e9d5ff' : '#94a3b8'};">[Lv.${p.pt}] ${p.name}</span>
+                      <span style="font-size: 0.65rem; color: ${isUnlocked ? '#34d399' : '#f87171'}; font-weight: bold;">${isUnlocked ? '🟢 활성' : '🔒 잠김'}</span>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 0.7rem; margin-top: 0.15rem; line-height: 1.35;">${p.desc}</div>
+                    ${tagBadges ? `<div style="display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.25rem;">${tagBadges}</div>` : ''}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      })()}
     </div>
   `;
 }

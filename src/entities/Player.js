@@ -765,12 +765,19 @@ export class Player {
         return true;
       }
       if (this.hasKillWall()) {
-        const tile = map.getTile ? map.getTile(newX, newY) : (map.tiles && map.tiles[newY] ? map.tiles[newY][newX] : null);
-        if (tile) {
-          tile.type = 'FLOOR';
-          tile.char = '.';
-          tile.isWalkable = true;
-          tile.blocksVision = false;
+        const ok = map.carveWall ? map.carveWall(newX, newY) : false;
+        if (!ok) {
+          const tile = map.getTile ? map.getTile(newX, newY) : (map.tiles && map.tiles[newY] ? map.tiles[newY][newX] : null);
+          if (tile && !tile.isStaircase && !tile.isUpStaircase && tile.type !== 'STAIRS_UP' && tile.type !== 'STAIRS_DOWN') {
+            tile.type = 'FLOOR';
+            tile.char = '.';
+            tile.isWalkable = true;
+            tile.blocksVision = false;
+            map.mutationVersion = (map.mutationVersion || 0) + 1;
+            if (map.bridge && typeof map.bridge.updateTile === 'function') {
+              map.bridge.updateTile(newX, newY);
+            }
+          }
         }
         this.x = newX;
         this.y = newY;

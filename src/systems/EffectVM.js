@@ -538,11 +538,22 @@ export class EffectVM {
             if (dist <= radius) {
               const tile = map.getTile ? map.getTile(tx, ty) : map.tiles[ty]?.[tx];
               if (tile && !tile.isWalkable) {
-                tile.type = 'FLOOR';
-                tile.char = '.';
-                tile.isWalkable = true;
-                tile.blocksVision = false;
-                carvedCount++;
+                const ok = map.carveWall ? map.carveWall(tx, ty) : false;
+                if (!ok) {
+                  if (!tile.isStaircase && !tile.isUpStaircase && tile.type !== 'STAIRS_UP' && tile.type !== 'STAIRS_DOWN') {
+                    tile.type = 'FLOOR';
+                    tile.char = '.';
+                    tile.isWalkable = true;
+                    tile.blocksVision = false;
+                    map.mutationVersion = (map.mutationVersion || 0) + 1;
+                    if (map.bridge && typeof map.bridge.updateTile === 'function') {
+                      map.bridge.updateTile(tx, ty);
+                    }
+                    carvedCount++;
+                  }
+                } else {
+                  carvedCount++;
+                }
               }
             }
           }

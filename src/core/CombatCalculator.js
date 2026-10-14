@@ -572,8 +572,9 @@ export class CombatCalculator {
     /**
      * 평타 추가 시너지 및 오우거/슬라임 등의 몬스터 고유 반사 피해를 일괄 조율합니다.
      */
-    static processGenericAttackSynergies(player, monster, activeTags, currentPhysDmg, game) {
+    static processGenericAttackSynergies(player, monster, activeTags, currentPhysDmg, game, options = {}) {
         let physDmg = currentPhysDmg;
+        const rng = options?.rng || game?.rng || Math.random;
 
         // Ambush Tag Synergy (replaces Goblin 7pt)
         const ambushStacks = activeTags["AMBUSH"] || 0;
@@ -613,7 +614,7 @@ export class CombatCalculator {
 
         // Curse Boost Tag Synergy (replaces Imp 5pt)
         const curseBoost = activeTags["CURSE_BOOST"] || 0;
-        if (curseBoost > 0 && monster.stats.hp > 0 && Math.random() < (0.25 * curseBoost)) {
+        if (curseBoost > 0 && monster.stats.hp > 0 && rng() < (0.25 * curseBoost)) {
             if (!monster.debuffs) monster.debuffs = { poison: 0, frost: 0, paralyzed: false, magicVulnerability: 0 };
             monster.debuffs.magicVulnerability = 3;
             game.addLogEntry(`[Skill] 약화의 저주 발동! ${monster.name}에게 3턴간 [마법 취약] 상태를 부여했습니다! (마법 피해 +30% 증폭)`, `loot`);
@@ -627,7 +628,7 @@ export class CombatCalculator {
           monster.char === 'O' || monster.char === 'T' || monster.char === 'P' ||
           (monster.synergyTags && monster.synergyTags.includes('GIANT_BLOOD'));
 
-        if (isGiantTroll && monster.stats.hp > 0 && (!monster.giantBloodCooldown || monster.giantBloodCooldown <= 0) && Math.random() < mstCfg.OGRE_REGEN.chance) {
+        if (isGiantTroll && monster.stats.hp > 0 && (!monster.giantBloodCooldown || monster.giantBloodCooldown <= 0) && rng() < mstCfg.OGRE_REGEN.chance) {
             let healAmt = Math.max(1, Math.floor((monster.stats.maxHp - monster.stats.hp) * mstCfg.OGRE_REGEN.maxHpPercentageHeal));
             monster.stats.hp = Math.min(monster.stats.maxHp, monster.stats.hp + healAmt);
             monster.giantBloodCooldown = mstCfg.OGRE_REGEN.cooldown;
@@ -640,7 +641,7 @@ export class CombatCalculator {
           monster.char === 'j' || monster.char === 'm' || monster.char === ',' ||
           (monster.synergyTags && monster.synergyTags.includes('ACID_COUNTER'));
 
-        if (isSlimeJelly && monster.stats.hp > 0 && Math.random() < mstCfg.SLIME_REFLECTION.chance) {
+        if (isSlimeJelly && monster.stats.hp > 0 && rng() < mstCfg.SLIME_REFLECTION.chance) {
             let reflDmg = CombatCalculator.rollDice(mstCfg.SLIME_REFLECTION.diceFormula);
             player.stats.hp = Math.max(0, player.stats.hp - reflDmg);
             if (game && game.addLogEntry) {

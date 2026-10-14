@@ -407,7 +407,7 @@ export class MimicBody {
     // Main core
     const mainCategory = this.player.normalizeCategory(this.player.mimicCore.name);
     const mainKey = this.player.mimicCore.coreType || mainCategory;
-    const mainMastery = this.getLoreLevel(mainKey);
+    const mainMastery = Math.max(this.player.level || 1, this.getLoreLevel(mainKey) || 1);
     const mainSkills = CORE_SKILL_TREES[this.player.mimicCore.coreType] || CORE_SKILL_TREES[mainCategory] || [];
     mainSkills.forEach(skill => {
       if (mainMastery >= (skill.pt || skill.requiredMastery || 1)) addTags(skill.synergyTags);
@@ -418,7 +418,7 @@ export class MimicBody {
       if (!core) return;
       const category = this.player.normalizeCategory(core.baseName || core.name || core.coreType);
       const subKey = core.coreType || category;
-      const subMastery = this.getLoreLevel(subKey);
+      const subMastery = Math.max(this.player.level || 1, this.getLoreLevel(subKey) || 1);
       const skills = CORE_SKILL_TREES[core.coreType] || CORE_SKILL_TREES[category] || [];
       skills.forEach(skill => {
         if (subMastery >= (skill.pt || skill.requiredMastery || 1)) addTags(skill.synergyTags);

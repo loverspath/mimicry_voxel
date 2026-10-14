@@ -331,15 +331,25 @@ export class Voxel3DRenderer {
     this.map = map;
     this.time += 0.016;
 
-    if (this.lastMapInstance !== map) {
+    const currentMutationVersion = map.mutationVersion || 0;
+    if (this.lastMapInstance !== map || this.lastMutationVersion !== currentMutationVersion) {
+      const isNewMap = (this.lastMapInstance !== map);
       this.lastMapInstance = map;
-      this.mapBridge = new Voxel3DMapBridge(map);
-      const topV = this.mapBridge.getTopVoxel(playerX, playerY);
-      this.snapCamera(playerX, playerY, topV ? topV.z : 0);
+      this.lastMutationVersion = currentMutationVersion;
+      if (!this.mapBridge || isNewMap) {
+        this.mapBridge = new Voxel3DMapBridge(map);
+      } else {
+        this.mapBridge.rebuildVoxelGrid();
+      }
+      if (isNewMap) {
+        const topV = this.mapBridge.getTopVoxel(playerX, playerY);
+        this.snapCamera(playerX, playerY, topV ? topV.z : 0);
+      }
     }
 
     const topVoxel = this.mapBridge ? this.mapBridge.getTopVoxel(playerX, playerY) : null;
-    const playerZ = topVoxel ? topVoxel.z : 0;
+    const isPlayerInWall = topVoxel && topVoxel.themeKey === 'WALL';
+    const playerZ = isPlayerInWall ? 0 : (topVoxel ? topVoxel.z : 0);
 
     const tileW = this.baseTileW;
     const tileH = this.baseTileH;
